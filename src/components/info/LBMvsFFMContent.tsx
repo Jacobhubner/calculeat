@@ -9,7 +9,7 @@ export default function LBMvsFFMContent() {
   return (
     <div className="space-y-4">
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
           {t('lbmVsffm.section1Title')}
         </h3>
         <p>
@@ -18,10 +18,12 @@ export default function LBMvsFFMContent() {
       </section>
 
       <section>
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="font-medium text-green-900 mb-2">{t('lbmVsffm.lbmTitle')}</p>
-          <p className="text-sm text-neutral-700">{t('lbmVsffm.lbmIntro')}</p>
-          <ul className="list-disc list-inside mt-2 space-y-1 text-sm text-neutral-700">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 dark:bg-green-900/25 dark:border-green-800">
+          <p className="font-medium text-green-900 mb-2 dark:text-green-300">
+            {t('lbmVsffm.lbmTitle')}
+          </p>
+          <p className="text-sm text-neutral-700 dark:text-neutral-200">{t('lbmVsffm.lbmIntro')}</p>
+          <ul className="list-disc list-inside mt-2 space-y-1 text-sm text-neutral-700 dark:text-neutral-200">
             <li>{t('lbmVsffm.lbmItem1')}</li>
             <li>{t('lbmVsffm.lbmItem2')}</li>
             <li>{t('lbmVsffm.lbmItem3')}</li>
@@ -30,10 +32,12 @@ export default function LBMvsFFMContent() {
       </section>
 
       <section>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="font-medium text-blue-900 mb-2">{t('lbmVsffm.ffmTitle')}</p>
-          <p className="text-sm text-neutral-700">{t('lbmVsffm.ffmIntro')}</p>
-          <ul className="list-disc list-inside mt-2 space-y-1 text-sm text-neutral-700">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 dark:bg-blue-900/25 dark:border-blue-800">
+          <p className="font-medium text-blue-900 mb-2 dark:text-blue-300">
+            {t('lbmVsffm.ffmTitle')}
+          </p>
+          <p className="text-sm text-neutral-700 dark:text-neutral-200">{t('lbmVsffm.ffmIntro')}</p>
+          <ul className="list-disc list-inside mt-2 space-y-1 text-sm text-neutral-700 dark:text-neutral-200">
             <li>{t('lbmVsffm.ffmItem1')}</li>
             <li>{t('lbmVsffm.ffmItem2')}</li>
             <li>{t('lbmVsffm.ffmItem3')}</li>
@@ -43,9 +47,11 @@ export default function LBMvsFFMContent() {
       </section>
 
       <section>
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <p className="font-medium text-yellow-900 mb-2">{t('lbmVsffm.diffTitle')}</p>
-          <ul className="text-sm space-y-1 text-neutral-700">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 dark:bg-yellow-900/25 dark:border-yellow-800">
+          <p className="font-medium text-yellow-900 mb-2 dark:text-yellow-300">
+            {t('lbmVsffm.diffTitle')}
+          </p>
+          <ul className="text-sm space-y-1 text-neutral-700 dark:text-neutral-200">
             <li>{t('lbmVsffm.diffItem1')}</li>
             <li>{t('lbmVsffm.diffItem2')}</li>
             <li>
@@ -57,8 +63,8 @@ export default function LBMvsFFMContent() {
       </section>
 
       <section>
-        <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
-          <p className="text-sm text-neutral-700">
+        <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 dark:border-neutral-700 dark:bg-neutral-900">
+          <p className="text-sm text-neutral-700 dark:text-neutral-200">
             👉 {t('lbmVsffm.practicalText1')}
             <br />
             👉 {t('lbmVsffm.practicalText2')}

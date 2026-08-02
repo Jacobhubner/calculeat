@@ -48,7 +48,7 @@ export default function ForgotPasswordPage() {
             <div className="flex items-center justify-center mb-4">
               <img src="/calculeat-logo-full.svg" alt="Calculeat" className="h-24 object-contain" />
             </div>
-            <p className="text-neutral-600">{t('forgotPassword.subtitle')}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">{t('forgotPassword.subtitle')}</p>
           </div>
 
           <Card>
@@ -62,8 +62,8 @@ export default function ForgotPasswordPage() {
                   <div
                     className={`p-3 rounded-lg ${
                       isSuccess
-                        ? 'bg-green-50 border border-green-200 text-green-700'
-                        : 'bg-red-50 border border-red-200 text-red-700'
+                        ? 'bg-green-50 border border-green-200 text-green-700 dark:bg-green-900/25 dark:text-green-300 dark:border-green-800'
+                        : 'bg-red-50 border border-red-200 text-red-700 dark:bg-red-900/25 dark:text-red-300 dark:border-red-800'
                     }`}
                   >
                     {message}
@@ -94,7 +94,10 @@ export default function ForgotPasswordPage() {
                 </Button>
 
                 <div className="text-center text-sm">
-                  <Link to="/login" className="text-primary-600 hover:underline">
+                  <Link
+                    to="/login"
+                    className="text-primary-600 hover:underline dark:text-primary-300"
+                  >
                     {t('forgotPassword.backToLogin')}
                   </Link>
                 </div>

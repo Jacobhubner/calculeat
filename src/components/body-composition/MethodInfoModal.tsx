@@ -73,10 +73,10 @@ export default function MethodInfoModal({
       <div className="space-y-6">
         {/* Beskrivning */}
         <div>
-          <h3 className="text-lg font-semibold text-neutral-800 mb-2">
+          <h3 className="text-lg font-semibold text-neutral-800 mb-2 dark:text-neutral-200">
             {t('methodModal.description')}
           </h3>
-          <div className="text-neutral-700 leading-relaxed whitespace-pre-line">
+          <div className="text-neutral-700 leading-relaxed whitespace-pre-line dark:text-neutral-200">
             {localeKey
               ? t(`methodInfo.${localeKey}.description`, { defaultValue: info.description })
               : info.description}
@@ -85,8 +85,8 @@ export default function MethodInfoModal({
 
         {/* Returnerar densitet? */}
         {info.returnsDensity !== undefined && (
-          <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg">
-            <p className="text-sm text-blue-900">
+          <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg dark:bg-blue-900/25 dark:border-blue-800">
+            <p className="text-sm text-blue-900 dark:text-blue-300">
               {info.returnsDensity ? (
                 <>
                   <span className="font-semibold">{t('methodModal.returnsDensityLabel')}</span>{' '}
@@ -105,7 +105,7 @@ export default function MethodInfoModal({
         {/* Denna metod är bättre för */}
         {info.betterFor && info.betterFor.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-blue-800 mb-3">
+            <h3 className="text-lg font-semibold text-blue-800 mb-3 dark:text-blue-300">
               {t('methodModal.betterFor')}
             </h3>
             <ul className="space-y-2">
@@ -115,8 +115,10 @@ export default function MethodInfoModal({
                   : item
                 return (
                   <li key={index} className="flex gap-3">
-                    <span className="text-blue-600 font-bold mt-1">•</span>
-                    <span className="text-neutral-700 flex-1">{translated}</span>
+                    <span className="text-blue-600 font-bold mt-1 dark:text-blue-300">•</span>
+                    <span className="text-neutral-700 flex-1 dark:text-neutral-200">
+                      {translated}
+                    </span>
                   </li>
                 )
               })}
@@ -126,8 +128,8 @@ export default function MethodInfoModal({
 
         {/* Viktigt att veta (för Siri och Brozek) */}
         {info.pros && info.pros.length > 0 && !info.betterFor && (
-          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold text-amber-900 mb-3">
+          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-lg dark:bg-amber-900/25">
+            <h3 className="text-lg font-semibold text-amber-900 mb-3 dark:text-amber-300">
               {t('methodModal.importantToKnow')}
             </h3>
             <ul className="space-y-2">
@@ -137,8 +139,8 @@ export default function MethodInfoModal({
                   : item
                 return (
                   <li key={index} className="flex gap-3">
-                    <span className="text-amber-600 font-bold mt-1">•</span>
-                    <span className="text-amber-900 flex-1">{translated}</span>
+                    <span className="text-amber-600 font-bold mt-1 dark:text-amber-300">•</span>
+                    <span className="text-amber-900 flex-1 dark:text-amber-300">{translated}</span>
                   </li>
                 )
               })}
@@ -161,7 +163,7 @@ export default function MethodInfoModal({
                 return (
                   <div key={i}>
                     {isFirstOfGender && (
-                      <h3 className="text-lg font-semibold text-neutral-800 mb-3 mt-2">
+                      <h3 className="text-lg font-semibold text-neutral-800 mb-3 mt-2 dark:text-neutral-200">
                         {tStr(
                           `genderLabel.${(v.gender ? genderLocaleKeyMap[v.gender] : null) ?? 'both'}`,
                           {
@@ -172,17 +174,19 @@ export default function MethodInfoModal({
                     )}
                     <div className="mb-4">
                       {v.name && (
-                        <p className="text-sm font-semibold text-neutral-600 mb-1">{v.name}</p>
+                        <p className="text-sm font-semibold text-neutral-600 mb-1 dark:text-neutral-400">
+                          {v.name}
+                        </p>
                       )}
-                      <div className="bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-3">
-                        <p className="font-mono text-sm text-neutral-800 whitespace-pre-line">
+                      <div className="bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-3 dark:border-neutral-700 dark:bg-neutral-900">
+                        <p className="font-mono text-sm text-neutral-800 whitespace-pre-line dark:text-neutral-200">
                           {v.equation}
                         </p>
-                        <p className="font-mono text-xs text-neutral-500 mt-2 whitespace-pre-line">
+                        <p className="font-mono text-xs text-neutral-500 mt-2 whitespace-pre-line dark:text-neutral-400">
                           {v.measurements}
                         </p>
                         {v.reference && (
-                          <p className="text-xs text-neutral-400 mt-2 italic">
+                          <p className="text-xs text-neutral-400 mt-2 italic dark:text-neutral-500">
                             {t('methodModal.source')} {v.reference}
                           </p>
                         )}
@@ -198,11 +202,11 @@ export default function MethodInfoModal({
         {/* Formel (enkel, för Siri/Brozek) — exakta ekvationer är premium */}
         {info.formula && !info.formulaVariants && (
           <div>
-            <h3 className="text-lg font-semibold text-neutral-800 mb-2">
+            <h3 className="text-lg font-semibold text-neutral-800 mb-2 dark:text-neutral-200">
               {t('methodModal.formula')}
             </h3>
             <EquationGate feature="advanced_body_comp">
-              <div className="bg-neutral-50 text-neutral-800 font-mono text-sm px-4 py-3 rounded-lg border border-neutral-200 whitespace-pre-line">
+              <div className="bg-neutral-50 text-neutral-800 font-mono text-sm px-4 py-3 rounded-lg border border-neutral-200 whitespace-pre-line dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-200">
                 {info.formula}
               </div>
             </EquationGate>
@@ -212,14 +216,14 @@ export default function MethodInfoModal({
         {/* Referenser */}
         {info.references && info.references.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-neutral-800 mb-3">
+            <h3 className="text-lg font-semibold text-neutral-800 mb-3 dark:text-neutral-200">
               {t('methodModal.references')}
             </h3>
             <div className="space-y-3">
               {info.references.map((ref, index) => (
                 <div
                   key={index}
-                  className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200"
+                  className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400"
                 >
                   <p className="leading-relaxed break-all">{ref}</p>
                 </div>
@@ -230,11 +234,11 @@ export default function MethodInfoModal({
 
         {/* Anteckningar (fallback för äldre metoder som inte använder nya strukturen) */}
         {info.notes && !info.pros && !info.cons && (
-          <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg">
-            <h4 className="font-semibold mb-1 text-amber-900 text-sm">
+          <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg dark:bg-amber-900/25 dark:border-amber-800">
+            <h4 className="font-semibold mb-1 text-amber-900 text-sm dark:text-amber-300">
               {t('methodModal.importantToKnow')}
             </h4>
-            <p className="text-sm text-amber-800 leading-relaxed whitespace-pre-line">
+            <p className="text-sm text-amber-800 leading-relaxed whitespace-pre-line dark:text-amber-300">
               {info.notes}
             </p>
           </div>

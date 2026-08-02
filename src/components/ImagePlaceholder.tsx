@@ -52,14 +52,14 @@ export function ImagePlaceholder({
       `}
       style={aspectRatio ? undefined : { width: `${width}px`, height: `${height}px` }}
     >
-      <ImageIcon className="h-12 w-12 text-neutral-400" strokeWidth={1.5} />
+      <ImageIcon className="h-12 w-12 text-neutral-400 dark:text-neutral-500" strokeWidth={1.5} />
       <div className="space-y-1">
-        <p className="text-sm font-medium text-neutral-700">{description}</p>
-        <p className="text-xs font-mono text-neutral-500 bg-neutral-200 px-2 py-1 rounded">
+        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-200">{description}</p>
+        <p className="text-xs font-mono text-neutral-500 bg-neutral-200 px-2 py-1 rounded dark:bg-neutral-700 dark:text-neutral-400">
           {filename}
         </p>
         {!aspectRatio && (
-          <p className="text-xs text-neutral-400">
+          <p className="text-xs text-neutral-400 dark:text-neutral-500">
             {width} × {height}px
           </p>
         )}

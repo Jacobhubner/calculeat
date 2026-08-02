@@ -239,18 +239,18 @@ function AdminSupportThread({
       {/* Thread header */}
       <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-neutral-100">
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-neutral-900 truncate">
+          <p className="text-sm font-semibold text-neutral-900 truncate dark:text-neutral-100">
             {entry.username || entry.email || t('guestFallbackName')}
             {entry.is_guest && (
-              <span className="ml-1.5 align-middle text-[10px] bg-amber-50 text-amber-700 border border-amber-200 rounded px-1.5 py-0.5 leading-none font-medium">
+              <span className="ml-1.5 align-middle text-[10px] bg-amber-50 text-amber-700 border border-amber-200 rounded px-1.5 py-0.5 leading-none font-medium dark:bg-amber-900/25 dark:text-amber-300 dark:border-amber-800">
                 {t('guestBadge')}
               </span>
             )}
           </p>
           <div className="flex items-center gap-1.5 mt-0.5">
-            <p className="text-xs text-neutral-500 truncate">{entry.email}</p>
+            <p className="text-xs text-neutral-500 truncate dark:text-neutral-400">{entry.email}</p>
             {entry.assigned_admin_id && (
-              <span className="shrink-0 text-[10px] bg-primary-50 text-primary-700 rounded px-1.5 py-0.5 leading-none font-medium">
+              <span className="shrink-0 text-[10px] bg-primary-50 text-primary-700 rounded px-1.5 py-0.5 leading-none font-medium dark:bg-primary-900/25 dark:text-primary-300">
                 {isAssignedToMe ? 'Du hanterar' : `@${entry.assigned_admin_username ?? '...'}`}
               </span>
             )}
@@ -263,7 +263,7 @@ function AdminSupportThread({
               type="button"
               onClick={() => assignThread({ threadId: entry.thread_id, adminId: null })}
               disabled={isAssigning}
-              className="flex items-center gap-1 text-xs text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 px-2 py-1 rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center gap-1 text-xs text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 px-2 py-1 rounded-lg transition-colors disabled:opacity-50 dark:hover:text-neutral-100 dark:bg-neutral-800 dark:text-neutral-400"
             >
               {isAssigning ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -277,7 +277,7 @@ function AdminSupportThread({
               type="button"
               onClick={() => assignThread({ threadId: entry.thread_id, adminId: user?.id ?? null })}
               disabled={isAssigning}
-              className="flex items-center gap-1 text-xs text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 px-2 py-1 rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center gap-1 text-xs text-primary-600 hover:text-primary-700 bg-primary-50 hover:bg-primary-100 px-2 py-1 rounded-lg transition-colors disabled:opacity-50 dark:bg-primary-900/25 dark:text-primary-300"
             >
               {isAssigning ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -293,7 +293,7 @@ function AdminSupportThread({
               type="button"
               onClick={() => closeThread(entry.thread_id)}
               disabled={isClosing}
-              className="flex items-center gap-1 text-xs text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 px-2 py-1 rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center gap-1 text-xs text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 px-2 py-1 rounded-lg transition-colors disabled:opacity-50 dark:hover:text-neutral-100 dark:bg-neutral-800 dark:text-neutral-400"
             >
               {isClosing ? (
                 <Loader2 className="h-3 w-3 animate-spin" />
@@ -308,7 +308,7 @@ function AdminSupportThread({
                 type="button"
                 onClick={() => reopenThread(entry.thread_id)}
                 disabled={isReopening || isDeleting}
-                className="flex items-center gap-1 text-xs text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 px-2 py-1 rounded-lg transition-colors disabled:opacity-50"
+                className="flex items-center gap-1 text-xs text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 px-2 py-1 rounded-lg transition-colors disabled:opacity-50 dark:hover:text-neutral-100 dark:bg-neutral-800 dark:text-neutral-400"
               >
                 {isReopening ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
@@ -322,7 +322,7 @@ function AdminSupportThread({
                   type="button"
                   onClick={() => setConfirmDelete(true)}
                   disabled={isReopening || isDeleting}
-                  className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-1 rounded-lg transition-colors disabled:opacity-50"
+                  className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-1 rounded-lg transition-colors disabled:opacity-50 dark:bg-red-900/25"
                 >
                   <Trash2 className="h-3 w-3" />
                   {t('deleteConversation')}
@@ -336,7 +336,7 @@ function AdminSupportThread({
                       onClose?.()
                     }}
                     disabled={isDeleting}
-                    className="text-xs text-red-600 font-medium hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-1 rounded-lg transition-colors disabled:opacity-50"
+                    className="text-xs text-red-600 font-medium hover:text-red-700 bg-red-50 hover:bg-red-100 px-2 py-1 rounded-lg transition-colors disabled:opacity-50 dark:bg-red-900/25 dark:text-red-300"
                   >
                     {isDeleting ? (
                       <Loader2 className="h-3 w-3 animate-spin" />
@@ -347,7 +347,7 @@ function AdminSupportThread({
                   <button
                     type="button"
                     onClick={() => setConfirmDelete(false)}
-                    className="text-xs text-neutral-500 hover:text-neutral-700 bg-neutral-100 hover:bg-neutral-200 px-2 py-1 rounded-lg transition-colors"
+                    className="text-xs text-neutral-500 hover:text-neutral-700 bg-neutral-100 hover:bg-neutral-200 px-2 py-1 rounded-lg transition-colors dark:hover:text-neutral-200 dark:bg-neutral-800 dark:text-neutral-400"
                   >
                     {t('deleteConfirmNo')}
                   </button>
@@ -359,7 +359,7 @@ function AdminSupportThread({
             <button
               type="button"
               onClick={onClose}
-              className="md:hidden h-7 w-7 flex items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100"
+              className="md:hidden h-7 w-7 flex items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-400"
             >
               <X className="h-4 w-4" />
             </button>
@@ -371,7 +371,7 @@ function AdminSupportThread({
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
         {isLoading && (
           <div className="flex justify-center py-4">
-            <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
+            <Loader2 className="h-5 w-5 animate-spin text-neutral-400 dark:text-neutral-500" />
           </div>
         )}
         {hasNextPage && (
@@ -380,7 +380,7 @@ function AdminSupportThread({
               type="button"
               onClick={() => fetchNextPage()}
               disabled={isFetchingNextPage}
-              className="text-xs text-primary-600 hover:underline disabled:opacity-50"
+              className="text-xs text-primary-600 hover:underline disabled:opacity-50 dark:text-primary-300"
             >
               {isFetchingNextPage ? <Loader2 className="h-3 w-3 animate-spin inline mr-1" /> : null}
               {t('loadMore')}
@@ -408,7 +408,7 @@ function AdminSupportThread({
                 <img
                   src={previewUrl}
                   alt={t('attachedImageAlt')}
-                  className="h-16 w-16 rounded-lg object-cover border border-neutral-200"
+                  className="h-16 w-16 rounded-lg object-cover border border-neutral-200 dark:border-neutral-700"
                 />
                 <button
                   type="button"
@@ -434,7 +434,7 @@ function AdminSupportThread({
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isBusy}
-              className="shrink-0 h-9 w-9 rounded-xl text-neutral-400 hover:text-primary-600 hover:bg-primary-50 flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="shrink-0 h-9 w-9 rounded-xl text-neutral-400 hover:text-primary-600 hover:bg-primary-50 flex items-center justify-center transition-colors disabled:opacity-40 disabled:cursor-not-allowed dark:text-neutral-500"
               title={t('attachImage')}
             >
               <ImagePlus className="h-4 w-4" />
@@ -449,7 +449,7 @@ function AdminSupportThread({
               onKeyDown={handleKeyDown}
               placeholder={t('adminReplyPlaceholder')}
               rows={1}
-              className="flex-1 resize-none rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+              className="flex-1 resize-none rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100"
               style={{ minHeight: '40px', maxHeight: '120px' }}
             />
             <button
@@ -463,8 +463,8 @@ function AdminSupportThread({
           </div>
         </div>
       ) : (
-        <div className="shrink-0 border-t border-neutral-100 px-4 py-3 bg-neutral-50 text-center">
-          <p className="text-xs text-neutral-500">{t('threadClosedAdmin')}</p>
+        <div className="shrink-0 border-t border-neutral-100 px-4 py-3 bg-neutral-50 text-center dark:bg-neutral-900">
+          <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('threadClosedAdmin')}</p>
         </div>
       )}
     </div>
@@ -488,7 +488,7 @@ function AdminSupportInbox({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-40">
-        <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-neutral-400 dark:text-neutral-500" />
       </div>
     )
   }
@@ -497,7 +497,7 @@ function AdminSupportInbox({
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center px-4">
         <InboxIcon className="h-10 w-10 text-neutral-300 mb-3" />
-        <p className="text-sm text-neutral-500">{t('inboxEmpty')}</p>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">{t('inboxEmpty')}</p>
       </div>
     )
   }
@@ -510,32 +510,34 @@ function AdminSupportInbox({
           type="button"
           onClick={() => onSelect(entry)}
           className={`w-full text-left px-4 py-3 hover:bg-neutral-50 transition-colors ${
-            selectedId === entry.thread_id ? 'bg-primary-50 border-l-2 border-primary-600' : ''
+            selectedId === entry.thread_id
+              ? 'bg-primary-50 border-l-2 border-primary-600 dark:bg-primary-900/25'
+              : ''
           }`}
         >
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5 mb-0.5">
-                <p className="text-sm font-medium text-neutral-900 truncate">
+                <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
                   {entry.username || entry.email || t('guestFallbackName')}
                 </p>
                 {entry.is_guest && (
-                  <span className="shrink-0 text-[10px] bg-amber-50 text-amber-700 border border-amber-200 rounded px-1 py-0.5 leading-none font-medium">
+                  <span className="shrink-0 text-[10px] bg-amber-50 text-amber-700 border border-amber-200 rounded px-1 py-0.5 leading-none font-medium dark:bg-amber-900/25 dark:text-amber-300 dark:border-amber-800">
                     {t('guestBadge')}
                   </span>
                 )}
                 {entry.status === 'closed' && (
-                  <span className="shrink-0 text-[10px] bg-neutral-100 text-neutral-500 rounded px-1 py-0.5 leading-none">
+                  <span className="shrink-0 text-[10px] bg-neutral-100 text-neutral-500 rounded px-1 py-0.5 leading-none dark:bg-neutral-800 dark:text-neutral-400">
                     {t('closed')}
                   </span>
                 )}
                 {entry.assigned_admin_id && (
-                  <span className="shrink-0 text-[10px] bg-primary-50 text-primary-700 rounded px-1 py-0.5 leading-none">
+                  <span className="shrink-0 text-[10px] bg-primary-50 text-primary-700 rounded px-1 py-0.5 leading-none dark:bg-primary-900/25 dark:text-primary-300">
                     @{entry.assigned_admin_username ?? '...'}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-neutral-500 truncate">
+              <p className="text-xs text-neutral-500 truncate dark:text-neutral-400">
                 {/* Tom sträng = bildmeddelande utan text */}
                 {entry.last_message === ''
                   ? t('imageAttachment')
@@ -544,7 +546,7 @@ function AdminSupportInbox({
             </div>
             <div className="flex flex-col items-end gap-1 shrink-0">
               {entry.last_message_at && (
-                <p className="text-[10px] text-neutral-400">
+                <p className="text-[10px] text-neutral-400 dark:text-neutral-500">
                   {format(parseISO(entry.last_message_at), 'HH:mm', { locale: getDateLocale() })}
                 </p>
               )}
@@ -574,7 +576,7 @@ export default function AdminSupportPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[300px]">
-          <Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+          <Loader2 className="h-6 w-6 animate-spin text-neutral-400 dark:text-neutral-500" />
         </div>
       </DashboardLayout>
     )
@@ -584,7 +586,7 @@ export default function AdminSupportPage() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-[300px]">
-          <p className="text-neutral-500">{t('noAccess')}</p>
+          <p className="text-neutral-500 dark:text-neutral-400">{t('noAccess')}</p>
         </div>
       </DashboardLayout>
     )
@@ -600,7 +602,9 @@ export default function AdminSupportPage() {
           } flex-col w-full md:w-80 lg:w-96 shrink-0 border-r border-neutral-200 overflow-y-auto`}
         >
           <div className="shrink-0 px-4 py-3 border-b border-neutral-100">
-            <h1 className="text-base font-semibold text-neutral-900">{t('adminPageTitle')}</h1>
+            <h1 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
+              {t('adminPageTitle')}
+            </h1>
           </div>
           <AdminSupportInbox
             selectedId={selectedEntry?.thread_id ?? null}
@@ -614,7 +618,7 @@ export default function AdminSupportPage() {
             <AdminSupportThread entry={selectedEntry} onClose={() => setSelectedEntry(null)} />
           </div>
         ) : (
-          <div className="hidden md:flex flex-1 items-center justify-center text-neutral-400">
+          <div className="hidden md:flex flex-1 items-center justify-center text-neutral-400 dark:text-neutral-500">
             <div className="text-center">
               <InboxIcon className="h-10 w-10 mx-auto mb-2 opacity-30" />
               <p className="text-sm">{t('selectThread')}</p>

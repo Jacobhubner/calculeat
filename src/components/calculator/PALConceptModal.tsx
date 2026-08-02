@@ -20,26 +20,26 @@ export default function PALConceptModal({ isOpen, onClose }: PALConceptModalProp
       <div className="space-y-6">
         {/* Description */}
         <div>
-          <h3 className="text-lg font-semibold text-neutral-800 mb-2">
+          <h3 className="text-lg font-semibold text-neutral-800 mb-2 dark:text-neutral-200">
             {t('tdeeCalc.palConceptModal.description')}
           </h3>
-          <p className="text-neutral-700 leading-relaxed">
+          <p className="text-neutral-700 leading-relaxed dark:text-neutral-200">
             {t('tdeeCalc.palConceptModal.descriptionText')}
           </p>
         </div>
 
         {/* How it works */}
         <div>
-          <h3 className="text-lg font-semibold text-blue-800 mb-3 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-blue-800 mb-3 flex items-center gap-2 dark:text-blue-300">
             <span className="text-xl">💡</span>
             {t('tdeeCalc.palConceptModal.howItWorksTitle')}
           </h3>
           <div className="space-y-3">
-            <p className="text-neutral-700 leading-relaxed">
+            <p className="text-neutral-700 leading-relaxed dark:text-neutral-200">
               {t('tdeeCalc.palConceptModal.howItWorksPara')}
             </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-neutral-800 font-medium text-center">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 dark:bg-blue-900/25 dark:border-blue-800">
+              <p className="text-neutral-800 font-medium text-center dark:text-neutral-200">
                 {t('tdeeCalc.palConceptModal.formula')}
               </p>
             </div>
@@ -48,13 +48,13 @@ export default function PALConceptModal({ isOpen, onClose }: PALConceptModalProp
 
         {/* Why choose different systems */}
         <div>
-          <h3 className="text-lg font-semibold text-neutral-800 mb-3">
+          <h3 className="text-lg font-semibold text-neutral-800 mb-3 dark:text-neutral-200">
             {t('tdeeCalc.palConceptModal.whyDifferentTitle')}
           </h3>
-          <p className="text-neutral-700 leading-relaxed mb-3">
+          <p className="text-neutral-700 leading-relaxed mb-3 dark:text-neutral-200">
             {t('tdeeCalc.palConceptModal.whyDifferentPara1')}
           </p>
-          <p className="text-neutral-700 leading-relaxed">
+          <p className="text-neutral-700 leading-relaxed dark:text-neutral-200">
             {t('tdeeCalc.palConceptModal.whyDifferentPara2')}
           </p>
         </div>

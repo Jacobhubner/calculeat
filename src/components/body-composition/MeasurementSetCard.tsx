@@ -99,15 +99,15 @@ export default function MeasurementSetCard({
         isUnsaved && [
           'border-2 border-dashed',
           isActive
-            ? 'border-l-4 border-l-amber-500 border-amber-300 bg-amber-50/30 shadow-sm'
-            : 'border-amber-300 bg-amber-50/20 hover:border-amber-400 hover:shadow-md',
+            ? 'border-l-4 border-l-amber-500 border-amber-300 bg-amber-50/30 shadow-sm dark:border-amber-800'
+            : 'border-amber-300 bg-amber-50/20 hover:border-amber-400 hover:shadow-md dark:border-amber-800',
         ],
         // Sparade kort - normal grön/neutral styling
         !isUnsaved && [
           'border-2',
           isActive
             ? 'border-l-4 border-l-primary-600 bg-primary-50/50 border-primary-500'
-            : 'border-neutral-200 hover:border-primary-300 hover:bg-neutral-50 hover:shadow-sm',
+            : 'border-neutral-200 hover:border-primary-300 hover:bg-neutral-50 hover:shadow-sm dark:hover:bg-neutral-800 dark:border-neutral-700',
         ]
       )}
     >
@@ -121,7 +121,7 @@ export default function MeasurementSetCard({
           onClick={e => e.stopPropagation()}
           placeholder={defaultName}
           autoFocus
-          className="w-full font-medium text-sm pr-20 bg-white border border-primary-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full font-medium text-sm pr-20 bg-white border border-primary-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-neutral-850"
         />
       ) : (
         <h4 className="font-medium text-sm pr-20">{displayName}</h4>
@@ -139,7 +139,7 @@ export default function MeasurementSetCard({
                 'p-0.5 rounded transition-colors',
                 isFirst || reorderPending
                   ? 'text-neutral-300 cursor-not-allowed'
-                  : 'text-neutral-500 hover:text-primary-600 hover:bg-primary-50'
+                  : 'text-neutral-500 hover:text-primary-600 hover:bg-primary-50 dark:text-neutral-400'
               )}
               title={t('card.moveUp')}
             >
@@ -153,7 +153,7 @@ export default function MeasurementSetCard({
                 'p-0.5 rounded transition-colors',
                 isLast || reorderPending
                   ? 'text-neutral-300 cursor-not-allowed'
-                  : 'text-neutral-500 hover:text-primary-600 hover:bg-primary-50'
+                  : 'text-neutral-500 hover:text-primary-600 hover:bg-primary-50 dark:text-neutral-400'
               )}
               title={t('card.moveDown')}
             >
@@ -169,8 +169,8 @@ export default function MeasurementSetCard({
             className={cn(
               'transition-all p-0.5 rounded',
               isEditingName
-                ? 'text-primary-600 bg-primary-100' // Pressed state
-                : 'text-neutral-500 hover:text-primary-600 hover:bg-primary-50'
+                ? 'text-primary-600 bg-primary-100 dark:bg-primary-900/25 dark:text-primary-300' // Pressed state
+                : 'text-neutral-500 hover:text-primary-600 hover:bg-primary-50 dark:text-neutral-400'
             )}
             aria-label={isEditingName ? t('card.stopEditing') : t('card.editName')}
             title={isEditingName ? t('card.saveChanges') : t('card.editName')}
@@ -191,7 +191,7 @@ export default function MeasurementSetCard({
               'transition-colors p-0.5',
               isSaving
                 ? 'text-neutral-300 cursor-not-allowed'
-                : 'text-primary-600 hover:text-primary-700'
+                : 'text-primary-600 hover:text-primary-700 dark:text-primary-300'
             )}
             aria-label={t('card.saveMeasurements')}
             title={t('card.saveMeasurements')}
@@ -206,7 +206,7 @@ export default function MeasurementSetCard({
             e.stopPropagation()
             onDelete()
           }}
-          className="text-neutral-400 hover:text-red-500 transition-colors p-0.5"
+          className="text-neutral-400 hover:text-red-500 transition-colors p-0.5 dark:text-neutral-500"
           aria-label={t('card.deleteSet')}
         >
           <X className="h-4 w-4" />

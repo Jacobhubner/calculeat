@@ -48,7 +48,9 @@ export function PlanBadge({ className }: PlanBadgeProps) {
           // Ingen "ADMINVY"-etikett: reglaget visar redan vilket läge som är
           // aktivt, och title/aria-label förklarar för den som behöver det.
           'inline-flex items-center gap-1.5 rounded-full border px-1 py-0.5 transition-colors cursor-pointer',
-          showingFree ? 'border-neutral-300 bg-neutral-100' : 'border-amber-400 bg-amber-100',
+          showingFree
+            ? 'border-neutral-300 bg-neutral-100 dark:border-neutral-600 dark:bg-neutral-800'
+            : 'border-amber-400 bg-amber-100 dark:bg-amber-900/25',
           className
         )}
       >
@@ -61,7 +63,7 @@ export function PlanBadge({ className }: PlanBadgeProps) {
         >
           <span
             className={cn(
-              'absolute top-0.5 h-2.5 w-2.5 rounded-full bg-white shadow transition-all',
+              'absolute top-0.5 h-2.5 w-2.5 rounded-full bg-white shadow transition-all dark:bg-neutral-850',
               showingFree ? 'left-0.5' : 'left-3'
             )}
           />
@@ -69,7 +71,9 @@ export function PlanBadge({ className }: PlanBadgeProps) {
         <span
           className={cn(
             'pr-1 text-[10px] font-semibold',
-            showingFree ? 'text-neutral-600' : 'text-amber-700'
+            showingFree
+              ? 'text-neutral-600 dark:text-neutral-400'
+              : 'text-amber-700 dark:text-amber-300'
           )}
         >
           {showingFree ? t('badge.free') : t('badge.premium')}
@@ -84,7 +88,7 @@ export function PlanBadge({ className }: PlanBadgeProps) {
         type="button"
         onClick={() => openUpgradeModal()}
         className={cn(
-          'inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-neutral-100 px-2 py-0.5 text-[10px] font-semibold text-neutral-600 transition-colors hover:border-amber-400 hover:bg-amber-100 hover:text-amber-700 cursor-pointer',
+          'inline-flex items-center gap-1 rounded-full border border-neutral-300 bg-neutral-100 px-2 py-0.5 text-[10px] font-semibold text-neutral-600 transition-colors hover:border-amber-400 hover:bg-amber-100 hover:text-amber-700 cursor-pointer dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-400',
           className
         )}
       >
@@ -98,7 +102,7 @@ export function PlanBadge({ className }: PlanBadgeProps) {
     return (
       <span
         className={cn(
-          'inline-flex items-center gap-1 rounded-full border border-amber-400 bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700',
+          'inline-flex items-center gap-1 rounded-full border border-amber-400 bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:bg-amber-900/25 dark:text-amber-300',
           className
         )}
       >

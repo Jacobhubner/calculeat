@@ -96,7 +96,7 @@ export default function TapeMeasurementsSection({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Ruler className="h-5 w-5 text-primary-600" />
+            <Ruler className="h-5 w-5 text-primary-600 dark:text-primary-300" />
             {t('tape.title')}
           </CardTitle>
           <CardDescription>{t('tape.description')}</CardDescription>
@@ -115,14 +115,14 @@ export default function TapeMeasurementsSection({
                       {t(`tapeLabels.${field as string}`, {
                         defaultValue: tapeLabels[field as string],
                       })}{' '}
-                      <span className="text-neutral-500">(cm)</span>
+                      <span className="text-neutral-500 dark:text-neutral-400">(cm)</span>
                       {isRequired && <span className="text-red-500 ml-1">*</span>}
                     </Label>
                     {description && (
                       <button
                         type="button"
                         onClick={() => handleInfoClick(field)}
-                        className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
+                        className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer dark:text-neutral-500"
                         aria-label={t('tape.infoAriaLabel', {
                           field: t(`tapeLabels.${field as string}`, {
                             defaultValue: tapeLabels[field as string],
@@ -164,19 +164,21 @@ export default function TapeMeasurementsSection({
             onClick={() => setShowModal(false)}
           >
             <div
-              className="bg-white rounded-2xl shadow-2xl max-w-md w-full"
+              className="bg-white rounded-2xl shadow-2xl max-w-md w-full dark:bg-neutral-850"
               onClick={e => e.stopPropagation()}
             >
-              <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl">
+              <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl dark:border-neutral-700 dark:bg-neutral-850">
                 <div>
-                  <h2 className="text-2xl font-bold text-neutral-900">{modalContent.title}</h2>
-                  <p className="text-sm text-neutral-600 mt-1">
+                  <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+                    {modalContent.title}
+                  </h2>
+                  <p className="text-sm text-neutral-600 mt-1 dark:text-neutral-400">
                     {t('tape.measurementInstruction')}
                   </p>
                 </div>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-neutral-500 hover:text-neutral-700 transition-colors"
+                  className="text-neutral-500 hover:text-neutral-700 transition-colors dark:hover:text-neutral-200 dark:text-neutral-400"
                   aria-label={t('tape.closeModalAriaLabel')}
                 >
                   <X className="h-6 w-6" />
@@ -299,10 +301,14 @@ export default function TapeMeasurementsSection({
                             return (
                               <div
                                 key={idx}
-                                className="bg-blue-50 border-blue-200 border rounded-lg p-4"
+                                className="bg-blue-50 border-blue-200 border rounded-lg p-4 dark:bg-blue-900/25 dark:border-blue-800"
                               >
-                                <p className="font-semibold text-blue-700 mb-2">👨 {maleLabel}</p>
-                                <p className="text-blue-900 leading-relaxed">{section.content}</p>
+                                <p className="font-semibold text-blue-700 mb-2 dark:text-blue-300">
+                                  👨 {maleLabel}
+                                </p>
+                                <p className="text-blue-900 leading-relaxed dark:text-blue-300">
+                                  {section.content}
+                                </p>
                               </div>
                             )
                           }
@@ -323,10 +329,14 @@ export default function TapeMeasurementsSection({
                             return (
                               <div
                                 key={idx}
-                                className="bg-purple-50 border-purple-200 border rounded-lg p-4"
+                                className="bg-purple-50 border-purple-200 border rounded-lg p-4 dark:bg-purple-900/25 dark:border-purple-800"
                               >
-                                <p className="font-semibold text-purple-700 mb-2">👥 {bothLabel}</p>
-                                <p className="text-purple-900 leading-relaxed">{section.content}</p>
+                                <p className="font-semibold text-purple-700 mb-2 dark:text-purple-300">
+                                  👥 {bothLabel}
+                                </p>
+                                <p className="text-purple-900 leading-relaxed dark:text-purple-300">
+                                  {section.content}
+                                </p>
                               </div>
                             )
                           }
@@ -335,13 +345,13 @@ export default function TapeMeasurementsSection({
                             return (
                               <div
                                 key={idx}
-                                className="bg-amber-50 border-amber-200 border rounded-lg p-4"
+                                className="bg-amber-50 border-amber-200 border rounded-lg p-4 dark:bg-amber-900/25 dark:border-amber-800"
                               >
-                                <p className="font-semibold text-amber-700 mb-2">
+                                <p className="font-semibold text-amber-700 mb-2 dark:text-amber-300">
                                   📋 {section.title}
                                 </p>
                                 {section.content && (
-                                  <p className="text-amber-900 leading-relaxed whitespace-pre-line">
+                                  <p className="text-amber-900 leading-relaxed whitespace-pre-line dark:text-amber-300">
                                     {section.content}
                                   </p>
                                 )}
@@ -353,7 +363,7 @@ export default function TapeMeasurementsSection({
                           return (
                             <p
                               key={idx}
-                              className="text-neutral-700 leading-relaxed whitespace-pre-line"
+                              className="text-neutral-700 leading-relaxed whitespace-pre-line dark:text-neutral-200"
                             >
                               {section.content}
                             </p>
@@ -365,13 +375,13 @@ export default function TapeMeasurementsSection({
 
                   // No special formatting, just show normal text
                   return (
-                    <p className="text-neutral-700 whitespace-pre-line leading-relaxed">
+                    <p className="text-neutral-700 whitespace-pre-line leading-relaxed dark:text-neutral-200">
                       {description}
                     </p>
                   )
                 })()}
               </div>
-              <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
+              <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl dark:border-neutral-700 dark:bg-neutral-850">
                 <Button onClick={() => setShowModal(false)} className="w-full">
                   {t('tape.closeModal')}
                 </Button>

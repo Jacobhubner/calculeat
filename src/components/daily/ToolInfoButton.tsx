@@ -21,13 +21,15 @@ export function ToolInfoButton({ title, body, ariaLabel }: ToolInfoButtonProps) 
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="p-1 rounded-lg text-neutral-400 hover:text-primary-600 hover:bg-neutral-100 transition-colors"
+        className="p-1 rounded-lg text-neutral-400 hover:text-primary-600 hover:bg-neutral-100 transition-colors dark:hover:bg-neutral-800 dark:text-neutral-500"
         aria-label={ariaLabel}
       >
         <Info className="h-4 w-4" />
       </button>
       <InfoModal open={open} onClose={() => setOpen(false)} title={title} size="md">
-        <p className="text-neutral-700 leading-relaxed whitespace-pre-line">{body}</p>
+        <p className="text-neutral-700 leading-relaxed whitespace-pre-line dark:text-neutral-200">
+          {body}
+        </p>
       </InfoModal>
     </>
   )

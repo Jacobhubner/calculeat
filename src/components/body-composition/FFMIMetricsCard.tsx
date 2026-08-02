@@ -17,36 +17,38 @@ export function FFMIMetricsCard({
 
   if (!ffmi || !normalizedFFMI) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 dark:bg-neutral-850">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          <span className="text-orange-600">Fat Fri Mass Index</span> (FFMI)
+          <span className="text-orange-600 dark:text-orange-300">Fat Fri Mass Index</span> (FFMI)
         </h3>
-        <p className="text-sm text-gray-600">
-          {t('ffmiCard.noHeightMessage')}
-        </p>
+        <p className="text-sm text-gray-600">{t('ffmiCard.noHeightMessage')}</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden dark:bg-neutral-850">
       <div className="px-6 py-4 border-b border-gray-200">
         <h3 className="text-lg font-semibold text-gray-900">
-          <span className="text-orange-600">Fat Fri Mass Index</span> (FFMI)
+          <span className="text-orange-600 dark:text-orange-300">Fat Fri Mass Index</span> (FFMI)
         </h3>
       </div>
 
       <div className="p-6 space-y-4">
         {/* FFMI and Normalized FFMI */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-green-100 border-2 border-green-600 rounded-lg p-4 text-center">
+          <div className="bg-green-100 border-2 border-green-600 rounded-lg p-4 text-center dark:bg-green-900/25">
             <div className="text-xs text-gray-600 font-medium mb-1">FFMI:</div>
-            <div className="text-3xl font-bold text-green-900">{ffmi.toFixed(1)}</div>
+            <div className="text-3xl font-bold text-green-900 dark:text-green-300">
+              {ffmi.toFixed(1)}
+            </div>
           </div>
 
-          <div className="bg-green-100 border-2 border-green-600 rounded-lg p-4 text-center">
+          <div className="bg-green-100 border-2 border-green-600 rounded-lg p-4 text-center dark:bg-green-900/25">
             <div className="text-xs text-gray-600 font-medium mb-1">{t('ffmiCard.normalized')}</div>
-            <div className="text-3xl font-bold text-green-900">{normalizedFFMI.toFixed(1)}</div>
+            <div className="text-3xl font-bold text-green-900 dark:text-green-300">
+              {normalizedFFMI.toFixed(1)}
+            </div>
           </div>
         </div>
 
@@ -60,7 +62,8 @@ export function FFMIMetricsCard({
         {category && category !== 'Unknown' && (
           <div className="pt-2 border-t border-gray-200">
             <p className="text-sm text-gray-600">
-              {t('ffmiCard.category')} <span className="font-semibold text-gray-900">{category}</span>
+              {t('ffmiCard.category')}{' '}
+              <span className="font-semibold text-gray-900">{category}</span>
             </p>
           </div>
         )}

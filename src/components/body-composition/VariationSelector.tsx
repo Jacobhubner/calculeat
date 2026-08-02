@@ -32,7 +32,7 @@ export default function VariationSelector({
         id="variation-select"
         value={selectedVariation || variations[0]}
         onChange={e => onChange(e.target.value as MethodVariation)}
-        className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-2.5 text-sm transition-colors hover:border-neutral-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+        className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-2.5 text-sm transition-colors hover:border-neutral-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 dark:hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-850"
       >
         {variations.map(variation => {
           // Map MethodVariation string values to locale keys
@@ -54,7 +54,9 @@ export default function VariationSelector({
           )
         })}
       </select>
-      <p className="text-xs text-neutral-500">{t('variationSelector.hint')}</p>
+      <p className="text-xs text-neutral-500 dark:text-neutral-400">
+        {t('variationSelector.hint')}
+      </p>
     </div>
   )
 }

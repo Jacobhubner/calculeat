@@ -141,7 +141,7 @@ export default function SignUpForm() {
 
   if (success) {
     return (
-      <div className="p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg space-y-1">
+      <div className="p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg space-y-1 dark:bg-green-900/25 dark:text-green-300 dark:border-green-800">
         <p className="font-semibold">{t('register.successTitle')}</p>
         {actualUsername && (
           <p className="text-sm">
@@ -161,7 +161,9 @@ export default function SignUpForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {error && (
-        <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg">{error}</div>
+        <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg dark:bg-red-900/25 dark:text-red-300 dark:border-red-800">
+          {error}
+        </div>
       )}
 
       {/* Användarnamn */}
@@ -176,7 +178,7 @@ export default function SignUpForm() {
           />
           <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
             {usernameStatus === 'checking' && (
-              <Loader className="h-4 w-4 text-neutral-400 animate-spin" />
+              <Loader className="h-4 w-4 text-neutral-400 animate-spin dark:text-neutral-500" />
             )}
             {usernameStatus === 'available' && <CheckCircle2 className="h-4 w-4 text-green-500" />}
             {usernameStatus === 'taken' && <XCircle className="h-4 w-4 text-red-500" />}
@@ -187,9 +189,13 @@ export default function SignUpForm() {
         ) : usernameStatus === 'taken' ? (
           <p className="text-red-500 text-sm mt-1">{t('register.usernameTaken')}</p>
         ) : usernameStatus === 'available' ? (
-          <p className="text-green-600 text-sm mt-1">{t('register.usernameAvailable')}</p>
+          <p className="text-green-600 text-sm mt-1 dark:text-green-300">
+            {t('register.usernameAvailable')}
+          </p>
         ) : (
-          <p className="text-neutral-500 text-xs mt-1">{t('register.usernameHint')}</p>
+          <p className="text-neutral-500 text-xs mt-1 dark:text-neutral-400">
+            {t('register.usernameHint')}
+          </p>
         )}
       </div>
 
@@ -219,7 +225,9 @@ export default function SignUpForm() {
         {errors.password ? (
           <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
         ) : (
-          <p className="text-neutral-500 text-xs mt-1">{t('register.passwordHint')}</p>
+          <p className="text-neutral-500 text-xs mt-1 dark:text-neutral-400">
+            {t('register.passwordHint')}
+          </p>
         )}
       </div>
 
@@ -244,9 +252,9 @@ export default function SignUpForm() {
           <input
             type="checkbox"
             {...register('acceptTerms')}
-            className="mt-1 h-4 w-4 rounded border-neutral-300"
+            className="mt-1 h-4 w-4 rounded border-neutral-300 dark:border-neutral-600"
           />
-          <span className="text-sm text-neutral-700">
+          <span className="text-sm text-neutral-700 dark:text-neutral-200">
             <Trans
               i18nKey="register.consent.terms"
               ns="auth"
@@ -256,7 +264,7 @@ export default function SignUpForm() {
                     href={termsPath}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-primary-600 hover:underline"
+                    className="font-medium text-primary-600 hover:underline dark:text-primary-300"
                   />
                 ),
               }}
@@ -269,9 +277,9 @@ export default function SignUpForm() {
           <input
             type="checkbox"
             {...register('acceptPrivacy')}
-            className="mt-1 h-4 w-4 rounded border-neutral-300"
+            className="mt-1 h-4 w-4 rounded border-neutral-300 dark:border-neutral-600"
           />
-          <span className="text-sm text-neutral-700">
+          <span className="text-sm text-neutral-700 dark:text-neutral-200">
             <Trans
               i18nKey="register.consent.privacy"
               ns="auth"
@@ -281,7 +289,7 @@ export default function SignUpForm() {
                     href={privacyPath}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-primary-600 hover:underline"
+                    className="font-medium text-primary-600 hover:underline dark:text-primary-300"
                   />
                 ),
               }}
@@ -296,9 +304,11 @@ export default function SignUpForm() {
           <input
             type="checkbox"
             {...register('acceptAge')}
-            className="mt-1 h-4 w-4 rounded border-neutral-300"
+            className="mt-1 h-4 w-4 rounded border-neutral-300 dark:border-neutral-600"
           />
-          <span className="text-sm text-neutral-700">{t('register.consent.age')}</span>
+          <span className="text-sm text-neutral-700 dark:text-neutral-200">
+            {t('register.consent.age')}
+          </span>
         </label>
         {errors.acceptAge && <p className="text-red-500 text-sm">{errors.acceptAge.message}</p>}
       </div>

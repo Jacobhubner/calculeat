@@ -92,11 +92,13 @@ export default function ResetPasswordPage() {
         <main className="flex-1 flex items-center justify-center py-12">
           <Card className="w-full max-w-md p-8">
             <div className="text-center py-8">
-              <Loader2 className="h-12 w-12 text-primary-600 animate-spin mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-neutral-900 mb-2">
+              <Loader2 className="h-12 w-12 text-primary-600 animate-spin mx-auto mb-4 dark:text-primary-300" />
+              <h2 className="text-xl font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
                 {t('resetPassword.verifying')}
               </h2>
-              <p className="text-neutral-600">{t('resetPassword.pleaseWait')}</p>
+              <p className="text-neutral-600 dark:text-neutral-400">
+                {t('resetPassword.pleaseWait')}
+              </p>
             </div>
           </Card>
         </main>
@@ -113,10 +115,12 @@ export default function ResetPasswordPage() {
         <main className="flex-1 flex items-center justify-center py-12">
           <Card className="w-full max-w-md p-8">
             <div className="text-center py-8">
-              <h2 className="text-xl font-semibold text-neutral-900 mb-2">
+              <h2 className="text-xl font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
                 {t('resetPassword.invalidTitle')}
               </h2>
-              <p className="text-neutral-600 mb-6">{t('resetPassword.invalidDescription')}</p>
+              <p className="text-neutral-600 mb-6 dark:text-neutral-400">
+                {t('resetPassword.invalidDescription')}
+              </p>
               <Button onClick={() => navigate('/forgot-password')} className="w-full">
                 {t('resetPassword.requestNew')}
               </Button>
@@ -136,12 +140,14 @@ export default function ResetPasswordPage() {
         <main className="flex-1 flex items-center justify-center py-12">
           <Card className="w-full max-w-md p-8">
             <div className="text-center py-8">
-              <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-neutral-900 mb-2">
+              <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4 dark:text-green-300" />
+              <h2 className="text-xl font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
                 {t('resetPassword.successTitle')}
               </h2>
-              <p className="text-neutral-600 mb-6">{t('resetPassword.successDescription')}</p>
-              <div className="flex items-center justify-center gap-2 text-sm text-neutral-500">
+              <p className="text-neutral-600 mb-6 dark:text-neutral-400">
+                {t('resetPassword.successDescription')}
+              </p>
+              <div className="flex items-center justify-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 <span>{t('resetPassword.redirecting')}</span>
               </div>
@@ -163,7 +169,7 @@ export default function ResetPasswordPage() {
             <div className="flex items-center justify-center mb-4">
               <img src="/calculeat-logo-full.svg" alt="Calculeat" className="h-24 object-contain" />
             </div>
-            <p className="text-neutral-600">{t('resetPassword.subtitle')}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">{t('resetPassword.subtitle')}</p>
           </div>
 
           <Card>
@@ -183,7 +189,7 @@ export default function ResetPasswordPage() {
                     disabled={isLoading}
                   />
                   {errors.password && (
-                    <p className="text-sm text-red-600 mt-1">
+                    <p className="text-sm text-red-600 mt-1 dark:text-red-300">
                       {errors.password.message || t('resetPassword.validation.minLength')}
                     </p>
                   )}
@@ -199,7 +205,7 @@ export default function ResetPasswordPage() {
                     disabled={isLoading}
                   />
                   {errors.confirmPassword && (
-                    <p className="text-sm text-red-600 mt-1">
+                    <p className="text-sm text-red-600 mt-1 dark:text-red-300">
                       {errors.confirmPassword.message || t('resetPassword.validation.mismatch')}
                     </p>
                   )}

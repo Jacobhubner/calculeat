@@ -34,12 +34,12 @@ export function FFMIReferenceTable({ userFFMI, userBodyFat, gender }: FFMIRefere
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden dark:bg-neutral-850">
       <div className="flex justify-end px-2 pt-2">
         <button
           type="button"
           onClick={() => setShowMale(v => !v)}
-          className="text-[10px] text-primary-600 hover:underline"
+          className="text-[10px] text-primary-600 hover:underline dark:text-primary-300"
         >
           {showMale ? t('refTable.showWomensValues') : t('refTable.showMensValues')}
         </button>
@@ -70,8 +70,8 @@ export function FFMIReferenceTable({ userFFMI, userBodyFat, gender }: FFMIRefere
                   key={index}
                   className={`${
                     isHighlighted
-                      ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold'
-                      : row.colorClass || 'bg-white'
+                      ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold dark:bg-blue-900/25'
+                      : row.colorClass || 'bg-white dark:bg-neutral-850'
                   } hover:bg-gray-50 transition-colors`}
                 >
                   <td className="px-4 py-2 text-gray-900">{ffmiValue}</td>

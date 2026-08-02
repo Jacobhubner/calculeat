@@ -10,7 +10,7 @@ export default function TabNavigation({ activeTab, onTabChange }: TabNavigationP
 
   return (
     <div className="mb-6">
-      <div className="border-b border-neutral-200">
+      <div className="border-b border-neutral-200 dark:border-neutral-700">
         <nav className="-mb-px flex gap-6" aria-label="Tabs">
           <button
             onClick={() => onTabChange('method-first')}
@@ -18,8 +18,8 @@ export default function TabNavigation({ activeTab, onTabChange }: TabNavigationP
               whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors
               ${
                 activeTab === 'method-first'
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700'
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-300'
+                  : 'border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700 dark:hover:text-neutral-200 dark:text-neutral-400'
               }
             `}
             aria-current={activeTab === 'method-first' ? 'page' : undefined}
@@ -32,8 +32,8 @@ export default function TabNavigation({ activeTab, onTabChange }: TabNavigationP
               whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium transition-colors
               ${
                 activeTab === 'measurements-first'
-                  ? 'border-primary-500 text-primary-600'
-                  : 'border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700'
+                  ? 'border-primary-500 text-primary-600 dark:text-primary-300'
+                  : 'border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-700 dark:hover:text-neutral-200 dark:text-neutral-400'
               }
             `}
             aria-current={activeTab === 'measurements-first' ? 'page' : undefined}

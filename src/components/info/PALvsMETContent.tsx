@@ -9,7 +9,7 @@ export default function PALvsMETContent() {
   return (
     <div className="space-y-4">
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
           {t('palVsMet.section1Title')}
         </h3>
         <p>
@@ -18,47 +18,51 @@ export default function PALvsMETContent() {
       </section>
 
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
           {t('palVsMet.section2Title')}
         </h3>
         <p>
           <strong>PAL</strong> {t('palVsMet.section2Intro')}
         </p>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-3">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-3 dark:bg-blue-900/25 dark:border-blue-800">
           <p className="font-medium text-center">{t('palVsMet.section2Formula')}</p>
         </div>
         <p className="mt-3">{t('palVsMet.section2Note')}</p>
       </section>
 
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
           {t('palVsMet.section3Title')}
         </h3>
         <p>
           <strong>MET</strong> {t('palVsMet.section3Intro')}
         </p>
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-3">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-3 dark:bg-green-900/25 dark:border-green-800">
           <p className="font-medium">{t('palVsMet.section3Formula')}</p>
         </div>
       </section>
 
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
           {t('palVsMet.section4Title')}
         </h3>
         <div className="grid md:grid-cols-2 gap-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="font-medium text-blue-900 mb-2">{t('palVsMet.palTitle')}</p>
-            <ul className="text-sm space-y-1 text-neutral-700">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 dark:bg-blue-900/25 dark:border-blue-800">
+            <p className="font-medium text-blue-900 mb-2 dark:text-blue-300">
+              {t('palVsMet.palTitle')}
+            </p>
+            <ul className="text-sm space-y-1 text-neutral-700 dark:text-neutral-200">
               <li>{t('palVsMet.palItem1')}</li>
               <li>{t('palVsMet.palItem2')}</li>
               <li>{t('palVsMet.palItem3')}</li>
               <li>{t('palVsMet.palItem4')}</li>
             </ul>
           </div>
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <p className="font-medium text-green-900 mb-2">{t('palVsMet.metTitle')}</p>
-            <ul className="text-sm space-y-1 text-neutral-700">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 dark:bg-green-900/25 dark:border-green-800">
+            <p className="font-medium text-green-900 mb-2 dark:text-green-300">
+              {t('palVsMet.metTitle')}
+            </p>
+            <ul className="text-sm space-y-1 text-neutral-700 dark:text-neutral-200">
               <li>{t('palVsMet.metItem1')}</li>
               <li>{t('palVsMet.metItem2')}</li>
               <li>{t('palVsMet.metItem3')}</li>
@@ -69,19 +73,19 @@ export default function PALvsMETContent() {
       </section>
 
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
           {t('palVsMet.section5Title')}
         </h3>
-        <p className="text-neutral-700 mb-3">{t('palVsMet.section5Intro')}</p>
+        <p className="text-neutral-700 mb-3 dark:text-neutral-200">{t('palVsMet.section5Intro')}</p>
 
         <div className="overflow-x-auto">
-          <table className="min-w-full border border-neutral-200 rounded-lg text-sm">
-            <thead className="bg-neutral-100">
+          <table className="min-w-full border border-neutral-200 rounded-lg text-sm dark:border-neutral-700">
+            <thead className="bg-neutral-100 dark:bg-neutral-800">
               <tr>
-                <th className="px-4 py-2 text-left font-medium text-neutral-900">
+                <th className="px-4 py-2 text-left font-medium text-neutral-900 dark:text-neutral-100">
                   {t('palVsMet.tableColSteps')}
                 </th>
-                <th className="px-4 py-2 text-left font-medium text-neutral-900">
+                <th className="px-4 py-2 text-left font-medium text-neutral-900 dark:text-neutral-100">
                   {t('palVsMet.tableColPal')}
                 </th>
               </tr>
@@ -91,7 +95,7 @@ export default function PALvsMETContent() {
                 <td className="px-4 py-2">{t('palVsMet.tableRow1Steps')}</td>
                 <td className="px-4 py-2">{t('palVsMet.tableRow1Pal')}</td>
               </tr>
-              <tr className="border-t bg-neutral-50">
+              <tr className="border-t bg-neutral-50 dark:bg-neutral-900">
                 <td className="px-4 py-2">{t('palVsMet.tableRow2Steps')}</td>
                 <td className="px-4 py-2">{t('palVsMet.tableRow2Pal')}</td>
               </tr>
@@ -103,11 +107,13 @@ export default function PALvsMETContent() {
           </table>
         </div>
 
-        <p className="text-xs text-neutral-600 mt-2">{t('palVsMet.tableNote')}</p>
+        <p className="text-xs text-neutral-600 mt-2 dark:text-neutral-400">
+          {t('palVsMet.tableNote')}
+        </p>
       </section>
 
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
           {t('palVsMet.section6Title')}
         </h3>
         <ul className="list-disc list-inside mt-2 space-y-1">
@@ -121,40 +127,48 @@ export default function PALvsMETContent() {
       </section>
 
       <section>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+        <h3 className="text-lg font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
           {t('palVsMet.section7Title')}
         </h3>
         <p>{t('palVsMet.section7Intro')}</p>
         <div className="space-y-3 mt-3">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="font-medium text-blue-900">{t('palVsMet.palIncludesTitle')}</p>
-            <p className="font-mono text-sm text-neutral-700 mt-2">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 dark:bg-blue-900/25 dark:border-blue-800">
+            <p className="font-medium text-blue-900 dark:text-blue-300">
+              {t('palVsMet.palIncludesTitle')}
+            </p>
+            <p className="font-mono text-sm text-neutral-700 mt-2 dark:text-neutral-200">
               {t('palVsMet.palIncludesFormula')}
             </p>
-            <p className="text-xs text-neutral-600 mt-2">{t('palVsMet.palIncludesNote')}</p>
+            <p className="text-xs text-neutral-600 mt-2 dark:text-neutral-400">
+              {t('palVsMet.palIncludesNote')}
+            </p>
           </div>
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <p className="font-medium text-green-900">{t('palVsMet.palExcludesTitle')}</p>
-            <p className="font-mono text-sm text-neutral-700 mt-2">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 dark:bg-green-900/25 dark:border-green-800">
+            <p className="font-medium text-green-900 dark:text-green-300">
+              {t('palVsMet.palExcludesTitle')}
+            </p>
+            <p className="font-mono text-sm text-neutral-700 mt-2 dark:text-neutral-200">
               {t('palVsMet.palExcludesFormula')}
             </p>
-            <p className="text-xs text-neutral-600 mt-2">{t('palVsMet.palExcludesNote')}</p>
+            <p className="text-xs text-neutral-600 mt-2 dark:text-neutral-400">
+              {t('palVsMet.palExcludesNote')}
+            </p>
           </div>
         </div>
-        <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 mt-3 space-y-1">
-          <p className="text-sm font-semibold text-neutral-700 mb-2">
+        <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4 mt-3 space-y-1 dark:border-neutral-700 dark:bg-neutral-900">
+          <p className="text-sm font-semibold text-neutral-700 mb-2 dark:text-neutral-200">
             {t('palVsMet.summaryTitle')}
           </p>
-          <div className="flex gap-2 text-sm text-neutral-700">
-            <span className="text-neutral-400 mt-0.5">•</span>
+          <div className="flex gap-2 text-sm text-neutral-700 dark:text-neutral-200">
+            <span className="text-neutral-400 mt-0.5 dark:text-neutral-500">•</span>
             <span>{t('palVsMet.summaryItem1')}</span>
           </div>
-          <div className="flex gap-2 text-sm text-neutral-700">
-            <span className="text-neutral-400 mt-0.5">•</span>
+          <div className="flex gap-2 text-sm text-neutral-700 dark:text-neutral-200">
+            <span className="text-neutral-400 mt-0.5 dark:text-neutral-500">•</span>
             <span>{t('palVsMet.summaryItem2')}</span>
           </div>
-          <div className="flex gap-2 text-sm text-neutral-700">
-            <span className="text-neutral-400 mt-0.5">•</span>
+          <div className="flex gap-2 text-sm text-neutral-700 dark:text-neutral-200">
+            <span className="text-neutral-400 mt-0.5 dark:text-neutral-500">•</span>
             <span>{t('palVsMet.summaryItem3')}</span>
           </div>
         </div>

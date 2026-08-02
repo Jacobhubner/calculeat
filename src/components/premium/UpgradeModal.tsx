@@ -110,13 +110,13 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
         </DialogHeader>
 
         {/* Free vs Premium — jämförelsen är säljargumentet */}
-        <div className="overflow-hidden rounded-xl border border-neutral-200">
-          <div className="grid grid-cols-[1.1fr_0.8fr_1.1fr] bg-neutral-50 text-xs font-semibold">
+        <div className="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
+          <div className="grid grid-cols-[1.1fr_0.8fr_1.1fr] bg-neutral-50 text-xs font-semibold dark:bg-neutral-900">
             <div className="px-3 py-2" />
-            <div className="px-2 py-2 text-center text-neutral-500">
+            <div className="px-2 py-2 text-center text-neutral-500 dark:text-neutral-400">
               {t('upgradeModal.compare.freeHeader')}
             </div>
-            <div className="flex items-center justify-center gap-1 bg-amber-100 px-2 py-2 text-amber-700">
+            <div className="flex items-center justify-center gap-1 bg-amber-100 px-2 py-2 text-amber-700 dark:bg-amber-900/25 dark:text-amber-300">
               <Sparkles className="h-3 w-3" aria-hidden="true" />
               {t('upgradeModal.compare.premiumHeader')}
             </div>
@@ -126,20 +126,22 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
               key={row}
               className="grid grid-cols-[1.1fr_0.8fr_1.1fr] border-t border-neutral-100 text-xs"
             >
-              <div className="px-3 py-2 font-medium text-neutral-700">
+              <div className="px-3 py-2 font-medium text-neutral-700 dark:text-neutral-200">
                 {t(`upgradeModal.compare.rows.${row}.label`)}
               </div>
-              <div className="px-2 py-2 text-center text-neutral-500">
+              <div className="px-2 py-2 text-center text-neutral-500 dark:text-neutral-400">
                 {t(`upgradeModal.compare.rows.${row}.free`)}
               </div>
-              <div className="bg-amber-50 px-2 py-2 text-center font-medium text-amber-800">
+              <div className="bg-amber-50 px-2 py-2 text-center font-medium text-amber-800 dark:bg-amber-900/25 dark:text-amber-300">
                 {t(`upgradeModal.compare.rows.${row}.premium`)}
               </div>
             </div>
           ))}
         </div>
 
-        <p className="text-xs text-neutral-500">{t('upgradeModal.dataPromise')}</p>
+        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+          {t('upgradeModal.dataPromise')}
+        </p>
 
         <div className="flex flex-col gap-2 pt-2">
           <Button onClick={() => startCheckout('monthly')} disabled={loadingPlan !== null}>
@@ -167,7 +169,9 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
             )}
           </Button>
           {!hasUsedTrial && (
-            <p className="text-center text-xs text-neutral-500">{t('upgradeModal.trialNote')}</p>
+            <p className="text-center text-xs text-neutral-500 dark:text-neutral-400">
+              {t('upgradeModal.trialNote')}
+            </p>
           )}
           <Button
             variant="ghost"

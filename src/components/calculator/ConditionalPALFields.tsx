@@ -61,7 +61,7 @@ export default function ConditionalPALFields({
           ))}
         </Select>
         {desc && (
-          <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
+          <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200 dark:text-neutral-400">
             {desc}
           </p>
         )}
@@ -85,7 +85,7 @@ export default function ConditionalPALFields({
           ))}
         </Select>
         {desc && (
-          <p className="text-xs text-neutral-600 mt-2 p-2 bg-green-50 rounded border border-green-200">
+          <p className="text-xs text-neutral-600 mt-2 p-2 bg-green-50 rounded border border-green-200 dark:text-neutral-400">
             {desc}
           </p>
         )}
@@ -177,11 +177,15 @@ export default function ConditionalPALFields({
                 className="mt-2"
                 {...register('custom_pal', { valueAsNumber: true })}
               />
-              <p className="text-xs text-neutral-500 mt-1">{t('palFields.customPALHint')}</p>
+              <p className="text-xs text-neutral-500 mt-1 dark:text-neutral-400">
+                {t('palFields.customPALHint')}
+              </p>
               {customPALOutOfRange && (
-                <div className="mt-2 flex gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl">
-                  <span className="text-amber-600 flex-shrink-0">⚠</span>
-                  <p className="text-sm text-amber-800">{t('palFields.customPALWarning')}</p>
+                <div className="mt-2 flex gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl dark:bg-amber-900/25 dark:border-amber-800">
+                  <span className="text-amber-600 flex-shrink-0 dark:text-amber-300">⚠</span>
+                  <p className="text-sm text-amber-800 dark:text-amber-300">
+                    {t('palFields.customPALWarning')}
+                  </p>
                 </div>
               )}
             </div>

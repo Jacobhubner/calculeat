@@ -35,7 +35,8 @@ export default function PALTableFAO({ register, watch }: PALTableFAOProps) {
       {register && (
         <div>
           <Label htmlFor="activity_level">
-            {t('tdeeCalc.palTable.activityLabel')} <span className="text-red-600">*</span>
+            {t('tdeeCalc.palTable.activityLabel')}{' '}
+            <span className="text-red-600 dark:text-red-300">*</span>
           </Label>
           <Select id="activity_level" {...register('activity_level')} className="mt-2">
             <option value="">{t('tdeeCalc.palTable.activityPlaceholder')}</option>
@@ -46,7 +47,7 @@ export default function PALTableFAO({ register, watch }: PALTableFAOProps) {
             ))}
           </Select>
           {description && (
-            <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
+            <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200 dark:text-neutral-400">
               {description}
             </p>
           )}

@@ -30,11 +30,13 @@ export default function FloatingProfileSaveCard({
   if (!hasChanges) return null
 
   return (
-    <Card className="fixed right-4 bottom-4 z-50 shadow-xl border-2 border-accent-200 w-64 md:w-72">
+    <Card className="fixed right-4 bottom-4 z-50 shadow-xl border-2 border-accent-200 w-64 md:w-72 dark:border-accent-800">
       <CardContent className="p-4 space-y-3">
         {/* Profile Name Input */}
         <div>
-          <label className="text-xs font-medium text-neutral-700 mb-1 block">{t('floatingSave.profileNameLabel')}</label>
+          <label className="text-xs font-medium text-neutral-700 mb-1 block dark:text-neutral-200">
+            {t('floatingSave.profileNameLabel')}
+          </label>
           <Input
             type="text"
             value={profileName}

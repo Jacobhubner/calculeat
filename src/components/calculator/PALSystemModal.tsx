@@ -52,7 +52,7 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
       <div className="space-y-6">
         {/* Description */}
         <div>
-          <h3 className="text-lg font-semibold text-neutral-800 mb-2">
+          <h3 className="text-lg font-semibold text-neutral-800 mb-2 dark:text-neutral-200">
             {t('tdeeCalc.modal.description')}
           </h3>
           {description.descriptionBlocks ? (
@@ -74,8 +74,10 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                 return description.descriptionBlocks!.map((block, i) =>
                   block.type === 'formula' ? (
                     <EquationGate key={i} feature="all_tdee_formulas">
-                      <div className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3">
-                        <p className="text-sm font-mono text-neutral-800">{block.text}</p>
+                      <div className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3 dark:border-neutral-700 dark:bg-neutral-800">
+                        <p className="text-sm font-mono text-neutral-800 dark:text-neutral-200">
+                          {block.text}
+                        </p>
                       </div>
                     </EquationGate>
                   ) : block.type === 'bullets' ? (
@@ -87,8 +89,12 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                           : ((bulletsUsed = true), block.items)
                       ).map((item, ii) => (
                         <li key={ii} className="flex gap-3">
-                          <span className="text-neutral-400 font-bold mt-0.5">•</span>
-                          <span className="text-neutral-700 text-sm">{item}</span>
+                          <span className="text-neutral-400 font-bold mt-0.5 dark:text-neutral-500">
+                            •
+                          </span>
+                          <span className="text-neutral-700 text-sm dark:text-neutral-200">
+                            {item}
+                          </span>
                         </li>
                       ))}
                     </ul>
@@ -97,10 +103,13 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                       key={i}
                       src={block.src}
                       alt={tImageAlt || block.alt}
-                      className="w-3/4 rounded-xl border border-neutral-200"
+                      className="w-3/4 rounded-xl border border-neutral-200 dark:border-neutral-700"
                     />
                   ) : (
-                    <p key={i} className="text-neutral-700 leading-relaxed text-sm">
+                    <p
+                      key={i}
+                      className="text-neutral-700 leading-relaxed text-sm dark:text-neutral-200"
+                    >
                       {tBlocks[textIdx++] ?? block.text}
                     </p>
                   )
@@ -108,7 +117,7 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
               })()}
             </div>
           ) : (
-            <p className="text-neutral-700 leading-relaxed whitespace-pre-line">
+            <p className="text-neutral-700 leading-relaxed whitespace-pre-line dark:text-neutral-200">
               {t(`palSystems.${sk}.description`, { defaultValue: description.description })}
             </p>
           )}
@@ -117,15 +126,15 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
         {/* Best For */}
         {tBestFor && tBestFor.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-blue-800 mb-3 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-blue-800 mb-3 flex items-center gap-2 dark:text-blue-300">
               <span className="text-xl">👥</span>
               {t('tdeeCalc.modal.bestFor')}
             </h3>
             <ul className="space-y-2">
               {tBestFor.map((item, index) => (
                 <li key={index} className="flex gap-3">
-                  <span className="text-blue-600 font-bold mt-1">•</span>
-                  <span className="text-neutral-700 flex-1">{item}</span>
+                  <span className="text-blue-600 font-bold mt-1 dark:text-blue-300">•</span>
+                  <span className="text-neutral-700 flex-1 dark:text-neutral-200">{item}</span>
                 </li>
               ))}
             </ul>
@@ -134,15 +143,15 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
 
         {/* Pros */}
         <div>
-          <h3 className="text-lg font-semibold text-green-800 mb-3 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-green-800 mb-3 flex items-center gap-2 dark:text-green-300">
             <span className="text-xl">✓</span>
             {t('tdeeCalc.modal.pros')}
           </h3>
           <ul className="space-y-2">
             {tPros.map((pro, index) => (
               <li key={index} className="flex gap-3">
-                <span className="text-green-600 font-bold mt-1">•</span>
-                <span className="text-neutral-700 flex-1">{pro}</span>
+                <span className="text-green-600 font-bold mt-1 dark:text-green-300">•</span>
+                <span className="text-neutral-700 flex-1 dark:text-neutral-200">{pro}</span>
               </li>
             ))}
           </ul>
@@ -151,15 +160,15 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
         {/* Cons */}
         {tCons.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-amber-800 mb-3 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-amber-800 mb-3 flex items-center gap-2 dark:text-amber-300">
               <span className="text-xl">⚠</span>
               {t('tdeeCalc.modal.cons')}
             </h3>
             <ul className="space-y-2">
               {tCons.map((con, index) => (
                 <li key={index} className="flex gap-3">
-                  <span className="text-amber-600 font-bold mt-1">•</span>
-                  <span className="text-neutral-700 flex-1">{con}</span>
+                  <span className="text-amber-600 font-bold mt-1 dark:text-amber-300">•</span>
+                  <span className="text-neutral-700 flex-1 dark:text-neutral-200">{con}</span>
                 </li>
               ))}
             </ul>
@@ -227,17 +236,24 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
 
                 return (
                   <div key={index}>
-                    <h3 className="text-lg font-semibold text-neutral-800 mb-3">{tSecTitle}</h3>
+                    <h3 className="text-lg font-semibold text-neutral-800 mb-3 dark:text-neutral-200">
+                      {tSecTitle}
+                    </h3>
                     <div className="space-y-3">
                       {section.blocks.map((block, bi) =>
                         block.type === 'heading' ? (
-                          <p key={bi} className="text-sm font-semibold text-neutral-700 mt-1">
+                          <p
+                            key={bi}
+                            className="text-sm font-semibold text-neutral-700 mt-1 dark:text-neutral-200"
+                          >
                             {block.text}
                           </p>
                         ) : block.type === 'formula' ? (
                           <EquationGate key={bi} feature="all_tdee_formulas">
-                            <div className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3">
-                              <p className="text-sm font-mono text-neutral-800">{block.text}</p>
+                            <div className="bg-neutral-100 border border-neutral-200 rounded-lg px-4 py-3 dark:border-neutral-700 dark:bg-neutral-800">
+                              <p className="text-sm font-mono text-neutral-800 dark:text-neutral-200">
+                                {block.text}
+                              </p>
                             </div>
                           </EquationGate>
                         ) : block.type === 'bullets' ? (
@@ -253,8 +269,13 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                                     return block.items
                                   })()
                               return bulletItems.map((item, ii) => (
-                                <li key={ii} className="flex gap-2 text-neutral-700 text-sm">
-                                  <span className="text-neutral-400 mt-0.5">•</span>
+                                <li
+                                  key={ii}
+                                  className="flex gap-2 text-neutral-700 text-sm dark:text-neutral-200"
+                                >
+                                  <span className="text-neutral-400 mt-0.5 dark:text-neutral-500">
+                                    •
+                                  </span>
                                   <span>{item}</span>
                                 </li>
                               ))
@@ -270,7 +291,7 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                         ) : (
                           <p
                             key={bi}
-                            className="text-neutral-700 leading-relaxed text-sm whitespace-pre-line"
+                            className="text-neutral-700 leading-relaxed text-sm whitespace-pre-line dark:text-neutral-200"
                           >
                             {tSecBlocks[textIdx++] ?? block.text}
                           </p>
@@ -279,13 +300,13 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                     </div>
                     {tSecRefs.length > 0 && (
                       <div className="mt-4 space-y-2">
-                        <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
+                        <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide dark:text-neutral-400">
                           {t('tdeeCalc.modal.references')}
                         </p>
                         {tSecRefs.map((ref, ri) => (
                           <div
                             key={ri}
-                            className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200"
+                            className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400"
                           >
                             <p className="leading-relaxed">{ref}</p>
                           </div>
@@ -302,7 +323,7 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
         {/* Formula variants */}
         {description.formulaVariants && description.formulaVariants.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-neutral-800 mb-3">
+            <h3 className="text-lg font-semibold text-neutral-800 mb-3 dark:text-neutral-200">
               {t('tdeeCalc.modal.palValues')}
             </h3>
             {(() => {
@@ -326,10 +347,12 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                     return (
                       <div key={i}>
                         {tName && (
-                          <p className="text-sm font-semibold text-neutral-600 mb-1">{tName}</p>
+                          <p className="text-sm font-semibold text-neutral-600 mb-1 dark:text-neutral-400">
+                            {tName}
+                          </p>
                         )}
                         {tRows ? (
-                          <div className="overflow-x-auto rounded-lg border border-neutral-200">
+                          <div className="overflow-x-auto rounded-lg border border-neutral-200 dark:border-neutral-700">
                             <table className="w-full text-sm">
                               <tbody>
                                 {tRows.map((row, ri) => (
@@ -337,16 +360,16 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                                     key={ri}
                                     className={
                                       ri === 0 && row[0] === ''
-                                        ? 'bg-neutral-100 text-neutral-500 font-medium'
+                                        ? 'bg-neutral-100 text-neutral-500 font-medium dark:bg-neutral-800 dark:text-neutral-400'
                                         : ri % 2 === 0
-                                          ? 'bg-white'
-                                          : 'bg-neutral-50'
+                                          ? 'bg-white dark:bg-neutral-850'
+                                          : 'bg-neutral-50 dark:bg-neutral-900'
                                     }
                                   >
                                     {row.map((cell, ci) => (
                                       <td
                                         key={ci}
-                                        className={`px-3 py-1.5 ${ci === 0 ? 'text-neutral-700' : 'text-neutral-800 font-mono text-right'}`}
+                                        className={`px-3 py-1.5 ${ci === 0 ? 'text-neutral-700 dark:text-neutral-200' : 'text-neutral-800 font-mono text-right dark:text-neutral-200'}`}
                                       >
                                         {cell}
                                       </td>
@@ -358,15 +381,15 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
                           </div>
                         ) : tEquation ? (
                           <EquationGate feature="all_tdee_formulas">
-                            <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
-                              <p className="text-sm font-mono text-neutral-800 whitespace-pre-line">
+                            <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 dark:border-neutral-700 dark:bg-neutral-900">
+                              <p className="text-sm font-mono text-neutral-800 whitespace-pre-line dark:text-neutral-200">
                                 {tEquation}
                               </p>
                             </div>
                           </EquationGate>
                         ) : null}
                         {tMeasurements && (
-                          <p className="text-xs text-neutral-500 mt-1 whitespace-pre-line">
+                          <p className="text-xs text-neutral-500 mt-1 whitespace-pre-line dark:text-neutral-400">
                             {tMeasurements}
                           </p>
                         )}
@@ -382,14 +405,14 @@ export default function PALSystemModal({ system, isOpen, onClose }: PALSystemMod
         {/* References */}
         {description.references && description.references.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-neutral-800 mb-3">
+            <h3 className="text-lg font-semibold text-neutral-800 mb-3 dark:text-neutral-200">
               {t('tdeeCalc.modal.references')}
             </h3>
             <div className="space-y-3">
               {description.references.map((ref, index) => (
                 <div
                   key={index}
-                  className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200"
+                  className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400"
                 >
                   <p className="leading-relaxed">{ref}</p>
                 </div>

@@ -79,23 +79,23 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
       <div className="space-y-6">
         {/* Description */}
         <div>
-          <h3 className="text-lg font-semibold text-neutral-800 mb-2">
+          <h3 className="text-lg font-semibold text-neutral-800 mb-2 dark:text-neutral-200">
             {t('tdeeCalc.modal.description')}
           </h3>
-          <p className="text-neutral-700 leading-relaxed">{tDescription}</p>
+          <p className="text-neutral-700 leading-relaxed dark:text-neutral-200">{tDescription}</p>
         </div>
 
         {/* Pros */}
         <div>
-          <h3 className="text-lg font-semibold text-green-800 mb-3 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-green-800 mb-3 flex items-center gap-2 dark:text-green-300">
             <span className="text-xl">✓</span>
             {t('tdeeCalc.modal.pros')}
           </h3>
           <ul className="space-y-2">
             {tPros.map((pro, index) => (
               <li key={index} className="flex gap-3">
-                <span className="text-green-600 font-bold mt-1">•</span>
-                <span className="text-neutral-700 flex-1">{pro}</span>
+                <span className="text-green-600 font-bold mt-1 dark:text-green-300">•</span>
+                <span className="text-neutral-700 flex-1 dark:text-neutral-200">{pro}</span>
               </li>
             ))}
           </ul>
@@ -104,15 +104,15 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
         {/* Cons */}
         {tCons.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-amber-800 mb-3 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-amber-800 mb-3 flex items-center gap-2 dark:text-amber-300">
               <span className="text-xl">⚠</span>
               {t('tdeeCalc.modal.cons')}
             </h3>
             <ul className="space-y-2">
               {tCons.map((con, index) => (
                 <li key={index} className="flex gap-3">
-                  <span className="text-amber-600 font-bold mt-1">•</span>
-                  <span className="text-neutral-700 flex-1">{con}</span>
+                  <span className="text-amber-600 font-bold mt-1 dark:text-amber-300">•</span>
+                  <span className="text-neutral-700 flex-1 dark:text-neutral-200">{con}</span>
                 </li>
               ))}
             </ul>
@@ -122,7 +122,7 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
         {/* Formula variants — exakta ekvationer är premium (EquationGate) */}
         {description.formulaVariants && description.formulaVariants.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-neutral-800 mb-3">
+            <h3 className="text-lg font-semibold text-neutral-800 mb-3 dark:text-neutral-200">
               {t('tdeeCalc.modal.formula')}
             </h3>
             <MaybeEquationGate locked={!PUBLIC_EQUATION_BMR_FORMULAS.includes(formula)}>
@@ -146,21 +146,23 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
                     return (
                       <div key={i}>
                         {isFirstOfGender && (
-                          <h3 className="text-lg font-semibold text-neutral-800 mb-3 mt-2">
+                          <h3 className="text-lg font-semibold text-neutral-800 mb-3 mt-2 dark:text-neutral-200">
                             {genderLabel}
                           </h3>
                         )}
                         <div className="mb-4">
                           {v.name && (
-                            <p className="text-sm font-semibold text-neutral-600 mb-1">{v.name}</p>
+                            <p className="text-sm font-semibold text-neutral-600 mb-1 dark:text-neutral-400">
+                              {v.name}
+                            </p>
                           )}
-                          <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
-                            <p className="text-sm font-mono text-neutral-800 whitespace-pre-line">
+                          <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 dark:border-neutral-700 dark:bg-neutral-900">
+                            <p className="text-sm font-mono text-neutral-800 whitespace-pre-line dark:text-neutral-200">
                               {v.equation}
                             </p>
                           </div>
                           {measurements && (
-                            <p className="text-xs text-neutral-500 mt-1 whitespace-pre-line">
+                            <p className="text-xs text-neutral-500 mt-1 whitespace-pre-line dark:text-neutral-400">
                               {measurements}
                             </p>
                           )}
@@ -177,14 +179,14 @@ export default function BMRFormulaModal({ formula, isOpen, onClose }: BMRFormula
         {/* References */}
         {description.references.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold text-neutral-800 mb-3">
+            <h3 className="text-lg font-semibold text-neutral-800 mb-3 dark:text-neutral-200">
               {t('tdeeCalc.modal.references')}
             </h3>
             <div className="space-y-3">
               {description.references.map((ref, index) => (
                 <div
                   key={index}
-                  className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200"
+                  className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400"
                 >
                   <p className="leading-relaxed break-all">{ref}</p>
                 </div>

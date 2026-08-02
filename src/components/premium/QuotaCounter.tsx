@@ -23,8 +23,8 @@ export function QuotaCounter({ used, limit, className }: QuotaCounterProps) {
       className={cn(
         'inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium',
         atLimit
-          ? 'border-amber-400 bg-amber-100 text-amber-700'
-          : 'border-neutral-300 bg-neutral-100 text-neutral-600',
+          ? 'border-amber-400 bg-amber-100 text-amber-700 dark:bg-amber-900/25 dark:text-amber-300'
+          : 'border-neutral-300 bg-neutral-100 text-neutral-600 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-400',
         className
       )}
     >

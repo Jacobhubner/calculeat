@@ -17,7 +17,7 @@ export default function LoginPage() {
             <div className="flex items-center justify-center mb-4">
               <img src="/calculeat-logo-full.svg" alt="Calculeat" className="h-24 object-contain" />
             </div>
-            <p className="text-neutral-600">{t('login.subtitle')}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">{t('login.subtitle')}</p>
           </div>
 
           <Card>
@@ -28,13 +28,19 @@ export default function LoginPage() {
             <CardContent>
               <LoginForm />
               <div className="mt-6 text-center text-sm">
-                <Link to="/forgot-password" className="text-primary-600 hover:underline">
+                <Link
+                  to="/forgot-password"
+                  className="text-primary-600 hover:underline dark:text-primary-300"
+                >
                   {t('login.forgotPassword')}
                 </Link>
               </div>
-              <div className="mt-4 text-center text-sm text-neutral-600">
+              <div className="mt-4 text-center text-sm text-neutral-600 dark:text-neutral-400">
                 {t('login.noAccount')}{' '}
-                <Link to="/register" className="text-primary-600 hover:underline font-medium">
+                <Link
+                  to="/register"
+                  className="text-primary-600 hover:underline font-medium dark:text-primary-300"
+                >
                   {t('login.registerLink')}
                 </Link>
               </div>

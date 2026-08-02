@@ -63,25 +63,25 @@ export function CompactFoodItem({
       onClick={disabled ? undefined : onClick}
       className={`
         flex items-start gap-2 p-2.5 rounded-lg transition-colors
-        ${onClick && !disabled ? 'cursor-pointer hover:bg-neutral-100' : ''}
-        ${highlighted ? 'bg-primary-50 border border-primary-200' : 'hover:bg-neutral-50'}
+        ${onClick && !disabled ? 'cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800' : ''}
+        ${highlighted ? 'bg-primary-50 border border-primary-200 dark:bg-primary-900/25 dark:border-primary-800' : 'hover:bg-neutral-50 dark:hover:bg-neutral-800'}
         ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
       `}
     >
       {/* Namn och detaljer */}
       <div className="flex-1 min-w-0">
         <div className="flex items-start gap-2">
-          <span className="text-sm font-medium text-neutral-900 leading-tight break-words flex-1">
+          <span className="text-sm font-medium text-neutral-900 leading-tight break-words flex-1 dark:text-neutral-100">
             {food.name}
           </span>
         </div>
         {showDetails && detailsText && (
-          <div className="text-xs text-neutral-500 mt-0.5">{detailsText}</div>
+          <div className="text-xs text-neutral-500 mt-0.5 dark:text-neutral-400">{detailsText}</div>
         )}
       </div>
 
       {/* Kalorier per 100g/100ml */}
-      <div className="text-xs text-neutral-600 whitespace-nowrap flex-shrink-0 mt-0.5">
+      <div className="text-xs text-neutral-600 whitespace-nowrap flex-shrink-0 mt-0.5 dark:text-neutral-400">
         {kcalPer100} kcal
       </div>
 

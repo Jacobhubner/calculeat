@@ -111,7 +111,7 @@ export default function PALTableActivityLevelWizard({
 
   if (!register) {
     return (
-      <div className="p-4 text-center text-sm text-neutral-600">
+      <div className="p-4 text-center text-sm text-neutral-600 dark:text-neutral-400">
         <p>{t('tdeeCalc.wizard.loading')}</p>
       </div>
     )
@@ -121,19 +121,21 @@ export default function PALTableActivityLevelWizard({
     <>
       <div className="space-y-8">
         {/* Sektion 1: Träning & Motion */}
-        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
+        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200 dark:border-primary-800">
           <div>
-            <h3 className="text-base font-semibold text-neutral-900">
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
               {t('tdeeCalc.wizard.section1Title')}
             </h3>
-            <p className="text-sm text-neutral-600 mt-1">{t('tdeeCalc.wizard.section1Desc')}</p>
+            <p className="text-sm text-neutral-600 mt-1 dark:text-neutral-400">
+              {t('tdeeCalc.wizard.section1Desc')}
+            </p>
           </div>
 
           {/* Antal dagar per vecka */}
           <div>
             <Label htmlFor="training-days">{t('tdeeCalc.wizard.trainingDaysLabel')}</Label>
             <div className="flex items-center gap-4 mt-2">
-              <span className="text-sm text-neutral-600">0</span>
+              <span className="text-sm text-neutral-600 dark:text-neutral-400">0</span>
               <input
                 id="training-days"
                 type="range"
@@ -144,10 +146,10 @@ export default function PALTableActivityLevelWizard({
                 className="flex-1"
                 {...register('training_days_per_week', { valueAsNumber: true })}
               />
-              <span className="text-sm text-neutral-600">7</span>
+              <span className="text-sm text-neutral-600 dark:text-neutral-400">7</span>
             </div>
             <div className="text-center mt-2">
-              <span className="text-2xl font-bold text-primary-600">
+              <span className="text-2xl font-bold text-primary-600 dark:text-primary-300">
                 {trainingDays}{' '}
                 {trainingDays === 1
                   ? t('tdeeCalc.wizard.trainingDaysSingular')
@@ -182,7 +184,7 @@ export default function PALTableActivityLevelWizard({
               onChange={e => setSearchTerm(e.target.value)}
               className="mt-1"
             />
-            <p className="text-xs text-neutral-500 mt-1">
+            <p className="text-xs text-neutral-500 mt-1 dark:text-neutral-400">
               {t('tdeeCalc.wizard.activitiesFound', { count: filteredActivities.length })}
             </p>
           </div>
@@ -209,12 +211,14 @@ export default function PALTableActivityLevelWizard({
         </div>
 
         {/* Sektion 2: Gång & Stående */}
-        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
+        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200 dark:border-primary-800">
           <div>
-            <h3 className="text-base font-semibold text-neutral-900">
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
               {t('tdeeCalc.wizard.section2Title')}
             </h3>
-            <p className="text-sm text-neutral-600 mt-1">{t('tdeeCalc.wizard.section2Desc')}</p>
+            <p className="text-sm text-neutral-600 mt-1 dark:text-neutral-400">
+              {t('tdeeCalc.wizard.section2Desc')}
+            </p>
           </div>
 
           {/* Steg per dag */}
@@ -230,7 +234,9 @@ export default function PALTableActivityLevelWizard({
               className="mt-1"
               {...register('steps_per_day', { valueAsNumber: true })}
             />
-            <p className="text-xs text-neutral-500 mt-1">{t('tdeeCalc.wizard.stepsTip')}</p>
+            <p className="text-xs text-neutral-500 mt-1 dark:text-neutral-400">
+              {t('tdeeCalc.wizard.stepsTip')}
+            </p>
           </div>
 
           {/* Gångtempo */}
@@ -249,7 +255,7 @@ export default function PALTableActivityLevelWizard({
           <div>
             <Label htmlFor="hours-standing">{t('tdeeCalc.wizard.standingHoursLabel')}</Label>
             <div className="flex items-center gap-4 mt-2">
-              <span className="text-sm text-neutral-600">0</span>
+              <span className="text-sm text-neutral-600 dark:text-neutral-400">0</span>
               <input
                 id="hours-standing"
                 type="range"
@@ -260,10 +266,10 @@ export default function PALTableActivityLevelWizard({
                 className="flex-1"
                 {...register('hours_standing_per_day', { valueAsNumber: true })}
               />
-              <span className="text-sm text-neutral-600">16</span>
+              <span className="text-sm text-neutral-600 dark:text-neutral-400">16</span>
             </div>
             <div className="text-center mt-2">
-              <span className="text-2xl font-bold text-primary-600">
+              <span className="text-2xl font-bold text-primary-600 dark:text-primary-300">
                 {hoursStanding}{' '}
                 {hoursStanding === 1
                   ? t('tdeeCalc.wizard.standingHoursSingular')
@@ -274,12 +280,14 @@ export default function PALTableActivityLevelWizard({
         </div>
 
         {/* Sektion 3: Hushållsarbete */}
-        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
+        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200 dark:border-primary-800">
           <div>
-            <h3 className="text-base font-semibold text-neutral-900">
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
               {t('tdeeCalc.wizard.section3Title')}
             </h3>
-            <p className="text-sm text-neutral-600 mt-1">{t('tdeeCalc.wizard.section3Desc')}</p>
+            <p className="text-sm text-neutral-600 mt-1 dark:text-neutral-400">
+              {t('tdeeCalc.wizard.section3Desc')}
+            </p>
           </div>
 
           {/* Typ av hushållsarbete */}
@@ -299,7 +307,7 @@ export default function PALTableActivityLevelWizard({
           <div>
             <Label htmlFor="household-hours">{t('tdeeCalc.wizard.householdHoursLabel')}</Label>
             <div className="flex items-center gap-4 mt-2">
-              <span className="text-sm text-neutral-600">0</span>
+              <span className="text-sm text-neutral-600 dark:text-neutral-400">0</span>
               <input
                 id="household-hours"
                 type="range"
@@ -310,10 +318,10 @@ export default function PALTableActivityLevelWizard({
                 className="flex-1"
                 {...register('household_hours_per_day', { valueAsNumber: true })}
               />
-              <span className="text-sm text-neutral-600">16</span>
+              <span className="text-sm text-neutral-600 dark:text-neutral-400">16</span>
             </div>
             <div className="text-center mt-2">
-              <span className="text-2xl font-bold text-primary-600">
+              <span className="text-2xl font-bold text-primary-600 dark:text-primary-300">
                 {householdHours}{' '}
                 {householdHours === 1
                   ? t('tdeeCalc.wizard.householdHoursSingular')
@@ -324,19 +332,23 @@ export default function PALTableActivityLevelWizard({
         </div>
 
         {/* Sektion 4: SPA-faktor */}
-        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200">
+        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200 dark:border-primary-800">
           <div>
-            <h3 className="text-base font-semibold text-neutral-900">
+            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
               {t('tdeeCalc.wizard.section4Title')}
             </h3>
-            <p className="text-sm text-neutral-600 mt-1">{t('tdeeCalc.wizard.section4Desc')}</p>
+            <p className="text-sm text-neutral-600 mt-1 dark:text-neutral-400">
+              {t('tdeeCalc.wizard.section4Desc')}
+            </p>
           </div>
 
           {/* SPA Slider */}
           <div>
             <Label htmlFor="spa-factor">{t('tdeeCalc.wizard.spaLabel')}</Label>
             <div className="flex items-center gap-4 mt-2">
-              <span className="text-sm text-neutral-600 font-medium">0.95</span>
+              <span className="text-sm text-neutral-600 font-medium dark:text-neutral-400">
+                0.95
+              </span>
               <input
                 id="spa-factor"
                 type="range"
@@ -344,14 +356,18 @@ export default function PALTableActivityLevelWizard({
                 max="1.15"
                 step="0.01"
                 defaultValue="1.00"
-                className="flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-primary-600"
+                className="flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-primary-600 dark:bg-neutral-700"
                 {...register('spa_factor', { valueAsNumber: true })}
               />
-              <span className="text-sm text-neutral-600 font-medium">1.15</span>
+              <span className="text-sm text-neutral-600 font-medium dark:text-neutral-400">
+                1.15
+              </span>
             </div>
             <div className="text-center mt-2">
-              <span className="text-3xl font-bold text-primary-600">{spaFactor.toFixed(2)}</span>
-              <p className="text-xs text-neutral-500 mt-1">
+              <span className="text-3xl font-bold text-primary-600 dark:text-primary-300">
+                {spaFactor.toFixed(2)}
+              </span>
+              <p className="text-xs text-neutral-500 mt-1 dark:text-neutral-400">
                 {spaFactor < 1.0
                   ? t('tdeeCalc.wizard.spaLow')
                   : spaFactor === 1.0
@@ -364,8 +380,10 @@ export default function PALTableActivityLevelWizard({
           </div>
 
           {/* Tips-ruta */}
-          <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3">
-            <p className="text-sm text-neutral-700">{t('tdeeCalc.wizard.spaTip')}</p>
+          <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 dark:border-neutral-700 dark:bg-neutral-900">
+            <p className="text-sm text-neutral-700 dark:text-neutral-200">
+              {t('tdeeCalc.wizard.spaTip')}
+            </p>
           </div>
         </div>
       </div>
@@ -373,33 +391,39 @@ export default function PALTableActivityLevelWizard({
       {/* Sticky bottom bar — visas när PAL är beräknat */}
       {palValue && (
         <Portal>
-          <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-primary-200 shadow-lg px-4 py-3">
+          <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-primary-200 shadow-lg px-4 py-3 dark:bg-neutral-850">
             <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
               <div className="flex items-center gap-6">
                 <div className="text-center">
-                  <p className="text-xs text-neutral-500 leading-none mb-0.5">PAL</p>
-                  <p className="text-2xl font-bold text-primary-600 leading-none">
+                  <p className="text-xs text-neutral-500 leading-none mb-0.5 dark:text-neutral-400">
+                    PAL
+                  </p>
+                  <p className="text-2xl font-bold text-primary-600 leading-none dark:text-primary-300">
                     {palValue.toFixed(2)}
                   </p>
                 </div>
                 {bmr && (
                   <div className="text-center">
-                    <p className="text-xs text-neutral-500 leading-none mb-0.5">BMR</p>
-                    <p className="text-lg font-semibold text-neutral-700 leading-none">
+                    <p className="text-xs text-neutral-500 leading-none mb-0.5 dark:text-neutral-400">
+                      BMR
+                    </p>
+                    <p className="text-lg font-semibold text-neutral-700 leading-none dark:text-neutral-200">
                       {Math.round(bmr)} kcal
                     </p>
                   </div>
                 )}
                 {tdee && (
                   <div className="text-center">
-                    <p className="text-xs text-neutral-500 leading-none mb-0.5">TDEE</p>
-                    <p className="text-lg font-semibold text-neutral-700 leading-none">
+                    <p className="text-xs text-neutral-500 leading-none mb-0.5 dark:text-neutral-400">
+                      TDEE
+                    </p>
+                    <p className="text-lg font-semibold text-neutral-700 leading-none dark:text-neutral-200">
                       {Math.round(tdee)} kcal
                     </p>
                   </div>
                 )}
               </div>
-              <p className="text-xs text-neutral-400 text-right hidden sm:block">
+              <p className="text-xs text-neutral-400 text-right hidden sm:block dark:text-neutral-500">
                 {t('tdeeCalc.wizard.basedOn')}
               </p>
             </div>

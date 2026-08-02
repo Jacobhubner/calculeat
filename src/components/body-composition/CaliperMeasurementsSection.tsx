@@ -86,7 +86,7 @@ export default function CaliperMeasurementsSection({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Ruler className="h-5 w-5 text-primary-600" />
+            <Ruler className="h-5 w-5 text-primary-600 dark:text-primary-300" />
             {t('caliper.title')}
           </CardTitle>
           <CardDescription>{t('caliper.description')}</CardDescription>
@@ -104,14 +104,14 @@ export default function CaliperMeasurementsSection({
                       {t(`caliperLabels.${field as string}`, {
                         defaultValue: caliperLabels[field as string],
                       })}{' '}
-                      <span className="text-neutral-500">(mm)</span>
+                      <span className="text-neutral-500 dark:text-neutral-400">(mm)</span>
                       {isRequired && <span className="text-red-500 ml-1">*</span>}
                     </Label>
                     {description && (
                       <button
                         type="button"
                         onClick={() => handleInfoClick(field)}
-                        className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer"
+                        className="text-neutral-400 hover:text-primary-600 transition-colors cursor-pointer dark:text-neutral-500"
                         aria-label={t('caliper.infoAriaLabel', {
                           field: t(`caliperLabels.${field as string}`, {
                             defaultValue: caliperLabels[field as string],
@@ -153,19 +153,21 @@ export default function CaliperMeasurementsSection({
             onClick={() => setShowModal(false)}
           >
             <div
-              className="bg-white rounded-2xl shadow-2xl max-w-md w-full"
+              className="bg-white rounded-2xl shadow-2xl max-w-md w-full dark:bg-neutral-850"
               onClick={e => e.stopPropagation()}
             >
-              <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl">
+              <div className="sticky top-0 bg-white border-b border-neutral-200 px-6 py-4 flex justify-between items-start rounded-t-2xl dark:border-neutral-700 dark:bg-neutral-850">
                 <div>
-                  <h2 className="text-2xl font-bold text-neutral-900">{modalContent.title}</h2>
-                  <p className="text-sm text-neutral-600 mt-1">
+                  <h2 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+                    {modalContent.title}
+                  </h2>
+                  <p className="text-sm text-neutral-600 mt-1 dark:text-neutral-400">
                     {t('caliper.measurementInstruction')}
                   </p>
                 </div>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="text-neutral-500 hover:text-neutral-700 transition-colors"
+                  className="text-neutral-500 hover:text-neutral-700 transition-colors dark:hover:text-neutral-200 dark:text-neutral-400"
                   aria-label={t('caliper.closeModalAriaLabel')}
                 >
                   <X className="h-6 w-6" />
@@ -199,10 +201,16 @@ export default function CaliperMeasurementsSection({
                             const content = part
                               .replace(new RegExp(`^(${maleLabel}|${femaleLabel}):\\s*`), '')
                               .trim()
-                            const bgColor = isMale ? 'bg-blue-50' : 'bg-pink-50'
-                            const borderColor = isMale ? 'border-blue-200' : 'border-pink-200'
-                            const textColor = isMale ? 'text-blue-900' : 'text-pink-900'
-                            const labelColor = isMale ? 'text-blue-700' : 'text-pink-700'
+                            const bgColor = isMale ? 'bg-blue-50 dark:bg-blue-900/25' : 'bg-pink-50'
+                            const borderColor = isMale
+                              ? 'border-blue-200 dark:border-blue-800'
+                              : 'border-pink-200'
+                            const textColor = isMale
+                              ? 'text-blue-900 dark:text-blue-300'
+                              : 'text-pink-900'
+                            const labelColor = isMale
+                              ? 'text-blue-700 dark:text-blue-300'
+                              : 'text-pink-700'
                             const emoji = isMale ? '👨' : '👩'
                             return (
                               <div
@@ -218,7 +226,10 @@ export default function CaliperMeasurementsSection({
                           }
 
                           return (
-                            <p key={idx} className="text-neutral-700 leading-relaxed">
+                            <p
+                              key={idx}
+                              className="text-neutral-700 leading-relaxed dark:text-neutral-200"
+                            >
                               {part.trim()}
                             </p>
                           )
@@ -229,13 +240,13 @@ export default function CaliperMeasurementsSection({
 
                   // No gender-specific instructions, just show normal text
                   return (
-                    <p className="text-neutral-700 whitespace-pre-line leading-relaxed">
+                    <p className="text-neutral-700 whitespace-pre-line leading-relaxed dark:text-neutral-200">
                       {description}
                     </p>
                   )
                 })()}
               </div>
-              <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl">
+              <div className="sticky bottom-0 bg-white border-t border-neutral-200 px-6 py-4 rounded-b-2xl dark:border-neutral-700 dark:bg-neutral-850">
                 <Button onClick={() => setShowModal(false)} className="w-full">
                   {t('caliper.closeModal')}
                 </Button>

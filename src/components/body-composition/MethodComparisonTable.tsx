@@ -69,11 +69,13 @@ export default function MethodComparisonTable({
 
   if (results.length === 0) {
     return (
-      <Card className="bg-neutral-50">
+      <Card className="bg-neutral-50 dark:bg-neutral-900">
         <CardContent className="flex flex-col items-center justify-center py-12">
-          <Calculator className="h-12 w-12 text-neutral-400 mb-4" />
-          <p className="text-lg font-medium text-neutral-700 mb-2">{t('comparison.loading')}</p>
-          <p className="text-sm text-neutral-500 text-center max-w-md">
+          <Calculator className="h-12 w-12 text-neutral-400 mb-4 dark:text-neutral-500" />
+          <p className="text-lg font-medium text-neutral-700 mb-2 dark:text-neutral-200">
+            {t('comparison.loading')}
+          </p>
+          <p className="text-sm text-neutral-500 text-center max-w-md dark:text-neutral-400">
             {t('comparison.loadingDescription')}
           </p>
         </CardContent>
@@ -86,7 +88,7 @@ export default function MethodComparisonTable({
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Calculator className="h-5 w-5 text-primary-600" />
+            <Calculator className="h-5 w-5 text-primary-600 dark:text-primary-300" />
             {t('comparison.title')}
           </CardTitle>
           <CardDescription>
@@ -104,11 +106,11 @@ export default function MethodComparisonTable({
             <div className="hidden lg:block overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-neutral-200">
+                  <tr className="border-b border-neutral-200 dark:border-neutral-700">
                     <th className="text-left py-3 px-4">
                       <button
                         onClick={() => handleSort('method')}
-                        className="flex items-center gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors"
+                        className="flex items-center gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors dark:text-neutral-200"
                       >
                         {t('comparison.colMethod')}
                         <ArrowUpDown className="h-4 w-4" />
@@ -117,7 +119,7 @@ export default function MethodComparisonTable({
                     <th className="text-right py-3 px-4">
                       <button
                         onClick={() => handleSort('bodyDensity')}
-                        className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full"
+                        className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full dark:text-neutral-200"
                       >
                         {t('comparison.colDensity')}
                         <ArrowUpDown className="h-4 w-4" />
@@ -126,7 +128,7 @@ export default function MethodComparisonTable({
                     <th className="text-right py-3 px-4">
                       <button
                         onClick={() => handleSort('bodyFatPercentage')}
-                        className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full"
+                        className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full dark:text-neutral-200"
                       >
                         {t('comparison.colBodyFat')}
                         <ArrowUpDown className="h-4 w-4" />
@@ -135,7 +137,7 @@ export default function MethodComparisonTable({
                     <th className="text-left py-3 px-4">
                       <button
                         onClick={() => handleSort('category')}
-                        className="flex items-center gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors"
+                        className="flex items-center gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors dark:text-neutral-200"
                       >
                         {t('comparison.colCategory')}
                         <ArrowUpDown className="h-4 w-4" />
@@ -144,7 +146,7 @@ export default function MethodComparisonTable({
                     <th className="text-right py-3 px-4">
                       <button
                         onClick={() => handleSort('leanBodyMass')}
-                        className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full"
+                        className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full dark:text-neutral-200"
                       >
                         {t('comparison.colLeanMass')}
                         <ArrowUpDown className="h-4 w-4" />
@@ -153,7 +155,7 @@ export default function MethodComparisonTable({
                     <th className="text-right py-3 px-4">
                       <button
                         onClick={() => handleSort('fatMass')}
-                        className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full"
+                        className="flex items-center justify-end gap-1 font-medium text-neutral-700 hover:text-primary-600 transition-colors w-full dark:text-neutral-200"
                       >
                         {t('comparison.colFatMass')}
                         <ArrowUpDown className="h-4 w-4" />
@@ -161,7 +163,7 @@ export default function MethodComparisonTable({
                     </th>
                     {onSaveResult && (
                       <th className="text-center py-3 px-4">
-                        <span className="font-medium text-neutral-700">
+                        <span className="font-medium text-neutral-700 dark:text-neutral-200">
                           {t('comparison.colAction')}
                         </span>
                       </th>
@@ -172,9 +174,11 @@ export default function MethodComparisonTable({
                   {sortedResults.map((result, index) => {
                     const isUnavailable = result.isAvailable === false
                     const rowClass = isUnavailable
-                      ? 'border-b border-neutral-100 bg-neutral-100 opacity-60'
-                      : 'border-b border-neutral-100 hover:bg-neutral-50 transition-colors'
-                    const textClass = isUnavailable ? 'text-neutral-400' : 'text-neutral-700'
+                      ? 'border-b border-neutral-100 bg-neutral-100 opacity-60 dark:bg-neutral-800'
+                      : 'border-b border-neutral-100 hover:bg-neutral-50 transition-colors dark:hover:bg-neutral-800'
+                    const textClass = isUnavailable
+                      ? 'text-neutral-400 dark:text-neutral-500'
+                      : 'text-neutral-700 dark:text-neutral-200'
 
                     return (
                       <tr
@@ -194,7 +198,7 @@ export default function MethodComparisonTable({
                                   variation: result.variation,
                                 })
                               }
-                              className="text-primary-600 hover:text-primary-700 transition-colors"
+                              className="text-primary-600 hover:text-primary-700 transition-colors dark:text-primary-300"
                               title={t('comparison.showMethodInfo')}
                             >
                               <Info className="h-3.5 w-3.5" />
@@ -203,7 +207,7 @@ export default function MethodComparisonTable({
                               result.missingFields &&
                               result.missingFields.length > 0 && (
                                 <span
-                                  className="text-xs text-neutral-500 italic"
+                                  className="text-xs text-neutral-500 italic dark:text-neutral-400"
                                   title={t('comparison.missingTitle', {
                                     fields: result.missingFields.join(', '),
                                   })}
@@ -223,13 +227,13 @@ export default function MethodComparisonTable({
                               : '-'}
                         </td>
                         <td
-                          className={`py-3 px-4 text-right text-sm font-medium ${isUnavailable ? textClass : 'text-neutral-900'}`}
+                          className={`py-3 px-4 text-right text-sm font-medium ${isUnavailable ? textClass : 'text-neutral-900 dark:text-neutral-100'}`}
                         >
                           {isUnavailable ? '-' : `${result.bodyFatPercentage.toFixed(1)}%`}
                         </td>
                         <td className="py-3 px-4">
                           {isUnavailable ? (
-                            <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-neutral-200 text-neutral-400">
+                            <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-neutral-200 text-neutral-400 dark:bg-neutral-700 dark:text-neutral-500">
                               -
                             </span>
                           ) : (
@@ -272,9 +276,11 @@ export default function MethodComparisonTable({
               {sortedResults.map((result, index) => {
                 const isUnavailable = result.isAvailable === false
                 const cardClass = isUnavailable
-                  ? 'border border-neutral-200 rounded-xl p-4 space-y-3 bg-neutral-100 opacity-60'
-                  : 'border border-neutral-200 rounded-xl p-4 space-y-3'
-                const textClass = isUnavailable ? 'text-neutral-400' : 'text-neutral-700'
+                  ? 'border border-neutral-200 rounded-xl p-4 space-y-3 bg-neutral-100 opacity-60 dark:border-neutral-700 dark:bg-neutral-800'
+                  : 'border border-neutral-200 rounded-xl p-4 space-y-3 dark:border-neutral-700'
+                const textClass = isUnavailable
+                  ? 'text-neutral-400 dark:text-neutral-500'
+                  : 'text-neutral-700 dark:text-neutral-200'
 
                 return (
                   <div
@@ -282,11 +288,11 @@ export default function MethodComparisonTable({
                     className={cardClass}
                   >
                     <div
-                      className={`font-medium text-sm ${isUnavailable ? 'text-neutral-400' : 'text-neutral-900'}`}
+                      className={`font-medium text-sm ${isUnavailable ? 'text-neutral-400 dark:text-neutral-500' : 'text-neutral-900 dark:text-neutral-100'}`}
                     >
                       {formatMethodName(result.method, result.variation)}
                       {isUnavailable && result.missingFields && result.missingFields.length > 0 && (
-                        <div className="text-xs text-neutral-500 italic mt-1">
+                        <div className="text-xs text-neutral-500 italic mt-1 dark:text-neutral-400">
                           {t('comparison.missing', { fields: result.missingFields.join(', ') })}
                         </div>
                       )}
@@ -294,28 +300,28 @@ export default function MethodComparisonTable({
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       {!isUnavailable && result.bodyDensity && (
                         <div>
-                          <div className="text-neutral-500 text-xs mb-1">
+                          <div className="text-neutral-500 text-xs mb-1 dark:text-neutral-400">
                             {t('comparison.mobileColDensity')}
                           </div>
                           <div className={textClass}>{result.bodyDensity.toFixed(4)} g/cm³</div>
                         </div>
                       )}
                       <div>
-                        <div className="text-neutral-500 text-xs mb-1">
+                        <div className="text-neutral-500 text-xs mb-1 dark:text-neutral-400">
                           {t('comparison.mobileColBodyFat')}
                         </div>
                         <div
-                          className={`font-medium ${isUnavailable ? textClass : 'text-neutral-900'}`}
+                          className={`font-medium ${isUnavailable ? textClass : 'text-neutral-900 dark:text-neutral-100'}`}
                         >
                           {isUnavailable ? '-' : `${result.bodyFatPercentage.toFixed(1)}%`}
                         </div>
                       </div>
                       <div>
-                        <div className="text-neutral-500 text-xs mb-1">
+                        <div className="text-neutral-500 text-xs mb-1 dark:text-neutral-400">
                           {t('comparison.mobileColCategory')}
                         </div>
                         {isUnavailable ? (
-                          <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-neutral-200 text-neutral-400">
+                          <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-neutral-200 text-neutral-400 dark:bg-neutral-700 dark:text-neutral-500">
                             -
                           </span>
                         ) : (
@@ -327,7 +333,7 @@ export default function MethodComparisonTable({
                         )}
                       </div>
                       <div>
-                        <div className="text-neutral-500 text-xs mb-1">
+                        <div className="text-neutral-500 text-xs mb-1 dark:text-neutral-400">
                           {t('comparison.mobileColLeanMass')}
                         </div>
                         <div className={textClass}>
@@ -335,7 +341,7 @@ export default function MethodComparisonTable({
                         </div>
                       </div>
                       <div>
-                        <div className="text-neutral-500 text-xs mb-1">
+                        <div className="text-neutral-500 text-xs mb-1 dark:text-neutral-400">
                           {t('comparison.mobileColFatMass')}
                         </div>
                         <div className={textClass}>

@@ -43,7 +43,8 @@ export default function PALTableProPhysique({ register, watch }: PALTableProPhys
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="activity_level">
-              {t('tdeeCalc.palTable.activityLabel')} <span className="text-red-600">*</span>
+              {t('tdeeCalc.palTable.activityLabel')}{' '}
+              <span className="text-red-600 dark:text-red-300">*</span>
             </Label>
             <Select id="activity_level" {...register('activity_level')} className="mt-2">
               <option value="">{t('tdeeCalc.palTable.activityPlaceholder')}</option>
@@ -54,14 +55,15 @@ export default function PALTableProPhysique({ register, watch }: PALTableProPhys
               ))}
             </Select>
             {activityDesc && (
-              <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200">
+              <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200 dark:text-neutral-400">
                 {activityDesc}
               </p>
             )}
           </div>
           <div>
             <Label htmlFor="intensity_level">
-              {t('tdeeCalc.palTable.intensityLabel')} <span className="text-red-600">*</span>
+              {t('tdeeCalc.palTable.intensityLabel')}{' '}
+              <span className="text-red-600 dark:text-red-300">*</span>
             </Label>
             <Select id="intensity_level" {...register('intensity_level')} className="mt-2">
               <option value="">{t('tdeeCalc.palTable.intensityPlaceholder')}</option>
@@ -72,7 +74,7 @@ export default function PALTableProPhysique({ register, watch }: PALTableProPhys
               ))}
             </Select>
             {intensityDesc && (
-              <p className="text-xs text-neutral-600 mt-2 p-2 bg-green-50 rounded border border-green-200">
+              <p className="text-xs text-neutral-600 mt-2 p-2 bg-green-50 rounded border border-green-200 dark:text-neutral-400">
                 {intensityDesc}
               </p>
             )}
@@ -85,7 +87,8 @@ export default function PALTableProPhysique({ register, watch }: PALTableProPhys
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label htmlFor="training_frequency_per_week">
-              {t('tdeeCalc.palTable.trainingFreqLabel')} <span className="text-red-600">*</span>
+              {t('tdeeCalc.palTable.trainingFreqLabel')}{' '}
+              <span className="text-red-600 dark:text-red-300">*</span>
             </Label>
             <Input
               id="training_frequency_per_week"
@@ -99,7 +102,8 @@ export default function PALTableProPhysique({ register, watch }: PALTableProPhys
           </div>
           <div>
             <Label htmlFor="training_duration_minutes">
-              {t('tdeeCalc.palTable.trainingDurLabel')} <span className="text-red-600">*</span>
+              {t('tdeeCalc.palTable.trainingDurLabel')}{' '}
+              <span className="text-red-600 dark:text-red-300">*</span>
             </Label>
             <Input
               id="training_duration_minutes"

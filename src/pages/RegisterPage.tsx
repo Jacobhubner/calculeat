@@ -17,7 +17,7 @@ export default function RegisterPage() {
             <div className="flex items-center justify-center mb-4">
               <img src="/calculeat-logo-full.svg" alt="Calculeat" className="h-24 object-contain" />
             </div>
-            <p className="text-neutral-600">{t('register.subtitle')}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">{t('register.subtitle')}</p>
           </div>
 
           <Card>
@@ -27,9 +27,12 @@ export default function RegisterPage() {
             </CardHeader>
             <CardContent>
               <SignUpForm />
-              <div className="mt-4 text-center text-sm text-neutral-600">
+              <div className="mt-4 text-center text-sm text-neutral-600 dark:text-neutral-400">
                 {t('register.hasAccount')}{' '}
-                <Link to="/login" className="text-primary-600 hover:underline font-medium">
+                <Link
+                  to="/login"
+                  className="text-primary-600 hover:underline font-medium dark:text-primary-300"
+                >
                   {t('register.loginLink')}
                 </Link>
               </div>
