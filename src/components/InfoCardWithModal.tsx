@@ -25,7 +25,7 @@ export default function InfoCardWithModal({
     <>
       <Card className="bg-gradient-to-br from-primary-50 to-accent-50 p-4 dark:from-primary-900/30 dark:to-accent-900/20">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-neutral-900">{title}</h3>
+          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{title}</h3>
           <button
             type="button"
             onClick={() => setIsOpen(true)}

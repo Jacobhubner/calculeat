@@ -400,7 +400,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                       }}
                       className={`flex items-center gap-1 px-2 py-0.5 text-xs rounded-full border transition-colors ${
                         filterByColor && c.checked
-                          ? `${c.key === 'yellow' ? 'bg-yellow-400 border-yellow-500 text-neutral-900' : c.key === 'green' ? 'bg-green-500 border-green-600 text-white' : 'bg-orange-500 border-orange-600 text-white'}`
+                          ? `${c.key === 'yellow' ? 'bg-yellow-400 border-yellow-500 text-neutral-900 dark:text-neutral-100' : c.key === 'green' ? 'bg-green-500 border-green-600 text-white' : 'bg-orange-500 border-orange-600 text-white'}`
                           : 'bg-white dark:bg-neutral-850 text-neutral-500 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500'
                       }`}
                     >

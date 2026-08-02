@@ -61,7 +61,7 @@ export default function ConditionalPALFields({
           ))}
         </Select>
         {desc && (
-          <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200 dark:text-neutral-400">
+          <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200 dark:text-neutral-400 dark:bg-blue-900/25 dark:border-blue-800">
             {desc}
           </p>
         )}
@@ -85,7 +85,7 @@ export default function ConditionalPALFields({
           ))}
         </Select>
         {desc && (
-          <p className="text-xs text-neutral-600 mt-2 p-2 bg-green-50 rounded border border-green-200 dark:text-neutral-400">
+          <p className="text-xs text-neutral-600 mt-2 p-2 bg-green-50 rounded border border-green-200 dark:text-neutral-400 dark:bg-green-900/25 dark:border-green-800">
             {desc}
           </p>
         )}

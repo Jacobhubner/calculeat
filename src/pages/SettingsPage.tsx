@@ -329,7 +329,7 @@ export default function SettingsPage() {
       <div className="space-y-6">
         {/* Page Header */}
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 flex items-center gap-2 md:gap-3">
+          <h1 className="text-2xl md:text-3xl font-bold text-neutral-900 flex items-center gap-2 md:gap-3 dark:text-neutral-100">
             <SettingsIcon className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
             {t('settings.title')}
           </h1>
@@ -420,7 +420,7 @@ export default function SettingsPage() {
                     className="mt-0.5 accent-primary-600"
                   />
                   <div>
-                    <span className="text-sm font-medium text-neutral-900">
+                    <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                       {t('settings.manual')}
                     </span>
                     <p className="text-xs text-neutral-500 mt-0.5">{t('settings.manualDesc')}</p>
@@ -442,7 +442,7 @@ export default function SettingsPage() {
                     className="mt-0.5 accent-primary-600"
                   />
                   <div>
-                    <span className="text-sm font-medium text-neutral-900">
+                    <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                       {t('settings.auto')}
                     </span>
                     <p className="text-xs text-neutral-500 mt-0.5">{t('settings.autoDesc')}</p>
@@ -642,13 +642,13 @@ export default function SettingsPage() {
                     <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-0.5">
                       {t('settings.username')}
                     </p>
-                    <p className="text-sm font-medium text-neutral-900">
+                    <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
                       {userProfile?.username ? `@${userProfile.username}` : '—'}
                     </p>
                   </div>
                   <button
                     onClick={() => openEditorFor('username')}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors dark:text-neutral-100"
                   >
                     <Pencil className="h-3 w-3" />
                     {t('settings.edit')}
@@ -720,11 +720,13 @@ export default function SettingsPage() {
                     <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-0.5">
                       {t('settings.email')}
                     </p>
-                    <p className="text-sm font-medium text-neutral-900">{user?.email ?? '—'}</p>
+                    <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                      {user?.email ?? '—'}
+                    </p>
                   </div>
                   <button
                     onClick={() => openEditorFor('email')}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors dark:text-neutral-100"
                   >
                     <Pencil className="h-3 w-3" />
                     {t('settings.edit')}
@@ -804,11 +806,13 @@ export default function SettingsPage() {
                     <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-0.5">
                       {t('settings.passwordLabel')}
                     </p>
-                    <p className="text-sm font-medium text-neutral-900 tracking-widest">••••••••</p>
+                    <p className="text-sm font-medium text-neutral-900 tracking-widest dark:text-neutral-100">
+                      ••••••••
+                    </p>
                   </div>
                   <button
                     onClick={() => openEditorFor('password')}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors dark:text-neutral-100"
                   >
                     <Pencil className="h-3 w-3" />
                     {t('settings.edit')}
@@ -837,7 +841,9 @@ export default function SettingsPage() {
                     className="flex items-center justify-between p-3 rounded-lg bg-neutral-50 border border-neutral-200"
                   >
                     <div>
-                      <p className="text-sm font-medium text-neutral-900">{admin.email}</p>
+                      <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                        {admin.email}
+                      </p>
                       {admin.is_super_admin && (
                         <p className="text-xs text-primary-600 font-medium">Super admin</p>
                       )}

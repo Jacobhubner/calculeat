@@ -297,7 +297,7 @@ export default function DashboardNav() {
           <Link
             to="/app/settings"
             className={cn(
-              'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 transition-colors relative group',
+              'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 transition-colors relative group dark:text-neutral-100',
               'dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100',
               sidebarCollapsed && 'justify-center px-2'
             )}

@@ -155,7 +155,7 @@ export default function BodyFatGoalCalculation({
             )}
           </div>
 
-          <div className="text-xs text-neutral-600 bg-blue-50 p-2 rounded border border-blue-100">
+          <div className="text-xs text-neutral-600 bg-blue-50 p-2 rounded border border-blue-100 dark:bg-blue-900/25 dark:border-blue-800">
             💡 <strong>Tidsberäkning baserad på:</strong> TDEE {tdee} kcal, Intag {calorieIntake}{' '}
             kcal, Dagligt {weightChange > 0 ? 'överskott' : 'underskott'}{' '}
             {Math.abs(tdee! - calorieIntake!)} kcal

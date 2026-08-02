@@ -99,7 +99,7 @@ export default function MeasurementSetCard({
         isUnsaved && [
           'border-2 border-dashed',
           isActive
-            ? 'border-l-4 border-l-amber-500 border-amber-300 bg-amber-50/30 shadow-sm dark:border-amber-800'
+            ? 'border-l-4 border-l-amber-500 border-amber-300 bg-amber-50/30 shadow-sm dark:border-amber-800 dark:bg-amber-900/20'
             : 'border-amber-300 bg-amber-50/20 hover:border-amber-400 hover:shadow-md dark:border-amber-800',
         ],
         // Sparade kort - normal grön/neutral styling

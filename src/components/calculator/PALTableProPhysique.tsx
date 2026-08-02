@@ -74,7 +74,7 @@ export default function PALTableProPhysique({ register, watch }: PALTableProPhys
               ))}
             </Select>
             {intensityDesc && (
-              <p className="text-xs text-neutral-600 mt-2 p-2 bg-green-50 rounded border border-green-200 dark:text-neutral-400">
+              <p className="text-xs text-neutral-600 mt-2 p-2 bg-green-50 rounded border border-green-200 dark:text-neutral-400 dark:bg-green-900/25 dark:border-green-800">
                 {intensityDesc}
               </p>
             )}

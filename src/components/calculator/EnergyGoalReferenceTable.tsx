@@ -29,7 +29,7 @@ export default function EnergyGoalReferenceTable({
 
   if (!tdee || tdee <= 0 || !isFinite(tdee)) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:bg-red-900/25 dark:border-red-800">
         <p className="text-sm text-red-600">{t('energyGoalTable.invalidTdee')}</p>
       </div>
     )

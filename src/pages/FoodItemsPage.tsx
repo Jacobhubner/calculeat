@@ -934,7 +934,7 @@ export default function FoodItemsPage() {
                   colorFilter === 'Yellow'
                     ? // Mörk text även i mörkt läge: knappen har gul botten, så
                       // ljus text skulle bli oläslig
-                      'bg-yellow-400 hover:bg-yellow-500 text-neutral-900 border-yellow-500 font-semibold'
+                      'bg-yellow-400 hover:bg-yellow-500 text-neutral-900 border-yellow-500 font-semibold dark:text-neutral-100'
                     : ''
                 }
               >

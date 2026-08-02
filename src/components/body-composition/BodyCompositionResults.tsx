@@ -70,7 +70,7 @@ export default function BodyCompositionResults({
             {t('results.method', { method: selectedMethod })}
           </p>
           {isEstimatedBMR && selectedMethod === 'Reversed Cunningham equation' && (
-            <p className="text-xs text-amber-700 mt-1 bg-amber-50 p-2 rounded border border-amber-200">
+            <p className="text-xs text-amber-700 mt-1 bg-amber-50 p-2 rounded border border-amber-200 dark:bg-amber-900/25 dark:border-amber-800">
               ℹ️ {t('results.estimatedRMR')}
             </p>
           )}

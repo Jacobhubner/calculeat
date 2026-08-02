@@ -47,7 +47,7 @@ export default function PALTableFAO({ register, watch }: PALTableFAOProps) {
             ))}
           </Select>
           {description && (
-            <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200 dark:text-neutral-400">
+            <p className="text-xs text-neutral-600 mt-2 p-2 bg-blue-50 rounded border border-blue-200 dark:text-neutral-400 dark:bg-blue-900/25 dark:border-blue-800">
               {description}
             </p>
           )}
