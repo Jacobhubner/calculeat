@@ -121,7 +121,7 @@ export default function PALTableActivityLevelWizard({
     <>
       <div className="space-y-8">
         {/* Sektion 1: Träning & Motion */}
-        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200 dark:border-primary-800">
+        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200 dark:border-primary-800 dark:bg-neutral-850/50">
           <div>
             <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
               {t('tdeeCalc.wizard.section1Title')}
@@ -211,7 +211,7 @@ export default function PALTableActivityLevelWizard({
         </div>
 
         {/* Sektion 2: Gång & Stående */}
-        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200 dark:border-primary-800">
+        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200 dark:border-primary-800 dark:bg-neutral-850/50">
           <div>
             <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
               {t('tdeeCalc.wizard.section2Title')}
@@ -280,7 +280,7 @@ export default function PALTableActivityLevelWizard({
         </div>
 
         {/* Sektion 3: Hushållsarbete */}
-        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200 dark:border-primary-800">
+        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200 dark:border-primary-800 dark:bg-neutral-850/50">
           <div>
             <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
               {t('tdeeCalc.wizard.section3Title')}
@@ -332,7 +332,7 @@ export default function PALTableActivityLevelWizard({
         </div>
 
         {/* Sektion 4: SPA-faktor */}
-        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200 dark:border-primary-800">
+        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200 dark:border-primary-800 dark:bg-neutral-850/50">
           <div>
             <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
               {t('tdeeCalc.wizard.section4Title')}

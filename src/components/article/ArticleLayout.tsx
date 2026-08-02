@@ -127,7 +127,7 @@ export function ArticleLayout({
             {(formattedDate || readingMinutes) && (
               <p
                 data-byline
-                className="mt-6 inline-flex items-center gap-2 rounded-full border border-neutral-200/80 bg-white/70 px-3.5 py-1.5 text-[13px] text-neutral-500 shadow-xs dark:text-neutral-400"
+                className="mt-6 inline-flex items-center gap-2 rounded-full border border-neutral-200/80 bg-white/70 px-3.5 py-1.5 text-[13px] text-neutral-500 shadow-xs dark:text-neutral-400 dark:border-neutral-700/80 dark:bg-neutral-800/70"
               >
                 <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-primary-500" />
                 {formattedDate && (
@@ -170,7 +170,10 @@ export function ArticleLayout({
                 <ArticleToc items={tocItems} heading={t('toc.heading')} variant="inline" />
               )}
 
-              <article className="max-w-none text-[17px] leading-[1.75] text-neutral-700 [&_strong]:font-semibold [&_strong]:text-neutral-900 dark:text-neutral-200">
+              {/* [&_strong] tvingar fetstil mörkare än brödtexten. Utan en
+                  dark-variant blev all fetstil i artiklarna nästan svart —
+                  osynlig mot mörk botten, mitt i läsbar löptext. */}
+              <article className="max-w-none text-[17px] leading-[1.75] text-neutral-700 [&_strong]:font-semibold [&_strong]:text-neutral-900 dark:text-neutral-200 dark:[&_strong]:text-neutral-50">
                 {children}
               </article>
             </div>
