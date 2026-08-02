@@ -189,7 +189,10 @@ export function ArticleLayout({
         {moneyPageHref && moneyPageLabel && (
           <section className="bg-white pb-16 dark:bg-neutral-850">
             <div className="container mx-auto px-4 max-w-2xl">
-              <div className="rounded-2xl bg-gradient-to-br from-primary-600 to-primary-800 p-6 sm:p-8 shadow-card flex flex-col sm:flex-row items-start sm:items-center gap-5">
+              {/* Helmättad grön lyser mot en dov mörk sida. I mörkt läge
+                  dämpas gradienten så banderollen fortfarande är sidans
+                  starkaste yta utan att skrika. */}
+              <div className="rounded-2xl bg-gradient-to-br from-primary-600 to-primary-800 dark:from-primary-800 dark:to-primary-950 p-6 sm:p-8 shadow-card flex flex-col sm:flex-row items-start sm:items-center gap-5">
                 <div className="flex-1">
                   <p className="font-semibold text-white text-lg leading-snug mb-1">
                     {moneyPageLabel}
@@ -201,7 +204,9 @@ export function ArticleLayout({
                 <Link
                   data-layout-text
                   to={moneyPageHref}
-                  className="inline-flex items-center justify-center gap-2 bg-white text-primary-800 hover:bg-primary-50 font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm whitespace-nowrap shadow-xs w-full sm:w-auto dark:bg-neutral-850"
+                  // Knappen behöll text-primary-800 när ytan blev mörk —
+                  // mörkt på mörkt. Ljus text i mörkt läge i stället.
+                  className="inline-flex items-center justify-center gap-2 bg-white text-primary-800 hover:bg-primary-50 font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm whitespace-nowrap shadow-xs w-full sm:w-auto dark:bg-neutral-100 dark:text-primary-900 dark:hover:bg-white"
                 >
                   {t('moneyPageCta.button')}
                   <ArrowRight className="h-4 w-4" />
