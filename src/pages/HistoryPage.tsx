@@ -182,10 +182,12 @@ export default function HistoryPage() {
       {/* Header */}
       <div className="mb-6 md:mb-8">
         <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
-          <HistoryIcon className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
+          <HistoryIcon className="h-6 w-6 md:h-8 md:w-8 text-primary-600 dark:text-primary-300" />
           {t('page.title')}
         </h1>
-        <p className="text-sm md:text-base text-neutral-600">{t('page.description')}</p>
+        <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400">
+          {t('page.description')}
+        </p>
       </div>
 
       {/* View Mode Toggle */}
@@ -279,17 +281,17 @@ export default function HistoryPage() {
                                   return (
                                     <div
                                       key={log.id}
-                                      className="flex items-center justify-between p-3 rounded-lg border hover:bg-neutral-50 transition-colors cursor-pointer"
+                                      className="flex items-center justify-between p-3 rounded-lg border hover:bg-neutral-50 transition-colors cursor-pointer dark:hover:bg-neutral-800"
                                       onClick={() =>
                                         (window.location.href = `/app/history/${log.log_date}`)
                                       }
                                     >
                                       <div className="flex items-center gap-3">
                                         <div className="text-center">
-                                          <div className="text-2xl font-bold text-neutral-900">
+                                          <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
                                             {date.getDate()}
                                           </div>
-                                          <div className="text-xs text-neutral-500 uppercase">
+                                          <div className="text-xs text-neutral-500 uppercase dark:text-neutral-400">
                                             {date.toLocaleDateString('sv-SE', { weekday: 'short' })}
                                           </div>
                                         </div>
@@ -301,14 +303,14 @@ export default function HistoryPage() {
                                             {log.is_completed && (
                                               <Badge
                                                 variant="outline"
-                                                className="gap-1 bg-success-50 text-success-700 border-success-200"
+                                                className="gap-1 bg-success-50 text-success-700 border-success-200 dark:bg-success-900/25 dark:text-success-300 dark:border-success-800"
                                               >
                                                 <Check className="h-3 w-3" />
                                                 {t('status.completed')}
                                               </Badge>
                                             )}
                                           </div>
-                                          <div className="text-sm text-neutral-600">
+                                          <div className="text-sm text-neutral-600 dark:text-neutral-400">
                                             F: {log.total_fat_g}g · K: {log.total_carb_g}g · P:{' '}
                                             {log.total_protein_g}g
                                           </div>
@@ -323,7 +325,7 @@ export default function HistoryPage() {
                                         >
                                           <Trash2 className="h-4 w-4" />
                                         </button>
-                                        <ChevronRight className="h-5 w-5 text-neutral-400" />
+                                        <ChevronRight className="h-5 w-5 text-neutral-400 dark:text-neutral-500" />
                                       </div>
                                     </div>
                                   )
@@ -372,7 +374,7 @@ export default function HistoryPage() {
                         className={`flex-1 py-1 text-xs rounded-md font-medium transition-colors inline-flex items-center justify-center gap-0.5 ${
                           statsPeriod === p
                             ? 'bg-primary-600 text-white'
-                            : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                            : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400'
                         }`}
                       >
                         {p === 14 ? '2v' : p === 21 ? '3v' : `${p}d`}
@@ -384,7 +386,7 @@ export default function HistoryPage() {
                       className={`flex-1 py-1 text-xs rounded-md font-medium transition-colors inline-flex items-center justify-center gap-0.5 ${
                         statsPeriod === null
                           ? 'bg-primary-600 text-white'
-                          : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                          : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400'
                       }`}
                     >
                       {t('stats.allTime')}
@@ -401,7 +403,7 @@ export default function HistoryPage() {
                         onChange={e => setStatsPeriod(Number(e.target.value))}
                         className="w-full accent-primary-600"
                       />
-                      <div className="flex justify-between text-xs text-neutral-400">
+                      <div className="flex justify-between text-xs text-neutral-400 dark:text-neutral-500">
                         <span>1d</span>
                         <span>{historyLimited ? `${Math.min(90, historyDays)}d` : '90d'}</span>
                       </div>
@@ -409,37 +411,51 @@ export default function HistoryPage() {
                   )}
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-neutral-900">{completedDays}</div>
-                  <div className="text-sm text-neutral-600">
+                  <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+                    {completedDays}
+                  </div>
+                  <div className="text-sm text-neutral-600 dark:text-neutral-400">
                     {statsPeriod === null
                       ? t('stats.completedDays')
                       : t('stats.completedDaysOf', { days: statsPeriod })}
                   </div>
                 </div>
                 <div className="border-t pt-3">
-                  <div className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2">
+                  <div className="text-xs font-medium text-neutral-500 uppercase tracking-wide mb-2 dark:text-neutral-400">
                     {t('stats.avgPerDay')}
                   </div>
                   <div className="space-y-1.5">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-neutral-600">
+                      <span className="text-sm text-neutral-600 dark:text-neutral-400">
                         {t('stats.avgCaloriesLabel')}
                       </span>
-                      <span className="text-sm font-semibold text-neutral-900">
+                      <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                         {avgCalories} kcal
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-neutral-600">{t('stats.avgFatLabel')}</span>
-                      <span className="text-sm font-semibold text-neutral-900">{avgFat} g</span>
+                      <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                        {t('stats.avgFatLabel')}
+                      </span>
+                      <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                        {avgFat} g
+                      </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-neutral-600">{t('stats.avgCarbsLabel')}</span>
-                      <span className="text-sm font-semibold text-neutral-900">{avgCarbs} g</span>
+                      <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                        {t('stats.avgCarbsLabel')}
+                      </span>
+                      <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                        {avgCarbs} g
+                      </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-neutral-600">{t('stats.avgProteinLabel')}</span>
-                      <span className="text-sm font-semibold text-neutral-900">{avgProtein} g</span>
+                      <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                        {t('stats.avgProteinLabel')}
+                      </span>
+                      <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+                        {avgProtein} g
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -447,15 +463,21 @@ export default function HistoryPage() {
             </Card>
 
             {/* Streak Card */}
-            <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200">
+            <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200 dark:from-primary-900/30 dark:to-accent-900/20 dark:border-primary-800">
               <CardHeader>
                 <CardTitle className="text-lg">🔥 {t('stats.streak')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-primary-700">{currentStreak}</div>
-                  <div className="text-sm text-neutral-700">{t('stats.daysInARow')}</div>
-                  <p className="text-xs text-neutral-600 mt-3">{t('stats.streakEncouragement')}</p>
+                  <div className="text-4xl font-bold text-primary-700 dark:text-primary-300">
+                    {currentStreak}
+                  </div>
+                  <div className="text-sm text-neutral-700 dark:text-neutral-200">
+                    {t('stats.daysInARow')}
+                  </div>
+                  <p className="text-xs text-neutral-600 mt-3 dark:text-neutral-400">
+                    {t('stats.streakEncouragement')}
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -494,18 +516,26 @@ export default function HistoryPage() {
                     return (
                       <>
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-neutral-600">{t('stats.green')}</span>
-                          <span className="text-sm font-semibold text-green-700">{greenPct}%</span>
+                          <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                            {t('stats.green')}
+                          </span>
+                          <span className="text-sm font-semibold text-green-700 dark:text-green-300">
+                            {greenPct}%
+                          </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-neutral-600">{t('stats.yellow')}</span>
-                          <span className="text-sm font-semibold text-yellow-700">
+                          <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                            {t('stats.yellow')}
+                          </span>
+                          <span className="text-sm font-semibold text-yellow-700 dark:text-yellow-300">
                             {yellowPct}%
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-sm text-neutral-600">{t('stats.orange')}</span>
-                          <span className="text-sm font-semibold text-orange-700">
+                          <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                            {t('stats.orange')}
+                          </span>
+                          <span className="text-sm font-semibold text-orange-700 dark:text-orange-300">
                             {orangePct}%
                           </span>
                         </div>
@@ -517,11 +547,11 @@ export default function HistoryPage() {
             )}
 
             {/* Tips */}
-            <Card className="bg-gradient-to-br from-accent-50 to-success-50 border-accent-200">
+            <Card className="bg-gradient-to-br from-accent-50 to-success-50 border-accent-200 dark:from-accent-900/25 dark:to-success-900/20 dark:border-accent-800">
               <CardHeader>
                 <CardTitle className="text-lg">📊 {t('tips.title')}</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 text-sm text-neutral-700">
+              <CardContent className="space-y-2 text-sm text-neutral-700 dark:text-neutral-200">
                 <p>{t('tips.tip1')}</p>
                 <p>{t('tips.tip2')}</p>
                 {profile?.show_energy_density && <p>{t('tips.tip3')}</p>}

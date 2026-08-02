@@ -160,8 +160,12 @@ export default function HistoryDayPage() {
     return (
       <DashboardLayout>
         <div className="text-center py-12">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-2">{t('empty.noDataForDate')}</h2>
-          <p className="text-neutral-600 mb-6">{t('empty.noDataDescription', { date })}</p>
+          <h2 className="text-2xl font-bold text-neutral-900 mb-2 dark:text-neutral-100">
+            {t('empty.noDataForDate')}
+          </h2>
+          <p className="text-neutral-600 mb-6 dark:text-neutral-400">
+            {t('empty.noDataDescription', { date })}
+          </p>
           <Button onClick={() => navigate('/app/history')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('actions.backToHistory')}
@@ -192,12 +196,12 @@ export default function HistoryDayPage() {
           <div>
             <div className="flex items-center gap-2 mb-1 md:mb-2">
               <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent flex items-center gap-2 md:gap-3">
-                <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
+                <Calendar className="h-6 w-6 md:h-8 md:w-8 text-primary-600 dark:text-primary-300" />
                 {isEditing && isEditingDate ? (
                   <input
                     type="date"
                     defaultValue={log.log_date}
-                    className="text-2xl md:text-3xl font-bold text-neutral-800 border rounded px-2 py-0.5"
+                    className="text-2xl md:text-3xl font-bold text-neutral-800 border rounded px-2 py-0.5 dark:text-neutral-200"
                     onBlur={e => handleDateSelected(e.target.value)}
                     onKeyDown={e => {
                       if (e.key === 'Enter')
@@ -221,7 +225,7 @@ export default function HistoryDayPage() {
             </div>
             <div className="flex items-center gap-2">
               {log.is_completed && !isEditing && (
-                <Badge className="gap-1 bg-success-100 text-success-700 border-success-200">
+                <Badge className="gap-1 bg-success-100 text-success-700 border-success-200 dark:bg-success-900/25 dark:text-success-300 dark:border-success-800">
                   <Check className="h-3 w-3" />
                   {t('status.dayCompleted')}
                 </Badge>
@@ -232,7 +236,7 @@ export default function HistoryDayPage() {
                   size="sm"
                   onClick={handleStartEditing}
                   disabled={reopenDay.isPending}
-                  className="gap-1.5 text-neutral-500 hover:text-neutral-700 h-7 px-2 text-xs"
+                  className="gap-1.5 text-neutral-500 hover:text-neutral-700 h-7 px-2 text-xs dark:hover:text-neutral-200 dark:text-neutral-400"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                   {t('actions.edit')}
@@ -249,12 +253,12 @@ export default function HistoryDayPage() {
 
       {/* Editing banner */}
       {isEditing && (
-        <Card className="mb-6 bg-amber-50 border-amber-200">
+        <Card className="mb-6 bg-amber-50 border-amber-200 dark:bg-amber-900/25 dark:border-amber-800">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <Pencil className="h-4 w-4 text-amber-600" />
-                <p className="text-sm font-medium text-amber-800">
+                <Pencil className="h-4 w-4 text-amber-600 dark:text-amber-300" />
+                <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
                   {t('editing.banner')}
                   {' · '}
                   <button
@@ -281,12 +285,12 @@ export default function HistoryDayPage() {
 
       {/* Date change confirmation */}
       {pendingDate && (
-        <Card className="mb-6 bg-blue-50 border-blue-200">
+        <Card className="mb-6 bg-blue-50 border-blue-200 dark:bg-blue-900/25 dark:border-blue-800">
           <CardContent className="pt-6">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-blue-600" />
-                <p className="text-sm font-medium text-blue-800">
+                <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-300" />
+                <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
                   {t('editing.confirmDateChangePlain', { from: log?.log_date, to: pendingDate })}
                 </p>
               </div>
@@ -407,14 +411,14 @@ export default function HistoryDayPage() {
 
               {/* Energitäthet — visas bara om funktionen är aktiverad */}
               {profile?.show_energy_density && dailySummary && dailySummary.energyDensity > 0 && (
-                <div className="pt-3 border-t border-neutral-200">
+                <div className="pt-3 border-t border-neutral-200 dark:border-neutral-700">
                   <EnergyDensityIndicator density={dailySummary.energyDensity} size="sm" />
                 </div>
               )}
 
               {/* Matbalans (Grön/Gul/Orange) — opt-in via profilinställning */}
               {profile?.show_energy_density && dailySummary && dailySummary.energyDensity > 0 && (
-                <div className="pt-3 border-t border-neutral-200">
+                <div className="pt-3 border-t border-neutral-200 dark:border-neutral-700">
                   <ColorBalanceCard
                     greenCalories={dailySummary.greenCalories}
                     yellowCalories={dailySummary.yellowCalories}
@@ -441,7 +445,7 @@ export default function HistoryDayPage() {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <UtensilsCrossed className="h-5 w-5 text-accent-600" />
+                        <UtensilsCrossed className="h-5 w-5 text-accent-600 dark:text-accent-300" />
                         <div>
                           <CardTitle className="text-lg">{meal.meal_name}</CardTitle>
                           <CardDescription>
@@ -485,7 +489,7 @@ export default function HistoryDayPage() {
                                     item.food_item?.name ||
                                     t('empty.unknownFood')}
                                 </div>
-                                <div className="text-sm text-neutral-600">
+                                <div className="text-sm text-neutral-600 dark:text-neutral-400">
                                   {item.amount} {item.unit}
                                 </div>
                               </div>
@@ -495,7 +499,7 @@ export default function HistoryDayPage() {
                                 <div className="font-semibold">
                                   {Math.round(item.calories ?? 0)} kcal
                                 </div>
-                                <div className="text-xs text-neutral-600">
+                                <div className="text-xs text-neutral-600 dark:text-neutral-400">
                                   F: {Math.round(item.fat_g ?? 0)}g · K:{' '}
                                   {Math.round(item.carb_g ?? 0)}g · P:{' '}
                                   {Math.round(item.protein_g ?? 0)}g
@@ -504,7 +508,7 @@ export default function HistoryDayPage() {
                               {isEditing && (
                                 <button
                                   onClick={() => handleRemoveItem(item.id)}
-                                  className="p-1.5 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                  className="p-1.5 rounded-lg text-neutral-400 hover:text-red-600 hover:bg-red-50 transition-colors dark:text-neutral-500"
                                   title={t('editing.removeItem')}
                                 >
                                   <X className="h-4 w-4" />
@@ -515,7 +519,7 @@ export default function HistoryDayPage() {
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-4 text-neutral-400">
+                      <div className="text-center py-4 text-neutral-400 dark:text-neutral-500">
                         {t('empty.noFoodInMeal')}
                       </div>
                     )}
@@ -525,7 +529,7 @@ export default function HistoryDayPage() {
             </div>
           ) : (
             <Card>
-              <CardContent className="py-12 text-center text-neutral-400">
+              <CardContent className="py-12 text-center text-neutral-400 dark:text-neutral-500">
                 {t('empty.noMealsForDay')}
               </CardContent>
             </Card>
@@ -557,9 +561,11 @@ export default function HistoryDayPage() {
               <CardContent className="space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <span className="text-sm text-neutral-600">{t('day.calories')}</span>
+                    <span className="text-sm text-neutral-600 dark:text-neutral-400">
+                      {t('day.calories')}
+                    </span>
                     {log.goal_calories_min && (
-                      <p className="text-xs text-neutral-400 mt-0.5">
+                      <p className="text-xs text-neutral-400 mt-0.5 dark:text-neutral-500">
                         {t('day.goalRange', {
                           min: Math.round(log.goal_calories_min),
                           max: Math.round(log.goal_calories_max),
@@ -576,7 +582,7 @@ export default function HistoryDayPage() {
                       )}{' '}
                       kcal
                     </div>
-                    <div className="text-xs text-neutral-400 mt-0.5">
+                    <div className="text-xs text-neutral-400 mt-0.5 dark:text-neutral-500">
                       {t('day.avgGoalPercent', {
                         pct: Math.round(
                           (log.total_calories /

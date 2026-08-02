@@ -82,26 +82,26 @@ function dayColor(log: DailyLog): { dot: string; bg: string; text: string } {
   const cal = log.total_calories
   if (!log.is_completed)
     return {
-      dot: 'bg-neutral-300',
-      bg: 'bg-neutral-50 hover:bg-neutral-100',
-      text: 'text-neutral-600',
+      dot: 'bg-neutral-300 dark:bg-neutral-600',
+      bg: 'bg-neutral-50 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:bg-neutral-900',
+      text: 'text-neutral-600 dark:text-neutral-400',
     }
   if (max > 0 && cal >= min && cal <= max)
     return {
       dot: 'bg-green-500',
-      bg: 'bg-green-50 hover:bg-green-100',
-      text: 'text-green-800 font-semibold',
+      bg: 'bg-green-50 hover:bg-green-100 dark:bg-green-900/25',
+      text: 'text-green-800 font-semibold dark:text-green-300',
     }
   if (max > 0 && cal > max)
     return {
       dot: 'bg-orange-400',
-      bg: 'bg-orange-50 hover:bg-orange-100',
-      text: 'text-orange-700 font-semibold',
+      bg: 'bg-orange-50 hover:bg-orange-100 dark:bg-orange-900/25',
+      text: 'text-orange-700 font-semibold dark:text-orange-300',
     }
   return {
     dot: 'bg-blue-400',
-    bg: 'bg-blue-50 hover:bg-blue-100',
-    text: 'text-blue-700 font-semibold',
+    bg: 'bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/25',
+    text: 'text-blue-700 font-semibold dark:text-blue-300',
   }
 }
 
@@ -126,18 +126,20 @@ export function HistoryCalendar({ logs }: Props) {
   // ── Year view ──────────────────────────────────────────────
   if (view === 'year') {
     return (
-      <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
+      <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm overflow-hidden dark:border-neutral-700 dark:bg-neutral-850">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 dark:border-neutral-700">
           <button
             onClick={() => setYear(y => y - 1)}
-            className="p-1.5 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-500"
+            className="p-1.5 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-500 dark:hover:bg-neutral-800 dark:text-neutral-400"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
-          <span className="text-base font-semibold text-neutral-800">{year}</span>
+          <span className="text-base font-semibold text-neutral-800 dark:text-neutral-200">
+            {year}
+          </span>
           <button
             onClick={() => setYear(y => y + 1)}
-            className="p-1.5 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-500"
+            className="p-1.5 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-500 dark:hover:bg-neutral-800 dark:text-neutral-400"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
@@ -164,18 +166,18 @@ export function HistoryCalendar({ logs }: Props) {
                 }}
                 className={`
                   rounded-xl px-3 py-4 text-center transition-colors
-                  ${isFuture ? 'opacity-30 cursor-default' : 'cursor-pointer hover:bg-primary-50'}
+                  ${isFuture ? 'opacity-30 cursor-default' : 'cursor-pointer hover:bg-primary-50 dark:hover:bg-primary-900/25'}
                   ${isCurrentMonth ? 'ring-2 ring-primary-400' : ''}
-                  ${m === month && !isFuture ? 'bg-primary-50' : ''}
+                  ${m === month && !isFuture ? 'bg-primary-50 dark:bg-primary-900/25' : ''}
                 `}
               >
                 <p
-                  className={`text-sm font-semibold ${isCurrentMonth ? 'text-primary-600' : 'text-neutral-700'}`}
+                  className={`text-sm font-semibold ${isCurrentMonth ? 'text-primary-600 dark:text-primary-300' : 'text-neutral-700 dark:text-neutral-200'}`}
                 >
                   {monthShort[m]}
                 </p>
                 {count > 0 && (
-                  <p className="text-xs text-neutral-400 mt-0.5">
+                  <p className="text-xs text-neutral-400 mt-0.5 dark:text-neutral-500">
                     {count} {isSv ? 'dgr' : 'days'}
                   </p>
                 )}
@@ -211,36 +213,39 @@ export function HistoryCalendar({ logs }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm overflow-hidden">
+    <div className="rounded-2xl border border-neutral-200 bg-white shadow-sm overflow-hidden dark:border-neutral-700 dark:bg-neutral-850">
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100 dark:border-neutral-700">
         <button
           onClick={prevMonth}
-          className="p-1.5 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-500"
+          className="p-1.5 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-500 dark:hover:bg-neutral-800 dark:text-neutral-400"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
         <button
           onClick={() => setView('year')}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-neutral-100 transition-colors group"
+          className="flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-neutral-100 transition-colors group dark:hover:bg-neutral-800"
         >
-          <span className="text-base font-semibold text-neutral-800">
+          <span className="text-base font-semibold text-neutral-800 dark:text-neutral-200">
             {monthNames[month]} {year}
           </span>
-          <ChevronUp className="h-4 w-4 text-neutral-400 group-hover:text-neutral-600 transition-colors" />
+          <ChevronUp className="h-4 w-4 text-neutral-400 group-hover:text-neutral-600 transition-colors dark:text-neutral-500" />
         </button>
         <button
           onClick={nextMonth}
-          className="p-1.5 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-500"
+          className="p-1.5 rounded-lg hover:bg-neutral-100 transition-colors text-neutral-500 dark:hover:bg-neutral-800 dark:text-neutral-400"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
       </div>
 
       {/* Weekday labels */}
-      <div className="grid grid-cols-7 border-b border-neutral-100">
+      <div className="grid grid-cols-7 border-b border-neutral-100 dark:border-neutral-700">
         {weekdays.map(d => (
-          <div key={d} className="py-2 text-center text-xs font-medium text-neutral-400">
+          <div
+            key={d}
+            className="py-2 text-center text-xs font-medium text-neutral-400 dark:text-neutral-500"
+          >
             {d}
           </div>
         ))}
@@ -266,7 +271,7 @@ export function HistoryCalendar({ logs }: Props) {
               className={`
                 aspect-square flex flex-col items-center justify-center gap-0.5
                 transition-colors rounded-lg m-0.5
-                ${colors ? colors.bg : isFuture ? '' : 'hover:bg-neutral-50'}
+                ${colors ? colors.bg : isFuture ? '' : 'hover:bg-neutral-50 dark:hover:bg-neutral-800'}
                 ${isFuture ? 'cursor-default opacity-30' : 'cursor-pointer'}
                 ${isToday ? 'ring-2 ring-primary-400 ring-offset-1' : ''}
               `}
@@ -278,7 +283,7 @@ export function HistoryCalendar({ logs }: Props) {
               </span>
               {log && <span className={`h-1.5 w-1.5 rounded-full ${colors!.dot}`} />}
               {log && (
-                <span className="text-[9px] leading-none text-neutral-400">
+                <span className="text-[9px] leading-none text-neutral-400 dark:text-neutral-500">
                   {log.total_calories}
                 </span>
               )}
@@ -288,7 +293,7 @@ export function HistoryCalendar({ logs }: Props) {
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-x-4 gap-y-1 px-5 py-3 border-t border-neutral-100 text-xs text-neutral-500">
+      <div className="flex flex-wrap gap-x-4 gap-y-1 px-5 py-3 border-t border-neutral-100 text-xs text-neutral-500 dark:text-neutral-400">
         <span className="flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-green-500" />
           {isSv ? 'Inom mål' : 'Within goal'}
