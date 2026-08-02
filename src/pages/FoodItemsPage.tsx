@@ -784,13 +784,13 @@ export default function FoodItemsPage() {
       <div className="mb-6 md:mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
-            <UtensilsCrossed className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
+            <UtensilsCrossed className="h-6 w-6 md:h-8 md:w-8 text-primary-600 dark:text-primary-300" />
             {t('header.title')}
           </h1>
-          <p className="text-sm md:text-base text-neutral-600">
+          <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400">
             {t('items', { count: totalCount })}
             {isFetching && !isLoading && (
-              <span className="text-neutral-400 ml-2">{t('updating')}</span>
+              <span className="text-neutral-400 ml-2 dark:text-neutral-500">{t('updating')}</span>
             )}
           </p>
         </div>
@@ -806,7 +806,7 @@ export default function FoodItemsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex mb-0 border-b border-neutral-200 overflow-x-auto">
+      <div className="flex mb-0 border-b border-neutral-200 overflow-x-auto dark:border-neutral-700">
         {/* Primary tabs: Alla, Mina, Calculeat, primary datasource, shared lists */}
         <div className="flex gap-1">
           {allTabs
@@ -820,8 +820,8 @@ export default function FoodItemsPage() {
                 onClick={() => handleTabChange(tab.key)}
                 className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                   activeTab === tab.key
-                    ? 'border-primary-500 text-primary-600'
-                    : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+                    ? 'border-primary-500 text-primary-600 dark:text-primary-300'
+                    : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300 dark:hover:text-neutral-200 dark:text-neutral-400'
                 }`}
               >
                 {tab.label}
@@ -833,7 +833,7 @@ export default function FoodItemsPage() {
           tab => DATA_SOURCES.some(ds => ds.tabKey === tab.key) && tab.key !== primaryDataSourceTab
         ) && (
           <>
-            <div className="w-px bg-neutral-200 mx-3 my-1.5" />
+            <div className="w-px bg-neutral-200 mx-3 my-1.5 dark:bg-neutral-700" />
             <div className="flex gap-1">
               {allTabs
                 .filter(
@@ -847,8 +847,8 @@ export default function FoodItemsPage() {
                     onClick={() => handleTabChange(tab.key)}
                     className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                       activeTab === tab.key
-                        ? 'border-primary-500 text-primary-600 opacity-100'
-                        : 'border-transparent text-neutral-400 hover:text-neutral-600 hover:border-neutral-200 opacity-50 hover:opacity-75'
+                        ? 'border-primary-500 text-primary-600 opacity-100 dark:text-primary-300'
+                        : 'border-transparent text-neutral-400 hover:text-neutral-600 hover:border-neutral-200 opacity-50 hover:opacity-75 dark:hover:border-neutral-700 dark:text-neutral-500'
                     }`}
                   >
                     {tab.label}
@@ -860,7 +860,7 @@ export default function FoodItemsPage() {
         {/* "+" knapp för att skapa ny delad lista */}
         <button
           onClick={() => setCreateListOpen(true)}
-          className="px-3 py-2 text-sm font-medium border-b-2 border-transparent text-neutral-400 hover:text-primary-600 hover:border-neutral-300 transition-colors"
+          className="px-3 py-2 text-sm font-medium border-b-2 border-transparent text-neutral-400 hover:text-primary-600 hover:border-neutral-300 transition-colors dark:text-neutral-500"
           title={t('tooltip.createSharedList')}
         >
           <Plus className="h-4 w-4" />
@@ -882,7 +882,7 @@ export default function FoodItemsPage() {
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search */}
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400 dark:text-neutral-500" />
               <Input
                 placeholder={t('filter.search')}
                 value={searchQuery}
@@ -902,7 +902,7 @@ export default function FoodItemsPage() {
                 }}
                 className={
                   !colorFilter && !isRecipeFilter
-                    ? 'bg-neutral-200 hover:bg-neutral-300 border-neutral-400 font-semibold'
+                    ? 'bg-neutral-200 hover:bg-neutral-300 border-neutral-400 font-semibold dark:border-neutral-500 dark:bg-neutral-700'
                     : ''
                 }
               >
@@ -932,7 +932,9 @@ export default function FoodItemsPage() {
                 }}
                 className={
                   colorFilter === 'Yellow'
-                    ? 'bg-yellow-400 hover:bg-yellow-500 text-neutral-900 border-yellow-500 font-semibold'
+                    ? // Mörk text även i mörkt läge: knappen har gul botten, så
+                      // ljus text skulle bli oläslig
+                      'bg-yellow-400 hover:bg-yellow-500 text-neutral-900 border-yellow-500 font-semibold'
                     : ''
                 }
               >
@@ -977,29 +979,29 @@ export default function FoodItemsPage() {
 
       {/* Banner: livsmedel utan densitet (visas bara i Mina-fliken) */}
       {isMina && liquidNoDensityItems.length > 0 && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 overflow-hidden">
+        <div className="rounded-lg border border-amber-200 bg-amber-50 overflow-hidden dark:bg-amber-900/25 dark:border-amber-800">
           <button
             className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-amber-100 transition-colors"
             onClick={() => setDensityBannerExpanded(prev => !prev)}
           >
-            <span className="text-sm font-medium text-amber-800">
+            <span className="text-sm font-medium text-amber-800 dark:text-amber-300">
               {t('densityBanner.title', { count: liquidNoDensityItems.length })}
             </span>
             {densityBannerExpanded ? (
-              <ChevronUp className="h-4 w-4 text-amber-600 shrink-0" />
+              <ChevronUp className="h-4 w-4 text-amber-600 shrink-0 dark:text-amber-300" />
             ) : (
-              <ChevronDown className="h-4 w-4 text-amber-600 shrink-0" />
+              <ChevronDown className="h-4 w-4 text-amber-600 shrink-0 dark:text-amber-300" />
             )}
           </button>
           {densityBannerExpanded && (
-            <ul className="border-t border-amber-200 divide-y divide-amber-100">
+            <ul className="border-t border-amber-200 divide-y divide-amber-100 dark:border-amber-800">
               {liquidNoDensityItems.map(item => (
                 <li key={item.id} className="flex items-center justify-between px-4 py-2">
-                  <span className="text-sm text-amber-900">{item.name}</span>
+                  <span className="text-sm text-amber-900 dark:text-amber-300">{item.name}</span>
                   <Button
                     variant="outline"
                     size="sm"
-                    className="text-xs border-amber-300 text-amber-800 hover:bg-amber-100"
+                    className="text-xs border-amber-300 text-amber-800 hover:bg-amber-100 dark:text-amber-300 dark:border-amber-800"
                     onClick={async () => {
                       const fullItem = items.find(i => i.id === item.id)
                       if (fullItem) {
@@ -1026,7 +1028,7 @@ export default function FoodItemsPage() {
       {/* Food Items List */}
       {isLoading ? (
         <div className="text-center py-12">
-          <p className="text-neutral-600">{t('loading')}</p>
+          <p className="text-neutral-600 dark:text-neutral-400">{t('loading')}</p>
         </div>
       ) : items.length === 0 ? (
         <EmptyState
@@ -1080,7 +1082,7 @@ export default function FoodItemsPage() {
                     {/* Row 1: Name + color badge */}
                     <div className="flex items-center justify-between gap-2 mb-0.5">
                       <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                        <span className="font-medium text-neutral-900 text-sm truncate">
+                        <span className="font-medium text-neutral-900 text-sm truncate dark:text-neutral-100">
                           {item.name}
                         </span>
                         {item.is_recipe && <span className="text-xs shrink-0">👨‍🍳</span>}
@@ -1113,7 +1115,7 @@ export default function FoodItemsPage() {
                     </div>
                     {/* Row 2: Portion + Macros combined */}
                     <div className="flex items-center gap-1.5 text-[10px] mb-1 flex-wrap">
-                      <span className="text-neutral-500">
+                      <span className="text-neutral-500 dark:text-neutral-400">
                         {displayData ? (
                           <>
                             {displayData.icon} {displayData.header}
@@ -1124,19 +1126,19 @@ export default function FoodItemsPage() {
                           </>
                         )}
                       </span>
-                      <span className="text-neutral-400">•</span>
-                      <span className="font-semibold text-primary-600">
+                      <span className="text-neutral-400 dark:text-neutral-500">•</span>
+                      <span className="font-semibold text-primary-600 dark:text-primary-300">
                         {displayData ? Math.round(displayData.kcal) : item.calories} kcal
                       </span>
-                      <span className="text-neutral-400">•</span>
+                      <span className="text-neutral-400 dark:text-neutral-500">•</span>
                       <span style={{ color: '#f5c518' }}>
                         F: {displayData ? displayData.fat.toFixed(1) : item.fat_g}g
                       </span>
-                      <span className="text-neutral-400">•</span>
+                      <span className="text-neutral-400 dark:text-neutral-500">•</span>
                       <span style={{ color: '#fb923c' }}>
                         K: {displayData ? displayData.carb.toFixed(1) : item.carb_g}g
                       </span>
-                      <span className="text-neutral-400">•</span>
+                      <span className="text-neutral-400 dark:text-neutral-500">•</span>
                       <span style={{ color: '#f43f5e' }}>
                         P: {displayData ? displayData.protein.toFixed(1) : item.protein_g}g
                       </span>
@@ -1151,8 +1153,8 @@ export default function FoodItemsPage() {
                               onClick={() => switchToDisplayMode(item.id, mode)}
                               className={`px-1.5 py-0.5 text-[9px] font-medium rounded-full transition-all shrink-0 ${
                                 mode === currentMode
-                                  ? 'bg-primary-100 text-primary-700 border-2 border-primary-500'
-                                  : 'text-neutral-600 bg-white border border-neutral-300 active:bg-neutral-100'
+                                  ? 'bg-primary-100 text-primary-700 border-2 border-primary-500 dark:bg-primary-900/25 dark:text-primary-300'
+                                  : 'text-neutral-600 bg-white border border-neutral-300 active:bg-neutral-100 dark:border-neutral-600 dark:bg-neutral-850 dark:text-neutral-400'
                               }`}
                             >
                               {getButtonLabel(mode, item)}
@@ -1167,7 +1169,7 @@ export default function FoodItemsPage() {
                           className="h-7 w-7 p-0"
                           title={t('tooltip.viewNutrients')}
                         >
-                          <Info className="h-3 w-3 text-neutral-500" />
+                          <Info className="h-3 w-3 text-neutral-500 dark:text-neutral-400" />
                         </Button>
                         {isMina && (sharedLists.length > 0 || isAdmin) && (
                           <DropdownMenu>
@@ -1178,7 +1180,7 @@ export default function FoodItemsPage() {
                                 className="h-7 w-7 p-0"
                                 title={t('tooltip.copyToList')}
                               >
-                                <Copy className="h-3 w-3 text-neutral-500" />
+                                <Copy className="h-3 w-3 text-neutral-500 dark:text-neutral-400" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
@@ -1193,7 +1195,7 @@ export default function FoodItemsPage() {
                               {isAdmin && (
                                 <DropdownMenuItem
                                   onClick={() => handleCopyToCalculeat(item.id)}
-                                  className="text-amber-700 font-medium"
+                                  className="text-amber-700 font-medium dark:text-amber-300"
                                 >
                                   Calculeat-listan
                                 </DropdownMenuItem>
@@ -1207,7 +1209,7 @@ export default function FoodItemsPage() {
                           onClick={() => handleEdit(item)}
                           className="h-7 w-7 p-0"
                         >
-                          <Edit2 className="h-3 w-3 text-blue-600" />
+                          <Edit2 className="h-3 w-3 text-blue-600 dark:text-blue-300" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -1216,7 +1218,7 @@ export default function FoodItemsPage() {
                           disabled={deletingItemId === item.id}
                           className="h-7 w-7 p-0"
                         >
-                          <Trash2 className="h-3 w-3 text-red-600" />
+                          <Trash2 className="h-3 w-3 text-red-600 dark:text-red-300" />
                         </Button>
                       </div>
                     </div>
@@ -1231,9 +1233,9 @@ export default function FoodItemsPage() {
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-neutral-50 border-b">
+                  <thead className="bg-neutral-50 border-b dark:bg-neutral-900">
                     <tr>
-                      <th className="text-left p-4 text-sm font-semibold text-neutral-900">
+                      <th className="text-left p-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                         <button
                           onClick={() => handleSort('name')}
                           className="flex items-center gap-1 hover:text-primary-600 transition-colors"
@@ -1250,10 +1252,10 @@ export default function FoodItemsPage() {
                           )}
                         </button>
                       </th>
-                      <th className="text-left p-4 text-sm font-semibold text-neutral-900">
+                      <th className="text-left p-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                         {t('table.portion')}
                       </th>
-                      <th className="text-right p-4 text-sm font-semibold text-neutral-900">
+                      <th className="text-right p-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                         <button
                           onClick={() => handleSort('calories')}
                           className="flex items-center gap-1 ml-auto hover:text-primary-600 transition-colors"
@@ -1270,7 +1272,7 @@ export default function FoodItemsPage() {
                           )}
                         </button>
                       </th>
-                      <th className="text-right p-4 text-sm font-semibold text-neutral-900">
+                      <th className="text-right p-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                         <button
                           onClick={() => handleSort('fat')}
                           className="flex items-center gap-1 ml-auto hover:text-primary-600 transition-colors"
@@ -1287,7 +1289,7 @@ export default function FoodItemsPage() {
                           )}
                         </button>
                       </th>
-                      <th className="text-right p-4 text-sm font-semibold text-neutral-900">
+                      <th className="text-right p-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                         <button
                           onClick={() => handleSort('carb')}
                           className="flex items-center gap-1 ml-auto hover:text-primary-600 transition-colors"
@@ -1304,7 +1306,7 @@ export default function FoodItemsPage() {
                           )}
                         </button>
                       </th>
-                      <th className="text-right p-4 text-sm font-semibold text-neutral-900">
+                      <th className="text-right p-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                         <button
                           onClick={() => handleSort('protein')}
                           className="flex items-center gap-1 ml-auto hover:text-primary-600 transition-colors"
@@ -1322,7 +1324,7 @@ export default function FoodItemsPage() {
                         </button>
                       </th>
                       {showEnergyDensity && (
-                        <th className="text-center p-4 text-sm font-semibold text-neutral-900">
+                        <th className="text-center p-4 text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                           <button
                             onClick={() => handleSort('color')}
                             className="flex items-center gap-1 mx-auto hover:text-primary-600 transition-colors"
@@ -1346,12 +1348,14 @@ export default function FoodItemsPage() {
                     {sortedItems.map(item => (
                       <tr
                         key={item.id}
-                        className="border-b hover:bg-neutral-50 transition-colors cursor-pointer"
+                        className="border-b hover:bg-neutral-50 transition-colors cursor-pointer dark:hover:bg-neutral-800"
                         onClick={() => handleShowNutrients(item)}
                       >
                         <td className="p-4">
                           <div className="flex items-center gap-2">
-                            <span className="font-medium text-neutral-900">{item.name}</span>
+                            <span className="font-medium text-neutral-900 dark:text-neutral-100">
+                              {item.name}
+                            </span>
                             {item.is_recipe && (
                               <span title={t('filter.recipe')} className="text-base">
                                 👨‍🍳
@@ -1373,7 +1377,7 @@ export default function FoodItemsPage() {
                             })()}
                           </div>
                         </td>
-                        <td className="p-4 text-neutral-600 text-sm">
+                        <td className="p-4 text-neutral-600 text-sm dark:text-neutral-400">
                           <div className="flex items-center gap-2">
                             <div className="flex-1">
                               {(() => {
@@ -1390,7 +1394,7 @@ export default function FoodItemsPage() {
                                 }
 
                                 return (
-                                  <div className="font-medium text-neutral-900 flex items-center gap-1">
+                                  <div className="font-medium text-neutral-900 flex items-center gap-1 dark:text-neutral-100">
                                     <span className="text-base">{displayData.icon}</span>
                                     <span>{displayData.header}</span>
                                   </div>
@@ -1420,8 +1424,8 @@ export default function FoodItemsPage() {
                                         }}
                                         className={`px-2 py-0.5 text-xs font-medium rounded-full transition-all max-w-20 truncate ${
                                           isActive
-                                            ? 'bg-primary-100 text-primary-700 border-2 border-primary-500'
-                                            : 'text-neutral-600 bg-white border border-neutral-300 hover:bg-neutral-100 hover:text-neutral-800 hover:border-neutral-400'
+                                            ? 'bg-primary-100 text-primary-700 border-2 border-primary-500 dark:bg-primary-900/25 dark:text-primary-300'
+                                            : 'text-neutral-600 bg-white border border-neutral-300 hover:bg-neutral-100 hover:text-neutral-800 hover:border-neutral-400 dark:hover:bg-neutral-800 dark:hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-850 dark:text-neutral-400'
                                         }`}
                                         title={getUnitButtonTooltip(mode, item)}
                                         aria-label={getUnitButtonTooltip(mode, item)}
@@ -1444,20 +1448,24 @@ export default function FoodItemsPage() {
                             if (!displayData || !item.kcal_per_gram) {
                               return (
                                 <div>
-                                  <span className="font-semibold text-primary-600">
+                                  <span className="font-semibold text-primary-600 dark:text-primary-300">
                                     {item.calories}
                                   </span>
-                                  <span className="text-xs text-neutral-500 ml-1">kcal</span>
+                                  <span className="text-xs text-neutral-500 ml-1 dark:text-neutral-400">
+                                    kcal
+                                  </span>
                                 </div>
                               )
                             }
 
                             return (
                               <div>
-                                <span className="font-semibold text-primary-600">
+                                <span className="font-semibold text-primary-600 dark:text-primary-300">
                                   {Math.round(displayData.kcal)}
                                 </span>
-                                <span className="text-xs text-neutral-500 ml-1">kcal</span>
+                                <span className="text-xs text-neutral-500 ml-1 dark:text-neutral-400">
+                                  kcal
+                                </span>
                               </div>
                             )
                           })()}
@@ -1474,19 +1482,25 @@ export default function FoodItemsPage() {
                                   <span className="font-semibold" style={{ color: '#f5c518' }}>
                                     {item.fat_g}
                                   </span>
-                                  <span className="text-xs text-neutral-500 ml-1">g</span>
+                                  <span className="text-xs text-neutral-500 ml-1 dark:text-neutral-400">
+                                    g
+                                  </span>
                                 </td>
                                 <td className="p-4 text-right">
                                   <span className="font-semibold" style={{ color: '#fb923c' }}>
                                     {item.carb_g}
                                   </span>
-                                  <span className="text-xs text-neutral-500 ml-1">g</span>
+                                  <span className="text-xs text-neutral-500 ml-1 dark:text-neutral-400">
+                                    g
+                                  </span>
                                 </td>
                                 <td className="p-4 text-right">
                                   <span className="font-semibold" style={{ color: '#f43f5e' }}>
                                     {item.protein_g}
                                   </span>
-                                  <span className="text-xs text-neutral-500 ml-1">g</span>
+                                  <span className="text-xs text-neutral-500 ml-1 dark:text-neutral-400">
+                                    g
+                                  </span>
                                 </td>
                               </>
                             )
@@ -1498,19 +1512,25 @@ export default function FoodItemsPage() {
                                 <span className="font-semibold" style={{ color: '#f5c518' }}>
                                   {displayData.fat.toFixed(1)}
                                 </span>
-                                <span className="text-xs text-neutral-500 ml-1">g</span>
+                                <span className="text-xs text-neutral-500 ml-1 dark:text-neutral-400">
+                                  g
+                                </span>
                               </td>
                               <td className="p-4 text-right">
                                 <span className="font-semibold" style={{ color: '#fb923c' }}>
                                   {displayData.carb.toFixed(1)}
                                 </span>
-                                <span className="text-xs text-neutral-500 ml-1">g</span>
+                                <span className="text-xs text-neutral-500 ml-1 dark:text-neutral-400">
+                                  g
+                                </span>
                               </td>
                               <td className="p-4 text-right">
                                 <span className="font-semibold" style={{ color: '#f43f5e' }}>
                                   {displayData.protein.toFixed(1)}
                                 </span>
-                                <span className="text-xs text-neutral-500 ml-1">g</span>
+                                <span className="text-xs text-neutral-500 ml-1 dark:text-neutral-400">
+                                  g
+                                </span>
                               </td>
                             </>
                           )
@@ -1522,10 +1542,10 @@ export default function FoodItemsPage() {
                                 variant="outline"
                                 className={
                                   item.energy_density_color === 'Green'
-                                    ? 'bg-green-100 text-green-700 border-green-300'
+                                    ? 'bg-green-100 text-green-700 border-green-300 dark:bg-green-900/25 dark:text-green-300 dark:border-green-800'
                                     : item.energy_density_color === 'Yellow'
-                                      ? 'bg-yellow-100 text-yellow-700 border-yellow-300'
-                                      : 'bg-orange-100 text-orange-700 border-orange-300'
+                                      ? 'bg-yellow-100 text-yellow-700 border-yellow-300 dark:bg-yellow-900/25 dark:text-yellow-300 dark:border-yellow-800'
+                                      : 'bg-orange-100 text-orange-700 border-orange-300 dark:bg-orange-900/25 dark:text-orange-300 dark:border-orange-800'
                                 }
                               >
                                 {item.energy_density_color === 'Green'
@@ -1549,7 +1569,7 @@ export default function FoodItemsPage() {
                                     className="h-8 w-8 p-0"
                                     title={t('tooltip.copyToList')}
                                   >
-                                    <Copy className="h-4 w-4 text-neutral-500" />
+                                    <Copy className="h-4 w-4 text-neutral-500 dark:text-neutral-400" />
                                   </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
@@ -1570,7 +1590,7 @@ export default function FoodItemsPage() {
                                         e.stopPropagation()
                                         handleCopyToCalculeat(item.id)
                                       }}
-                                      className="text-amber-700 font-medium"
+                                      className="text-amber-700 font-medium dark:text-amber-300"
                                     >
                                       Calculeat-listan
                                     </DropdownMenuItem>
@@ -1587,7 +1607,7 @@ export default function FoodItemsPage() {
                               }}
                               className="h-8 w-8 p-0"
                             >
-                              <Edit2 className="h-4 w-4 text-blue-600" />
+                              <Edit2 className="h-4 w-4 text-blue-600 dark:text-blue-300" />
                             </Button>
                             <Button
                               variant="ghost"
@@ -1599,7 +1619,7 @@ export default function FoodItemsPage() {
                               disabled={deletingItemId === item.id}
                               className="h-8 w-8 p-0"
                             >
-                              <Trash2 className="h-4 w-4 text-red-600" />
+                              <Trash2 className="h-4 w-4 text-red-600 dark:text-red-300" />
                             </Button>
                           </div>
                         </td>
@@ -1614,7 +1634,7 @@ export default function FoodItemsPage() {
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex items-center justify-between mt-4 px-1">
-              <p className="text-sm text-neutral-500">
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">
                 {t('pagination.page', { page: page + 1, total: totalPages })}
               </p>
               <div className="flex gap-2">
@@ -1688,8 +1708,10 @@ export default function FoodItemsPage() {
               className="w-full justify-start h-auto py-3 px-4"
             >
               <div className="text-left">
-                <p className="font-medium text-orange-700">{t('listEdit.editInList')}</p>
-                <p className="text-xs font-normal text-orange-600 mt-0.5">
+                <p className="font-medium text-orange-700 dark:text-orange-300">
+                  {t('listEdit.editInList')}
+                </p>
+                <p className="text-xs font-normal text-orange-600 mt-0.5 dark:text-orange-300">
                   {t('listEdit.editInListDesc')}
                 </p>
               </div>

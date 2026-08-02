@@ -69,7 +69,7 @@ export function RecipeImageUpload({ value, onChange }: RecipeImageUploadProps) {
       />
 
       {value ? (
-        <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-neutral-100">
+        <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800">
           <img src={value} alt={t('imageUpload.altImage')} className="w-full h-full object-cover" />
           <button
             type="button"
@@ -103,8 +103,8 @@ export function RecipeImageUpload({ value, onChange }: RecipeImageUploadProps) {
             transition-colors text-sm
             ${
               isDragOver
-                ? 'border-primary-400 bg-primary-50 text-primary-600'
-                : 'border-neutral-200 bg-neutral-50 text-neutral-500 hover:border-neutral-300 hover:bg-neutral-100'
+                ? 'border-primary-400 bg-primary-50 text-primary-600 dark:bg-primary-900/25 dark:text-primary-300'
+                : 'border-neutral-200 bg-neutral-50 text-neutral-500 hover:border-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400'
             }
             disabled:opacity-60 disabled:cursor-not-allowed
           `}
@@ -118,7 +118,9 @@ export function RecipeImageUpload({ value, onChange }: RecipeImageUploadProps) {
             <>
               <Camera className="h-6 w-6" />
               <span>{t('imageUpload.addImage')}</span>
-              <span className="text-xs text-neutral-400">{t('imageUpload.dragHint')}</span>
+              <span className="text-xs text-neutral-400 dark:text-neutral-500">
+                {t('imageUpload.dragHint')}
+              </span>
             </>
           )}
         </button>

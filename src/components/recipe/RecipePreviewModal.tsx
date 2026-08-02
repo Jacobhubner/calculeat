@@ -31,9 +31,12 @@ interface RecipePreviewModalProps {
 }
 
 const colorBadgeClass = {
-  Green: 'bg-green-100 text-green-700 border-green-300',
-  Yellow: 'bg-yellow-100 text-yellow-700 border-yellow-300',
-  Orange: 'bg-orange-100 text-orange-700 border-orange-300',
+  Green:
+    'bg-green-100 text-green-700 border-green-300 dark:bg-green-900/25 dark:text-green-300 dark:border-green-800',
+  Yellow:
+    'bg-yellow-100 text-yellow-700 border-yellow-300 dark:bg-yellow-900/25 dark:text-yellow-300 dark:border-yellow-800',
+  Orange:
+    'bg-orange-100 text-orange-700 border-orange-300 dark:bg-orange-900/25 dark:text-orange-300 dark:border-orange-800',
 }
 
 export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreviewModalProps) {
@@ -144,7 +147,7 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
       <DialogContent className="md:max-w-lg">
         <DialogHeader className="pr-8">
           <div className="flex items-start gap-3">
-            <ScrollText className="h-5 w-5 text-primary-600 flex-shrink-0 mt-0.5" />
+            <ScrollText className="h-5 w-5 text-primary-600 flex-shrink-0 mt-0.5 dark:text-primary-300" />
             <div className="min-w-0">
               <DialogTitle className="text-left">{recipe.name}</DialogTitle>
               <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -156,7 +159,7 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
                     {t(`card.color${energyDensityColor}`)}
                   </Badge>
                 )}
-                <DialogDescription className="text-xs text-neutral-500 mt-0">
+                <DialogDescription className="text-xs text-neutral-500 mt-0 dark:text-neutral-400">
                   {savedAs100g
                     ? t('card.per100g')
                     : `${servings} ${servings === 1 ? t('card.portion') : t('card.portionPlural')}`}
@@ -177,41 +180,49 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
 
           {/* Nutrition summary */}
           {displayCalories !== null && (
-            <div className="bg-neutral-50 rounded-lg p-3">
-              <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2">
+            <div className="bg-neutral-50 rounded-lg p-3 dark:bg-neutral-900">
+              <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-2 dark:text-neutral-400">
                 {savedAs100g
                   ? t('nutrition.per100g')
                   : t('nutrition.perServing', { weight: fi?.weight_grams ?? '?' })}
               </p>
               <div className="flex gap-4">
                 <div className="flex-1 text-center">
-                  <p className="text-lg font-bold text-primary-600">{displayCalories}</p>
-                  <p className="text-xs text-neutral-500">kcal</p>
+                  <p className="text-lg font-bold text-primary-600 dark:text-primary-300">
+                    {displayCalories}
+                  </p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">kcal</p>
                 </div>
                 <div className="flex-1 text-center">
                   <p className="text-sm font-semibold" style={{ color: '#f5c518' }}>
                     {displayFat}g
                   </p>
-                  <p className="text-xs text-neutral-500">{t('nutrition.fat')}</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                    {t('nutrition.fat')}
+                  </p>
                 </div>
                 <div className="flex-1 text-center">
                   <p className="text-sm font-semibold" style={{ color: '#fb923c' }}>
                     {displayCarbs}g
                   </p>
-                  <p className="text-xs text-neutral-500">{t('nutrition.carbs')}</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                    {t('nutrition.carbs')}
+                  </p>
                 </div>
                 <div className="flex-1 text-center">
                   <p className="text-sm font-semibold" style={{ color: '#f43f5e' }}>
                     {displayProtein}g
                   </p>
-                  <p className="text-xs text-neutral-500">{t('nutrition.protein')}</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                    {t('nutrition.protein')}
+                  </p>
                 </div>
               </div>
               {(subNutrients.saturatedFat != null ||
                 subNutrients.sugars != null ||
                 subNutrients.salt != null ||
                 subNutrients.fiber != null) && (
-                <div className="mt-2 pt-2 border-t border-neutral-200 space-y-1 text-xs text-neutral-600">
+                <div className="mt-2 pt-2 border-t border-neutral-200 space-y-1 text-xs text-neutral-600 dark:border-neutral-700 dark:text-neutral-400">
                   {subNutrients.saturatedFat != null && (
                     <div className="flex justify-between">
                       <span>{t('nutrition.saturatedFat')}</span>
@@ -243,22 +254,22 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
 
           {/* Time info */}
           {(recipe.prep_time_min || recipe.cook_time_min) && (
-            <div className="flex gap-4 text-sm text-neutral-600">
+            <div className="flex gap-4 text-sm text-neutral-600 dark:text-neutral-400">
               {recipe.prep_time_min ? (
                 <span className="flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5 text-neutral-400" />
+                  <Clock className="h-3.5 w-3.5 text-neutral-400 dark:text-neutral-500" />
                   {t('preview.prepTime', { minutes: recipe.prep_time_min })}
                 </span>
               ) : null}
               {recipe.cook_time_min ? (
                 <span className="flex items-center gap-1">
-                  <ChefHat className="h-3.5 w-3.5 text-neutral-400" />
+                  <ChefHat className="h-3.5 w-3.5 text-neutral-400 dark:text-neutral-500" />
                   {t('preview.cookTime', { minutes: recipe.cook_time_min })}
                 </span>
               ) : null}
               {!savedAs100g && (
                 <span className="flex items-center gap-1">
-                  <Users className="h-3.5 w-3.5 text-neutral-400" />
+                  <Users className="h-3.5 w-3.5 text-neutral-400 dark:text-neutral-500" />
                   {servings} {servings === 1 ? t('card.portion') : t('card.portionPlural')}
                 </span>
               )}
@@ -268,16 +279,16 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
           {/* Ingredients */}
           {sortedIngredients.length > 0 && (
             <div>
-              <p className="text-sm font-semibold text-neutral-700 mb-2">
+              <p className="text-sm font-semibold text-neutral-700 mb-2 dark:text-neutral-200">
                 {t('modal.ingredients')}
               </p>
               <ul className="space-y-1.5">
                 {sortedIngredients.map(ing => (
                   <li key={ing.id} className="flex items-center justify-between text-sm">
-                    <span className="text-neutral-800">
+                    <span className="text-neutral-800 dark:text-neutral-200">
                       {ing.food_item?.name ?? t('preview.unknownIngredient')}
                     </span>
-                    <span className="text-neutral-500 ml-4 flex-shrink-0">
+                    <span className="text-neutral-500 ml-4 flex-shrink-0 dark:text-neutral-400">
                       {ing.amount} {ing.unit}
                       {(() => {
                         const WEIGHT_VOLUME = new Set(['g', 'kg', 'dl', 'ml', 'msk', 'tsk'])
@@ -288,9 +299,19 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
                         if (weightG <= 0) return null
                         if (food.ml_per_gram && food.ml_per_gram > 0) {
                           const ml = Math.round(weightG * food.ml_per_gram)
-                          return <span className="text-neutral-400"> ({ml}ml)</span>
+                          return (
+                            <span className="text-neutral-400 dark:text-neutral-500">
+                              {' '}
+                              ({ml}ml)
+                            </span>
+                          )
                         }
-                        return <span className="text-neutral-400"> ({Math.round(weightG)}g)</span>
+                        return (
+                          <span className="text-neutral-400 dark:text-neutral-500">
+                            {' '}
+                            ({Math.round(weightG)}g)
+                          </span>
+                        )
                       })()}
                     </span>
                   </li>
@@ -302,10 +323,10 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
           {/* Instructions */}
           {recipe.instructions && (
             <div>
-              <p className="text-sm font-semibold text-neutral-700 mb-2">
+              <p className="text-sm font-semibold text-neutral-700 mb-2 dark:text-neutral-200">
                 {t('modal.instructionsLabel')}
               </p>
-              <p className="text-sm text-neutral-700 whitespace-pre-line leading-relaxed">
+              <p className="text-sm text-neutral-700 whitespace-pre-line leading-relaxed dark:text-neutral-200">
                 {recipe.instructions}
               </p>
             </div>
@@ -314,7 +335,9 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
           {/* Equipment */}
           {recipe.equipment && recipe.equipment.length > 0 && (
             <div>
-              <p className="text-sm font-semibold text-neutral-700 mb-2">{t('modal.equipment')}</p>
+              <p className="text-sm font-semibold text-neutral-700 mb-2 dark:text-neutral-200">
+                {t('modal.equipment')}
+              </p>
               <div className="flex flex-wrap gap-2">
                 {recipe.equipment.map(eq => (
                   <Badge key={eq} variant="outline" className="text-xs">

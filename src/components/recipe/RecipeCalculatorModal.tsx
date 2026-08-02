@@ -146,7 +146,7 @@ const InstructionsTextarea = React.memo(function InstructionsTextarea({
       onBlur={e => onChange(e.target.value)}
       placeholder={placeholder}
       rows={5}
-      className="w-full rounded-xl border border-neutral-300 p-3 text-base md:text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+      className="w-full rounded-xl border border-neutral-300 p-3 text-base md:text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:border-neutral-600"
     />
   )
 })
@@ -646,7 +646,7 @@ export function RecipeCalculatorModal({
         <DialogContent className="md:max-w-2xl md:max-h-[90vh] md:overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <ChefHat className="h-5 w-5 text-primary-600" />
+              <ChefHat className="h-5 w-5 text-primary-600 dark:text-primary-300" />
               {isEditing ? t('modal.titleEdit') : t('modal.titleNew')}
             </DialogTitle>
             <DialogDescription>
@@ -655,13 +655,13 @@ export function RecipeCalculatorModal({
           </DialogHeader>
 
           {isSharedListRecipe && (
-            <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700 mx-3 md:mx-0">
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-3 text-sm text-blue-700 mx-3 md:mx-0 dark:bg-blue-900/25 dark:text-blue-300 dark:border-blue-800">
               {isEditing ? t('modal.sharedListEdit') : t('modal.sharedListNew')}
             </div>
           )}
 
           {changedIngredients.length > 0 && (
-            <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-800 mx-3 md:mx-0">
+            <div className="bg-amber-50 border border-amber-200 rounded-md p-3 text-sm text-amber-800 mx-3 md:mx-0 dark:bg-amber-900/25 dark:text-amber-300 dark:border-amber-800">
               <p className="font-medium mb-1">{t('modal.ingredientsChangedTitle')}</p>
               <ul className="list-disc list-inside space-y-0.5">
                 {changedIngredients.map(ing => (
@@ -672,7 +672,9 @@ export function RecipeCalculatorModal({
                   </li>
                 ))}
               </ul>
-              <p className="mt-1 text-amber-700 text-xs">{t('modal.ingredientsChangedHint')}</p>
+              <p className="mt-1 text-amber-700 text-xs dark:text-amber-300">
+                {t('modal.ingredientsChangedHint')}
+              </p>
             </div>
           )}
 
@@ -705,23 +707,29 @@ export function RecipeCalculatorModal({
 
                   {/* Loading state for foods */}
                   {foodsLoading && (
-                    <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6 text-center">
-                      <p className="text-neutral-500 text-sm">{t('modal.loadingFoods')}</p>
+                    <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6 text-center dark:border-neutral-700 dark:bg-neutral-900">
+                      <p className="text-neutral-500 text-sm dark:text-neutral-400">
+                        {t('modal.loadingFoods')}
+                      </p>
                     </div>
                   )}
 
                   {/* Error state for foods */}
                   {foodsError && (
-                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3 dark:bg-red-900/25 dark:border-red-800">
                       <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
-                      <p className="text-red-700 text-sm">{t('modal.foodsError')}</p>
+                      <p className="text-red-700 text-sm dark:text-red-300">
+                        {t('modal.foodsError')}
+                      </p>
                     </div>
                   )}
 
                   {/* Empty state - no ingredients yet */}
                   {!foodsLoading && !foodsError && ingredients.length === 0 && (
-                    <div className="bg-neutral-50 border-2 border-dashed border-neutral-200 rounded-xl p-8 text-center">
-                      <p className="text-neutral-500 text-sm mb-4">{t('modal.noIngredients')}</p>
+                    <div className="bg-neutral-50 border-2 border-dashed border-neutral-200 rounded-xl p-8 text-center dark:border-neutral-700 dark:bg-neutral-900">
+                      <p className="text-neutral-500 text-sm mb-4 dark:text-neutral-400">
+                        {t('modal.noIngredients')}
+                      </p>
                       <Button variant="outline" onClick={handleAddIngredient} className="gap-2">
                         <Plus className="h-4 w-4" />
                         {t('modal.addIngredient')}
@@ -769,17 +777,17 @@ export function RecipeCalculatorModal({
                 </div>
 
                 {/* Hopfällbar detaljsektion */}
-                <div className="border border-neutral-200 rounded-xl overflow-hidden">
+                <div className="border border-neutral-200 rounded-xl overflow-hidden dark:border-neutral-700">
                   <button
                     type="button"
                     onClick={() => setDetailsOpen(prev => !prev)}
-                    className="w-full flex items-center justify-between px-4 py-3 bg-neutral-50 hover:bg-neutral-100 transition-colors text-sm font-medium text-neutral-700"
+                    className="w-full flex items-center justify-between px-4 py-3 bg-neutral-50 hover:bg-neutral-100 transition-colors text-sm font-medium text-neutral-700 dark:hover:bg-neutral-800 dark:bg-neutral-900 dark:text-neutral-200"
                   >
                     <span>{t('modal.detailsSection')}</span>
                     {detailsOpen ? (
-                      <ChevronUp className="h-4 w-4 text-neutral-400" />
+                      <ChevronUp className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />
                     ) : (
-                      <ChevronDown className="h-4 w-4 text-neutral-400" />
+                      <ChevronDown className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />
                     )}
                   </button>
 
@@ -806,7 +814,9 @@ export function RecipeCalculatorModal({
                         <Label>{t('modal.cookingTime')}</Label>
                         <div className="grid grid-cols-2 gap-3">
                           <div className="space-y-1">
-                            <span className="text-xs text-neutral-500">{t('modal.prepTime')}</span>
+                            <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                              {t('modal.prepTime')}
+                            </span>
                             <Input
                               type="number"
                               min={0}
@@ -822,7 +832,9 @@ export function RecipeCalculatorModal({
                             />
                           </div>
                           <div className="space-y-1">
-                            <span className="text-xs text-neutral-500">{t('modal.cookTime')}</span>
+                            <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                              {t('modal.cookTime')}
+                            </span>
                             <Input
                               type="number"
                               min={0}
@@ -840,7 +852,7 @@ export function RecipeCalculatorModal({
                         </div>
                         {(typeof prepTime === 'number' || typeof cookTime === 'number') &&
                           (prepTime as number) + (cookTime as number) > 0 && (
-                            <div className="flex items-center gap-1.5 text-sm text-neutral-500">
+                            <div className="flex items-center gap-1.5 text-sm text-neutral-500 dark:text-neutral-400">
                               <Clock className="h-3.5 w-3.5" />
                               <span>
                                 {t('modal.totalTime', {
@@ -882,8 +894,8 @@ export function RecipeCalculatorModal({
                                 px-3 py-1.5 rounded-full text-sm border transition-colors
                                 ${
                                   selected
-                                    ? 'bg-primary-100 text-primary-700 border-primary-300'
-                                    : 'bg-white text-neutral-600 border-neutral-300 hover:border-neutral-400'
+                                    ? 'bg-primary-100 text-primary-700 border-primary-300 dark:bg-primary-900/25 dark:text-primary-300 dark:border-primary-800'
+                                    : 'bg-white text-neutral-600 border-neutral-300 hover:border-neutral-400 dark:hover:border-neutral-500 dark:border-neutral-600 dark:bg-neutral-850 dark:text-neutral-400'
                                 }
                               `}
                               >
@@ -900,15 +912,18 @@ export function RecipeCalculatorModal({
                             const fields = EQUIPMENT_SETTINGS_FIELDS[eq as EquipmentValue]!
                             const settings = equipmentSettings[eq] ?? {}
                             return (
-                              <div key={eq} className="bg-neutral-50 rounded-xl p-3 space-y-2">
-                                <p className="text-xs font-medium text-neutral-600">
+                              <div
+                                key={eq}
+                                className="bg-neutral-50 rounded-xl p-3 space-y-2 dark:bg-neutral-900"
+                              >
+                                <p className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
                                   {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                   {t(`equipmentOptions.${eq}` as any)}
                                 </p>
                                 <div className="grid grid-cols-2 gap-3">
                                   {fields.map(field => (
                                     <div key={field.key} className="space-y-1">
-                                      <span className="text-xs text-neutral-500">
+                                      <span className="text-xs text-neutral-500 dark:text-neutral-400">
                                         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                         {t(`equipmentFields.${field.key}` as any)}
                                         {field.unit ? ` (${field.unit})` : ''}
@@ -948,7 +963,7 @@ export function RecipeCalculatorModal({
 
                 {/* Error message */}
                 {error && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700 dark:bg-red-900/25 dark:text-red-300 dark:border-red-800">
                     {error}
                   </div>
                 )}
@@ -976,7 +991,7 @@ export function RecipeCalculatorModal({
                       value="portion"
                       checked={saveAs === 'portion'}
                       onChange={() => setSaveAs('portion')}
-                      className="w-4 h-4 text-primary-600 focus:ring-primary-500"
+                      className="w-4 h-4 text-primary-600 focus:ring-primary-500 dark:text-primary-300"
                     />
                     <span className="text-sm">
                       {t('modal.saveAsPortion', {
@@ -991,12 +1006,12 @@ export function RecipeCalculatorModal({
                       value="100g"
                       checked={saveAs === '100g'}
                       onChange={() => setSaveAs('100g')}
-                      className="w-4 h-4 text-primary-600 focus:ring-primary-500"
+                      className="w-4 h-4 text-primary-600 focus:ring-primary-500 dark:text-primary-300"
                     />
                     <span className="text-sm">{t('modal.saveAs100g')}</span>
                   </label>
                 </div>
-                <p className="text-xs text-neutral-500 mt-2">
+                <p className="text-xs text-neutral-500 mt-2 dark:text-neutral-400">
                   {saveAs === 'portion' ? t('modal.saveAsPortionHint') : t('modal.saveAs100gHint')}
                 </p>
               </div>

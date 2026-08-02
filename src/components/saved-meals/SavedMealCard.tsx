@@ -98,7 +98,7 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-300"
                 onClick={() => setShowDeleteDialog(true)}
               >
                 <Trash2 className="h-4 w-4" />
@@ -107,8 +107,8 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
           </div>
 
           {/* Nutrition Summary */}
-          <div className="flex items-center gap-3 text-sm text-neutral-600 mt-2">
-            <span className="font-semibold text-primary-600">
+          <div className="flex items-center gap-3 text-sm text-neutral-600 mt-2 dark:text-neutral-400">
+            <span className="font-semibold text-primary-600 dark:text-primary-300">
               {Math.round(totals.calories)} kcal
             </span>
             <span>•</span>
@@ -119,7 +119,7 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
           </div>
 
           {/* Macros */}
-          <div className="flex items-center gap-3 text-xs text-neutral-500 mt-1">
+          <div className="flex items-center gap-3 text-xs text-neutral-500 mt-1 dark:text-neutral-400">
             <span>F: {totals.fat.toFixed(1)}g</span>
             <span>K: {totals.carbs.toFixed(1)}g</span>
             <span>P: {totals.protein.toFixed(1)}g</span>
@@ -127,7 +127,7 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
 
           {/* Last Used */}
           {meal.last_used_at && (
-            <p className="text-xs text-neutral-400 mt-2">
+            <p className="text-xs text-neutral-400 mt-2 dark:text-neutral-500">
               {t('savedMealCard.lastUsed')}{' '}
               {new Date(meal.last_used_at).toLocaleDateString('sv-SE', {
                 day: 'numeric',
@@ -154,7 +154,7 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
             <Button
               variant="ghost"
               size="sm"
-              className="w-full gap-2 text-neutral-600"
+              className="w-full gap-2 text-neutral-600 dark:text-neutral-400"
               onClick={() => setShowItems(!showItems)}
             >
               {showItems ? (
@@ -182,18 +182,18 @@ export default function SavedMealCard({ meal, onUseToday, onEdit }: SavedMealCar
                 return (
                   <div
                     key={item.id}
-                    className="p-2 bg-neutral-50 rounded text-sm flex items-center justify-between"
+                    className="p-2 bg-neutral-50 rounded text-sm flex items-center justify-between dark:bg-neutral-900"
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-neutral-900 truncate">
+                      <p className="font-medium text-neutral-900 truncate dark:text-neutral-100">
                         {foodItem?.name || t('savedMealCard.unknownFood')}
                       </p>
-                      <p className="text-xs text-neutral-500">
+                      <p className="text-xs text-neutral-500 dark:text-neutral-400">
                         {item.amount} {item.unit}
                       </p>
                     </div>
                     {itemNutrition && (
-                      <span className="text-xs text-neutral-600 shrink-0 ml-2">
+                      <span className="text-xs text-neutral-600 shrink-0 ml-2 dark:text-neutral-400">
                         {Math.round(itemNutrition.calories)} kcal
                       </span>
                     )}

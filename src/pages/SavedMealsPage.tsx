@@ -73,10 +73,10 @@ export default function SavedMealsPage() {
       <div className="mb-6 md:mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
-            <Bookmark className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
+            <Bookmark className="h-6 w-6 md:h-8 md:w-8 text-primary-600 dark:text-primary-300" />
             {t('savedMeals.title')}
           </h1>
-          <p className="text-sm md:text-base text-neutral-600">
+          <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400">
             {t('savedMeals.subtitle')}
             <QuotaCounter
               used={savedMeals?.length ?? 0}
@@ -91,7 +91,7 @@ export default function SavedMealsPage() {
       <Card className="mb-6">
         <CardContent className="pt-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400 dark:text-neutral-500" />
             <Input
               placeholder={t('savedMeals.searchPlaceholder')}
               value={searchQuery}
@@ -105,7 +105,7 @@ export default function SavedMealsPage() {
       {/* Saved Meals List */}
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary-600 dark:text-primary-300" />
         </div>
       ) : sortedMeals.length === 0 ? (
         <EmptyState
@@ -138,11 +138,11 @@ export default function SavedMealsPage() {
 
       {/* Quick Tips */}
       <div className="grid gap-6 md:grid-cols-2 mt-8">
-        <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200">
+        <Card className="bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200 dark:border-primary-800">
           <CardHeader>
             <CardTitle className="text-lg">💡 {t('savedMeals.tipsTitle')}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm text-neutral-700">
+          <CardContent className="space-y-2 text-sm text-neutral-700 dark:text-neutral-200">
             <p>• {t('savedMeals.tip1')}</p>
             <p>• {t('savedMeals.tip2')}</p>
             <p>• {t('savedMeals.tip3')}</p>
@@ -150,11 +150,11 @@ export default function SavedMealsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-accent-50 to-success-50 border-accent-200">
+        <Card className="bg-gradient-to-br from-accent-50 to-success-50 border-accent-200 dark:border-accent-800">
           <CardHeader>
             <CardTitle className="text-lg">📋 {t('savedMeals.differenceTitle')}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm text-neutral-700">
+          <CardContent className="space-y-2 text-sm text-neutral-700 dark:text-neutral-200">
             <p>
               <span className="font-semibold">{t('savedMeals.recipeExplain')}</span>{' '}
               {t('savedMeals.recipeExplainText')}

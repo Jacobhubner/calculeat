@@ -256,10 +256,10 @@ export default function RecipesPage() {
       <div className="mb-6 md:mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-600 to-primary-500 bg-clip-text text-transparent mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
-            <ChefHat className="h-6 w-6 md:h-8 md:w-8 text-primary-600" />
+            <ChefHat className="h-6 w-6 md:h-8 md:w-8 text-primary-600 dark:text-primary-300" />
             {t('page.title')}
           </h1>
-          <p className="text-sm md:text-base text-neutral-600">
+          <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-400">
             {t('page.subtitle')}
             {recipes &&
               recipes.length > 0 &&
@@ -275,14 +275,14 @@ export default function RecipesPage() {
       </div>
 
       {/* Flikar: Mina recept / Upptäck */}
-      <div className="mb-4 flex gap-1 rounded-xl bg-neutral-100 p-1 w-fit">
+      <div className="mb-4 flex gap-1 rounded-xl bg-neutral-100 p-1 w-fit dark:bg-neutral-800">
         <button
           type="button"
           onClick={() => setTab('mine')}
           className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
             tab === 'mine'
-              ? 'bg-white text-neutral-900 shadow-sm'
-              : 'text-neutral-500 hover:text-neutral-700'
+              ? 'bg-white text-neutral-900 shadow-sm dark:bg-neutral-850 dark:text-neutral-100'
+              : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-200 dark:text-neutral-400'
           }`}
         >
           <ChefHat className="h-4 w-4" />
@@ -293,8 +293,8 @@ export default function RecipesPage() {
           onClick={() => setTab('discover')}
           className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
             tab === 'discover'
-              ? 'bg-white text-neutral-900 shadow-sm'
-              : 'text-neutral-500 hover:text-neutral-700'
+              ? 'bg-white text-neutral-900 shadow-sm dark:bg-neutral-850 dark:text-neutral-100'
+              : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-200 dark:text-neutral-400'
           }`}
         >
           <Compass className="h-4 w-4" />
@@ -306,7 +306,7 @@ export default function RecipesPage() {
       <Card className="mb-6">
         <CardContent className="pt-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-neutral-400 dark:text-neutral-500" />
             <Input
               placeholder={t('page.searchPlaceholder')}
               value={searchQuery}
@@ -321,11 +321,11 @@ export default function RecipesPage() {
       {tab === 'mine' &&
         (isError ? (
           <div className="text-center py-12">
-            <p className="text-red-600">{t('page.errorLoading')}</p>
+            <p className="text-red-600 dark:text-red-300">{t('page.errorLoading')}</p>
           </div>
         ) : isLoading ? (
           <div className="text-center py-12">
-            <p className="text-neutral-600">{t('page.loading')}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">{t('page.loading')}</p>
           </div>
         ) : !filteredRecipes || filteredRecipes.length === 0 ? (
           <EmptyState
@@ -374,7 +374,7 @@ export default function RecipesPage() {
             className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
               tagFilter === null
                 ? 'bg-primary-600 text-white'
-                : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400'
             }`}
           >
             {t('discover.allTags')}
@@ -387,7 +387,7 @@ export default function RecipesPage() {
               className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                 tagFilter === tag
                   ? 'bg-primary-600 text-white'
-                  : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                  : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400'
               }`}
             >
               {tag}
@@ -400,7 +400,7 @@ export default function RecipesPage() {
       {tab === 'discover' &&
         (isLoadingOfficial ? (
           <div className="text-center py-12">
-            <p className="text-neutral-600">{t('page.loading')}</p>
+            <p className="text-neutral-600 dark:text-neutral-400">{t('page.loading')}</p>
           </div>
         ) : !filteredOfficialRecipes || filteredOfficialRecipes.length === 0 ? (
           <EmptyState
@@ -417,7 +417,7 @@ export default function RecipesPage() {
           />
         ) : (
           <div className="flex flex-col gap-2">
-            <p className="mb-1 rounded-lg bg-primary-50 px-3 py-2 text-xs text-primary-700">
+            <p className="mb-1 rounded-lg bg-primary-50 px-3 py-2 text-xs text-primary-700 dark:bg-primary-900/25 dark:text-primary-300">
               {t('discover.editHint')}
             </p>
             {filteredOfficialRecipes.map(recipe =>
@@ -432,26 +432,28 @@ export default function RecipesPage() {
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="font-semibold text-neutral-900 truncate">
+                          <span className="font-semibold text-neutral-900 truncate dark:text-neutral-100">
                             {recipe.name}
                           </span>
                           <PremiumBadge />
                         </div>
                         <div
-                          className="flex items-center gap-3 text-sm text-neutral-500 blur-sm select-none"
+                          className="flex items-center gap-3 text-sm text-neutral-500 blur-sm select-none dark:text-neutral-400"
                           aria-hidden="true"
                         >
                           <span>
                             {recipe.servings || 1} {t('card.portionPlural')}
                           </span>
-                          <span className="font-semibold text-primary-600">000 kcal</span>
+                          <span className="font-semibold text-primary-600 dark:text-primary-300">
+                            000 kcal
+                          </span>
                           <span>F:00g</span>
                           <span>K:00g</span>
                           <span>P:00g</span>
                         </div>
                       </div>
                       <Lock
-                        className="h-4 w-4 text-neutral-400 shrink-0"
+                        className="h-4 w-4 text-neutral-400 shrink-0 dark:text-neutral-500"
                         aria-label={t('discover.lockedHint')}
                       />
                     </div>
@@ -474,15 +476,17 @@ export default function RecipesPage() {
 
       {/* Önska recept — endast Upptäck-fliken */}
       {tab === 'discover' && (
-        <Card className="mt-8 bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200">
+        <Card className="mt-8 bg-gradient-to-br from-primary-50 to-accent-50 border-primary-200 dark:border-primary-800">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <Lightbulb className="h-5 w-5 text-primary-600" />
+              <Lightbulb className="h-5 w-5 text-primary-600 dark:text-primary-300" />
               {t('discover.requestTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="text-sm text-neutral-600">{t('discover.requestDescription')}</p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+              {t('discover.requestDescription')}
+            </p>
             <div className="flex flex-col sm:flex-row gap-2">
               <Input
                 value={requestText}
@@ -509,29 +513,33 @@ export default function RecipesPage() {
 
       {/* Admin: inkomna receptönskemål — endast Upptäck-fliken */}
       {tab === 'discover' && isAdmin && (
-        <Card className="mt-6 border-amber-200">
+        <Card className="mt-6 border-amber-200 dark:border-amber-800">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <BookOpen className="h-5 w-5 text-amber-600" />
+              <BookOpen className="h-5 w-5 text-amber-600 dark:text-amber-300" />
               {t('discover.adminRequestsTitle')}
-              <span className="text-sm font-normal text-neutral-400">
+              <span className="text-sm font-normal text-neutral-400 dark:text-neutral-500">
                 ({recipeRequests.length})
               </span>
             </CardTitle>
           </CardHeader>
           <CardContent>
             {recipeRequests.length === 0 ? (
-              <p className="text-sm text-neutral-500">{t('discover.adminRequestsEmpty')}</p>
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                {t('discover.adminRequestsEmpty')}
+              </p>
             ) : (
               <ul className="space-y-2">
                 {recipeRequests.map(req => (
                   <li
                     key={req.id}
-                    className="flex items-start justify-between gap-3 rounded-lg border border-neutral-100 bg-neutral-50 px-3 py-2"
+                    className="flex items-start justify-between gap-3 rounded-lg border border-neutral-100 bg-neutral-50 px-3 py-2 dark:bg-neutral-900"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm text-neutral-800">{req.request_text}</p>
-                      <p className="mt-0.5 text-xs text-neutral-400">
+                      <p className="text-sm text-neutral-800 dark:text-neutral-200">
+                        {req.request_text}
+                      </p>
+                      <p className="mt-0.5 text-xs text-neutral-400 dark:text-neutral-500">
                         @{req.requester_name} · {new Date(req.created_at).toLocaleDateString()}
                       </p>
                     </div>
@@ -540,7 +548,7 @@ export default function RecipesPage() {
                       size="sm"
                       onClick={() => deleteRecipeRequest.mutate(req.id)}
                       disabled={deleteRecipeRequest.isPending}
-                      className="h-7 w-7 shrink-0 p-0 text-neutral-400 hover:text-red-600 hover:bg-red-50"
+                      className="h-7 w-7 shrink-0 p-0 text-neutral-400 hover:text-red-600 hover:bg-red-50 dark:text-neutral-500"
                       aria-label={t('discover.adminRequestDelete')}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -555,14 +563,14 @@ export default function RecipesPage() {
 
       {/* Info Card — endast Mina recept */}
       {tab === 'mine' && (
-        <Card className="mt-8 bg-gradient-to-br from-accent-50 to-primary-50 border-primary-200">
+        <Card className="mt-8 bg-gradient-to-br from-accent-50 to-primary-50 border-primary-200 dark:border-primary-800">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BookOpen className="h-5 w-5" />
               {t('page.infoTitle')}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-neutral-700">
+          <CardContent className="space-y-3 text-sm text-neutral-700 dark:text-neutral-200">
             <div className="flex gap-2">
               <div className="flex-shrink-0 mt-1">
                 <div className="h-2 w-2 rounded-full bg-primary-600" />
@@ -629,17 +637,21 @@ export default function RecipesPage() {
           </DialogHeader>
           <div className="flex flex-col gap-2 pt-2">
             <Button variant="outline" onClick={handleEditGlobally} className="justify-start gap-2">
-              <Globe className="h-4 w-4 text-amber-600" />
+              <Globe className="h-4 w-4 text-amber-600 dark:text-amber-300" />
               <span className="flex flex-col items-start text-left">
                 <span className="font-medium">{t('discover.editGlobal')}</span>
-                <span className="text-xs text-neutral-500">{t('discover.editGlobalHint')}</span>
+                <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                  {t('discover.editGlobalHint')}
+                </span>
               </span>
             </Button>
             <Button variant="outline" onClick={handleEditAsCopy} className="justify-start gap-2">
-              <ChefHat className="h-4 w-4 text-primary-600" />
+              <ChefHat className="h-4 w-4 text-primary-600 dark:text-primary-300" />
               <span className="flex flex-col items-start text-left">
                 <span className="font-medium">{t('discover.editCopy')}</span>
-                <span className="text-xs text-neutral-500">{t('discover.editCopyHint')}</span>
+                <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                  {t('discover.editCopyHint')}
+                </span>
               </span>
             </Button>
           </div>

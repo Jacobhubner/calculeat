@@ -80,9 +80,12 @@ export function RecipeCard({
   const energyDensityColor = showEnergyDensity ? (fi?.energy_density_color ?? null) : null
 
   const colorBadgeClass = {
-    Green: 'bg-green-100 text-green-700 border-green-300',
-    Yellow: 'bg-yellow-100 text-yellow-700 border-yellow-300',
-    Orange: 'bg-orange-100 text-orange-700 border-orange-300',
+    Green:
+      'bg-green-100 text-green-700 border-green-300 dark:bg-green-900/25 dark:text-green-300 dark:border-green-800',
+    Yellow:
+      'bg-yellow-100 text-yellow-700 border-yellow-300 dark:bg-yellow-900/25 dark:text-yellow-300 dark:border-yellow-800',
+    Orange:
+      'bg-orange-100 text-orange-700 border-orange-300 dark:bg-orange-900/25 dark:text-orange-300 dark:border-orange-800',
   }
 
   const colorLabel = {
@@ -108,13 +111,15 @@ export function RecipeCard({
               loading="lazy"
             />
           ) : (
-            <ScrollText className="h-4 w-4 text-primary-600 flex-shrink-0" />
+            <ScrollText className="h-4 w-4 text-primary-600 flex-shrink-0 dark:text-primary-300" />
           )}
 
           {/* Name + meta */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 min-w-0">
-              <h3 className="font-semibold text-neutral-900 truncate text-sm">{recipe.name}</h3>
+              <h3 className="font-semibold text-neutral-900 truncate text-sm dark:text-neutral-100">
+                {recipe.name}
+              </h3>
               {energyDensityColor && (
                 <Badge
                   variant="outline"
@@ -124,7 +129,7 @@ export function RecipeCard({
                 </Badge>
               )}
             </div>
-            <div className="flex items-center gap-2 text-xs text-neutral-500 mt-0.5 flex-wrap">
+            <div className="flex items-center gap-2 text-xs text-neutral-500 mt-0.5 flex-wrap dark:text-neutral-400">
               <span className="flex items-center gap-1">
                 <Users className="h-3 w-3" />
                 {savedAs100g
@@ -137,8 +142,10 @@ export function RecipeCard({
                   {totalTime} min
                 </span>
               )}
-              <span className="text-neutral-400">·</span>
-              <span className="font-semibold text-primary-600">{displayCalories} kcal</span>
+              <span className="text-neutral-400 dark:text-neutral-500">·</span>
+              <span className="font-semibold text-primary-600 dark:text-primary-300">
+                {displayCalories} kcal
+              </span>
               <span style={{ color: '#f5c518' }}>F:{displayFat}g</span>
               <span style={{ color: '#fb923c' }}>K:{displayCarbs}g</span>
               <span style={{ color: '#f43f5e' }}>P:{displayProtein}g</span>
@@ -154,7 +161,7 @@ export function RecipeCard({
                 onClick={onSave}
                 disabled={isSaving}
                 title={t('card.saveToMineHint')}
-                className="h-8 gap-1.5 text-primary-700"
+                className="h-8 gap-1.5 text-primary-700 dark:text-primary-300"
               >
                 {isSaving ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -169,7 +176,7 @@ export function RecipeCard({
                 variant="ghost"
                 size="sm"
                 onClick={onUploadImage}
-                className="h-8 w-8 p-0 text-amber-600 hover:text-amber-800 hover:bg-amber-50"
+                className="h-8 w-8 p-0 text-amber-600 hover:text-amber-800 hover:bg-amber-50 dark:text-amber-300"
                 aria-label={t('card.uploadImage')}
               >
                 <Camera className="h-4 w-4" />
@@ -180,7 +187,7 @@ export function RecipeCard({
                 variant="ghost"
                 size="sm"
                 onClick={onPublish}
-                className="h-8 w-8 p-0 text-primary-600 hover:text-primary-800 hover:bg-primary-50"
+                className="h-8 w-8 p-0 text-primary-600 hover:text-primary-800 hover:bg-primary-50 dark:text-primary-300"
                 aria-label={t('card.publish')}
               >
                 <Globe className="h-4 w-4" />
@@ -191,7 +198,7 @@ export function RecipeCard({
                 variant="ghost"
                 size="sm"
                 onClick={onUnpublish}
-                className="h-8 w-8 p-0 text-amber-600 hover:text-amber-800 hover:bg-amber-50"
+                className="h-8 w-8 p-0 text-amber-600 hover:text-amber-800 hover:bg-amber-50 dark:text-amber-300"
                 aria-label={t('card.unpublish')}
               >
                 <Undo2 className="h-4 w-4" />

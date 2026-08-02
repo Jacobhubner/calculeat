@@ -35,7 +35,10 @@ function FoodHubTabs({ active }: { active: FoodHubTab }) {
   const { t } = useTranslation('common')
 
   return (
-    <nav aria-label={t('nav.sectionPlanning')} className="mb-5 md:mb-6 border-b border-neutral-200">
+    <nav
+      aria-label={t('nav.sectionPlanning')}
+      className="mb-5 md:mb-6 border-b border-neutral-200 dark:border-neutral-700"
+    >
       <div className="flex gap-1 overflow-x-auto md:overflow-x-visible scrollbar-none">
         {TABS.map(tab => {
           const Icon = tab.icon
@@ -50,7 +53,7 @@ function FoodHubTabs({ active }: { active: FoodHubTab }) {
                 'flex shrink-0 items-center gap-2 whitespace-nowrap border-b-2 px-3 py-2.5 text-sm font-medium transition-colors md:px-4',
                 isActive
                   ? 'border-primary-600 text-primary-700'
-                  : 'border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-800'
+                  : 'border-transparent text-neutral-500 hover:border-neutral-300 hover:text-neutral-800 dark:text-neutral-400'
               )}
             >
               <Icon className={cn('h-4 w-4 shrink-0', isActive && 'text-primary-600')} />

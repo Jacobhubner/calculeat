@@ -141,7 +141,7 @@ export function IngredientRow({
   }
 
   return (
-    <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200 space-y-2">
+    <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200 space-y-2 dark:border-neutral-700 dark:bg-neutral-900">
       {/* Row 1: Grip + food selector + delete */}
       <div className="flex items-center gap-2">
         {/* Drag handle */}
@@ -154,7 +154,7 @@ export function IngredientRow({
         {/* Food selector — opens full food picker modal */}
         <div className="flex-1">
           <div
-            className="flex items-center gap-2 px-3 py-2 bg-white border border-neutral-200 rounded-lg cursor-pointer hover:border-primary-300"
+            className="flex items-center gap-2 px-3 py-2 bg-white border border-neutral-200 rounded-lg cursor-pointer hover:border-primary-300 dark:border-neutral-700 dark:bg-neutral-850"
             onClick={e => {
               e.stopPropagation()
               onOpenPicker()
@@ -162,17 +162,19 @@ export function IngredientRow({
           >
             {ingredient.foodItem ? (
               <>
-                <span className="font-medium text-neutral-900 truncate">
+                <span className="font-medium text-neutral-900 truncate dark:text-neutral-100">
                   {ingredient.foodItem.name}
                 </span>
                 {ingredient.foodItem.brand && (
-                  <span className="text-xs text-neutral-500">({ingredient.foodItem.brand})</span>
+                  <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                    ({ingredient.foodItem.brand})
+                  </span>
                 )}
               </>
             ) : (
               <>
-                <Search className="h-4 w-4 text-neutral-400 flex-shrink-0" />
-                <span className="text-neutral-400 text-sm">
+                <Search className="h-4 w-4 text-neutral-400 flex-shrink-0 dark:text-neutral-500" />
+                <span className="text-neutral-400 text-sm dark:text-neutral-500">
                   {t('ingredient.searchPlaceholder')}
                 </span>
               </>
@@ -212,7 +214,7 @@ export function IngredientRow({
         <select
           value={ingredient.unit}
           onChange={e => handleUnitChange(e.target.value)}
-          className="flex-1 h-11 px-3 bg-white border border-neutral-200 rounded-2xl text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          className="flex-1 h-11 px-3 bg-white border border-neutral-200 rounded-2xl text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:border-neutral-700 dark:bg-neutral-850"
           aria-label={t('ingredient.selectUnit')}
         >
           {availableUnits.map(unit => (
@@ -225,8 +227,8 @@ export function IngredientRow({
 
       {/* Row 3: Macro display - always visible when food is selected */}
       {nutrition && nutrition.calories > 0 && (
-        <div className="flex items-center gap-4 text-sm pt-2 border-t border-neutral-200">
-          <span className="font-semibold text-primary-600">
+        <div className="flex items-center gap-4 text-sm pt-2 border-t border-neutral-200 dark:border-neutral-700">
+          <span className="font-semibold text-primary-600 dark:text-primary-300">
             {Math.round(nutrition.calories)} kcal
           </span>
           <span style={{ color: '#f5c518' }}>F: {nutrition.fat.toFixed(1)}g</span>
