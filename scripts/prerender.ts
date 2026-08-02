@@ -118,6 +118,11 @@ async function worker(browser: Browser, queue: RouteJob[], failures: string[]) {
   // och språkseedningen (i18n_language) racear mellan sv- och en-jobb
   const context = await browser.createBrowserContext()
   const page = await context.newPage()
+  // Tvinga ljust läge. Utan detta ärver den headless browsern byggmaskinens
+  // OS-inställning, och temaskriptet i index.html stämplar class="dark" i den
+  // prerendrade HTML:en — som sedan serveras till ALLA besökare oavsett deras
+  // egen inställning, tills React hinner montera och rätta det.
+  await page.emulateMediaFeatures([{ name: 'prefers-color-scheme', value: 'light' }])
   // Snabba upp: blockera bilder/fonter/media — men ALDRIG /locales/*.json
   await page.setRequestInterception(true)
   page.on('request', req => {
