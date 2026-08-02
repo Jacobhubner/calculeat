@@ -26,11 +26,13 @@ export default function StatCard({
   variant = 'default',
   className,
 }: StatCardProps) {
+  // Ikonbrickan: ljus pastell mot vitt, mättad ton på låg opacitet mot mörkt.
+  // En rak inversion av -200/40 blir nästan osynlig på mörk bakgrund.
   const variantStyles = {
-    default: 'bg-neutral-200/50 text-neutral-700',
-    primary: 'bg-primary-200/40 text-primary-700',
-    accent: 'bg-accent-200/40 text-accent-700',
-    success: 'bg-success-200/40 text-success-700',
+    default: 'bg-neutral-200/50 text-neutral-700 dark:bg-neutral-700/60 dark:text-neutral-200',
+    primary: 'bg-primary-200/40 text-primary-700 dark:bg-primary-500/25 dark:text-primary-200',
+    accent: 'bg-accent-200/40 text-accent-700 dark:bg-accent-500/25 dark:text-accent-200',
+    success: 'bg-success-200/40 text-success-700 dark:bg-success-500/25 dark:text-success-200',
   }
 
   return (
@@ -39,7 +41,9 @@ export default function StatCard({
         <div className="flex-1">
           <p className="text-sm font-medium text-neutral-600 mb-2 dark:text-neutral-400">{title}</p>
           <div className="flex items-baseline gap-2">
-            <h3 className="text-4xl font-bold text-neutral-950">{value}</h3>
+            {/* Värdet är kortets huvudsak — neutral-950 är nästan svart och
+                försvann mot mörk yta, dovare än etiketten ovanför. */}
+            <h3 className="text-4xl font-bold text-neutral-950 dark:text-neutral-50">{value}</h3>
             {unit && <span className="text-sm text-neutral-500 dark:text-neutral-400">{unit}</span>}
           </div>
           {subtitle && (
@@ -49,7 +53,9 @@ export default function StatCard({
             <p
               className={cn(
                 'mt-2 text-xs font-medium',
-                trend.value > 0 ? 'text-success-600' : 'text-error-600'
+                trend.value > 0
+                  ? 'text-success-600 dark:text-success-300'
+                  : 'text-error-600 dark:text-error-300'
               )}
             >
               {trend.value > 0 ? '+' : ''}

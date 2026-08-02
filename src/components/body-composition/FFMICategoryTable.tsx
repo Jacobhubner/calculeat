@@ -70,7 +70,7 @@ export function FFMICategoryTable({ userFFMI, gender }: FFMICategoryTableProps) 
                   key={index}
                   className={`${
                     isHighlighted
-                      ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold dark:bg-blue-900/25'
+                      ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold dark:bg-blue-500/20 dark:border-l-blue-400'
                       : row.colorClass || 'bg-white dark:bg-neutral-850'
                   } hover:bg-gray-50 dark:hover:bg-neutral-800 transition-colors`}
                 >

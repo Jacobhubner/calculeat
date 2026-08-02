@@ -104,7 +104,7 @@ export function BodyFatReferenceTable({
         <button
           type="button"
           onClick={() => setShowMale(v => !v)}
-          className="text-[10px] text-primary-600 hover:underline"
+          className="text-[10px] text-primary-600 hover:underline dark:text-primary-300"
         >
           {showMale ? t('refTable.showWomensValues') : t('refTable.showMensValues')}
         </button>
@@ -134,7 +134,7 @@ export function BodyFatReferenceTable({
                   key={index}
                   className={`${
                     isHighlightedByCategory || isUserCategory
-                      ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold dark:bg-blue-900/35'
+                      ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold dark:bg-blue-500/20 dark:border-l-blue-400'
                       : 'bg-white dark:bg-neutral-850'
                   } hover:bg-gray-50 transition-colors dark:hover:bg-neutral-800`}
                 >

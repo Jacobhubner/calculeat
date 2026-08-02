@@ -68,7 +68,7 @@ export function FFMIInterpretationTable({
             setShowMale(v => !v)
             setExpandedRow(null)
           }}
-          className="text-[10px] text-primary-600 hover:underline"
+          className="text-[10px] text-primary-600 hover:underline dark:text-primary-300"
         >
           {showMale
             ? t('ffmiInterpretation.showWomensValues')
@@ -102,7 +102,7 @@ export function FFMIInterpretationTable({
               const rowKey = `row${i}` as const
               const isExpanded = expandedRow === i
               const baseClass = highlighted
-                ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold dark:bg-blue-900/35'
+                ? 'bg-blue-100 border-l-4 border-l-blue-600 font-semibold dark:bg-blue-500/20 dark:border-l-blue-400'
                 : i % 2 === 0
                   ? 'bg-white dark:bg-neutral-850'
                   : 'bg-neutral-50/50 dark:bg-neutral-900/50'

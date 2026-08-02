@@ -19,23 +19,25 @@ export default function FeatureCard({
   description,
   accentColor = 'primary',
 }: FeatureCardProps) {
+  // Ikonbrickan: ljus pastell mot vitt, mättad ton på låg opacitet mot mörkt.
+  // -100 rakt av blir en blek fläck som varken syns eller bär färgen.
   const colorClasses = {
     primary: {
-      bg: 'bg-primary-100',
-      text: 'text-primary-600',
-      hover: 'group-hover:bg-primary-200',
+      bg: 'bg-primary-100 dark:bg-primary-500/20',
+      text: 'text-primary-600 dark:text-primary-300',
+      hover: 'group-hover:bg-primary-200 dark:group-hover:bg-primary-500/30',
     },
     accent: {
-      bg: 'bg-accent-100',
-      text: 'text-accent-600',
-      hover: 'group-hover:bg-accent-200',
+      bg: 'bg-accent-100 dark:bg-accent-500/20',
+      text: 'text-accent-600 dark:text-accent-300',
+      hover: 'group-hover:bg-accent-200 dark:group-hover:bg-accent-500/30',
     },
   }
 
   const colors = colorClasses[accentColor]
 
   return (
-    <div className="group rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-850 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-primary-300">
+    <div className="group rounded-2xl border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-850 shadow-lg dark:shadow-black/30 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-primary-300 dark:hover:border-primary-700">
       {/* Icon or Placeholder */}
       <div className="mb-4">
         {Icon ? (
