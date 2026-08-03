@@ -96,23 +96,24 @@ export function TDEEScenarioCard({ bmr, tdee }: Props) {
             {t('tdeeScenarios.infoIntro')}
           </p>
 
+          {/* Fullständiga nycklar i stället för `tdeeScenarios.${key}` —
+              mallsträngar kan i18next-typerna inte verifiera statiskt, vilket
+              tvingade fram `as any` och därmed tystade felstavningar. */}
           {(
             [
-              ['formulaWalkTitle', 'formulaWalk'],
-              ['formulaStandTitle', 'formulaStand'],
-              ['formulaMostActiveTitle', 'formulaMostActive'],
-              ['formulaLeastActiveTitle', 'formulaLeastActive'],
+              ['tdeeScenarios.formulaWalkTitle', 'tdeeScenarios.formulaWalk'],
+              ['tdeeScenarios.formulaStandTitle', 'tdeeScenarios.formulaStand'],
+              ['tdeeScenarios.formulaMostActiveTitle', 'tdeeScenarios.formulaMostActive'],
+              ['tdeeScenarios.formulaLeastActiveTitle', 'tdeeScenarios.formulaLeastActive'],
             ] as const
           ).map(([titleKey, formulaKey]) => (
             <section key={formulaKey}>
               <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 mb-2">
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                {t(`tdeeScenarios.${titleKey}` as any)}
+                {t(titleKey)}
               </h3>
               <EquationGate feature="all_tdee_formulas">
                 <div className="bg-neutral-50 dark:bg-neutral-900 text-neutral-800 dark:text-neutral-200 font-mono text-sm px-4 py-3 rounded-lg border border-neutral-200 dark:border-neutral-700 whitespace-pre-line">
-                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                  {t(`tdeeScenarios.${formulaKey}` as any)}
+                  {t(formulaKey)}
                 </div>
               </EquationGate>
             </section>
