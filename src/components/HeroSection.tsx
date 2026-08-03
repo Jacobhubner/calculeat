@@ -20,7 +20,7 @@ export function HeroSection() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-green-50 via-blue-50 to-white pt-20 pb-48 md:pt-32 md:pb-56 dark:to-neutral-850 dark:from-green-900/30 dark:via-blue-900/25">
       {/* Bold gradient background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(37,189,0,0.15),transparent_60%)] mix-blend-multiply" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(87,134,29,0.15),transparent_60%)] mix-blend-multiply" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(14,165,233,0.1),transparent_60%)] mix-blend-screen" />
 
       <div className="container relative mx-auto px-4">

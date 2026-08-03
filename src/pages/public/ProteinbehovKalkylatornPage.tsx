@@ -178,7 +178,7 @@ export default function ProteinbehovKalkylatornPage() {
       <main className="flex-1">
         {/* Hero section */}
         <section className="relative overflow-hidden bg-white border-b border-neutral-100 dark:bg-neutral-850">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(37,189,0,0.07),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(87,134,29,0.07),transparent_60%)]" />
           <div className="relative container mx-auto px-4 pt-16 pb-14 max-w-3xl">
             <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6 dark:text-neutral-400">
               <Link

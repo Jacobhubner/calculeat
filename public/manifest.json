@@ -6,7 +6,7 @@
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#25BD00",
+  "theme_color": "#7ABC29",
   "icons": [
     {
       "src": "/calculeat-leaf-icon-192x192.png",

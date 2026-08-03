@@ -340,7 +340,7 @@ export function ArticleLayout({
         >
           <div
             aria-hidden
-            className="absolute inset-x-0 -top-32 h-72 bg-[radial-gradient(ellipse_at_center,hsl(108_100%_37%/0.16),transparent_65%)]"
+            className="absolute inset-x-0 -top-32 h-72 bg-[radial-gradient(ellipse_at_center,hsl(87_64%_45%/0.16),transparent_65%)]"
           />
           <div className="relative container mx-auto px-4 max-w-2xl text-center">
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-4">
