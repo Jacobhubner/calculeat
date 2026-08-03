@@ -23,7 +23,7 @@ import {
   Check,
   UtensilsCrossed,
   Sparkles,
-  Copy,
+  CalendarArrowDown,
   AlertTriangle,
   Pencil,
   X,
@@ -52,6 +52,17 @@ import { useCalculations } from '@/hooks/useCalculations'
 import { useDailySummary } from '@/hooks/useDailySummary'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import type { UserProfile } from '@/lib/types'
+import { cn } from '@/lib/utils'
+
+/**
+ * Sidrubrikens två åtgärdsknappar — samma mönster som i MealSection, men med
+ * brytpunkt sm eftersom etiketterna redan doldes där. `h-auto` krävs för att
+ * size="sm" låser höjden till h-9 och klipper den staplade texten.
+ */
+const STACKED_HEADER_ACTION =
+  'h-auto flex-col gap-1 px-2.5 py-1.5 sm:h-9 sm:flex-row sm:gap-2 sm:px-4 sm:py-0'
+
+const HEADER_ACTION_LABEL = 'text-[11px] leading-none font-medium sm:text-sm'
 
 export default function TodayPage() {
   const { t } = useTranslation('today')
@@ -409,17 +420,26 @@ export default function TodayPage() {
             )}
           </div>
         </div>
-        <div className="flex gap-2">
+        {/* Etiketterna doldes helt under sm och knapparna saknade aria-label,
+            så på telefon blev de två namnlösa ikoner. Nu staplas en förkortad
+            etikett under ikonen; full text ligger som tillgängligt namn. */}
+        <div className="flex items-start gap-2 shrink-0">
           <Button
             variant="outline"
-            className="gap-2"
+            className={STACKED_HEADER_ACTION}
             size="sm"
+            aria-label={t('today.copyFromYesterday')}
             onClick={handleCopyFromYesterday}
             disabled={!yesterdayLog || copyDayToToday.isPending || !!todayLog?.is_completed}
           >
-            <Copy className="h-4 w-4" />
-            <span className="hidden sm:inline">
-              {copyDayToToday.isPending ? t('today.copying') : t('today.copyFromYesterday')}
+            {/* Generisk kopiera-ikon säger inte varifrån. Kalender med nedåtpil
+                kopplar handlingen till en annan dag. */}
+            <CalendarArrowDown className="h-4 w-4 shrink-0" />
+            <span className={HEADER_ACTION_LABEL}>
+              <span className="sm:hidden">{t('today.copyFromYesterdayShort')}</span>
+              <span className="hidden sm:inline">
+                {copyDayToToday.isPending ? t('today.copying') : t('today.copyFromYesterday')}
+              </span>
             </span>
           </Button>
           {todayLog && !todayLog.is_completed && (
@@ -427,10 +447,17 @@ export default function TodayPage() {
               onClick={handleFinishDay}
               disabled={finishDay.isPending}
               size="sm"
-              className="gap-2 bg-gradient-to-r from-success-600 to-success-500"
+              aria-label={t('today.finishDay')}
+              className={cn(
+                STACKED_HEADER_ACTION,
+                'bg-gradient-to-r from-success-600 to-success-500'
+              )}
             >
-              <Check className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('today.finishDay')}</span>
+              <Check className="h-4 w-4 shrink-0" />
+              <span className={HEADER_ACTION_LABEL}>
+                <span className="sm:hidden">{t('today.finishDayShort')}</span>
+                <span className="hidden sm:inline">{t('today.finishDay')}</span>
+              </span>
             </Button>
           )}
         </div>
