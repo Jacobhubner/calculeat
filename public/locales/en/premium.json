@@ -25,6 +25,7 @@
       "owned_shared_lists": "The free plan lets you create {{limit}} shared list. You can still be a member of unlimited lists.",
       "label_scans_per_month": "You have used this month's {{limit}} label scans on the free plan.",
       "recipe_bank_full": "This recipe is part of Premium. Upgrade to unlock the full recipe bank.",
+      "advanced_trends": "On the free plan you see 30 days of weight and body fat. With Premium you see your full journey — plus fat mass and lean mass.",
       "generic": "You have reached a limit on the free plan."
     },
     "compare": {
@@ -88,8 +89,8 @@
         },
         "trends": {
           "label": "Trend charts",
-          "free": "Weight trend",
-          "premium": "All + period comparisons"
+          "free": "Weight + body fat, 30 days",
+          "premium": "All charts, full history"
         },
         "equations": {
           "label": "Exact equations",

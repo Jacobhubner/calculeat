@@ -25,6 +25,7 @@
       "owned_shared_lists": "På gratisnivån kan du skapa {{limit}} gemensam lista. Du kan fortfarande vara medlem i hur många listor som helst.",
       "label_scans_per_month": "Du har använt månadens {{limit}} etikettskanningar på gratisnivån.",
       "recipe_bank_full": "Det här receptet ingår i Premium. Uppgradera för att låsa upp hela receptbanken.",
+      "advanced_trends": "På gratisnivån ser du 30 dagar av vikt och kroppsfett. Med Premium ser du hela din resa — plus fettmassa och mager massa.",
       "generic": "Du har nått en gräns på gratisnivån."
     },
     "compare": {
@@ -88,8 +89,8 @@
         },
         "trends": {
           "label": "Trendgrafer",
-          "free": "Vikttrend",
-          "premium": "Alla + periodjämförelser"
+          "free": "Vikt + kroppsfett, 30 dagar",
+          "premium": "Alla grafer, hela historiken"
         },
         "equations": {
           "label": "Exakta ekvationer",
