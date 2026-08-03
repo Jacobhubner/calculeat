@@ -30,6 +30,7 @@ import { CopyToCalculeatPrompt } from '@/components/food/CopyToCalculeatPrompt'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
 import { useAuth } from '@/contexts/AuthContext'
 import { SavedMealPicker } from './SavedMealPicker'
+import { pickDefaultMealIndex } from '@/lib/utils/defaultMealForTime'
 
 const PAGE_SIZE = 50
 
@@ -278,8 +279,11 @@ export function AddFoodToMealModal({
     if (mealName) {
       setSelectedMealName(mealName)
     } else if (mealSettings && mealSettings.length > 0) {
-      const last = [...mealSettings].sort((a, b) => b.meal_order - a.meal_order)[0]
-      setSelectedMealName(last.meal_name)
+      // Snabbloggning har ingen given plats. Tidigare valdes sista måltiden,
+      // alltså "Middag" även på morgonen — maten hamnade tyst i fel måltid.
+      const ordered = [...mealSettings].sort((a, b) => a.meal_order - b.meal_order)
+      const index = pickDefaultMealIndex(ordered.length)
+      setSelectedMealName(ordered[index]!.meal_name)
     }
 
     if (editItem) {
