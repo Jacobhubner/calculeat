@@ -360,7 +360,16 @@ export default function SiteHeader() {
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.15 }}
                     role="menu"
-                    className="absolute right-0 top-full mt-2 w-64 max-h-[calc(100vh-6rem)] overflow-y-auto overscroll-contain bg-white rounded-lg shadow-lg border border-neutral-200 py-1 z-50 dark:bg-neutral-850 dark:border-neutral-700"
+                    // Höjden räknade bara bort headern (6rem). Bottennavigeringen
+                    // är h-16 plus telefonens safe-area, så menyns sista rad —
+                    // "Logga ut" — hamnade under den. dvh i stället för vh:
+                    // mobilwebbläsarnas adressfält ingår i vh men inte i den yta
+                    // som faktiskt syns.
+                    style={{
+                      maxHeight:
+                        'calc(100dvh - 4rem - 0.5rem - 4rem - max(0px, env(safe-area-inset-bottom)) - 0.5rem)',
+                    }}
+                    className="absolute right-0 top-full mt-2 w-64 overflow-y-auto overscroll-contain bg-white rounded-lg shadow-lg border border-neutral-200 py-1 z-50 dark:bg-neutral-850 dark:border-neutral-700"
                   >
                     <div className="px-4 py-3 border-b border-neutral-100 dark:border-neutral-700">
                       <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
