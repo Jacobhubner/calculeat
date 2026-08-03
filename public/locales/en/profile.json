@@ -264,7 +264,8 @@
     "themeSystem": "System",
     "themeLight": "Light",
     "themeDark": "Dark",
-    "themeDesc": "System follows the setting on your phone or computer."
+    "themeDesc": "System follows the setting on your phone or computer.",
+    "language": "Language"
   },
   "tdeeOptions": {
     "calculateTitle": "Find out how much you can eat",

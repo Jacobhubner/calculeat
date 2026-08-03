@@ -31,6 +31,7 @@ import { useIsAdmin } from '@/hooks/useIsAdmin'
 import type { Friend } from '@/lib/types/friends'
 import { LanguageSwitcher } from '../ui/LanguageSwitcher'
 import { ThemeToggle } from '../ui/ThemeToggle'
+import { AppearanceControls } from '../ui/AppearanceControls'
 import { cn } from '@/lib/utils'
 
 export default function SiteHeader() {
@@ -259,6 +260,10 @@ export default function SiteHeader() {
                 <LogOut className="h-4 w-4 mr-2" />
                 {t('nav.logout')}
               </Button>
+              {/* Desktop saknar avatarmeny — avataren länkar rakt till /app —
+                  så tema och språk stannar i headern här. Utrymmet finns, till
+                  skillnad från i mobilheadern. */}
+              <ThemeToggle />
               <LanguageSwitcher />
             </div>
           ) : (
@@ -297,7 +302,6 @@ export default function SiteHeader() {
           <div className="md:hidden flex items-center gap-1 sm:gap-2">
             {/* Plan-chip — i mobilen finns ingen sidebar, så planen visas här */}
             <PlanBadge />
-            <LanguageSwitcher />
 
             {/* Social — egen knapp med badge. En inkorg som kräver att man
                 öppnar en meny för att se att något hänt fungerar inte som
@@ -480,6 +484,12 @@ export default function SiteHeader() {
                         <MessageCircle className="h-4 w-4" />
                         <span>{t('nav.support')}</span>
                       </button>
+                    </div>
+
+                    {/* Tema + språk. Låg tidigare som permanenta ikoner i
+                        mobilheadern — dyr yta för val man gör en gång. */}
+                    <div className="border-t border-neutral-100 dark:border-neutral-700">
+                      <AppearanceControls onNavigate={() => setMobileUserMenuOpen(false)} />
                     </div>
 
                     <div className="border-t border-neutral-100 py-1 dark:border-neutral-700">

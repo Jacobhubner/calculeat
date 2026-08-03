@@ -264,7 +264,8 @@
     "themeSystem": "System",
     "themeLight": "Ljust",
     "themeDark": "Mörkt",
-    "themeDesc": "System följer inställningen på din telefon eller dator."
+    "themeDesc": "System följer inställningen på din telefon eller dator.",
+    "language": "Språk"
   },
   "tdeeOptions": {
     "calculateTitle": "Räkna ut hur mycket du kan äta",
