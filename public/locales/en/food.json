@@ -308,6 +308,8 @@
   "addToMealModal": {
     "sourceFood": "Food items",
     "sourceSavedMeals": "Saved meals",
+    "titleSavedMeal": "Load saved meal",
+    "descriptionSavedMeal": "Choose a saved meal to add",
     "title": "Add food item",
     "titleEdit": "Edit food item",
     "description": "Select meal and add food item",

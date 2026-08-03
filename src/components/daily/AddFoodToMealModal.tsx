@@ -132,6 +132,9 @@ export function AddFoodToMealModal({
   // vore något helt annat.
   const showSavedMealSwitch = allowSavedMeals && !isEditMode && !!dailyLogId
 
+  /** Måltidsläget är aktivt — livsmedelslistan och dess kontroller ska vika undan. */
+  const isSavedMealMode = showSavedMealSwitch && source === 'meals' && !selectedFood
+
   // Tab + pagination + filter state
   const [activeTab, setActiveTab] = useState<FoodTab>('alla')
   const [page, setPage] = useState(0)
@@ -581,21 +584,29 @@ export function AddFoodToMealModal({
           }}
         >
           <DialogHeader>
+            {/* Rubriken följer läget — "Lägg till livsmedel" ovanför en lista
+                med sparade måltider beskriver fel sak. */}
             <DialogTitle>
-              {isEditMode ? t('addToMealModal.titleEdit') : t('addToMealModal.title')}
+              {isEditMode
+                ? t('addToMealModal.titleEdit')
+                : isSavedMealMode
+                  ? t('addToMealModal.titleSavedMeal')
+                  : t('addToMealModal.title')}
             </DialogTitle>
             <DialogDescription>
               {isEditMode
                 ? `${t('addToMealModal.descriptionEdit')} ${editItem?.food.name}`
-                : mealName
-                  ? `${t('addToMealModal.descriptionMeal')} ${mealName}`
-                  : t('addToMealModal.description')}
+                : isSavedMealMode
+                  ? t('addToMealModal.descriptionSavedMeal')
+                  : mealName
+                    ? `${t('addToMealModal.descriptionMeal')} ${mealName}`
+                    : t('addToMealModal.description')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="overflow-y-auto space-y-3">
-            {/* Källväxel — bara när en måltidsplats är känd. Utan mealOrder
-                finns ingen plats att ladda en sparad måltid till. */}
+            {/* Källväxel — döljs så fort ett livsmedel valts, då handlar
+                resten av modalen om mängd och enhet. */}
             {showSavedMealSwitch && !selectedFood && (
               <div className="flex gap-1 p-1 rounded-xl bg-neutral-100 dark:bg-neutral-800">
                 {(
@@ -621,7 +632,7 @@ export function AddFoodToMealModal({
               </div>
             )}
 
-            {showSavedMealSwitch && source === 'meals' && !selectedFood ? (
+            {isSavedMealMode ? (
               <SavedMealPicker
                 targetMealName={savedMealTarget.name}
                 targetMealOrder={savedMealTarget.order}
@@ -872,8 +883,12 @@ export function AddFoodToMealModal({
           </div>
 
           <div>
-            {/* Meal selector — visas längst ned när användaren kommer från sidebar */}
+            {/* Meal selector — visas längst ned när användaren kommer från sidebar.
+                I måltidsläget har SavedMealPicker en egen väljare överst, eftersom
+                en sparad måltid laddas direkt vid klick och platsen därför måste
+                vara vald innan. Utan source-villkoret visades båda samtidigt. */}
             {!isEditMode &&
+              !isSavedMealMode &&
               (showMealSelector || !mealName) &&
               !onFoodSelect &&
               mealSettings &&

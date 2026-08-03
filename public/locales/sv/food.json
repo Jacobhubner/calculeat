@@ -308,6 +308,8 @@
   "addToMealModal": {
     "sourceFood": "Livsmedel",
     "sourceSavedMeals": "Sparade måltider",
+    "titleSavedMeal": "Ladda sparad måltid",
+    "descriptionSavedMeal": "Välj en sparad måltid att lägga till",
     "title": "Lägg till livsmedel",
     "titleEdit": "Redigera livsmedel",
     "description": "Välj måltid och lägg till livsmedel",
