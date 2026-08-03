@@ -306,6 +306,8 @@
     "saveErrorUpdate": "uppdatera"
   },
   "addToMealModal": {
+    "sourceFood": "Livsmedel",
+    "sourceSavedMeals": "Sparade måltider",
     "title": "Lägg till livsmedel",
     "titleEdit": "Redigera livsmedel",
     "description": "Välj måltid och lägg till livsmedel",

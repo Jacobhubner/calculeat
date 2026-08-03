@@ -29,6 +29,7 @@ import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
 import { CopyToCalculeatPrompt } from '@/components/food/CopyToCalculeatPrompt'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
 import { useAuth } from '@/contexts/AuthContext'
+import { SavedMealPicker } from './SavedMealPicker'
 
 const PAGE_SIZE = 50
 
@@ -57,6 +58,13 @@ interface AddFoodToMealModalProps {
   onFoodSelect?: (food: FoodItem) => void
   showMealSelector?: boolean
   extraMealOptions?: { id: string; meal_name: string; meal_order: number }[]
+  /**
+   * Visar växeln Livsmedel / Sparade måltider högst upp. Kräver mealOrder,
+   * eftersom en sparad måltid laddas till en måltidsplats och inte till ett
+   * enskilt livsmedel.
+   */
+  allowSavedMeals?: boolean
+  mealOrder?: number
 }
 
 export function AddFoodToMealModal({
@@ -71,6 +79,8 @@ export function AddFoodToMealModal({
   onFoodSelect,
   showMealSelector = false,
   extraMealOptions = [],
+  allowSavedMeals = false,
+  mealOrder,
 }: AddFoodToMealModalProps) {
   const { t } = useTranslation('food')
   const tAny = t as (key: string) => string
@@ -111,6 +121,17 @@ export function AddFoodToMealModal({
   // Search state
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
+
+  // Livsmedel eller sparad måltid. Ligger ovanför livsmedelsflikarna eftersom
+  // FoodTab styr livsmedelsfrågan — en 'meals'-flik där hade skickat ett
+  // meningslöst värde vidare till usePaginatedFoodItems.
+  const [source, setSource] = useState<'food' | 'meals'>('food')
+
+  // Redigering byter ett befintligt livsmedel — att ladda en hel måltid där
+  // vore något helt annat. dailyLogId och mealOrder krävs för att ha en plats
+  // att ladda till.
+  const showSavedMealSwitch =
+    allowSavedMeals && !isEditMode && !!dailyLogId && mealOrder !== undefined
 
   // Tab + pagination + filter state
   const [activeTab, setActiveTab] = useState<FoodTab>('alla')
@@ -540,7 +561,42 @@ export function AddFoodToMealModal({
           </DialogHeader>
 
           <div className="overflow-y-auto space-y-3">
-            {!selectedFood ? (
+            {/* Källväxel — bara när en måltidsplats är känd. Utan mealOrder
+                finns ingen plats att ladda en sparad måltid till. */}
+            {showSavedMealSwitch && !selectedFood && (
+              <div className="flex gap-1 p-1 rounded-xl bg-neutral-100 dark:bg-neutral-800">
+                {(
+                  [
+                    { key: 'food', label: t('addToMealModal.sourceFood') },
+                    { key: 'meals', label: t('addToMealModal.sourceSavedMeals') },
+                  ] as const
+                ).map(opt => (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    onClick={() => setSource(opt.key)}
+                    aria-pressed={source === opt.key}
+                    className={`flex-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                      source === opt.key
+                        ? 'bg-white text-neutral-900 shadow-sm dark:bg-neutral-700 dark:text-neutral-100'
+                        : 'text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {showSavedMealSwitch && source === 'meals' && !selectedFood ? (
+              <SavedMealPicker
+                targetMealName={selectedMealName || mealName}
+                targetMealOrder={mealOrder!}
+                targetMealEntryId={mealEntryId}
+                dailyLogId={dailyLogId!}
+                onLoaded={() => onOpenChange(false)}
+              />
+            ) : !selectedFood ? (
               <>
                 {/* Tabs */}
                 <div className="flex gap-1 border-b border-neutral-200 overflow-x-auto dark:border-neutral-700">

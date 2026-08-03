@@ -9,7 +9,6 @@ import EmptyState from '@/components/EmptyState'
 import RecentFoodsCard from '@/components/RecentFoodsCard'
 import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
 import SaveMealDialog from '@/components/daily/SaveMealDialog'
-import LoadMealToSlotDialog from '@/components/daily/LoadMealToSlotDialog'
 import { PlateCalculator } from '@/components/daily/PlateCalculator'
 import { FoodSuggestions } from '@/components/daily/FoodSuggestions'
 import { PremiumGate } from '@/components/premium/PremiumGate'
@@ -79,6 +78,8 @@ export default function TodayPage() {
   const [selectedMealForFood, setSelectedMealForFood] = useState<{
     mealName: string
     mealEntryId?: string
+    // Krävs för att kunna ladda en sparad måltid till platsen från samma modal
+    mealOrder?: number
   } | null>(null)
   const [preselectedFood, setPreselectedFood] = useState<{
     food: FoodItem
@@ -98,14 +99,6 @@ export default function TodayPage() {
   const [saveMealDialogOpen, setSaveMealDialogOpen] = useState(false)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedMealToSave, setSelectedMealToSave] = useState<any | null>(null)
-
-  // State for LoadMealToSlotDialog
-  const [loadMealDialogOpen, setLoadMealDialogOpen] = useState(false)
-  const [selectedMealForLoad, setSelectedMealForLoad] = useState<{
-    mealName: string
-    mealOrder: number
-    mealEntryId?: string
-  } | null>(null)
 
   const [energyDensityInfoOpen, setEnergyDensityInfoOpen] = useState(false)
 
@@ -196,10 +189,10 @@ export default function TodayPage() {
     )
   }, [todayLog, profile])
 
-  const handleOpenAddFoodModal = (mealName: string, mealEntryId?: string) => {
+  const handleOpenAddFoodModal = (mealName: string, mealEntryId?: string, mealOrder?: number) => {
     setPreselectedFood(null)
     setShowMealSelectorInModal(false)
-    setSelectedMealForFood({ mealName, mealEntryId })
+    setSelectedMealForFood({ mealName, mealEntryId, mealOrder })
     setAddFoodModalOpen(true)
   }
 
@@ -348,11 +341,6 @@ export default function TodayPage() {
   const handleOpenSaveMealDialog = (mealEntry: any) => {
     setSelectedMealToSave(mealEntry)
     setSaveMealDialogOpen(true)
-  }
-
-  const handleOpenLoadMealDialog = (mealName: string, mealOrder: number, mealEntryId?: string) => {
-    setSelectedMealForLoad({ mealName, mealOrder, mealEntryId })
-    setLoadMealDialogOpen(true)
   }
 
   // Handler for sidebar tools (PlateCalculator, FoodSuggestions)
@@ -704,7 +692,6 @@ export default function TodayPage() {
                     isCompleted={!!todayLog?.is_completed}
                     onAddFood={handleOpenAddFoodModal}
                     onSaveMeal={handleOpenSaveMealDialog}
-                    onLoadMeal={handleOpenLoadMealDialog}
                     mealOrder={mealSetting.meal_order}
                     onRemoveFood={handleRemoveFood}
                     onEditItem={setEditItem}
@@ -724,7 +711,6 @@ export default function TodayPage() {
                   isCompleted={!!todayLog?.is_completed}
                   onAddFood={handleOpenAddFoodModal}
                   onSaveMeal={handleOpenSaveMealDialog}
-                  onLoadMeal={handleOpenLoadMealDialog}
                   mealOrder={meal.meal_order}
                   onRemoveFood={handleRemoveAdHocFood}
                   onEditItem={setEditItem}
@@ -862,6 +848,8 @@ export default function TodayPage() {
           preselectedFood={preselectedFood || undefined}
           showMealSelector={showMealSelectorInModal}
           extraMealOptions={todayLog.meals?.filter(m => m.is_ad_hoc) ?? []}
+          allowSavedMeals
+          mealOrder={selectedMealForFood.mealOrder}
         />
       )}
 
@@ -884,18 +872,6 @@ export default function TodayPage() {
           open={saveMealDialogOpen}
           onOpenChange={setSaveMealDialogOpen}
           mealEntry={selectedMealToSave}
-        />
-      )}
-
-      {/* Load Meal to Slot Dialog */}
-      {todayLog && selectedMealForLoad && (
-        <LoadMealToSlotDialog
-          open={loadMealDialogOpen}
-          onOpenChange={setLoadMealDialogOpen}
-          targetMealName={selectedMealForLoad.mealName}
-          targetMealOrder={selectedMealForLoad.mealOrder}
-          dailyLogId={todayLog.id}
-          targetMealEntryId={selectedMealForLoad.mealEntryId}
         />
       )}
 

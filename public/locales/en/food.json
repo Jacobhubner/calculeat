@@ -306,6 +306,8 @@
     "saveErrorUpdate": "update"
   },
   "addToMealModal": {
+    "sourceFood": "Food items",
+    "sourceSavedMeals": "Saved meals",
     "title": "Add food item",
     "titleEdit": "Edit food item",
     "description": "Select meal and add food item",

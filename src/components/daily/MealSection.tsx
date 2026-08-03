@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Plus, BookmarkPlus, FolderDown, Trash2, Coffee, UtensilsCrossed } from 'lucide-react'
+import { Plus, BookmarkPlus, Trash2, Coffee, UtensilsCrossed } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { SwipeableItem } from '@/components/ui/SwipeableItem'
@@ -37,9 +37,8 @@ interface MealSectionProps {
   goalCaloriesMin: number
   goalCalories: number
   isCompleted: boolean
-  onAddFood: (mealName: string, mealEntryId?: string) => void
+  onAddFood: (mealName: string, mealEntryId?: string, mealOrder?: number) => void
   onSaveMeal?: (mealEntry: MealEntry) => void
-  onLoadMeal?: (mealName: string, mealOrder: number, mealEntryId?: string) => void
   mealOrder: number
   onRemoveFood: (itemId: string, foodName: string) => void
   onEditItem: (item: EditItem) => void
@@ -56,7 +55,6 @@ export function MealSection({
   isCompleted,
   onAddFood,
   onSaveMeal,
-  onLoadMeal,
   mealOrder,
   onRemoveFood,
   onEditItem,
@@ -98,16 +96,17 @@ export function MealSection({
               </p>
             </div>
           </div>
-          {/* Etiketterna staplas under ikonerna på telefon i stället för att
-              döljas. Bookmark och nedåtpil är inte gissningsbara i en
-              måltidsrubrik — pil-mot-linje läses som "ladda ner", inte som
-              "hämta en sparad måltid hit". Från md ligger de på rad igen. */}
+          {/* "Lägg till" och "Ladda måltid" svarade på samma fråga — vad ska
+              in i den här måltiden — och skilde sig bara i källa. De är nu en
+              knapp; källvalet sker i modalen. Spara ligger kvar separat: den
+              lägger inte till något, den sparar det som redan finns, och hör
+              därför inte hemma bakom samma "+". */}
           <div className="flex items-start gap-1.5 md:gap-3 shrink-0">
             {hasItems && mealEntry && onSaveMeal && (
               <Button
                 size="sm"
-                variant="outline"
-                className={STACKED_ACTION_CLASS}
+                variant="ghost"
+                className={cn(STACKED_ACTION_CLASS, 'text-neutral-600 dark:text-neutral-400')}
                 // Full text som tillgängligt namn — den synliga etiketten är
                 // förkortad på telefon och "Spara" ensamt säger inte vad.
                 aria-label={t('today.saveMeal')}
@@ -120,24 +119,6 @@ export function MealSection({
                 </span>
               </Button>
             )}
-            {!isCompleted && onLoadMeal && (
-              <Button
-                size="sm"
-                variant="outline"
-                className={cn(
-                  STACKED_ACTION_CLASS,
-                  'border-primary-300 dark:border-primary-700 text-primary-700 dark:text-primary-300'
-                )}
-                aria-label={t('today.loadMeal')}
-                onClick={() => onLoadMeal(mealName, mealOrder, mealEntry?.id)}
-              >
-                <FolderDown className="h-4 w-4 shrink-0" />
-                <span className={ACTION_LABEL_CLASS}>
-                  <span className="md:hidden">{t('today.loadMealShort')}</span>
-                  <span className="hidden md:inline">{t('today.loadMeal')}</span>
-                </span>
-              </Button>
-            )}
             {!isCompleted && (
               <Button
                 size="sm"
@@ -145,7 +126,7 @@ export function MealSection({
                 // Sidan har flera måltider — "Lägg till" ensamt räcker inte
                 // när en skärmläsare stegar mellan rubrikerna.
                 aria-label={`${t('today.addFood')} — ${mealName}`}
-                onClick={() => onAddFood(mealName, mealEntry?.id)}
+                onClick={() => onAddFood(mealName, mealEntry?.id, mealOrder)}
               >
                 <Plus className="h-4 w-4 shrink-0" />
                 <span className={ACTION_LABEL_CLASS}>{t('today.addFood')}</span>
