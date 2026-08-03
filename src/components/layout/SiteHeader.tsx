@@ -30,6 +30,7 @@ import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
 import type { Friend } from '@/lib/types/friends'
 import { LanguageSwitcher } from '../ui/LanguageSwitcher'
+import { ThemeToggle } from '../ui/ThemeToggle'
 import { cn } from '@/lib/utils'
 
 export default function SiteHeader() {
@@ -262,6 +263,9 @@ export default function SiteHeader() {
             </div>
           ) : (
             <div className="flex items-center gap-2">
+              {/* Temaväxlaren finns annars bara i inställningarna, bakom
+                  inloggning — en besökare med mörkt OS hade ingen väg ur. */}
+              <ThemeToggle />
               <LanguageSwitcher />
               <Button variant="ghost" size="sm" asChild>
                 <Link to="/login">{t('nav.login')}</Link>
@@ -276,6 +280,7 @@ export default function SiteHeader() {
         {/* Mobile Menu Button - Only show when logged out */}
         {!user && (
           <div className="md:hidden flex items-center gap-1">
+            <ThemeToggle />
             <LanguageSwitcher />
             <button
               onClick={toggleMobileMenu}
