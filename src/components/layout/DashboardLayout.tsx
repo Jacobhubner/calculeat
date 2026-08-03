@@ -39,7 +39,12 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
     <div className={cn('flex flex-col', fullHeight ? 'h-screen' : 'min-h-screen')}>
       {/* Engångsnotis till soft launch-testare efter premium-flippen */}
       <LaunchAnnouncement />
-      <div className="sticky top-0 z-50">
+      {/* z-60, inte z-50: avatarmenyn hänger ut ur headern och kan nå ner till
+          skärmens botten, där MobileBottomNav ligger på z-50. Vid samma nivå
+          vinner det element som kommer senare i DOM:en — bottennavigeringen —
+          och den täckte menyns nedersta rad (språkväljaren). Menyns egen z-50
+          räcker inte, eftersom den sitter fast inuti den här stackningskontexten. */}
+      <div className="sticky top-0 z-60">
         <SiteHeader />
         {isPreviewMode && (
           <div className="bg-amber-50 border-b border-amber-300 px-4 py-2 text-sm text-amber-800 flex items-center justify-between gap-4 dark:bg-amber-900/25 dark:border-amber-800 dark:text-amber-200">
