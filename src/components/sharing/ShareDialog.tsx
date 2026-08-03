@@ -23,6 +23,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import { toast } from 'sonner'
 import type { Friend } from '@/lib/types/friends'
 import { useTranslation } from 'react-i18next'
+import { cn } from '@/lib/utils'
+import { AVATAR_GRADIENT } from '@/lib/constants/avatarStyles'
 
 type Step = 'recipient' | 'content' | 'confirm'
 type ContentType = 'food_item' | 'recipe' | 'saved_meal' | 'food_list'
@@ -230,7 +232,12 @@ export function ShareDialog({
                         onClick={() => handleFriendSelect(friend)}
                         className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/25 transition-colors text-left"
                       >
-                        <div className="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xs font-semibold shrink-0 dark:bg-primary-900/25 dark:text-primary-300">
+                        <div
+                          className={cn(
+                            'h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold shrink-0',
+                            AVATAR_GRADIENT
+                          )}
+                        >
                           {getInitials(friend.alias ?? friend.friend_name)}
                         </div>
                         <div className="min-w-0">
@@ -452,7 +459,12 @@ export function ShareDialog({
           <div className="space-y-4">
             <div className="rounded-xl border border-neutral-200 p-4 space-y-3 dark:border-neutral-700">
               <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-sm font-semibold shrink-0 dark:bg-primary-900/25 dark:text-primary-300">
+                <div
+                  className={cn(
+                    'h-9 w-9 rounded-full flex items-center justify-center text-sm font-semibold shrink-0',
+                    AVATAR_GRADIENT
+                  )}
+                >
                   {getInitials(recipientLabel)}
                 </div>
                 <div className="min-w-0">

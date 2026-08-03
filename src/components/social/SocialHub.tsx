@@ -98,6 +98,8 @@ import { useFriendPresence } from '@/hooks/useFriendPresence'
 import { useNavigate } from 'react-router-dom'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
 import { useRecipeRequests, useDeleteRecipeRequest } from '@/hooks/useOfficialRecipes'
+import { cn } from '@/lib/utils'
+import { AVATAR_GRADIENT } from '@/lib/constants/avatarStyles'
 
 function getDateLocale() {
   return i18n.language === 'sv' ? sv : enUS
@@ -676,7 +678,12 @@ function FriendProfile({
       {/* Avatar + info */}
       <div className="flex flex-col items-center py-4 gap-2">
         <div className="relative">
-          <div className="h-16 w-16 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-2xl font-semibold dark:bg-primary-900/25 dark:text-primary-300">
+          <div
+            className={cn(
+              'h-16 w-16 rounded-full flex items-center justify-center text-2xl font-semibold',
+              AVATAR_GRADIENT
+            )}
+          >
             {getInitials(displayName)}
           </div>
           {onlineFriendIds.has(friend.friend_id) && (
@@ -874,7 +881,12 @@ function ConversationList({ onOpenThread }: { onOpenThread: (conv: Conversation)
             onClick={() => onOpenThread(conv)}
             className="w-full flex items-center gap-3 px-4 py-3 hover:bg-neutral-50 transition-colors text-left dark:hover:bg-neutral-800"
           >
-            <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-sm font-semibold shrink-0 dark:bg-primary-900/25 dark:text-primary-300">
+            <div
+              className={cn(
+                'h-10 w-10 rounded-full flex items-center justify-center text-sm font-semibold shrink-0',
+                AVATAR_GRADIENT
+              )}
+            >
               {getInitials(displayName)}
             </div>
             <div className="flex-1 min-w-0">
@@ -1334,7 +1346,12 @@ function MessageThread({
         >
           <ArrowLeft className="h-4 w-4" />
         </button>
-        <div className="h-7 w-7 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-xs font-semibold shrink-0 dark:bg-primary-900/25 dark:text-primary-300">
+        <div
+          className={cn(
+            'h-7 w-7 rounded-full flex items-center justify-center text-xs font-semibold shrink-0',
+            AVATAR_GRADIENT
+          )}
+        >
           {getInitials(displayName)}
         </div>
         <div className="flex-1 min-w-0">
@@ -1801,7 +1818,12 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                         className="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-neutral-50 transition-colors text-left dark:hover:bg-neutral-800"
                       >
                         <div className="relative shrink-0">
-                          <div className="h-9 w-9 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 text-sm font-semibold dark:bg-primary-900/25 dark:text-primary-300">
+                          <div
+                            className={cn(
+                              'h-9 w-9 rounded-full flex items-center justify-center text-sm font-semibold',
+                              AVATAR_GRADIENT
+                            )}
+                          >
                             {getInitials(friend.alias ?? friend.friend_name)}
                           </div>
                           {onlineFriendIds.has(friend.friend_id) && (

@@ -8,6 +8,8 @@ import { useCreateSharedList } from '@/hooks/useSharedLists'
 import { handlePremiumLimitError } from '@/stores/upgradeModalStore'
 import { toast } from 'sonner'
 import type { Friend } from '@/lib/types/friends'
+import { cn } from '@/lib/utils'
+import { AVATAR_GRADIENT } from '@/lib/constants/avatarStyles'
 
 interface CreateSharedListDialogProps {
   open: boolean
@@ -128,7 +130,12 @@ export function CreateSharedListDialog({
                     }
                     className="flex w-full items-center gap-3 px-3 py-2.5 text-sm hover:bg-accent transition-colors"
                   >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-semibold shrink-0">
+                    <div
+                      className={cn(
+                        'flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold shrink-0',
+                        AVATAR_GRADIENT
+                      )}
+                    >
                       {getInitials(friend.friend_name)}
                     </div>
                     <span className="flex-1 text-left">{friend.friend_name}</span>

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import * as AvatarPrimitive from '@radix-ui/react-avatar'
 import { cn } from '@/lib/utils'
+import { AVATAR_GRADIENT } from '@/lib/constants/avatarStyles'
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -35,10 +36,8 @@ const AvatarFallback = React.forwardRef<
     className={cn(
       // Loggans gradient i stället för den helmättade primärgrönen — avataren
       // är appens mest sedda märkesyta efter loggan själv.
-      'flex h-full w-full items-center justify-center rounded-full text-sm font-semibold text-white',
-      'bg-[linear-gradient(135deg,#7bbe2a_0%,#edbe0c_53%,#fc8518_100%)]',
-      // Gradientens gula mittparti är ljust — skuggan håller initialerna läsbara
-      '[text-shadow:0_1px_2px_rgba(0,0,0,0.28)]',
+      'flex h-full w-full items-center justify-center rounded-full text-sm font-semibold',
+      AVATAR_GRADIENT,
       className
     )}
     {...props}
