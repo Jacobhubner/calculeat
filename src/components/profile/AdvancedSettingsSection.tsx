@@ -37,6 +37,8 @@ export default function AdvancedSettingsSection({
   showLockNotice,
 }: AdvancedSettingsSectionProps) {
   const { t } = useTranslation('profile')
+  // Samma nyckel styr både uppmaningen och kontrollen — se SettingsPage.
+  const deleteKeyword = t('dangerZone.deleteKeyword')
   const [isOpen, setIsOpen] = useState(false)
   const [deleteStep, setDeleteStep] = useState<0 | 1 | 2>(0)
   const [confirmText, setConfirmText] = useState('')
@@ -142,13 +144,13 @@ export default function AdvancedSettingsSection({
             {deleteStep === 2 && (
               <div className="space-y-3">
                 <p className="text-sm text-error-700 dark:text-error-300">
-                  {t('dangerZone.deleteConfirm')}
+                  {t('dangerZone.deleteConfirm', { keyword: deleteKeyword })}
                 </p>
                 <input
                   type="text"
                   value={confirmText}
                   onChange={e => setConfirmText(e.target.value)}
-                  placeholder={t('dangerZone.deleteConfirmPlaceholder')}
+                  placeholder={t('dangerZone.deleteConfirmPlaceholder', { keyword: deleteKeyword })}
                   className="w-full rounded-lg border-2 border-error-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-error-500 focus:border-error-500 dark:border-error-800 dark:bg-neutral-850"
                   autoFocus
                 />
@@ -163,7 +165,7 @@ export default function AdvancedSettingsSection({
                   </button>
                   <button
                     onClick={handleDeleteAccount}
-                    disabled={confirmText !== 'RADERA' || isDeleting}
+                    disabled={confirmText.trim().toUpperCase() !== deleteKeyword || isDeleting}
                     className="flex-1 rounded-lg bg-error-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-error-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     type="button"
                   >

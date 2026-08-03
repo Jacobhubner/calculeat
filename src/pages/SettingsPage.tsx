@@ -121,6 +121,12 @@ export default function SettingsPage() {
   const [confirmText, setConfirmText] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
 
+  // Bekräftelseordet kom från översättningen i uppmaningen men jämfördes mot
+  // hårdkodat 'RADERA'. På engelska bad gränssnittet alltså om DELETE medan
+  // koden krävde RADERA — knappen gick aldrig att aktivera. Samma nyckel styr
+  // nu både texten och kontrollen.
+  const deleteKeyword = t('settings.deleteAccountKeyword')
+
   // App settings
   const [completionMode, setCompletionMode] = useState<CompletionMode>(
     () => (localStorage.getItem('day-completion-mode') as CompletionMode) || 'manual'
@@ -1126,19 +1132,19 @@ export default function SettingsPage() {
               {deleteStep === 2 && (
                 <>
                   <p className="text-sm font-medium text-error-700 dark:text-error-300">
-                    {t('settings.deleteAccountFinal')}
+                    {t('settings.deleteAccountFinal', { keyword: deleteKeyword })}
                   </p>
                   <input
                     type="text"
                     value={confirmText}
                     onChange={e => setConfirmText(e.target.value)}
-                    placeholder={t('settings.deleteAccountPlaceholder')}
-                    className="w-full px-3 py-2 text-sm border border-error-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-error-500 dark:border-error-800"
+                    placeholder={t('settings.deleteAccountPlaceholder', { keyword: deleteKeyword })}
+                    className="w-full px-3 py-2 text-sm border border-error-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-error-500 dark:border-error-800 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500"
                   />
                   <div className="flex gap-2">
                     <button
                       onClick={handleDeleteAccount}
-                      disabled={confirmText !== 'RADERA' || isDeleting}
+                      disabled={confirmText.trim().toUpperCase() !== deleteKeyword || isDeleting}
                       className="px-4 py-2 text-sm font-medium text-white bg-error-600 hover:bg-error-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                       {isDeleting && <Loader2 className="h-4 w-4 animate-spin" />}
