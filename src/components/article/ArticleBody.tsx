@@ -203,7 +203,7 @@ export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBody
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-100">
+                  <tbody className="divide-y divide-neutral-100 dark:divide-neutral-700">
                     {block.rows.map((row, r) => (
                       <tr
                         key={r}
@@ -218,7 +218,7 @@ export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBody
                             key={c}
                             className={
                               c === 0
-                                ? `px-4 py-3 font-medium text-neutral-800 ${block.variant === 'plain' ? 'whitespace-nowrap' : ''}`
+                                ? `px-4 py-3 font-medium text-neutral-800 dark:text-neutral-100 ${block.variant === 'plain' ? 'whitespace-nowrap' : ''}`
                                 : 'px-4 py-3 text-neutral-600 tabular-nums dark:text-neutral-400'
                             }
                           >
@@ -245,7 +245,10 @@ export function ArticleBody({ blocks, headingIds, anchorCopyLabel }: ArticleBody
                     <table className="w-full text-sm">
                       <tbody>
                         {t.rows.map(([label, value], r) => (
-                          <tr key={r} className="border-t border-neutral-100 first:border-t-0">
+                          <tr
+                            key={r}
+                            className="border-t border-neutral-100 first:border-t-0 dark:border-neutral-700"
+                          >
                             <td className="px-4 py-2.5 text-neutral-600 dark:text-neutral-400">
                               {label}
                             </td>

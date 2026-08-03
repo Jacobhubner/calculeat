@@ -103,7 +103,7 @@ export default function CalculationResults({
         </CardHeader>
         <CardContent>
           <div className={`text-3xl font-bold ${getCalorieColor()}`}>{Math.round(calorieGoal)}</div>
-          <p className="text-xs text-neutral-600 mt-1">kcal/dag</p>
+          <p className="text-xs text-neutral-600 mt-1 dark:text-neutral-400">kcal/dag</p>
           {profile.calorie_goal !== 'Maintain weight' && (
             <p className="text-xs text-neutral-500 mt-2">
               {profile.calorie_goal === 'Weight loss' ? 'Underskott' : 'Överskott'}:{' '}

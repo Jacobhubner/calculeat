@@ -237,7 +237,7 @@ function AdminSupportThread({
   return (
     <div className="flex flex-col h-full">
       {/* Thread header */}
-      <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-neutral-100">
+      <div className="shrink-0 flex items-center justify-between px-4 py-3 border-b border-neutral-100 dark:border-neutral-700">
         <div className="min-w-0">
           <p className="text-sm font-semibold text-neutral-900 truncate dark:text-neutral-100">
             {entry.username || entry.email || t('guestFallbackName')}
@@ -400,7 +400,7 @@ function AdminSupportThread({
 
       {/* Reply input */}
       {threadStatus === 'open' ? (
-        <div className="shrink-0 border-t border-neutral-100 px-3 py-3">
+        <div className="shrink-0 border-t border-neutral-100 dark:border-neutral-700 px-3 py-3">
           {inlineError && <p className="text-xs text-red-500 mb-2 px-1">{inlineError}</p>}
           {previewUrl && (
             <div className="mb-2 px-1">
@@ -463,7 +463,7 @@ function AdminSupportThread({
           </div>
         </div>
       ) : (
-        <div className="shrink-0 border-t border-neutral-100 px-4 py-3 bg-neutral-50 text-center dark:bg-neutral-900">
+        <div className="shrink-0 border-t border-neutral-100 dark:border-neutral-700 px-4 py-3 bg-neutral-50 text-center dark:bg-neutral-900">
           <p className="text-xs text-neutral-500 dark:text-neutral-400">{t('threadClosedAdmin')}</p>
         </div>
       )}
@@ -601,7 +601,7 @@ export default function AdminSupportPage() {
             selectedEntry ? 'hidden md:flex' : 'flex'
           } flex-col w-full md:w-80 lg:w-96 shrink-0 border-r border-neutral-200 dark:border-neutral-700 overflow-y-auto`}
         >
-          <div className="shrink-0 px-4 py-3 border-b border-neutral-100">
+          <div className="shrink-0 px-4 py-3 border-b border-neutral-100 dark:border-neutral-700">
             <h1 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
               {t('adminPageTitle')}
             </h1>

@@ -125,7 +125,7 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
           {compareRows.map(row => (
             <div
               key={row}
-              className="grid grid-cols-[1.1fr_0.8fr_1.1fr] border-t border-neutral-100 text-xs"
+              className="grid grid-cols-[1.1fr_0.8fr_1.1fr] border-t border-neutral-100 dark:border-neutral-700 text-xs"
             >
               <div className="px-3 py-2 font-medium text-neutral-700 dark:text-neutral-200">
                 {t(`upgradeModal.compare.rows.${row}.label`)}

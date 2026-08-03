@@ -476,7 +476,7 @@ export function ShareDialog({
                   </p>
                 </div>
               </div>
-              <div className="border-t border-neutral-100 pt-3 flex items-center gap-3">
+              <div className="border-t border-neutral-100 dark:border-neutral-700 pt-3 flex items-center gap-3">
                 {contentType === 'food_item' && (
                   <Apple className="h-5 w-5 text-green-600 shrink-0 dark:text-green-300" />
                 )}

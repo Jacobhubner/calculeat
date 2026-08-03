@@ -111,7 +111,7 @@ export function SupportMessageInput({ threadId, status }: Props) {
   }
 
   return (
-    <div className="shrink-0 border-t border-neutral-100 px-3 py-3">
+    <div className="shrink-0 border-t border-neutral-100 dark:border-neutral-700 px-3 py-3">
       {status === 'closed' && threadId && (
         <div className="mb-3 flex flex-col items-center gap-2 rounded-lg bg-neutral-50 px-3 py-3 text-center dark:bg-neutral-900">
           <p className="text-xs text-neutral-500 dark:text-neutral-400">

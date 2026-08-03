@@ -69,10 +69,10 @@ export default function AuthCallbackPage() {
         {state === 'loading' && (
           <div className="text-center py-8">
             <Loader2 className="h-12 w-12 text-primary-600 animate-spin mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-neutral-900 mb-2">
+            <h2 className="text-xl font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
               {t('authCallback.loading')}
             </h2>
-            <p className="text-neutral-600">{t('authCallback.pleaseWait')}</p>
+            <p className="text-neutral-600 dark:text-neutral-300">{t('authCallback.pleaseWait')}</p>
           </div>
         )}
 
@@ -80,10 +80,12 @@ export default function AuthCallbackPage() {
         {state === 'success' && (
           <div className="text-center py-8">
             <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-neutral-900 mb-2">
+            <h2 className="text-xl font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
               {t('authCallback.successTitle')}
             </h2>
-            <p className="text-neutral-600 mb-6">{t('authCallback.successDescription')}</p>
+            <p className="text-neutral-600 mb-6 dark:text-neutral-300">
+              {t('authCallback.successDescription')}
+            </p>
             <div className="flex items-center justify-center gap-2 text-sm text-neutral-500">
               <Loader2 className="h-4 w-4 animate-spin" />
               <span>{t('authCallback.redirecting')}</span>
@@ -95,10 +97,10 @@ export default function AuthCallbackPage() {
         {state === 'error' && (
           <div className="text-center py-8">
             <XCircle className="h-12 w-12 text-red-600 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-neutral-900 mb-2">
+            <h2 className="text-xl font-semibold text-neutral-900 mb-2 dark:text-neutral-100">
               {t('authCallback.errorTitle')}
             </h2>
-            <p className="text-neutral-600 mb-6">
+            <p className="text-neutral-600 mb-6 dark:text-neutral-300">
               {errorMessage || t('authCallback.errorFallback')}
             </p>
             <div className="space-y-3">

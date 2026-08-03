@@ -137,7 +137,7 @@ const AdminSupportPage = lazyWithRetry(() => import('./pages/AdminSupportPage'))
 // Loading fallback component
 function PageLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+    <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-neutral-950">
       <div className="space-y-4 w-full max-w-md p-8">
         <Skeleton className="h-8 w-48 mx-auto" />
         <Skeleton className="h-4 w-full" />

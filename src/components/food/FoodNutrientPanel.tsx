@@ -175,7 +175,9 @@ export function FoodNutrientPanel({ foodItem, open, onOpenChange }: FoodNutrient
 
                   return (
                     <div key={cat}>
-                      {catIdx > 0 && <div className="border-t border-neutral-100 mb-4" />}
+                      {catIdx > 0 && (
+                        <div className="border-t border-neutral-100 dark:border-neutral-700 mb-4" />
+                      )}
                       <div className="rounded-xl border border-neutral-200 overflow-hidden dark:border-neutral-700">
                         <div className="bg-neutral-50 px-4 py-2 border-b border-neutral-200 dark:border-neutral-700 dark:bg-neutral-900">
                           <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-wide dark:text-neutral-400">

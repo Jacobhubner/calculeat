@@ -81,7 +81,7 @@ export function HeroSection() {
             <div className="w-full max-w-md">
               <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 dark:border-neutral-700 dark:bg-neutral-850">
                 {/* Card header */}
-                <div className="flex items-center gap-2 mb-5 pb-4 border-b border-neutral-100">
+                <div className="flex items-center gap-2 mb-5 pb-4 border-b border-neutral-100 dark:border-neutral-700">
                   <LayoutGrid className="h-4 w-4 text-primary-600 dark:text-primary-300" />
                   <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-200">
                     {t('home.hero.cardHeader')}

@@ -217,7 +217,7 @@ function MiniInvitationCard({ invitation }: { invitation: PendingInvitation }) {
           : t('invitations.badge.food_item')
 
   return (
-    <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white dark:bg-neutral-850">
+    <div className="rounded-lg border border-neutral-100 dark:border-neutral-700 p-3 space-y-2 bg-white dark:bg-neutral-850">
       <div className="flex items-start gap-2">
         <div className="p-1.5 rounded bg-violet-50 shrink-0 dark:bg-violet-500/20">{itemIcon}</div>
         <div className="flex-1 min-w-0">
@@ -313,7 +313,7 @@ function MiniSharedListInvitationCard({ invitation }: { invitation: SharedListIn
   const isBusy = isAccepting || isRejecting
 
   return (
-    <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white dark:bg-neutral-850">
+    <div className="rounded-lg border border-neutral-100 dark:border-neutral-700 p-3 space-y-2 bg-white dark:bg-neutral-850">
       <div className="flex items-start gap-2">
         <div className="p-1.5 rounded bg-blue-50 shrink-0 dark:bg-blue-900/25">
           <ListOrdered className="h-4 w-4 text-blue-600 dark:text-blue-300" />
@@ -400,7 +400,7 @@ function MiniFriendRequestCard({ request }: { request: FriendRequest }) {
   const isBusy = isAccepting || isRejecting
 
   return (
-    <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white dark:bg-neutral-850">
+    <div className="rounded-lg border border-neutral-100 dark:border-neutral-700 p-3 space-y-2 bg-white dark:bg-neutral-850">
       <div className="flex items-center gap-2">
         <div className="h-8 w-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-600 text-xs font-semibold shrink-0 dark:bg-neutral-800 dark:text-neutral-400">
           {getInitials(request.requester_name)}
@@ -480,7 +480,7 @@ function SentShareCard({ invitation }: { invitation: SentShareInvitation }) {
     )
 
   return (
-    <div className="rounded-lg border border-neutral-100 p-3 bg-white flex items-center gap-2 dark:bg-neutral-850">
+    <div className="rounded-lg border border-neutral-100 dark:border-neutral-700 p-3 bg-white flex items-center gap-2 dark:bg-neutral-850">
       <div className="p-1.5 rounded bg-neutral-50 shrink-0 dark:bg-neutral-900">{itemIcon}</div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-100">
@@ -526,7 +526,7 @@ function SentAdminInvitationCard({ invitation }: { invitation: SentAdminInvitati
   }
 
   return (
-    <div className="rounded-lg border border-neutral-100 p-3 bg-white flex items-center gap-2 dark:bg-neutral-850">
+    <div className="rounded-lg border border-neutral-100 dark:border-neutral-700 p-3 bg-white flex items-center gap-2 dark:bg-neutral-850">
       <div className="p-1.5 rounded bg-neutral-50 shrink-0 dark:bg-neutral-900">
         <ShieldCheck className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />
       </div>
@@ -574,7 +574,7 @@ function SentFriendRequestCard({ request }: { request: SentFriendRequest }) {
   }
 
   return (
-    <div className="rounded-lg border border-neutral-100 p-3 space-y-2 bg-white dark:bg-neutral-850">
+    <div className="rounded-lg border border-neutral-100 dark:border-neutral-700 p-3 space-y-2 bg-white dark:bg-neutral-850">
       <div className="flex items-center gap-2">
         <div className="h-8 w-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-600 text-xs font-semibold shrink-0 dark:bg-neutral-800 dark:text-neutral-400">
           {getInitials(request.addressee_name)}
@@ -1039,7 +1039,7 @@ function MessageBubble({
               setMenuOpen(v => !v)
               setConfirmDelete(false)
             }}
-            className={`absolute -top-2 ${isOwn ? '-left-6' : '-right-6'} opacity-0 group-hover:opacity-100 p-1 rounded-full bg-white shadow border border-neutral-100 text-neutral-400 hover:text-neutral-700 transition-all z-10 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-100`}
+            className={`absolute -top-2 ${isOwn ? '-left-6' : '-right-6'} opacity-0 group-hover:opacity-100 p-1 rounded-full bg-white shadow border border-neutral-100 dark:border-neutral-700 text-neutral-400 hover:text-neutral-700 transition-all z-10 dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-100`}
           >
             <MoreHorizontal className="h-3 w-3" />
           </button>
@@ -1047,7 +1047,7 @@ function MessageBubble({
 
         {menuOpen && (
           <div
-            className={`absolute top-0 ${isOwn ? 'right-full mr-1' : 'left-full ml-1'} z-50 bg-white rounded-lg shadow-lg border border-neutral-100 py-1 min-w-[130px] dark:bg-neutral-800 dark:border-neutral-700 dark:shadow-black/40`}
+            className={`absolute top-0 ${isOwn ? 'right-full mr-1' : 'left-full ml-1'} z-50 bg-white rounded-lg shadow-lg border border-neutral-100 dark:border-neutral-700 py-1 min-w-[130px] dark:bg-neutral-800 dark:border-neutral-700 dark:shadow-black/40`}
           >
             {!confirmDelete ? (
               <>
@@ -1338,7 +1338,7 @@ function MessageThread({
   return (
     <div className="flex flex-col h-full min-h-0">
       {/* Tråd-header */}
-      <div className="flex items-center gap-2 px-3 py-2 border-b border-neutral-100 shrink-0">
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-neutral-100 dark:border-neutral-700 shrink-0">
         <button
           type="button"
           onClick={onBack}
@@ -1461,7 +1461,7 @@ function MessageThread({
       </div>
 
       {/* Inmatningsfält */}
-      <div className="shrink-0 border-t border-neutral-100 px-3 py-2">
+      <div className="shrink-0 border-t border-neutral-100 dark:border-neutral-700 px-3 py-2">
         {showCharCount && (
           <p
             className={`text-[10px] mb-1 text-right ${isOverLimit ? 'text-red-500' : 'text-neutral-400 dark:text-neutral-500'}`}
@@ -1553,7 +1553,7 @@ function NotificationCard({
       className={`w-full flex items-start gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors ${
         isUnread
           ? 'border-primary-100 bg-primary-50 hover:bg-primary-100 dark:bg-primary-900/25'
-          : 'border-neutral-100 bg-white hover:bg-neutral-50 dark:hover:bg-neutral-800 dark:bg-neutral-850'
+          : 'border-neutral-100 dark:border-neutral-700 bg-white hover:bg-neutral-50 dark:hover:bg-neutral-800 dark:bg-neutral-850'
       }`}
     >
       <div className="mt-0.5 shrink-0">{notificationIcon(n.type)}</div>
@@ -1708,7 +1708,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
   return (
     <>
       {/* Header */}
-      <div className="px-4 pt-4 pb-2 border-b border-neutral-100 shrink-0">
+      <div className="px-4 pt-4 pb-2 border-b border-neutral-100 dark:border-neutral-700 shrink-0">
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-semibold text-neutral-900 dark:text-neutral-100">
             {t('social.hub.title')}
@@ -1969,7 +1969,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                 {recipeRequests.map(req => (
                   <div
                     key={req.id}
-                    className="rounded-lg border border-neutral-100 bg-white p-3 flex items-start justify-between gap-3 dark:bg-neutral-850"
+                    className="rounded-lg border border-neutral-100 dark:border-neutral-700 bg-white p-3 flex items-start justify-between gap-3 dark:bg-neutral-850"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-sm text-neutral-900 dark:text-neutral-100">

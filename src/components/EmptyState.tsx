@@ -27,7 +27,7 @@ export default function EmptyState({
       <div className="rounded-2xl bg-gradient-to-br from-primary-100/40 to-accent-100/40 p-6 mb-6 dark:from-primary-900/30 dark:to-accent-900/20">
         <Icon className="h-14 w-14 text-primary-600 dark:text-primary-300" />
       </div>
-      <h3 className="text-xl font-bold text-neutral-950 mb-3">{title}</h3>
+      <h3 className="text-xl font-bold text-neutral-950 mb-3 dark:text-neutral-50">{title}</h3>
       <p className="text-sm text-neutral-600 max-w-sm mb-8 dark:text-neutral-400">{description}</p>
       {action && (
         <Button onClick={action.onClick} size="lg">

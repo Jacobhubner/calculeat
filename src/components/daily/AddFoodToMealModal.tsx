@@ -780,7 +780,7 @@ export function AddFoodToMealModal({
 
                 {/* Pagination */}
                 {totalPages > 1 && (
-                  <div className="flex items-center justify-between pt-2 border-t border-neutral-100">
+                  <div className="flex items-center justify-between pt-2 border-t border-neutral-100 dark:border-neutral-700">
                     <span className="text-xs text-neutral-500 dark:text-neutral-400">
                       {t('addToMealModal.page', { page: page + 1, total: totalPages })}
                     </span>

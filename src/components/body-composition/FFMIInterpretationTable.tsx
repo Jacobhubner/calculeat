@@ -157,7 +157,7 @@ export function FFMIInterpretationTable({
           </tbody>
         </table>
       </div>
-      <p className="text-xs text-neutral-400 px-3 py-2 border-t border-neutral-100">
+      <p className="text-xs text-neutral-400 px-3 py-2 border-t border-neutral-100 dark:border-neutral-700">
         {t('ffmiInterpretation.sourceLabel')} {t('ffmiInterpretation.sourceLinkText')}
       </p>
     </div>

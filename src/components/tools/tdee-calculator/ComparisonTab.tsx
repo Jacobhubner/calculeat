@@ -230,7 +230,7 @@ export default function ComparisonTab({
 
           {/* Kroppsfett% */}
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1">
+            <label className="block text-sm font-medium text-neutral-700 mb-1 dark:text-neutral-300">
               {t('comparison.bodyFat')}{' '}
               <span className="text-neutral-500 dark:text-neutral-400 font-normal">
                 {t('comparison.bodyFatOptional')}

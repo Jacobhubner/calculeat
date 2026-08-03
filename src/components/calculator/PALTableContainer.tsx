@@ -58,7 +58,10 @@ export default function PALTableContainer({
         const customPALOutOfRange = !isNaN(rawPAL) && (rawPAL < 1.2 || rawPAL > 2.2)
         return register ? (
           <div className="space-y-2">
-            <label htmlFor="custom_pal" className="block text-sm font-medium text-neutral-700">
+            <label
+              htmlFor="custom_pal"
+              className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
+            >
               {t('tdeeCalc.palTable.customPALLabel')} <span className="text-red-600">*</span>
             </label>
             <input

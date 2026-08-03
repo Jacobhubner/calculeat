@@ -262,7 +262,9 @@ export function ArticleLayout({
                         href={s.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="underline decoration-neutral-300 underline-offset-2 hover:text-neutral-800 hover:decoration-primary-400 transition-colors"
+                        // hover:text-neutral-800 gjorde länken mörkare vid hover
+                        // — i mörkt läge alltså tvärtemot avsikten.
+                        className="underline decoration-neutral-300 underline-offset-2 hover:text-neutral-800 hover:decoration-primary-400 transition-colors dark:decoration-neutral-600 dark:hover:text-neutral-100"
                       >
                         {s.text}
                       </a>
