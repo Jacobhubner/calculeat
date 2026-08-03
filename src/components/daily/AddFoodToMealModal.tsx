@@ -58,12 +58,12 @@ interface AddFoodToMealModalProps {
   onFoodSelect?: (food: FoodItem) => void
   showMealSelector?: boolean
   extraMealOptions?: { id: string; meal_name: string; meal_order: number }[]
-  /**
-   * Visar växeln Livsmedel / Sparade måltider högst upp. Kräver mealOrder,
-   * eftersom en sparad måltid laddas till en måltidsplats och inte till ett
-   * enskilt livsmedel.
-   */
+  /** Visar växeln Livsmedel / Sparade måltider högst upp. Kräver dailyLogId. */
   allowSavedMeals?: boolean
+  /**
+   * Måltidsplatsens ordning, när modalen öppnats från en specifik måltid.
+   * Utelämnas vid snabbloggning — då härleds den ur mealSettings via namnet.
+   */
   mealOrder?: number
 }
 
