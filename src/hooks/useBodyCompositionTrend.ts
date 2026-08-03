@@ -20,57 +20,63 @@ export function useBodyCompositionTrend(
   return useMemo(() => {
     if (!weightHistory || weightHistory.length === 0) return []
 
-    const filtered = [...weightHistory]
-      .filter(e => e.body_fat_percentage != null && e.weight_kg != null)
-      .sort((a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime())
-
+    // Parsa datum och beräkna massorna EN gång per post. Tidigare kördes
+    // calculateFatMass/calculateFatFreeMass om för varje element i varje
+    // fönster, alltså O(n²) anrop utöver O(n²) datumparsningar.
+    const filtered: { ts: number; fatMass: number; leanMass: number }[] = []
+    for (const entry of weightHistory) {
+      if (entry.body_fat_percentage == null || entry.weight_kg == null) continue
+      filtered.push({
+        ts: new Date(entry.recorded_at).getTime(),
+        fatMass: calculateFatMass(entry.weight_kg, entry.body_fat_percentage),
+        leanMass: calculateFatFreeMass(entry.weight_kg, entry.body_fat_percentage),
+      })
+    }
     if (filtered.length === 0) return []
+    filtered.sort((a, b) => a.ts - b.ts)
 
-    return filtered.map((entry, index) => {
-      const entryDate = new Date(entry.recorded_at)
-      const bf = entry.body_fat_percentage as number
-      const w = entry.weight_kg
-      const bfm = parseFloat(calculateFatMass(w, bf).toFixed(2))
-      const slm = parseFloat(calculateFatFreeMass(w, bf).toFixed(2))
+    const shortFormatter = new Intl.DateTimeFormat('sv-SE', { month: 'short', day: 'numeric' })
+    const fullFormatter = new Intl.DateTimeFormat('sv-SE')
 
-      // 7-day rolling average (date-based window, same pattern as useBodyFatTrend)
-      const cutoffDate = new Date(entry.recorded_at)
-      cutoffDate.setDate(cutoffDate.getDate() - 7)
-      const window = filtered.slice(0, index + 1).filter(e => new Date(e.recorded_at) >= cutoffDate)
+    /** Kalenderbaserad gräns (setDate) — DST-säker, se useWeightTrend. */
+    const getCutoff = (ts: number) => {
+      const cutoff = new Date(ts)
+      cutoff.setDate(cutoff.getDate() - 7)
+      return cutoff.getTime()
+    }
 
-      const bfmRolling =
-        window.length >= 2
-          ? parseFloat(
-              (
-                window.reduce(
-                  (s, e) => s + calculateFatMass(e.weight_kg, e.body_fat_percentage as number),
-                  0
-                ) / window.length
-              ).toFixed(2)
-            )
-          : null
+    const round2 = (value: number) => parseFloat(value.toFixed(2))
 
-      const slmRolling =
-        window.length >= 2
-          ? parseFloat(
-              (
-                window.reduce(
-                  (s, e) => s + calculateFatFreeMass(e.weight_kg, e.body_fat_percentage as number),
-                  0
-                ) / window.length
-              ).toFixed(2)
-            )
-          : null
+    const result: BodyCompositionChartDataPoint[] = new Array(filtered.length)
+    let windowStart = 0
+    let fatSum = 0
+    let leanSum = 0
 
-      return {
-        date: entryDate.toLocaleDateString('sv-SE', { month: 'short', day: 'numeric' }),
-        timestamp: entryDate.getTime(),
-        bodyFatMass: bfm,
-        bodyFatMassRolling: bfmRolling,
-        softLeanMass: slm,
-        softLeanMassRolling: slmRolling,
-        displayDate: entryDate.toLocaleDateString('sv-SE'),
+    for (let i = 0; i < filtered.length; i++) {
+      const { ts, fatMass, leanMass } = filtered[i]
+      fatSum += fatMass
+      leanSum += leanMass
+
+      const cutoff = getCutoff(ts)
+      while (filtered[windowStart].ts < cutoff) {
+        fatSum -= filtered[windowStart].fatMass
+        leanSum -= filtered[windowStart].leanMass
+        windowStart++
       }
-    })
+
+      const count = i - windowStart + 1
+      const entryDate = new Date(ts)
+      result[i] = {
+        date: shortFormatter.format(entryDate),
+        timestamp: ts,
+        bodyFatMass: round2(fatMass),
+        bodyFatMassRolling: count >= 2 ? round2(fatSum / count) : null,
+        softLeanMass: round2(leanMass),
+        softLeanMassRolling: count >= 2 ? round2(leanSum / count) : null,
+        displayDate: fullFormatter.format(entryDate),
+      }
+    }
+
+    return result
   }, [weightHistory])
 }

@@ -11,33 +11,59 @@ export function useBodyFatTrend(
   return useMemo(() => {
     if (!weightHistory || weightHistory.length === 0) return []
 
-    const withBF = [...weightHistory]
-      .filter(e => e.body_fat_percentage != null)
-      .sort((a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime())
-
+    // Parsa varje datum EN gång och sortera på det cachade värdet.
+    const withBF: { ts: number; bodyFat: number }[] = []
+    for (const entry of weightHistory) {
+      if (entry.body_fat_percentage == null) continue
+      withBF.push({
+        ts: new Date(entry.recorded_at).getTime(),
+        bodyFat: entry.body_fat_percentage,
+      })
+    }
     if (withBF.length === 0) return []
+    withBF.sort((a, b) => a.ts - b.ts)
 
-    return withBF.map((entry, index) => {
-      const entryDate = new Date(entry.recorded_at)
+    // Återanvänd formatterare i stället för toLocaleDateString per punkt.
+    const shortFormatter = new Intl.DateTimeFormat('sv-SE', { month: 'short', day: 'numeric' })
+    const fullFormatter = new Intl.DateTimeFormat('sv-SE')
 
-      // 7-day rolling average over body-fat entries only (date-based window)
-      const cutoffDate = new Date(entry.recorded_at)
-      cutoffDate.setDate(cutoffDate.getDate() - 7)
-      const window = withBF
-        .slice(0, index + 1)
-        .filter(e => new Date(e.recorded_at) >= cutoffDate)
-        .map(e => e.body_fat_percentage as number)
+    /**
+     * Kalenderbaserad gräns (setDate), inte ts - 7*864e5 — skillnaden märks
+     * vid sommartidsskiften där ett dygn är 23 eller 25 timmar.
+     */
+    const getCutoff = (ts: number) => {
+      const cutoff = new Date(ts)
+      cutoff.setDate(cutoff.getDate() - 7)
+      return cutoff.getTime()
+    }
 
-      const rollingAverage =
-        window.length >= 2 ? window.reduce((s, v) => s + v, 0) / window.length : null
+    // Glidande fönster: summan justeras inkrementellt (O(n) i stället för
+    // slice+filter över hela prefixet per punkt).
+    const result: BodyFatChartDataPoint[] = new Array(withBF.length)
+    let windowStart = 0
+    let windowSum = 0
 
-      return {
-        date: entryDate.toLocaleDateString('sv-SE', { month: 'short', day: 'numeric' }),
-        timestamp: entryDate.getTime(),
-        bodyFat: entry.body_fat_percentage as number,
-        rollingAverage,
-        displayDate: entryDate.toLocaleDateString('sv-SE'),
+    for (let i = 0; i < withBF.length; i++) {
+      const { ts, bodyFat } = withBF[i]
+      windowSum += bodyFat
+
+      const cutoff = getCutoff(ts)
+      while (withBF[windowStart].ts < cutoff) {
+        windowSum -= withBF[windowStart].bodyFat
+        windowStart++
       }
-    })
+
+      const count = i - windowStart + 1
+      const entryDate = new Date(ts)
+      result[i] = {
+        date: shortFormatter.format(entryDate),
+        timestamp: ts,
+        bodyFat,
+        rollingAverage: count >= 2 ? windowSum / count : null,
+        displayDate: fullFormatter.format(entryDate),
+      }
+    }
+
+    return result
   }, [weightHistory])
 }

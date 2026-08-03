@@ -27,89 +27,118 @@ export function useWeightTrend(
       return emptyResult
     }
 
-    // Sort by date ascending for calculations
-    const sortedHistory = [...weightHistory].sort(
-      (a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime()
-    )
+    // Parsa varje datum EN gång och sortera på det cachade värdet. Tidigare
+    // parsades recorded_at om i comparatorn (O(n log n) Date-objekt) och sedan
+    // en gång till per punkt i rullande snitt.
+    const sortedHistory = weightHistory
+      .map(entry => ({ entry, ts: new Date(entry.recorded_at).getTime() }))
+      .sort((a, b) => a.ts - b.ts)
 
     // Use oldest weight as initial weight and newest as current weight
-    const initialWeight = sortedHistory[0].weight_kg
-    const latestWeight = currentWeight ?? sortedHistory[sortedHistory.length - 1].weight_kg
+    const initialWeight = sortedHistory[0].entry.weight_kg
+    const latestWeight = currentWeight ?? sortedHistory[sortedHistory.length - 1].entry.weight_kg
 
-    // Calculate rolling averages
-    const calculateRollingAverage = (
-      data: WeightHistory[],
-      index: number,
-      days: number
-    ): number | null => {
-      if (index < days - 1) return null
+    /**
+     * Rullande 7-dagarssnitt via glidande fönster: `start` flyttas framåt och
+     * summan justeras inkrementellt, så varje punkt besöks en gång (O(n)).
+     * Den gamla varianten gjorde slice+filter över hela prefixet per punkt,
+     * vilket blev O(n²) med en ny Date per jämförelse.
+     */
+    const ROLLING_DAYS = 7
 
-      const cutoffDate = new Date(data[index].recorded_at)
-      cutoffDate.setDate(cutoffDate.getDate() - days)
-
-      const relevantWeights = data
-        .slice(0, index + 1)
-        .filter(w => new Date(w.recorded_at) >= cutoffDate)
-        .map(w => w.weight_kg)
-
-      if (relevantWeights.length < 2) return null
-
-      return relevantWeights.reduce((sum, w) => sum + w, 0) / relevantWeights.length
+    /**
+     * Kalenderbaserad gräns (setDate), inte ts - 7*864e5. Skillnaden märks vid
+     * sommartidsskiften där ett dygn är 23 eller 25 timmar — en fast
+     * millisekundsubtraktion flyttar då fönstret och ändrar snittet.
+     */
+    const getRollingCutoff = (ts: number) => {
+      const cutoff = new Date(ts)
+      cutoff.setDate(cutoff.getDate() - ROLLING_DAYS)
+      return cutoff.getTime()
     }
 
-    // Build chart data with rolling averages
-    const chartDataWithTrend: WeightChartDataPoint[] = []
+    // Intl-formatterare är dyra att skapa — återanvänd i stället för att
+    // anropa toLocaleDateString (som bygger en ny formatterare) per punkt.
+    const shortFormatter = new Intl.DateTimeFormat('sv-SE', { month: 'short', day: 'numeric' })
+    const fullFormatter = new Intl.DateTimeFormat('sv-SE')
 
-    // Add all weight history entries
-    sortedHistory.forEach((entry, index) => {
-      const entryDate = new Date(entry.recorded_at)
-      chartDataWithTrend.push({
-        date: entryDate.toLocaleDateString('sv-SE', { month: 'short', day: 'numeric' }),
-        timestamp: entryDate.getTime(),
+    const chartDataWithTrend: WeightChartDataPoint[] = new Array(sortedHistory.length)
+    let windowStart = 0
+    let windowSum = 0
+
+    for (let i = 0; i < sortedHistory.length; i++) {
+      const { entry, ts } = sortedHistory[i]
+      windowSum += entry.weight_kg
+
+      // Krymp fönstret tills det bara rymmer punkter inom ROLLING_MS bakåt.
+      // Gränsen är INKLUSIV (>= cutoff behålls), vilket matchar den tidigare
+      // filter-varianten — annars tappas exakt en punkt på täta serier.
+      const cutoff = getRollingCutoff(ts)
+      while (sortedHistory[windowStart].ts < cutoff) {
+        windowSum -= sortedHistory[windowStart].entry.weight_kg
+        windowStart++
+      }
+
+      const count = i - windowStart + 1
+      // Behåll de gamla villkoren: minst 7 punkter totalt före snittet visas,
+      // och minst 2 punkter inom fönstret.
+      const rollingAverage = i < ROLLING_DAYS - 1 || count < 2 ? null : windowSum / count
+
+      const entryDate = new Date(ts)
+      chartDataWithTrend[i] = {
+        date: shortFormatter.format(entryDate),
+        timestamp: ts,
         weight: entry.weight_kg,
-        rollingAverage: calculateRollingAverage(sortedHistory, index, 7),
-        displayDate: entryDate.toLocaleDateString('sv-SE'),
+        rollingAverage,
+        displayDate: fullFormatter.format(entryDate),
         isPending: false,
         isCalibrationEvent: false,
-      })
-    })
+      }
+    }
 
-    // Calculate 7-day and 14-day averages from recent data
-    const now = new Date()
-    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-    const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000)
+    // Calculate 7-day and 14-day averages from recent data.
+    // Serien är sorterad, så snittfönstren hittas med ETT svep bakifrån i
+    // stället för två fulla filter-pass med Date-parsning per post.
+    const nowMs = new Date().getTime()
+    const sevenDaysAgoMs = nowMs - 7 * 24 * 60 * 60 * 1000
+    const fourteenDaysAgoMs = nowMs - 14 * 24 * 60 * 60 * 1000
 
-    const recentSevenDays = sortedHistory.filter(w => new Date(w.recorded_at) >= sevenDaysAgo)
-    const recentFourteenDays = sortedHistory.filter(w => new Date(w.recorded_at) >= fourteenDaysAgo)
+    let sevenSum = 0
+    let sevenCount = 0
+    let fourteenSum = 0
+    let fourteenCount = 0
+    let fourteenStartIndex = sortedHistory.length
 
-    const sevenDayAverage =
-      recentSevenDays.length >= 2
-        ? recentSevenDays.reduce((sum, w) => sum + w.weight_kg, 0) / recentSevenDays.length
-        : null
+    for (let i = sortedHistory.length - 1; i >= 0; i--) {
+      const { entry, ts } = sortedHistory[i]
+      if (ts < fourteenDaysAgoMs) break
+      fourteenSum += entry.weight_kg
+      fourteenCount++
+      fourteenStartIndex = i
+      if (ts >= sevenDaysAgoMs) {
+        sevenSum += entry.weight_kg
+        sevenCount++
+      }
+    }
 
-    const fourteenDayAverage =
-      recentFourteenDays.length >= 2
-        ? recentFourteenDays.reduce((sum, w) => sum + w.weight_kg, 0) / recentFourteenDays.length
-        : null
+    const sevenDayAverage = sevenCount >= 2 ? sevenSum / sevenCount : null
+    const fourteenDayAverage = fourteenCount >= 2 ? fourteenSum / fourteenCount : null
 
     // Calculate weekly change rate
     let weeklyChangeKg: number | null = null
     let weeklyChangePercent: number | null = null
 
     if (sortedHistory.length >= 2) {
-      const oldestRecentWeight = recentFourteenDays[0]
+      const oldestRecentWeight = sortedHistory[fourteenStartIndex]
       const newestWeight = sortedHistory[sortedHistory.length - 1]
 
       if (oldestRecentWeight && newestWeight) {
-        const daysDiff =
-          (new Date(newestWeight.recorded_at).getTime() -
-            new Date(oldestRecentWeight.recorded_at).getTime()) /
-          (1000 * 60 * 60 * 24)
+        const daysDiff = (newestWeight.ts - oldestRecentWeight.ts) / (1000 * 60 * 60 * 24)
 
         if (daysDiff >= 7) {
-          const weightDiff = newestWeight.weight_kg - oldestRecentWeight.weight_kg
+          const weightDiff = newestWeight.entry.weight_kg - oldestRecentWeight.entry.weight_kg
           weeklyChangeKg = (weightDiff / daysDiff) * 7
-          weeklyChangePercent = (weeklyChangeKg / oldestRecentWeight.weight_kg) * 100
+          weeklyChangePercent = (weeklyChangeKg / oldestRecentWeight.entry.weight_kg) * 100
         }
       }
     }
