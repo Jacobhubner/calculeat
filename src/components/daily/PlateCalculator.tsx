@@ -147,7 +147,7 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
                 onClick={() => handlePresetClick(value)}
                 className={`px-2 py-1 text-xs rounded transition-colors ${
                   targetAmount === value
-                    ? 'bg-primary-600 text-white'
+                    ? 'bg-primary-500 text-on-primary'
                     : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700'
                 }`}
               >

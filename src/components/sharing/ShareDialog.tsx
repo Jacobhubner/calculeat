@@ -286,7 +286,7 @@ export function ShareDialog({
                   }}
                   className={`flex-1 flex items-center justify-center gap-1 py-2 px-1.5 rounded-md text-xs font-medium transition-colors ${
                     contentType === type
-                      ? 'bg-primary-600 text-white'
+                      ? 'bg-primary-500 text-on-primary'
                       : 'text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-400'
                   }`}
                 >

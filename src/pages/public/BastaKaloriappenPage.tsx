@@ -313,7 +313,7 @@ export default function BastaKaloriappenPage() {
             <div className="flex flex-col sm:flex-row gap-2">
               <Link
                 to={calcHubHref}
-                className="inline-flex items-center gap-2 bg-primary-600 text-white font-medium px-4 py-2.5 rounded-xl hover:bg-primary-700 transition-colors text-sm"
+                className="inline-flex items-center gap-2 bg-primary-500 text-on-primary font-medium px-4 py-2.5 rounded-xl hover:bg-primary-700 transition-colors text-sm"
               >
                 <ArrowRight className="h-4 w-4" />
                 {t('best-calorie-app.internalCtaPrimary')}

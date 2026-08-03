@@ -493,7 +493,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
 
                             onAddToMeal(match.food, amount, unit)
                           }}
-                          className="p-1 rounded bg-primary-600 text-white hover:bg-primary-700 transition-colors flex-shrink-0"
+                          className="p-1 rounded bg-primary-500 text-on-primary hover:bg-primary-700 transition-colors flex-shrink-0"
                         >
                           <Plus className="h-3.5 w-3.5" />
                         </button>

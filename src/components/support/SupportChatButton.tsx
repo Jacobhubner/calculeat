@@ -64,7 +64,7 @@ export function SupportChatButton() {
           type="button"
           onClick={() => setIsOpen(prev => !prev)}
           aria-label={t('openChat')}
-          className="relative h-12 w-12 rounded-full bg-primary-600 text-white shadow-lg hover:bg-primary-700 hover:shadow-xl transition-all flex items-center justify-center"
+          className="relative h-12 w-12 rounded-full bg-primary-500 text-on-primary shadow-lg hover:bg-primary-700 hover:shadow-xl transition-all flex items-center justify-center"
         >
           <MessageCircle className="h-5 w-5" strokeWidth={2} />
           {unreadCount > 0 && (

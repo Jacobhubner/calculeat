@@ -666,7 +666,7 @@ export default function WeightTracker({
                     title={locked ? t('weightTracker.rangeLockedTitle') : undefined}
                     className={`flex items-center gap-1 px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
                       chartRange === r && !locked
-                        ? 'bg-primary-600 text-white'
+                        ? 'bg-primary-500 text-on-primary'
                         : locked
                           ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 hover:bg-neutral-200 dark:hover:bg-neutral-700'
                           : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'

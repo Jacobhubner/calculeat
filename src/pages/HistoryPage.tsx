@@ -373,7 +373,7 @@ export default function HistoryPage() {
                         onClick={() => requestStatsPeriod(p)}
                         className={`flex-1 py-1 text-xs rounded-md font-medium transition-colors inline-flex items-center justify-center gap-0.5 ${
                           statsPeriod === p
-                            ? 'bg-primary-600 text-white'
+                            ? 'bg-primary-500 text-on-primary'
                             : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400'
                         }`}
                       >
@@ -385,7 +385,7 @@ export default function HistoryPage() {
                       onClick={() => requestStatsPeriod(null)}
                       className={`flex-1 py-1 text-xs rounded-md font-medium transition-colors inline-flex items-center justify-center gap-0.5 ${
                         statsPeriod === null
-                          ? 'bg-primary-600 text-white'
+                          ? 'bg-primary-500 text-on-primary'
                           : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400'
                       }`}
                     >

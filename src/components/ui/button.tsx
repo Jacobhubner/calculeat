@@ -8,8 +8,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        // Loggans gröna med mörk text i stället för mörkare grönt med vit.
+        // Vit text på grönt når aldrig 4.5:1 i den här nyansen; mörk text ger
+        // 5.16:1 och låter knappen bära märkets faktiska färg.
         primary:
-          'bg-primary-600 text-white hover:bg-primary-700 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] shadow-md dark:shadow-black/30',
+          'bg-primary-500 text-on-primary hover:bg-primary-400 hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.98] shadow-md dark:shadow-black/30',
         secondary:
           'bg-neutral-200 text-neutral-900 hover:bg-neutral-300 dark:bg-neutral-800 dark:text-neutral-100 dark:hover:bg-neutral-700 hover:shadow-md dark:hover:shadow-black/30 hover:-translate-y-0.5 active:scale-[0.98]',
         ghost:

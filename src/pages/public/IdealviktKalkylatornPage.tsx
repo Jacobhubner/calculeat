@@ -233,7 +233,7 @@ export default function IdealviktKalkylatornPage() {
                         }}
                         className={`py-2.5 rounded-xl text-sm font-medium border transition-colors ${
                           gender === opt.value
-                            ? 'bg-primary-600 text-white border-primary-600'
+                            ? 'bg-primary-500 text-on-primary border-primary-600'
                             : 'bg-white text-neutral-700 border-neutral-200 hover:border-primary-300 dark:border-neutral-700 dark:bg-neutral-850 dark:text-neutral-200'
                         }`}
                       >
@@ -292,7 +292,7 @@ export default function IdealviktKalkylatornPage() {
                 <button
                   onClick={handleCalculate}
                   disabled={!canCalculate}
-                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                  className="w-full bg-primary-500 hover:bg-primary-400 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-on-primary font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
                   {t('idealweight-calculator.calculator.button')}
                 </button>
@@ -376,7 +376,7 @@ export default function IdealviktKalkylatornPage() {
                             relatedCalcs[0]?.href ??
                             t('idealweight-calculator.schema.breadcrumb.hubPath')
                           }
-                          className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                          className="inline-flex items-center justify-center gap-2 bg-primary-500 hover:bg-primary-400 text-on-primary text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                         >
                           {t('idealweight-calculator.calculator.nextStepPrimary')}
                           <ArrowRight className="h-4 w-4" />
@@ -448,7 +448,7 @@ export default function IdealviktKalkylatornPage() {
                   to={
                     relatedCalcs[0]?.href ?? t('idealweight-calculator.schema.breadcrumb.hubPath')
                   }
-                  className="inline-flex items-center gap-2 mt-4 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
+                  className="inline-flex items-center gap-2 mt-4 bg-primary-500 hover:bg-primary-400 text-on-primary text-sm font-medium px-4 py-2.5 rounded-lg transition-colors"
                 >
                   {t('idealweight-calculator.explanation.box_link')}
                   <ArrowRight className="h-4 w-4" />

@@ -167,7 +167,7 @@ export default function MyFitnessPalVsCalculeatPage() {
             <div className="mt-4 flex flex-col sm:flex-row gap-2">
               <Link
                 to={calcHubHref}
-                className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
+                className="inline-flex items-center justify-center gap-2 bg-primary-500 text-on-primary font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
               >
                 {t('myfitnesspal-vs-calculeat.quickAnswer.ctaCalc')}
                 <ArrowRight className="h-4 w-4" />
@@ -339,7 +339,7 @@ export default function MyFitnessPalVsCalculeatPage() {
             </div>
             <Link
               to={calcHubHref}
-              className="shrink-0 inline-flex items-center gap-2 bg-primary-600 text-white font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
+              className="shrink-0 inline-flex items-center gap-2 bg-primary-500 text-on-primary font-semibold px-4 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm"
             >
               {t('myfitnesspal-vs-calculeat.midPageCta.button')}
             </Link>

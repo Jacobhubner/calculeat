@@ -210,7 +210,7 @@ export function SupportMessageInput({ threadId, status }: Props) {
           type="button"
           onClick={handleSend}
           disabled={(!input.trim() && !attachedFile) || isBusy}
-          className="shrink-0 h-9 w-9 rounded-xl bg-primary-600 text-white flex items-center justify-center hover:bg-primary-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="shrink-0 h-9 w-9 rounded-xl bg-primary-500 text-on-primary flex items-center justify-center hover:bg-primary-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {isSending || isUploading ? (
             <Loader2 className="h-4 w-4 animate-spin" />

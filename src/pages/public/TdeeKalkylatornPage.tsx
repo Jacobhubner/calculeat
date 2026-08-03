@@ -302,7 +302,7 @@ export default function TdeeKalkylatornPage() {
                 <button
                   onClick={handleCalculate}
                   disabled={!bmr || !tdee}
-                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                  className="w-full bg-primary-500 hover:bg-primary-400 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-on-primary font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
                   {t('tdee-calculator.calculator.button')}
                 </button>
@@ -381,7 +381,7 @@ export default function TdeeKalkylatornPage() {
                       </p>
                       <Link
                         to="/register"
-                        className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm w-full sm:w-auto"
+                        className="inline-flex items-center justify-center gap-2 bg-primary-500 text-on-primary font-semibold px-5 py-2.5 rounded-lg hover:bg-primary-700 transition-colors text-sm w-full sm:w-auto"
                       >
                         {t('tdee-calculator.cta.gated.button')}
                         <ArrowRight className="h-4 w-4" />

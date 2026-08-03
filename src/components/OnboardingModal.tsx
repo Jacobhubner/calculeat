@@ -478,7 +478,7 @@ function SpotlightTour({ t, onDone, onSkip }: { t: T; onDone: () => void; onSkip
           </p>
           <button
             onClick={onDone}
-            className="w-full h-11 rounded-2xl bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 transition-colors"
+            className="w-full h-11 rounded-2xl bg-primary-500 text-on-primary text-sm font-semibold hover:bg-primary-700 transition-colors"
           >
             {t('tour.done')}
           </button>
@@ -579,7 +579,7 @@ function SpotlightTour({ t, onDone, onSkip }: { t: T; onDone: () => void; onSkip
             </button>
             <button
               onClick={handleNext}
-              className="text-xs font-semibold text-white bg-primary-600 hover:bg-primary-700 transition-colors rounded-lg px-3 py-1.5"
+              className="text-xs font-semibold text-on-primary bg-primary-500 hover:bg-primary-700 transition-colors rounded-lg px-3 py-1.5"
             >
               {isLast ? t('tour.done') : t('tour.next')}
             </button>

@@ -256,7 +256,7 @@ export default function BastaTdeeKalkylatornPage() {
             </div>
             <Link
               to={calcHubHref}
-              className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-semibold px-5 py-3 rounded-xl hover:bg-primary-700 transition-colors text-sm whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-2 bg-primary-500 text-on-primary font-semibold px-5 py-3 rounded-xl hover:bg-primary-700 transition-colors text-sm whitespace-nowrap"
             >
               {t('best-tdee-calculator.primaryCtaButton')}
               <ArrowRight className="h-4 w-4" />

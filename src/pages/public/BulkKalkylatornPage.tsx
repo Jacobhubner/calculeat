@@ -347,7 +347,7 @@ export default function BulkKalkylatornPage() {
                 <button
                   onClick={handleCalculate}
                   disabled={!bmr || !tdee}
-                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                  className="w-full bg-primary-500 hover:bg-primary-400 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-on-primary font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
                   {t('bulk-calculator.calculator.button')}
                 </button>
@@ -459,7 +459,7 @@ export default function BulkKalkylatornPage() {
                       </p>
                       <Link
                         to="/register"
-                        className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                        className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-400 text-on-primary text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                       >
                         {t('bulk-calculator.calculator.saveCtaButton')}
                         <ArrowRight className="h-4 w-4" />

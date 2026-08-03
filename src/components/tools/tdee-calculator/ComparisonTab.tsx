@@ -159,7 +159,7 @@ export default function ComparisonTab({
                     onClick={() => setGender(g)}
                     className={`px-4 py-2 rounded-full text-sm font-medium border transition-colors ${
                       gender === g
-                        ? 'bg-primary-600 text-white border-primary-600'
+                        ? 'bg-primary-500 text-on-primary border-primary-600'
                         : 'bg-white text-neutral-700 border-neutral-300 hover:border-primary-400 dark:bg-neutral-850 dark:text-neutral-300 dark:border-neutral-700'
                     }`}
                   >

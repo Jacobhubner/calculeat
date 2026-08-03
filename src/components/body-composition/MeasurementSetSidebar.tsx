@@ -39,7 +39,7 @@ export default function MeasurementSetSidebar({
             onClick={onCreateNew}
             variant="outline"
             size="sm"
-            className="h-8 w-8 p-0 rounded-full bg-primary-600 hover:bg-primary-700 text-white border-0"
+            className="h-8 w-8 p-0 rounded-full bg-primary-500 hover:bg-primary-400 text-on-primary border-0"
             aria-label={t('sidebar.newMeasurement')}
             title={t('sidebar.newMeasurement')}
           >

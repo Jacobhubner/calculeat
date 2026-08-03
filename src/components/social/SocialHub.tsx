@@ -1136,7 +1136,7 @@ function MessageBubble({
                 type="button"
                 onClick={handleEdit}
                 disabled={isEditPending || !editInput.trim()}
-                className="text-xs text-white bg-primary-600 hover:bg-primary-700 rounded px-2 py-1 disabled:opacity-40"
+                className="text-xs text-on-primary bg-primary-500 hover:bg-primary-700 rounded px-2 py-1 disabled:opacity-40"
               >
                 {isEditPending ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
@@ -1153,7 +1153,7 @@ function MessageBubble({
                 isDeleted
                   ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100 dark:bg-neutral-900 dark:text-neutral-500'
                   : isOwn
-                    ? 'bg-primary-600 text-white rounded-br-sm'
+                    ? 'bg-primary-500 text-on-primary rounded-br-sm'
                     : 'bg-neutral-100 text-neutral-900 rounded-bl-sm dark:bg-neutral-800 dark:text-neutral-100'
               }`}
             >
@@ -1484,7 +1484,7 @@ function MessageThread({
             type="button"
             onClick={handleSend}
             disabled={!input.trim() || isSending || isOverLimit}
-            className="shrink-0 h-9 w-9 rounded-xl bg-primary-600 text-white flex items-center justify-center hover:bg-primary-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            className="shrink-0 h-9 w-9 rounded-xl bg-primary-500 text-on-primary flex items-center justify-center hover:bg-primary-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {isSending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -1740,7 +1740,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
               }}
               className={`shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 tab === tabItem.id
-                  ? 'bg-primary-600 text-white'
+                  ? 'bg-primary-500 text-on-primary'
                   : 'text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-400'
               }`}
             >
@@ -1935,7 +1935,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                           toast.success(t('social.activity.admin_accepted'))
                         }}
                         disabled={respondAdminInvitation.isPending}
-                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50"
+                        className="flex-1 flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-on-primary bg-primary-500 hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50"
                       >
                         <Check className="h-3.5 w-3.5" />
                         {t('social.action.accept')}
@@ -2218,7 +2218,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
                 )}
               </div>
               {unreadSupportCount > 0 && (
-                <span className="shrink-0 h-5 min-w-5 px-1.5 bg-primary-600 text-white text-xs rounded-full flex items-center justify-center font-medium">
+                <span className="shrink-0 h-5 min-w-5 px-1.5 bg-primary-500 text-on-primary text-xs rounded-full flex items-center justify-center font-medium">
                   {unreadSupportCount}
                 </span>
               )}

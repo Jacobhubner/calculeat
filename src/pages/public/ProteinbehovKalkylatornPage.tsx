@@ -342,7 +342,7 @@ export default function ProteinbehovKalkylatornPage() {
                 <button
                   onClick={handleCalculate}
                   disabled={!result}
-                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                  className="w-full bg-primary-500 hover:bg-primary-400 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-on-primary font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
                   {t('protein-calculator.calculator.button')}
                 </button>
@@ -425,7 +425,7 @@ export default function ProteinbehovKalkylatornPage() {
                         <>
                           <Link
                             to={relatedCalcs[1]?.href ?? '/kalkylatorer/cut-kalkylator'}
-                            className="inline-flex items-center gap-1.5 text-xs font-medium text-white bg-primary-600 hover:bg-primary-700 px-3 py-1.5 rounded-lg transition-colors"
+                            className="inline-flex items-center gap-1.5 text-xs font-medium text-on-primary bg-primary-500 hover:bg-primary-700 px-3 py-1.5 rounded-lg transition-colors"
                           >
                             {relatedCalcs[1]?.label}
                             <ArrowRight className="h-3 w-3" />
@@ -442,7 +442,7 @@ export default function ProteinbehovKalkylatornPage() {
                       {goal === 'bulk' && (
                         <Link
                           to={relatedCalcs[2]?.href ?? '/kalkylatorer/bulk-kalkylator'}
-                          className="inline-flex items-center gap-1.5 text-xs font-medium text-white bg-primary-600 hover:bg-primary-700 px-3 py-1.5 rounded-lg transition-colors"
+                          className="inline-flex items-center gap-1.5 text-xs font-medium text-on-primary bg-primary-500 hover:bg-primary-700 px-3 py-1.5 rounded-lg transition-colors"
                         >
                           {relatedCalcs[2]?.label}
                           <ArrowRight className="h-3 w-3" />
@@ -468,7 +468,7 @@ export default function ProteinbehovKalkylatornPage() {
                       </p>
                       <Link
                         to="/register"
-                        className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                        className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-400 text-on-primary text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                       >
                         {t('protein-calculator.calculator.saveCtaButton')}
                         <ArrowRight className="h-4 w-4" />

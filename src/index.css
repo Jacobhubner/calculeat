@@ -33,6 +33,11 @@
   --color-primary-900: hsl(87 64% 16%);
   --color-primary-950: hsl(87 60% 11%);
 
+  /* Textfärg för ytor i primary-500. Vit text på grönt når aldrig 4.5:1 i den
+     här nyansen — mörk text gör det (5.16:1) och tillåter samtidigt att knappen
+     får loggans faktiska, ljusare gröna. */
+  --color-on-primary: hsl(87 70% 14%);
+
   --color-accent-50: hsl(33 100% 95%);
   --color-accent-100: hsl(33 100% 90%);
   --color-accent-200: hsl(33 100% 80%);
