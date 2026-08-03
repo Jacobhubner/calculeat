@@ -124,12 +124,15 @@ export default function FeaturesPage() {
 
       <main>
         {/* Hero Section */}
-        <section className="bg-gradient-to-br from-primary-50 via-white to-accent-50 py-20 md:py-28">
+        <section className="bg-gradient-to-br from-primary-50 via-white to-accent-50 py-20 md:py-28 dark:from-primary-900/25 dark:via-neutral-900 dark:to-accent-900/20">
           <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 mb-6">
-              {t('features.hero.title').replace(t('features.hero.titleHighlight'), '')}<span className="text-primary-600">{t('features.hero.titleHighlight')}</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 mb-6 dark:text-neutral-50">
+              {t('features.hero.title').replace(t('features.hero.titleHighlight'), '')}
+              <span className="text-primary-600 dark:text-primary-300">
+                {t('features.hero.titleHighlight')}
+              </span>
             </h1>
-            <p className="text-lg md:text-xl text-neutral-600 max-w-3xl mx-auto mb-12">
+            <p className="text-lg md:text-xl text-neutral-600 max-w-3xl mx-auto mb-12 dark:text-neutral-300">
               {t('features.hero.subtitle')}
             </p>
 
@@ -138,18 +141,21 @@ export default function FeaturesPage() {
               {featureOverview.map((feature, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+                  className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105 dark:bg-neutral-850 dark:border dark:border-neutral-800"
                 >
+                  {/* Färgerna kommer ur en ternär, så dark-varianterna måste
+                      ligga inuti den — ett dark:-tillägg utanför hade inte
+                      kunnat veta vilken accent kortet har. */}
                   <div
                     className={`inline-flex rounded-xl ${
-                      feature.accentColor === 'primary' ? 'bg-primary-100' : 'bg-accent-100'
-                    } p-3 ${
-                      feature.accentColor === 'primary' ? 'text-primary-600' : 'text-accent-600'
-                    } mb-3`}
+                      feature.accentColor === 'primary'
+                        ? 'bg-primary-100 text-primary-600 dark:bg-primary-900/25 dark:text-primary-300'
+                        : 'bg-accent-100 text-accent-600 dark:bg-accent-900/25 dark:text-accent-300'
+                    } p-3 mb-3`}
                   >
                     <feature.icon className="h-8 w-8" />
                   </div>
-                  <h3 className="text-sm md:text-base font-semibold text-neutral-900">
+                  <h3 className="text-sm md:text-base font-semibold text-neutral-900 dark:text-neutral-100">
                     {feature.title}
                   </h3>
                 </div>
@@ -159,20 +165,20 @@ export default function FeaturesPage() {
         </section>
 
         {/* Detailed Feature Showcases */}
-        <div className="bg-white">
+        <div className="bg-white dark:bg-neutral-900">
           {detailedFeatures.map((feature, index) => (
             <FeatureShowcase key={index} {...feature} />
           ))}
         </div>
 
         {/* Additional Features - Quick Grid */}
-        <section className="py-20 md:py-28 bg-neutral-50">
+        <section className="py-20 md:py-28 bg-neutral-50 dark:bg-neutral-950">
           <div className="container mx-auto px-4">
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-4">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-900 mb-4 dark:text-neutral-50">
                 {t('features.more.title')}
               </h2>
-              <p className="text-lg md:text-xl text-neutral-600">
+              <p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-300">
                 {t('features.more.subtitle')}
               </p>
             </div>
@@ -201,7 +207,9 @@ export default function FeaturesPage() {
         </section>
 
         {/* Get Started CTA */}
-        <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 py-20 md:py-28 text-white relative overflow-hidden">
+        {/* Mättad primärgrön med vit text fungerar i båda lägena och behöver
+            ingen mörk variant — bara en kant mot den nästan lika mörka sidan. */}
+        <section className="bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 py-20 md:py-28 text-white relative overflow-hidden dark:border-t dark:border-neutral-800">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(255,139,0,0.15),transparent_50%)]" />
 
           <div className="container mx-auto px-4 text-center relative z-10">
