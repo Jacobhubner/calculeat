@@ -101,6 +101,7 @@
     "errorLoadFailed": "Kunde inte ladda måltid. Försök igen."
   },
   "loadMealDialog": {
+    "targetMeal": "Lägg till i",
     "title": "Ladda måltid till {{mealName}}",
     "description": "Välj en sparad måltid att lägga till",
     "searchPlaceholder": "Sök efter sparade måltider...",

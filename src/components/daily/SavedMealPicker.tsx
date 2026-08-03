@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { Search, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select } from '@/components/ui/select'
 import { Card, CardContent } from '@/components/ui/card'
 import EmptyState from '../EmptyState'
 import { useSavedMeals, useLoadSavedMealToSlot } from '@/hooks/useSavedMeals'
@@ -15,6 +17,13 @@ interface SavedMealPickerProps {
   targetMealOrder: number
   targetMealEntryId?: string
   dailyLogId: string
+  /**
+   * Valbara måltidsplatser. Vid snabbloggning finns ingen given plats, så
+   * valet måste ske här — till skillnad från livsmedelsflödet, där platsen
+   * väljs efter att man valt livsmedel.
+   */
+  mealOptions?: { name: string; order: number }[]
+  onMealChange?: (mealName: string) => void
   /** Anropas när en måltid laddats — stänger den omgivande modalen. */
   onLoaded: () => void
 }
@@ -24,10 +33,10 @@ interface SavedMealPickerProps {
  * AddFoodToMealModal.
  *
  * Sparade måltider gick tidigare bara att nå via LoadMealToSlotDialog, som
- * öppnades från en egen knapp i måltidsrubriken. Det innebar att den globala
- * "+"-knappen i mobilnavigeringen inte kunde ladda en måltid alls — bara
- * enskilda livsmedel. Genom att flytta in listan här får båda ingångarna
- * samma innehåll.
+ * öppnades från en egen knapp i måltidsrubriken. Den globala "+"-knappen i
+ * mobilnavigeringen kunde därför inte ladda en måltid alls — bara enskilda
+ * livsmedel. Genom att flytta in listan här får båda ingångarna samma
+ * innehåll.
  *
  * Logiken är avsiktligt densamma som i LoadMealToSlotDialog (samma hook, samma
  * sortering) så att de två vyerna inte kan glida isär.
@@ -37,6 +46,8 @@ export function SavedMealPicker({
   targetMealOrder,
   targetMealEntryId,
   dailyLogId,
+  mealOptions,
+  onMealChange,
   onLoaded,
 }: SavedMealPickerProps) {
   const { t } = useTranslation('today')
@@ -109,6 +120,25 @@ export function SavedMealPicker({
 
   return (
     <div className="space-y-3">
+      {/* Målplatsen först — den avgör vad klicket på en måltid faktiskt gör,
+          så den måste vara synlig innan man väljer. */}
+      {onMealChange && mealOptions && mealOptions.length > 0 && (
+        <div className="space-y-1.5">
+          <Label htmlFor="saved-meal-target">{t('loadMealDialog.targetMeal')}</Label>
+          <Select
+            id="saved-meal-target"
+            value={targetMealName}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onMealChange(e.target.value)}
+          >
+            {mealOptions.map(opt => (
+              <option key={opt.name} value={opt.name}>
+                {opt.name}
+              </option>
+            ))}
+          </Select>
+        </div>
+      )}
+
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 dark:text-neutral-500" />
         <Input

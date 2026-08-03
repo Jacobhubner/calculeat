@@ -128,10 +128,8 @@ export function AddFoodToMealModal({
   const [source, setSource] = useState<'food' | 'meals'>('food')
 
   // Redigering byter ett befintligt livsmedel — att ladda en hel måltid där
-  // vore något helt annat. dailyLogId och mealOrder krävs för att ha en plats
-  // att ladda till.
-  const showSavedMealSwitch =
-    allowSavedMeals && !isEditMode && !!dailyLogId && mealOrder !== undefined
+  // vore något helt annat.
+  const showSavedMealSwitch = allowSavedMeals && !isEditMode && !!dailyLogId
 
   // Tab + pagination + filter state
   const [activeTab, setActiveTab] = useState<FoodTab>('alla')
@@ -147,6 +145,34 @@ export function AddFoodToMealModal({
   // Hooks
   const { data: mealSettings } = useMealSettings()
   const { data: sharedLists = [] } = useSharedLists()
+
+  /** Måltidsplatser att välja mellan när en sparad måltid ska laddas. */
+  const savedMealOptions = useMemo(
+    () =>
+      [...(mealSettings ?? []), ...extraMealOptions]
+        .sort((a, b) => a.meal_order - b.meal_order)
+        .map(m => ({ name: m.meal_name, order: m.meal_order })),
+    [mealSettings, extraMealOptions]
+  )
+
+  /**
+   * Vilken plats den sparade måltiden laddas till.
+   *
+   * mealOrder kommer som prop när modalen öppnats från en måltidsrubrik, men
+   * vid snabbloggning finns ingen — då härleds den ur mealSettings via namnet.
+   * mealEntryId får bara följa med när platsen fortfarande är den modalen
+   * öppnades för; byter användaren plats pekar id:t på fel måltid och skulle
+   * lägga innehållet i den gamla.
+   */
+  const savedMealTarget = useMemo(() => {
+    const name = selectedMealName || mealName
+    const match = savedMealOptions.find(m => m.name === name)
+    return {
+      name,
+      order: match?.order ?? mealOrder ?? 0,
+      entryId: name === mealName ? mealEntryId : undefined,
+    }
+  }, [selectedMealName, mealName, mealEntryId, mealOrder, savedMealOptions])
 
   const allTabs = useMemo<{ key: FoodTab; label: string }[]>(
     () => [
@@ -241,6 +267,9 @@ export function AddFoodToMealModal({
     setPage(0)
     setColorFilter(null)
     setRecipeFilter(null)
+    // Utan detta öppnas modalen i måltidsläget nästa gång, trots att
+    // "Lägg till" som regel syftar på ett livsmedel.
+    setSource('food')
     isPreselectedRef.current = false
   }, [])
 
@@ -590,10 +619,15 @@ export function AddFoodToMealModal({
 
             {showSavedMealSwitch && source === 'meals' && !selectedFood ? (
               <SavedMealPicker
-                targetMealName={selectedMealName || mealName}
-                targetMealOrder={mealOrder!}
-                targetMealEntryId={mealEntryId}
+                targetMealName={savedMealTarget.name}
+                targetMealOrder={savedMealTarget.order}
+                // Bara relevant när modalen öppnats från en befintlig måltid.
+                // Vid snabbloggning väljer man plats i listan, och då skulle
+                // ett medskickat id peka på fel måltid.
+                targetMealEntryId={savedMealTarget.entryId}
                 dailyLogId={dailyLogId!}
+                mealOptions={savedMealOptions}
+                onMealChange={setSelectedMealName}
                 onLoaded={() => onOpenChange(false)}
               />
             ) : !selectedFood ? (

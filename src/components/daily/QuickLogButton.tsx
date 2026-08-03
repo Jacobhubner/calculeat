@@ -78,6 +78,7 @@ export default function QuickLogButton() {
           mealName=""
           dailyLogId={dailyLogId}
           showMealSelector
+          allowSavedMeals
         />
       )}
     </>

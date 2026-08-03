@@ -101,6 +101,7 @@
     "errorLoadFailed": "Could not load meal. Please try again."
   },
   "loadMealDialog": {
+    "targetMeal": "Add to",
     "title": "Load meal to {{mealName}}",
     "description": "Choose a saved meal to add",
     "searchPlaceholder": "Search saved meals...",
