@@ -154,7 +154,12 @@
     "title": "Maximum fat metabolism",
     "deficit": "{{value}} kcal deficit",
     "tdeePercent": "{{value}}% of your TDEE",
-    "description": "This represents the maximum rate at which your body can metabolize fat for energy (approximately 31 kcal/kg of fat mass per day). Exceeding this deficit may result in muscle loss."
+    "description": "This represents the maximum rate at which your body can metabolize fat for energy (approximately 31 kcal/kg of fat mass per day). Exceeding this deficit may result in muscle loss.",
+    "profileTitle": "Maximum fat metabolism",
+    "profileInfoAriaLabel": "Show information about Maximum fat metabolism",
+    "profileSubtitle": "Scientific background and practical application",
+    "kcalPerDay": "{{value}} kcal/day",
+    "percentOfTdee": "{{value}}% of TDEE"
   },
   "sidebar": {
     "savedMeasurements": "Saved measurements",

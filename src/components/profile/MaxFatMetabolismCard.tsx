@@ -4,6 +4,7 @@
  */
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { InfoModal } from '@/components/ui/InfoModal'
 import { Flame, Info } from 'lucide-react'
@@ -17,6 +18,7 @@ interface MaxFatMetabolismCardProps {
 }
 
 export default function MaxFatMetabolismCard({ profile }: MaxFatMetabolismCardProps) {
+  const { t } = useTranslation('body')
   const [showModal, setShowModal] = useState(false)
 
   if (!profile) return null
@@ -39,12 +41,12 @@ export default function MaxFatMetabolismCard({ profile }: MaxFatMetabolismCardPr
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Flame className="h-5 w-5 text-red-600 dark:text-red-300" />
-            Maximal fettmetabolism
+            {t('maxFat.profileTitle')}
           </CardTitle>
           <button
             onClick={() => setShowModal(true)}
             className="absolute top-4 right-4 p-1 hover:bg-neutral-100 rounded-full transition-colors dark:hover:bg-neutral-800"
-            aria-label="Visa information om Maximal fettmetabolism"
+            aria-label={t('maxFat.profileInfoAriaLabel')}
           >
             <Info className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
           </button>
@@ -52,10 +54,10 @@ export default function MaxFatMetabolismCard({ profile }: MaxFatMetabolismCardPr
         <CardContent className="space-y-3">
           <div className="flex items-start justify-between">
             <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-              {maxFatMetabolism.practicalMax} kcal/dag
+              {t('maxFat.kcalPerDay', { value: maxFatMetabolism.practicalMax })}
             </p>
             <p className="text-xs text-neutral-500 dark:text-neutral-400">
-              {maxFatMetabolism.percentOfTDEE}% av TDEE
+              {t('maxFat.percentOfTdee', { value: maxFatMetabolism.percentOfTDEE })}
             </p>
           </div>
         </CardContent>
@@ -65,8 +67,8 @@ export default function MaxFatMetabolismCard({ profile }: MaxFatMetabolismCardPr
       <InfoModal
         open={showModal}
         onClose={() => setShowModal(false)}
-        title="Maximal fettmetabolism"
-        subtitle="Vetenskaplig bakgrund och praktisk tillämpning"
+        title={t('maxFat.profileTitle')}
+        subtitle={t('maxFat.profileSubtitle')}
       >
         <MaxFatMetabolismContent />
       </InfoModal>

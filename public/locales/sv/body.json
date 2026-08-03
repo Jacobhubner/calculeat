@@ -154,7 +154,12 @@
     "title": "Maximal fettförbränning",
     "deficit": "{{value}} kcal underskott",
     "tdeePercent": "{{value}}% av ditt TDEE",
-    "description": "Detta representerar den maximala hastigheten med vilken din kropp kan förbränna fett för energi (ca 31 kcal/kg kroppsfett per dag). Att överskrida detta underskott kan leda till muskelförlust."
+    "description": "Detta representerar den maximala hastigheten med vilken din kropp kan förbränna fett för energi (ca 31 kcal/kg kroppsfett per dag). Att överskrida detta underskott kan leda till muskelförlust.",
+    "profileTitle": "Maximal fettmetabolism",
+    "profileInfoAriaLabel": "Visa information om Maximal fettmetabolism",
+    "profileSubtitle": "Vetenskaplig bakgrund och praktisk tillämpning",
+    "kcalPerDay": "{{value}} kcal/dag",
+    "percentOfTdee": "{{value}}% av TDEE"
   },
   "sidebar": {
     "savedMeasurements": "Sparade mätningar",
