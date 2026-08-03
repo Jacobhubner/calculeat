@@ -1,7 +1,29 @@
 import { useTranslation } from 'react-i18next'
+import type { ParseKeys } from 'i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 type FoodItem = { label: string; icon: string }
+
+/**
+ * Nycklarna typades som `string`, vilket i18next-typerna inte godtar — därav
+ * `t(key as any)` på fem ställen. ParseKeys härleds ur food-namespacet, så
+ * typen följer med när översättningarna ändras.
+ *
+ * `*Items`-nycklarna pekar på arrayer och ingår därför inte i ParseKeys, som
+ * bara listar strängnycklar. De typas separat mot JSON-strukturen.
+ */
+type FoodKey = ParseKeys<'food'>
+
+type ItemsKey =
+  | 'infoCards.green.solidItems'
+  | 'infoCards.green.liquidItems'
+  | 'infoCards.green.soupItems'
+  | 'infoCards.yellow.solidItems'
+  | 'infoCards.yellow.liquidItems'
+  | 'infoCards.yellow.soupItems'
+  | 'infoCards.orange.solidItems'
+  | 'infoCards.orange.liquidItems'
+  | 'infoCards.orange.soupItems'
 
 function ColorCard({
   titleKey,
@@ -17,37 +39,35 @@ function ColorCard({
   border,
   emoji,
 }: {
-  titleKey: string
-  subtitleKey: string
-  solidLabelKey: string
-  liquidLabelKey: string
-  soupLabelKey: string
-  solidItemsKey: string
-  liquidItemsKey: string
-  soupItemsKey: string
-  tipKey: string
+  titleKey: FoodKey
+  subtitleKey: FoodKey
+  solidLabelKey: FoodKey
+  liquidLabelKey: FoodKey
+  soupLabelKey: FoodKey
+  solidItemsKey: ItemsKey
+  liquidItemsKey: ItemsKey
+  soupItemsKey: ItemsKey
+  tipKey: FoodKey
   gradient: string
   border: string
   emoji: string
 }) {
   const { t } = useTranslation('food')
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const items = (key: string) => t(key as any, { returnObjects: true }) as FoodItem[]
+  const items = (key: ItemsKey) =>
+    t(key as FoodKey, { returnObjects: true }) as unknown as FoodItem[]
 
   return (
     <Card className={`${gradient} ${border}`}>
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <span>{emoji}</span>
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {t(titleKey as any)}
+          {t(titleKey)}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 text-xs text-neutral-600 dark:text-neutral-400">
         <p className="text-sm text-neutral-700 font-medium dark:text-neutral-200">
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {t(subtitleKey as any)}
+          {t(subtitleKey)}
         </p>
         {[
           { labelKey: solidLabelKey, itemsKey: solidItemsKey },
@@ -56,8 +76,7 @@ function ColorCard({
         ].map(({ labelKey, itemsKey }) => (
           <div key={labelKey}>
             <p className="font-semibold text-neutral-700 mb-1 dark:text-neutral-200">
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {t(labelKey as any)}
+              {t(labelKey)}
             </p>
             <ul className="space-y-0.5 pl-2">
               {items(itemsKey).map(({ label, icon }) => (
@@ -69,8 +88,7 @@ function ColorCard({
             </ul>
           </div>
         ))}
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        <p className="text-neutral-500 pt-1 dark:text-neutral-400">{t(tipKey as any)}</p>
+        <p className="text-neutral-500 pt-1 dark:text-neutral-400">{t(tipKey)}</p>
       </CardContent>
     </Card>
   )

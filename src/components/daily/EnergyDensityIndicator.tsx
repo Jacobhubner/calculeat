@@ -73,8 +73,7 @@ export function EnergyDensityIndicator({
                 color === 'neutral' && 'text-neutral-400'
               )}
             >
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {t(labelKey as any)}
+              {t(labelKey)}
             </span>
           )}
         </div>
@@ -163,7 +162,7 @@ export function EnergyDensityCompact({ density, className }: EnergyDensityCompac
           color === 'neutral' && 'text-neutral-400'
         )}
       >
-        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}({t(labelKey as any)})
+        ({t(labelKey)})
       </span>
     </div>
   )

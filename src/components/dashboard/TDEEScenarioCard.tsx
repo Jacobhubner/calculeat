@@ -13,9 +13,13 @@ export function TDEEScenarioCard({ bmr, tdee }: Props) {
   const { t } = useTranslation('dashboard')
   const [showModal, setShowModal] = useState(false)
 
-  const scenarios: { labelKey: string; d: number; atMaxKey?: string; formulaKey: string }[] = [
-    { labelKey: 'tdeeScenarios.walk', d: 210, formulaKey: 'walk' },
-    { labelKey: 'tdeeScenarios.stand', d: 385, formulaKey: 'stand' },
+  // `as const` i stället för `labelKey: string`: i18next-typerna godtar bara
+  // kända nycklar, och en vid string-typ tvingade fram `t(key as any)` nedan.
+  // atMaxKey skrivs ut som undefined där den saknas så att unionen blir
+  // enhetlig och går att destrukturera.
+  const scenarios = [
+    { labelKey: 'tdeeScenarios.walk', d: 210, formulaKey: 'walk', atMaxKey: undefined },
+    { labelKey: 'tdeeScenarios.stand', d: 385, formulaKey: 'stand', atMaxKey: undefined },
     {
       labelKey: 'tdeeScenarios.mostActive',
       d: Math.round(bmr * 1.5 + 600 - tdee),
@@ -26,8 +30,9 @@ export function TDEEScenarioCard({ bmr, tdee }: Props) {
       labelKey: 'tdeeScenarios.leastActive',
       d: Math.round(bmr + 150 - tdee),
       formulaKey: 'leastActive',
+      atMaxKey: undefined,
     },
-  ]
+  ] as const
 
   return (
     <div className="rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-850 px-5 py-4 shadow-sm dark:shadow-black/30 relative">
@@ -64,18 +69,14 @@ export function TDEEScenarioCard({ bmr, tdee }: Props) {
               className={`flex flex-col gap-1.5 rounded-xl border ${borderClass} ${bgClass} px-3 py-3`}
             >
               <p className="text-xs leading-snug text-neutral-500 dark:text-neutral-400">
-                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                {t(labelKey as any)}
+                {t(labelKey)}
               </p>
               <p className={`text-lg font-bold leading-none ${textClass}`}>
                 {arrow} {Math.abs(d)}
                 <span className="ml-0.5 text-xs font-medium">kcal</span>
               </p>
               {d === 0 && atMaxKey && (
-                <p className="text-xs text-neutral-400 dark:text-neutral-400">
-                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                  {t(atMaxKey as any)}
-                </p>
+                <p className="text-xs text-neutral-400 dark:text-neutral-400">{t(atMaxKey)}</p>
               )}
             </div>
           )

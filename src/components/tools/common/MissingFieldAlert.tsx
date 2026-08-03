@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { useMissingProfileData } from '@/hooks/useProfileData'
 
 interface MissingFieldAlertProps {
   /** Lista av saknade fält med deras läsbara namn */
@@ -68,12 +69,15 @@ export function MissingFieldAlertAuto({
   message?: string
   hideButton?: boolean
 }) {
-  const { useMissingProfileData } = require('@/hooks/useProfileData')
   const missing = useMissingProfileData(requiredFields)
 
   if (missing.length === 0) return null
 
   return (
-    <MissingFieldAlert fields={missing.map((f: { label: string }) => f.label)} message={message} hideButton={hideButton} />
+    <MissingFieldAlert
+      fields={missing.map((f: { label: string }) => f.label)}
+      message={message}
+      hideButton={hideButton}
+    />
   )
 }

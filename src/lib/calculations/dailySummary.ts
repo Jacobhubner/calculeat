@@ -214,7 +214,20 @@ export function getEnergyDensityColorClass(density: number): string {
 /**
  * Get i18n key for energy density value
  */
-export function getEnergyDensityLabelKey(density: number): string {
+/**
+ * Nycklarna skrivs ut som en union i stället för `string`. i18next-typerna
+ * accepterar bara kända nycklar, så en vid `string`-retur tvingade fram
+ * `t(key as any)` på anropsställena.
+ */
+export type EnergyDensityLabelKey =
+  | 'energyDensity.noData'
+  | 'energyDensity.veryLow'
+  | 'energyDensity.low'
+  | 'energyDensity.medium'
+  | 'energyDensity.high'
+  | 'energyDensity.veryHigh'
+
+export function getEnergyDensityLabelKey(density: number): EnergyDensityLabelKey {
   if (density <= 0) return 'energyDensity.noData'
   if (density < 0.5) return 'energyDensity.veryLow'
   if (density < 1.0) return 'energyDensity.low'
