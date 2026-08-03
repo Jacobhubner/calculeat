@@ -14,7 +14,7 @@
       "genderMale": "Male",
       "genderFemale": "Female",
       "genderOther": "Other",
-      "genderError": "Please select Male or Female for the calculation.",
+      "genderError": "Invalid selection. There are only two genders, dumdum.",
       "ageLabel": "Age",
       "weightLabel": "Weight",
       "heightLabel": "Height",
