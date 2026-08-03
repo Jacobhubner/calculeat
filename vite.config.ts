@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -9,6 +10,15 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
+  },
+  test: {
+    // jsdom behövs bara för hook-testerna (renderHook); rena beräkningstester
+    // klarar sig utan, men en gemensam miljö håller konfigurationen enkel.
+    environment: 'jsdom',
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    // Testerna arbetar med relativa datum ("30 dagar sedan") och är därför
+    // tidszonskänsliga. Lås zonen så resultatet inte beror på maskinen.
+    env: { TZ: 'Europe/Stockholm' },
   },
   build: {
     sourcemap: true,
@@ -33,7 +43,12 @@ export default defineConfig({
           // Supabase
           'vendor-supabase': ['@supabase/supabase-js'],
           // i18n
-          'vendor-i18n': ['i18next', 'react-i18next', 'i18next-browser-languagedetector', 'i18next-http-backend'],
+          'vendor-i18n': [
+            'i18next',
+            'react-i18next',
+            'i18next-browser-languagedetector',
+            'i18next-http-backend',
+          ],
           // Forms
           'vendor-forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
           // Utilities
