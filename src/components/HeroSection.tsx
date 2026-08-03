@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from './ui/button'
+import { Logo } from './ui/Logo'
 
 export function HeroSection() {
   const { t } = useTranslation('marketing')
@@ -37,11 +38,7 @@ export function HeroSection() {
               </h1>
               {/* Large Logo */}
               <div className="flex justify-center lg:justify-start mt-4 lg:-mt-16">
-                <img
-                  src="/calculeat-logo-full.svg"
-                  alt="Calculeat"
-                  className="h-52 sm:h-60 md:h-80 lg:h-96 xl:h-[28rem] object-contain"
-                />
+                <Logo className="h-52 sm:h-60 md:h-80 lg:h-96 xl:h-[28rem] object-contain" />
               </div>
               <p className="text-lg md:text-xl text-neutral-700 max-w-2xl mx-auto lg:mx-0 dark:text-neutral-200">
                 {t('home.hero.body')}

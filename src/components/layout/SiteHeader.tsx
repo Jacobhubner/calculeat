@@ -33,6 +33,7 @@ import { LanguageSwitcher } from '../ui/LanguageSwitcher'
 import { ThemeToggle } from '../ui/ThemeToggle'
 import { AppearanceControls } from '../ui/AppearanceControls'
 import { cn } from '@/lib/utils'
+import { Logo } from '../ui/Logo'
 
 export default function SiteHeader() {
   const { t, i18n } = useTranslation('common')
@@ -166,10 +167,8 @@ export default function SiteHeader() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6 lg:px-8">
         {/* Logo */}
         <Link to={user ? '/app' : '/'} className="flex items-center group">
-          <img
-            src="/calculeat-logo-full.svg"
+          <Logo
             style={{ minHeight: '4rem' }}
-            alt="Calculeat"
             className="h-8 object-contain transition-transform group-hover:scale-105"
           />
         </Link>

@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Loader2, CheckCircle } from 'lucide-react'
 import SiteHeader from '@/components/layout/SiteHeader'
 import SiteFooter from '@/components/layout/SiteFooter'
+import { Logo } from '@/components/ui/Logo'
 
 const resetPasswordSchema = z
   .object({
@@ -167,7 +168,7 @@ export default function ResetPasswordPage() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
-              <img src="/calculeat-logo-full.svg" alt="Calculeat" className="h-24 object-contain" />
+              <Logo className="h-24 object-contain" />
             </div>
             <p className="text-neutral-600 dark:text-neutral-400">{t('resetPassword.subtitle')}</p>
           </div>

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { supabase } from '@/lib/supabase'
 import { Loader2 } from 'lucide-react'
+import { Logo } from '@/components/ui/Logo'
 
 export default function ForgotPasswordPage() {
   const { t } = useTranslation('auth')
@@ -46,7 +47,7 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <div className="flex items-center justify-center mb-4">
-              <img src="/calculeat-logo-full.svg" alt="Calculeat" className="h-24 object-contain" />
+              <Logo className="h-24 object-contain" />
             </div>
             <p className="text-neutral-600 dark:text-neutral-400">{t('forgotPassword.subtitle')}</p>
           </div>

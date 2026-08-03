@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { Github, Mail, Twitter, Heart } from 'lucide-react'
 import { Separator } from '../ui/separator'
 import { useTranslation } from 'react-i18next'
+import { Logo } from '../ui/Logo'
 
 export default function SiteFooter() {
   const { t } = useTranslation('marketing')
@@ -91,11 +92,7 @@ export default function SiteFooter() {
           {/* Brand Section */}
           <div className="lg:col-span-2 space-y-4">
             <Link to="/" className="flex items-center group w-fit">
-              <img
-                src="/calculeat-logo-full.svg"
-                alt="Calculeat"
-                className="h-16 object-contain transition-transform group-hover:scale-105"
-              />
+              <Logo className="h-16 object-contain transition-transform group-hover:scale-105" />
             </Link>
             <p className="text-sm text-neutral-600 max-w-xs dark:text-neutral-400">
               {t('footer.tagline')}
