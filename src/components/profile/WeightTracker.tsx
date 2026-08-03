@@ -24,6 +24,7 @@ import {
   AlertTriangle,
   ChevronDown,
   Info,
+  Lock,
 } from 'lucide-react'
 import type { WeightHistory } from '@/lib/types'
 import {
@@ -35,6 +36,8 @@ import {
 } from '@/hooks'
 import { useWeightTrend } from '@/hooks/useWeightTrend'
 import { useEntitlements } from '@/hooks/useEntitlements'
+import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
+import { LockedChartTeaser } from '@/components/premium/LockedChartTeaser'
 import type { Profile } from '@/lib/types'
 import {
   LineChart,
@@ -54,6 +57,77 @@ import { useChartTheme } from '@/hooks/useChartTheme'
 
 function getDateLocale() {
   return i18n.language === 'sv' ? 'sv-SE' : 'en-GB'
+}
+
+/**
+ * Normaliserar Postgres timestamptz ("2026-01-01 12:00:00+01") till något
+ * Date kan parsa, och returnerar millisekunder. Låg på modulnivå i stället
+ * för att återskapas per render/jämförelse i tre olika comparatorer.
+ */
+function parseRecordedAt(value: string): number {
+  return new Date(value.replace(' ', 'T').replace(/([+-]\d{2})$/, '$1:00')).getTime()
+}
+
+/**
+ * Cachade Intl-formatterare per locale. Recharts anropar tickFormatter för
+ * varje tick vid varje render; toLocaleDateString bygger en ny formatterare
+ * per anrop, vilket dominerade renderkostnaden på täta serier.
+ */
+const dateFormatterCache = new Map<string, Intl.DateTimeFormat>()
+
+function formatTick(ts: number, opts?: Intl.DateTimeFormatOptions): string {
+  const locale = getDateLocale()
+  const key = opts ? `${locale}|md` : locale
+  let formatter = dateFormatterCache.get(key)
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat(locale, opts)
+    dateFormatterCache.set(key, formatter)
+  }
+  return formatter.format(ts)
+}
+
+/** Kort axeletikett, t.ex. "3 aug". */
+const formatAxisTick = (ts: number) => formatTick(ts, { month: 'short', day: 'numeric' })
+
+/** Gratisnivåns synliga trendfönster (se docs/PREMIUM_SPEC.md). */
+const FREE_WINDOW_DAYS = 30
+
+/**
+ * Punktgolv: den som loggar sällan har ofta 0–1 punkt inom 30 dagar, och en
+ * ensam punkt kan inte bilda en linje. Golvet garanterar en läsbar kurva utan
+ * att luckra upp tidsgränsen för den som loggar aktivt.
+ */
+const FREE_MIN_POINTS = 3
+
+/**
+ * Tak för golvet. Utan det skulle tre mätningar utspridda över flera år ge
+ * gratisanvändaren hela den spännvidden — alltså mer historik ju sämre man
+ * loggar. Taket kapar vid ett halvår.
+ */
+const FREE_FLOOR_CAP_DAYS = 180
+
+/**
+ * Beskär en tidssorterad serie till gratisnivåns fönster.
+ *
+ * Regeln: 30 dagar som huvudfall. Räcker det inte till FREE_MIN_POINTS tas de
+ * senaste punkterna i stället, dock aldrig äldre än taket — och aldrig ett
+ * SÄMRE resultat än tidsfönstret redan gav, så golvet kan inte göra vyn tommare.
+ *
+ * `fullSeries` är serien före intervallfiltrering. Golvet plockas därifrån så
+ * att ett smalt valt intervall inte hinner tömma urvalet först.
+ */
+function applyFreeWindow<T extends { timestamp: number }>(
+  data: T[],
+  windowStart: number,
+  floorCap: number,
+  fullSeries: T[] = data
+): T[] {
+  const byTime = data.filter(d => d.timestamp >= windowStart)
+  if (byTime.length >= FREE_MIN_POINTS) return byTime
+
+  const floor = fullSeries.slice(-FREE_MIN_POINTS)
+  const capped = floor.filter(d => d.timestamp >= floorCap)
+  return capped.length > byTime.length ? capped : byTime
 }
 
 interface WeightTrackerProps {
@@ -140,22 +214,34 @@ export default function WeightTracker({
   // Calculate initial weight from oldest entry in history
   const initialWeight = useMemo(() => {
     if (weightHistory.length === 0) return 0
-    const parseDate = (s: string) => new Date(s.replace(' ', 'T').replace(/([+-]\d{2})$/, '$1:00'))
-    const sorted = [...weightHistory].sort(
-      (a, b) => parseDate(a.recorded_at).getTime() - parseDate(b.recorded_at).getTime()
-    )
-    return sorted[0].weight_kg
+    // Bara äldsta posten behövs — ett svep i stället för en full sortering.
+    let oldest = weightHistory[0]
+    let oldestTs = parseRecordedAt(oldest.recorded_at)
+    for (let i = 1; i < weightHistory.length; i++) {
+      const ts = parseRecordedAt(weightHistory[i].recorded_at)
+      if (ts < oldestTs) {
+        oldest = weightHistory[i]
+        oldestTs = ts
+      }
+    }
+    return oldest.weight_kg
   }, [weightHistory])
 
   // Current weight = entry with recorded_at on or before today (end of day)
   const currentWeightFromHistory = useMemo(() => {
     const todayStr = new Date().toISOString().split('T')[0]
-    const endOfToday = new Date(todayStr + 'T23:59:59')
-    const parseDate = (s: string) => new Date(s.replace(' ', 'T').replace(/([+-]\d{2})$/, '$1:00'))
-    const past = weightHistory.filter(e => parseDate(e.recorded_at) <= endOfToday)
-    if (past.length === 0) return null
-    past.sort((a, b) => parseDate(b.recorded_at).getTime() - parseDate(a.recorded_at).getTime())
-    return past[0].weight_kg
+    const endOfToday = new Date(todayStr + 'T23:59:59').getTime()
+    // Senaste posten t.o.m. idag — ett svep, ingen filter+sort-kedja.
+    let latestWeight: number | null = null
+    let latestTs = -Infinity
+    for (const entry of weightHistory) {
+      const ts = parseRecordedAt(entry.recorded_at)
+      if (ts <= endOfToday && ts > latestTs) {
+        latestTs = ts
+        latestWeight = entry.weight_kg
+      }
+    }
+    return latestWeight
   }, [weightHistory])
 
   const weight = currentWeightFromHistory ?? profile.weight_kg ?? initialWeight
@@ -170,11 +256,27 @@ export default function WeightTracker({
 
   // Use the new trend hook for calculations (user-based, no profile dependency)
   const weightTrend = useWeightTrend(weightHistory, targetWeight, weight)
-  // Vikttrenden är alltid gratis; kroppskompositionsgraferna kräver advanced_trends
+  // Vikt- och BF-graferna visas för alla, men gratisnivån har ett synligt
+  // fönster på 30 dagar: äldre punkter skuggas i stället för att döljas
+  // ("läsbar men låst", se docs/PREMIUM_SPEC.md). Fettmassa/mager massa
+  // kräver fortfarande advanced_trends i sin helhet.
   const { limits } = useEntitlements()
+  const openUpgradeModal = useUpgradeModalStore(state => state.open)
   const bodyFatChartData = useBodyFatTrend(weightHistory)
-  const hasBodyFatData = bodyFatChartData.length > 0
   const bodyCompositionChartData = useBodyCompositionTrend(weightHistory)
+
+  /** Gränsen för gratisnivåns synliga fönster; null när allt är upplåst. */
+  const freeWindowStart = useMemo(
+    () => (limits.advanced_trends ? null : new Date().getTime() - FREE_WINDOW_DAYS * 864e5),
+    [limits.advanced_trends]
+  )
+  const trendsLocked = freeWindowStart !== null
+
+  /** Taket som hindrar att punktgolvet öppnar flera år av historik. */
+  const freeFloorCap = useMemo(
+    () => (limits.advanced_trends ? null : new Date().getTime() - FREE_FLOOR_CAP_DAYS * 864e5),
+    [limits.advanced_trends]
+  )
 
   const handleAddWeight = async () => {
     const weightNum = parseFloat(currentWeight)
@@ -221,18 +323,69 @@ export default function WeightTracker({
     return new Date().getTime() - days * 24 * 60 * 60 * 1000
   }, [chartRange])
 
+  /**
+   * Beskärning av vikt-/BF-serierna. Sker HÄR, vid datakällan — då kan varken
+   * brush-reglaget, XAxis-domänen eller ett valt intervall nå längre bak,
+   * eftersom punkterna helt enkelt inte finns i serien som renderas.
+   *
+   * Först klipps serien till valt intervall, sedan lägger gratisnivån på sitt
+   * 30-dagarsfönster med punktgolv (applyFreeWindow). Golvet är per serie:
+   * vikt och kroppsfett har olika många mätningar.
+   */
+  const gateSeries = <T extends { timestamp: number }>(data: T[]) => {
+    const byRange = brushCutoff === 0 ? data : data.filter(d => d.timestamp >= brushCutoff)
+    if (freeWindowStart === null || freeFloorCap === null) return byRange
+    // Golvet räknas mot HELA serien, inte mot det redan intervallfiltrerade
+    // urvalet — annars äter ett smalt intervall (14d) upp punkterna innan
+    // golvet hinner rädda dem, och den glesa loggaren står med en ensam prick.
+    return applyFreeWindow(byRange, freeWindowStart, freeFloorCap, data)
+  }
+
   const brushChartData = useMemo(
-    () => (brushCutoff === 0 ? chartData : chartData.filter(d => d.timestamp >= brushCutoff)),
-    [chartData, brushCutoff]
+    () => gateSeries(chartData),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [chartData, brushCutoff, freeWindowStart, freeFloorCap]
   )
 
   const brushBodyFatData = useMemo(
-    () =>
-      brushCutoff === 0
-        ? bodyFatChartData
-        : bodyFatChartData.filter(d => d.timestamp >= brushCutoff),
-    [bodyFatChartData, brushCutoff]
+    () => gateSeries(bodyFatChartData),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [bodyFatChartData, brushCutoff, freeWindowStart, freeFloorCap]
   )
+
+  /**
+   * Nedre gräns för brush-reglaget. Utgår från seriens FAKTISKA äldsta punkt
+   * i stället för freeWindowStart — annars skulle reglaget dölja de punkter
+   * som punktgolvet just räddat fram för en gles loggare.
+   */
+  const weightFloorTs = brushChartData[0]?.timestamp
+  const bodyFatFloorTs = brushBodyFatData[0]?.timestamp
+  const clampBrushStart = (ts: number, floorTs?: number) =>
+    floorTs === undefined ? ts : Math.max(ts, floorTs)
+
+  /**
+   * Sant när data faktiskt beskurits bort — styr om låsnotisen visas.
+   * Jämför mot den renderade seriens start, så notisen inte dyker upp när
+   * punktgolvet redan gett användaren allt som finns.
+   */
+  const weightHistoryTruncated = useMemo(
+    () =>
+      trendsLocked &&
+      weightFloorTs !== undefined &&
+      chartData.some(d => d.timestamp < weightFloorTs),
+    [chartData, trendsLocked, weightFloorTs]
+  )
+
+  /**
+   * Render-guards måste utgå från den BESKURNA serien, inte råa chartData.
+   * Annars renderas ett tomt diagram för den som loggar sällan: guarden ser
+   * gamla punkter, men allt utanför gratisfönstret har filtrerats bort.
+   */
+  const hasRenderableWeightData = brushChartData.length > 1
+  const hasRenderableBodyFatData = brushBodyFatData.length > 0
+
+  /** Enda kvarvarande punkt ligger utanför fönstret ⇒ inget att rita alls. */
+  const weightHiddenByWindow = weightHistoryTruncated && brushChartData.length <= 1
 
   const brushBodyCompositionData = useMemo(
     () =>
@@ -252,9 +405,12 @@ export default function WeightTracker({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const nowTs = useMemo(() => new Date().getTime(), [chartRange])
 
-  const brushDefaultForData = (data: { timestamp: number }[]) => {
-    if (chartRange === 'all') return undefined
-    const idx = data.findIndex(d => d.timestamp >= viewCutoff)
+  // `gated` = grafen omfattas av gratisfönstret (vikt/BF). Då får startpunkten
+  // aldrig hamna före freeWindowStart, även när valt intervall är bredare.
+  const brushDefaultForData = (data: { timestamp: number }[], gated = false) => {
+    if (chartRange === 'all' && !(gated && trendsLocked)) return undefined
+    const floor = gated ? clampBrushStart(viewCutoff, data[0]?.timestamp) : viewCutoff
+    const idx = data.findIndex(d => d.timestamp >= floor)
     return {
       startIndex: idx >= 0 ? idx : Math.max(0, data.length - 1),
       endIndex: data.length - 1,
@@ -275,22 +431,25 @@ export default function WeightTracker({
     setBodyCompBrushTs(null)
   }, [chartRange])
 
-  // Filtrerade data för Y-axel-domän (baserat på brush-fönster om aktivt, annars view cutoff)
+  // Filtrerade data för Y-axel-domän (baserat på brush-fönster om aktivt, annars view cutoff).
+  // Utgår från brushChartData så att beskurna punkter aldrig påverkar skalan.
   const filteredChartData = useMemo(() => {
-    if (chartRange === 'all') return chartData
+    if (chartRange === 'all') return brushChartData
     if (weightBrushTs)
-      return chartData.filter(
+      return brushChartData.filter(
         d => d.timestamp >= weightBrushTs.start && d.timestamp <= weightBrushTs.end
       )
-    return chartData.filter(d => d.timestamp >= viewCutoff)
-  }, [chartData, chartRange, viewCutoff, weightBrushTs])
+    return brushChartData.filter(d => d.timestamp >= viewCutoff)
+  }, [brushChartData, chartRange, viewCutoff, weightBrushTs])
 
   // Pending-punkt borttagen — profilvikten visas inte i diagrammet om den inte är loggad
 
   const allWeights = filteredChartData.map(d => d.weight).filter(Boolean)
   if (targetWeight) allWeights.push(targetWeight)
-  const minWeight = Math.min(...allWeights) - 2
-  const maxWeight = Math.max(...allWeights) + 2
+  // Tom lista ⇒ Math.min/max ger ±Infinity och YAxis får en trasig domän.
+  // Faller tillbaka på 'auto' i så fall (kan hända när fönstret saknar punkter).
+  const minWeight = allWeights.length > 0 ? Math.min(...allWeights) - 2 : 'auto'
+  const maxWeight = allWeights.length > 0 ? Math.max(...allWeights) + 2 : 'auto'
 
   const handleDeleteWeight = async () => {
     if (!deleteConfirm) return
@@ -298,11 +457,17 @@ export default function WeightTracker({
     setDeleteConfirm(null)
   }
 
-  // Sort weight history by date (newest first) for the list view
-  const sortedHistoryForList = [...weightHistory].sort((a, b) => {
-    const parseDate = (s: string) => new Date(s.replace(' ', 'T').replace(/([+-]\d{2})$/, '$1:00'))
-    return parseDate(b.recorded_at).getTime() - parseDate(a.recorded_at).getTime()
-  })
+  // Sort weight history by date (newest first) for the list view.
+  // Memoiserad och med förparsade nycklar — comparatorn skapade tidigare två
+  // Date-objekt plus en closure per jämförelse, vid VARJE render.
+  const sortedHistoryForList = useMemo(
+    () =>
+      weightHistory
+        .map(entry => ({ entry, ts: parseRecordedAt(entry.recorded_at) }))
+        .sort((a, b) => b.ts - a.ts)
+        .map(item => item.entry),
+    [weightHistory]
+  )
 
   return (
     <Card>
@@ -517,27 +682,51 @@ export default function WeightTracker({
           )}
 
           {/* Chart range filter */}
-          {chartsReady && chartData.length > 1 && (
+          {chartsReady && hasRenderableWeightData && (
             <div className="flex gap-1 mb-2">
-              {(['14d', '30d', '90d', 'all'] as const).map(r => (
+              {(['14d', '30d', '90d', 'all'] as const).map(r => {
+                // Intervall bortom gratisfönstret kan inte visa mer data — låt
+                // dem öppna UpgradeModal i stället för att bli tomma klick.
+                const locked = trendsLocked && (r === '90d' || r === 'all')
+                return (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() =>
+                      locked ? openUpgradeModal('advanced_trends') : setChartRange(r)
+                    }
+                    aria-label={
+                      locked ? t('weightTracker.rangeLockedAria', { range: r }) : undefined
+                    }
+                    title={locked ? t('weightTracker.rangeLockedTitle') : undefined}
+                    className={`flex items-center gap-1 px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
+                      chartRange === r && !locked
+                        ? 'bg-primary-600 text-white'
+                        : locked
+                          ? 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400 dark:text-neutral-500 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                          : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
+                    }`}
+                  >
+                    {locked && <Lock className="h-2.5 w-2.5" />}
+                    {r === 'all' ? t('weightTracker.rangeAll') : r}
+                  </button>
+                )
+              })}
+              {weightHistoryTruncated && (
                 <button
-                  key={r}
                   type="button"
-                  onClick={() => setChartRange(r)}
-                  className={`px-2.5 py-1 text-xs rounded-md font-medium transition-colors ${
-                    chartRange === r
-                      ? 'bg-primary-600 text-white'
-                      : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700'
-                  }`}
+                  onClick={() => openUpgradeModal('advanced_trends')}
+                  className="ml-auto flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-primary-600 dark:text-primary-300 hover:underline"
                 >
-                  {r === 'all' ? t('weightTracker.rangeAll') : r}
+                  <Lock className="h-3 w-3" />
+                  {t('weightTracker.freeWindowNotice')}
                 </button>
-              ))}
+              )}
             </div>
           )}
 
           {/* Chart */}
-          {chartsReady && chartData.length > 1 && (
+          {chartsReady && hasRenderableWeightData && (
             <div className="h-80" style={{ minWidth: 0 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
@@ -551,11 +740,11 @@ export default function WeightTracker({
                     scale="time"
                     domain={
                       weightBrushTs
-                        ? [weightBrushTs.start, weightBrushTs.end]
+                        ? [clampBrushStart(weightBrushTs.start, weightFloorTs), weightBrushTs.end]
                         : chartRange === 'all'
                           ? ['dataMin', 'dataMax']
                           : [
-                              viewCutoff,
+                              clampBrushStart(viewCutoff, weightFloorTs),
                               brushChartData[brushChartData.length - 1]?.timestamp ?? nowTs,
                             ]
                     }
@@ -563,12 +752,7 @@ export default function WeightTracker({
                     angle={-45}
                     textAnchor="end"
                     height={60}
-                    tickFormatter={ts =>
-                      new Date(ts as number).toLocaleDateString(getDateLocale(), {
-                        month: 'short',
-                        day: 'numeric',
-                      })
-                    }
+                    tickFormatter={ts => formatAxisTick(ts as number)}
                   />
                   <YAxis
                     domain={[minWeight, maxWeight]}
@@ -593,10 +777,7 @@ export default function WeightTracker({
                     }
                     labelFormatter={ts => {
                       const entry = brushChartData.find(d => d.timestamp === (ts as number))
-                      return (
-                        entry?.displayDate ||
-                        new Date(ts as number).toLocaleDateString(getDateLocale())
-                      )
+                      return entry?.displayDate || formatTick(ts as number)
                     }}
                     contentStyle={{
                       backgroundColor: 'white',
@@ -665,9 +846,9 @@ export default function WeightTracker({
                     connectNulls={false}
                   />
 
-                  {chartRange !== 'all' &&
+                  {(chartRange !== 'all' || trendsLocked) &&
                     (() => {
-                      const bd = brushDefaultForData(brushChartData)
+                      const bd = brushDefaultForData(brushChartData, true)
                       return bd ? (
                         <Brush
                           key={`w-${chartRange}`}
@@ -678,17 +859,16 @@ export default function WeightTracker({
                           stroke={chartTheme.brush.stroke}
                           fill={chartTheme.brush.fill}
                           travellerWidth={8}
-                          tickFormatter={ts =>
-                            new Date(ts as number).toLocaleDateString(getDateLocale(), {
-                              month: 'short',
-                              day: 'numeric',
-                            })
-                          }
+                          tickFormatter={ts => formatAxisTick(ts as number)}
                           onChange={e => {
                             if (e.startIndex == null || e.endIndex == null) return
                             const s = brushChartData[e.startIndex]?.timestamp
                             const en = brushChartData[e.endIndex]?.timestamp
-                            if (s != null && en != null) setWeightBrushTs({ start: s, end: en })
+                            if (s != null && en != null)
+                              setWeightBrushTs({
+                                start: clampBrushStart(s, weightFloorTs),
+                                end: en,
+                              })
                           }}
                         />
                       ) : null
@@ -698,15 +878,30 @@ export default function WeightTracker({
             </div>
           )}
 
-          {chartData.length <= 1 && (
-            <div className="text-center py-8 text-neutral-500 dark:text-neutral-400">
-              <p>{t('weightTracker.noHistory')}</p>
-              <p className="text-sm mt-1">{t('weightTracker.noHistoryHint')}</p>
-            </div>
-          )}
+          {!hasRenderableWeightData &&
+            (weightHiddenByWindow ? (
+              // Datan finns men ligger utanför gratisfönstret — säg det rakt ut
+              // i stället för "ingen historik", som vore direkt missvisande.
+              <div className="text-center py-8 text-neutral-500 dark:text-neutral-400">
+                <Lock className="h-5 w-5 mx-auto mb-2 text-neutral-400 dark:text-neutral-500" />
+                <p>{t('weightTracker.historyOutsideWindow')}</p>
+                <button
+                  type="button"
+                  onClick={() => openUpgradeModal('advanced_trends')}
+                  className="text-sm mt-1 font-medium text-primary-600 dark:text-primary-300 hover:underline"
+                >
+                  {t('weightTracker.freeWindowNotice')}
+                </button>
+              </div>
+            ) : (
+              <div className="text-center py-8 text-neutral-500 dark:text-neutral-400">
+                <p>{t('weightTracker.noHistory')}</p>
+                <p className="text-sm mt-1">{t('weightTracker.noHistoryHint')}</p>
+              </div>
+            ))}
 
-          {/* Body fat chart */}
-          {limits.advanced_trends && chartsReady && hasBodyFatData && (
+          {/* Body fat chart — samma 30-dagarsfönster som viktgrafen för gratis */}
+          {chartsReady && hasRenderableBodyFatData && (
             <div>
               <div className="flex items-center gap-1.5 mb-2">
                 <h4 className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
@@ -733,11 +928,14 @@ export default function WeightTracker({
                       scale="time"
                       domain={
                         bodyFatBrushTs
-                          ? [bodyFatBrushTs.start, bodyFatBrushTs.end]
+                          ? [
+                              clampBrushStart(bodyFatBrushTs.start, bodyFatFloorTs),
+                              bodyFatBrushTs.end,
+                            ]
                           : chartRange === 'all'
                             ? ['dataMin', 'dataMax']
                             : [
-                                viewCutoff,
+                                clampBrushStart(viewCutoff, bodyFatFloorTs),
                                 brushBodyFatData[brushBodyFatData.length - 1]?.timestamp ?? nowTs,
                               ]
                       }
@@ -745,12 +943,7 @@ export default function WeightTracker({
                       angle={-45}
                       textAnchor="end"
                       height={60}
-                      tickFormatter={ts =>
-                        new Date(ts as number).toLocaleDateString(getDateLocale(), {
-                          month: 'short',
-                          day: 'numeric',
-                        })
-                      }
+                      tickFormatter={ts => formatAxisTick(ts as number)}
                     />
                     <YAxis
                       domain={['auto', 'auto']}
@@ -775,10 +968,7 @@ export default function WeightTracker({
                       }
                       labelFormatter={ts => {
                         const entry = brushBodyFatData.find(d => d.timestamp === (ts as number))
-                        return (
-                          entry?.displayDate ||
-                          new Date(ts as number).toLocaleDateString(getDateLocale())
-                        )
+                        return entry?.displayDate || formatTick(ts as number)
                       }}
                       contentStyle={{
                         backgroundColor: 'white',
@@ -812,9 +1002,9 @@ export default function WeightTracker({
                       dot={false}
                       connectNulls={false}
                     />
-                    {chartRange !== 'all' &&
+                    {(chartRange !== 'all' || trendsLocked) &&
                       (() => {
-                        const bd = brushDefaultForData(brushBodyFatData)
+                        const bd = brushDefaultForData(brushBodyFatData, true)
                         return bd ? (
                           <Brush
                             key={`bf-${chartRange}`}
@@ -825,17 +1015,16 @@ export default function WeightTracker({
                             stroke={chartTheme.brush.stroke}
                             fill={chartTheme.brush.fill}
                             travellerWidth={8}
-                            tickFormatter={ts =>
-                              new Date(ts as number).toLocaleDateString(getDateLocale(), {
-                                month: 'short',
-                                day: 'numeric',
-                              })
-                            }
+                            tickFormatter={ts => formatAxisTick(ts as number)}
                             onChange={e => {
                               if (e.startIndex == null || e.endIndex == null) return
                               const s = brushBodyFatData[e.startIndex]?.timestamp
                               const en = brushBodyFatData[e.endIndex]?.timestamp
-                              if (s != null && en != null) setBodyFatBrushTs({ start: s, end: en })
+                              if (s != null && en != null)
+                                setBodyFatBrushTs({
+                                  start: clampBrushStart(s, bodyFatFloorTs),
+                                  end: en,
+                                })
                             }}
                           />
                         ) : null
@@ -843,6 +1032,23 @@ export default function WeightTracker({
                   </LineChart>
                 </ResponsiveContainer>
               </div>
+            </div>
+          )}
+
+          {/* Låsta grafer visas som teaser i stället för att döljas helt —
+              den som inte vet att funktionen finns kan inte sakna den. */}
+          {trendsLocked && bodyCompositionChartData.length > 0 && (
+            <div className="space-y-3">
+              <LockedChartTeaser
+                title={t('weightTracker.chartBodyFatMassTitle')}
+                description={t('weightTracker.lockedBodyFatMassDesc')}
+                limitKey="advanced_trends"
+              />
+              <LockedChartTeaser
+                title={t('weightTracker.chartSoftLeanMassTitle')}
+                description={t('weightTracker.lockedSoftLeanMassDesc')}
+                limitKey="advanced_trends"
+              />
             </div>
           )}
 
@@ -901,12 +1107,7 @@ export default function WeightTracker({
                         angle={-45}
                         textAnchor="end"
                         height={60}
-                        tickFormatter={ts =>
-                          new Date(ts as number).toLocaleDateString(getDateLocale(), {
-                            month: 'short',
-                            day: 'numeric',
-                          })
-                        }
+                        tickFormatter={ts => formatAxisTick(ts as number)}
                       />
                       <YAxis
                         domain={['auto', 'auto']}
@@ -978,12 +1179,7 @@ export default function WeightTracker({
                               stroke={chartTheme.brush.stroke}
                               fill={chartTheme.brush.fill}
                               travellerWidth={8}
-                              tickFormatter={ts =>
-                                new Date(ts as number).toLocaleDateString(getDateLocale(), {
-                                  month: 'short',
-                                  day: 'numeric',
-                                })
-                              }
+                              tickFormatter={ts => formatAxisTick(ts as number)}
                               onChange={e => {
                                 if (e.startIndex == null || e.endIndex == null) return
                                 const s = brushBodyCompositionData[e.startIndex]?.timestamp
@@ -1055,12 +1251,7 @@ export default function WeightTracker({
                         angle={-45}
                         textAnchor="end"
                         height={60}
-                        tickFormatter={ts =>
-                          new Date(ts as number).toLocaleDateString(getDateLocale(), {
-                            month: 'short',
-                            day: 'numeric',
-                          })
-                        }
+                        tickFormatter={ts => formatAxisTick(ts as number)}
                       />
                       <YAxis
                         domain={['auto', 'auto']}
@@ -1132,12 +1323,7 @@ export default function WeightTracker({
                               stroke={chartTheme.brush.stroke}
                               fill={chartTheme.brush.fill}
                               travellerWidth={8}
-                              tickFormatter={ts =>
-                                new Date(ts as number).toLocaleDateString(getDateLocale(), {
-                                  month: 'short',
-                                  day: 'numeric',
-                                })
-                              }
+                              tickFormatter={ts => formatAxisTick(ts as number)}
                               onChange={e => {
                                 if (e.startIndex == null || e.endIndex == null) return
                                 const s = brushBodyCompositionData[e.startIndex]?.timestamp
