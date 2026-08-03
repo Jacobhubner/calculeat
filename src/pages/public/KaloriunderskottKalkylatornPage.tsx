@@ -160,7 +160,7 @@ export default function KaloriunderskottKalkylatornPage() {
       <main className="flex-1">
         {/* Hero section */}
         <section className="relative overflow-hidden bg-white border-b border-neutral-100 dark:bg-neutral-850">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(87,134,29,0.07),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(37,189,0,0.07),transparent_60%)]" />
           <div className="relative container mx-auto px-4 pt-16 pb-14 max-w-3xl">
             <nav className="flex items-center gap-2 text-sm text-neutral-500 mb-6 dark:text-neutral-400">
               <Link
@@ -357,7 +357,7 @@ export default function KaloriunderskottKalkylatornPage() {
                 <button
                   onClick={handleCalculate}
                   disabled={!bmr || !tdee}
-                  className="w-full bg-primary-500 hover:bg-primary-400 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-on-primary font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
+                  className="w-full bg-primary-600 hover:bg-primary-700 disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-500 text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm"
                 >
                   {t('calorie-deficit-calculator.calculator.button')}
                 </button>
@@ -464,7 +464,7 @@ export default function KaloriunderskottKalkylatornPage() {
                       </p>
                       <Link
                         to="/register"
-                        className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-400 text-on-primary text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+                        className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
                       >
                         {t('calorie-deficit-calculator.calculator.saveCtaButton')}
                         <ArrowRight className="h-4 w-4" />

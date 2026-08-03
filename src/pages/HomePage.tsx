@@ -404,7 +404,7 @@ export default function HomePage() {
             mörk sida, så den tappar sin avgränsning — en toppram återger kanten
             utan att sektionen behöver byta karaktär. */}
         <section className="bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 py-24 md:py-32 relative overflow-hidden dark:border-t dark:border-neutral-800">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(87,134,29,0.1),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(37,189,0,0.1),transparent_50%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(14,165,233,0.08),transparent_50%)]" />
 
           <div className="container relative mx-auto px-4 text-center">

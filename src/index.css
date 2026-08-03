@@ -8,35 +8,17 @@
 @theme {
   --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.04), 0 2px 8px -2px rgb(0 0 0 / 0.06);
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  /* Primärgrönt = loggans blad, hsl(87 64% 45%) ≈ #7bbe2a.
-   *
-   * Skalan låg tidigare på hsl(108) med 100 % mättnad rakt igenom. Två problem:
-   * ingen naturlig färg är fullmättad, så ögat läste den som en signalfärg och
-   * knappar hoppade ut ur gränssnittet — och nyansen låg 21° från loggan, alltså
-   * en synligt annan grön än märket.
-   *
-   * primary-600 (knappar) gick dessutom från 3.33:1 till 4.35:1 mot vit text,
-   * vilket tar den över WCAG AA-gränsen 4.5:1 för stor text och nära för brödtext.
-   *
-   * Mättnaden trappas ned mot de ljusa stegen så de inte blir neongröna, och
-   * hålls uppe i de mörka så de behåller karaktär mot mörkt läge.
-   */
-  --color-primary-50: hsl(87 45% 96%);
-  --color-primary-100: hsl(87 48% 90%);
-  --color-primary-200: hsl(87 52% 80%);
-  --color-primary-300: hsl(87 55% 66%);
-  --color-primary-400: hsl(87 60% 55%);
-  --color-primary-500: hsl(87 64% 45%);
-  --color-primary-600: hsl(87 64% 32%);
-  --color-primary-700: hsl(87 66% 26%);
-  --color-primary-800: hsl(87 66% 21%);
-  --color-primary-900: hsl(87 64% 16%);
-  --color-primary-950: hsl(87 60% 11%);
-
-  /* Textfärg för ytor i primary-500. Vit text på grönt når aldrig 4.5:1 i den
-     här nyansen — mörk text gör det (5.16:1) och tillåter samtidigt att knappen
-     får loggans faktiska, ljusare gröna. */
-  --color-on-primary: hsl(87 70% 14%);
+  --color-primary-50: hsl(108 100% 95%);
+  --color-primary-100: hsl(108 100% 90%);
+  --color-primary-200: hsl(108 100% 80%);
+  --color-primary-300: hsl(108 100% 65%);
+  --color-primary-400: hsl(108 100% 50%);
+  --color-primary-500: hsl(108 100% 37%);
+  --color-primary-600: hsl(108 100% 32%);
+  --color-primary-700: hsl(108 100% 27%);
+  --color-primary-800: hsl(108 100% 22%);
+  --color-primary-900: hsl(108 100% 17%);
+  --color-primary-950: hsl(108 100% 12%);
 
   --color-accent-50: hsl(33 100% 95%);
   --color-accent-100: hsl(33 100% 90%);
@@ -254,7 +236,7 @@
   }
 
   .bg-gradient-primary {
-    background: linear-gradient(135deg, hsl(87 60% 55%), hsl(87 64% 32%));
+    background: linear-gradient(135deg, hsl(108 100% 50%), hsl(108 100% 32%));
   }
 
   .bg-gradient-accent {
@@ -262,7 +244,7 @@
   }
 
   .bg-gradient-hero {
-    background: linear-gradient(135deg, hsl(87 64% 45%) 0%, hsl(87 66% 26%) 100%);
+    background: linear-gradient(135deg, hsl(108 100% 37%) 0%, hsl(108 100% 27%) 100%);
   }
 }
 

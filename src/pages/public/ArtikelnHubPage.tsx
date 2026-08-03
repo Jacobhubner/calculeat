@@ -51,7 +51,7 @@ export default function ArtikelnHubPage() {
               </p>
               <Link
                 to={articles[0]?.href ?? localeEntry.canonical}
-                className="inline-flex items-center gap-2 bg-primary-500 text-on-primary font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors"
+                className="inline-flex items-center gap-2 bg-primary-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors"
               >
                 {t('articles-hub.ctaButton')}
                 <ArrowRight className="h-4 w-4" />
@@ -104,7 +104,7 @@ export default function ArtikelnHubPage() {
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
                   to={calcHubHref}
-                  className="inline-flex items-center justify-center gap-2 bg-primary-500 text-on-primary font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors"
+                  className="inline-flex items-center justify-center gap-2 bg-primary-600 text-white font-medium px-6 py-3 rounded-xl hover:bg-primary-700 transition-colors"
                 >
                   {t('articles-hub.bottomCta.primaryButton')}
                   <ArrowRight className="h-4 w-4" />

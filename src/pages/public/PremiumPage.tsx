@@ -143,7 +143,7 @@ export default function PremiumPage() {
           <div className="mb-12">
             <Link
               to="/register"
-              className="inline-flex h-12 items-center rounded-xl bg-primary-500 px-8 text-base font-medium text-on-primary shadow-sm transition-colors hover:bg-primary-400"
+              className="inline-flex h-12 items-center rounded-xl bg-primary-600 px-8 text-base font-medium text-white shadow-sm transition-colors hover:bg-primary-700"
             >
               {t('premium.plans.cta')}
             </Link>

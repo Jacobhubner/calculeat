@@ -373,7 +373,7 @@ export default function RecipesPage() {
             onClick={() => setTagFilter(null)}
             className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
               tagFilter === null
-                ? 'bg-primary-500 text-on-primary'
+                ? 'bg-primary-600 text-white'
                 : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400'
             }`}
           >
@@ -386,7 +386,7 @@ export default function RecipesPage() {
               onClick={() => setTagFilter(tagFilter === tag ? null : tag)}
               className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                 tagFilter === tag
-                  ? 'bg-primary-500 text-on-primary'
+                  ? 'bg-primary-600 text-white'
                   : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400'
               }`}
             >

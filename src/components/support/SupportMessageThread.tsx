@@ -178,7 +178,7 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
                   type="button"
                   onClick={handleEditSubmit}
                   disabled={isEditing || !editValue.trim()}
-                  className="h-6 w-6 flex items-center justify-center rounded-lg bg-primary-500 text-on-primary hover:bg-primary-700 disabled:opacity-40"
+                  className="h-6 w-6 flex items-center justify-center rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-40"
                 >
                   {isEditing ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
