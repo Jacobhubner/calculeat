@@ -1,12 +1,26 @@
 import { useTranslation } from 'react-i18next'
-import { Plus, Bookmark, ArrowDownToLine, Trash2, Coffee, UtensilsCrossed } from 'lucide-react'
+import { Plus, BookmarkPlus, FolderDown, Trash2, Coffee, UtensilsCrossed } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { SwipeableItem } from '@/components/ui/SwipeableItem'
 import { MealProgressBar } from '@/components/daily/RangeProgressBar'
 import { MealMacroBreakdown } from '@/components/daily/MealMacroBreakdown'
+import { cn } from '@/lib/utils'
 import type { MealEntry, MealEntryItem } from '@/hooks/useDailyLogs'
 import type { FoodItem } from '@/hooks/useFoodItems'
+
+/**
+ * Måltidsrubrikens tre åtgärdsknappar.
+ *
+ * På telefon står etiketten under ikonen; från md går knappen tillbaka till
+ * ikon + text på rad. `h-auto` krävs eftersom size="sm" låser höjden till h-9,
+ * vilket klipper den staplade texten.
+ */
+const STACKED_ACTION_CLASS =
+  'h-auto flex-col gap-1 px-2 py-1.5 md:h-9 md:flex-row md:gap-1.5 md:px-3 md:py-0'
+
+/** text-[11px] håller tre knappar inom ~390 px utan att radbrytas. */
+const ACTION_LABEL_CLASS = 'text-[11px] leading-none font-medium md:text-sm'
 
 interface EditItem {
   itemId: string
@@ -84,37 +98,57 @@ export function MealSection({
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 md:gap-3 shrink-0">
+          {/* Etiketterna staplas under ikonerna på telefon i stället för att
+              döljas. Bookmark och nedåtpil är inte gissningsbara i en
+              måltidsrubrik — pil-mot-linje läses som "ladda ner", inte som
+              "hämta en sparad måltid hit". Från md ligger de på rad igen. */}
+          <div className="flex items-start gap-1.5 md:gap-3 shrink-0">
             {hasItems && mealEntry && onSaveMeal && (
               <Button
                 size="sm"
                 variant="outline"
-                className="gap-1.5 px-2 md:px-3"
+                className={STACKED_ACTION_CLASS}
+                // Full text som tillgängligt namn — den synliga etiketten är
+                // förkortad på telefon och "Spara" ensamt säger inte vad.
+                aria-label={t('today.saveMeal')}
                 onClick={() => onSaveMeal(mealEntry)}
               >
-                <Bookmark className="h-4 w-4" />
-                <span className="hidden md:inline">{t('today.saveMeal')}</span>
+                <BookmarkPlus className="h-4 w-4 shrink-0" />
+                <span className={ACTION_LABEL_CLASS}>
+                  <span className="md:hidden">{t('today.saveMealShort')}</span>
+                  <span className="hidden md:inline">{t('today.saveMeal')}</span>
+                </span>
               </Button>
             )}
             {!isCompleted && onLoadMeal && (
               <Button
                 size="sm"
                 variant="outline"
-                className="gap-1.5 px-2 md:px-3 border-primary-300 dark:border-primary-700 text-primary-700 dark:text-primary-300"
+                className={cn(
+                  STACKED_ACTION_CLASS,
+                  'border-primary-300 dark:border-primary-700 text-primary-700 dark:text-primary-300'
+                )}
+                aria-label={t('today.loadMeal')}
                 onClick={() => onLoadMeal(mealName, mealOrder, mealEntry?.id)}
               >
-                <ArrowDownToLine className="h-4 w-4" />
-                <span className="hidden md:inline">{t('today.loadMeal')}</span>
+                <FolderDown className="h-4 w-4 shrink-0" />
+                <span className={ACTION_LABEL_CLASS}>
+                  <span className="md:hidden">{t('today.loadMealShort')}</span>
+                  <span className="hidden md:inline">{t('today.loadMeal')}</span>
+                </span>
               </Button>
             )}
             {!isCompleted && (
               <Button
                 size="sm"
-                className="gap-1.5 px-2 md:px-3"
+                className={STACKED_ACTION_CLASS}
+                // Sidan har flera måltider — "Lägg till" ensamt räcker inte
+                // när en skärmläsare stegar mellan rubrikerna.
+                aria-label={`${t('today.addFood')} — ${mealName}`}
                 onClick={() => onAddFood(mealName, mealEntry?.id)}
               >
-                <Plus className="h-4 w-4" />
-                <span className="hidden sm:inline">{t('today.addFood')}</span>
+                <Plus className="h-4 w-4 shrink-0" />
+                <span className={ACTION_LABEL_CLASS}>{t('today.addFood')}</span>
               </Button>
             )}
           </div>

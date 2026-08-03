@@ -40,6 +40,8 @@
     "saveMeal": "Save meal",
     "loadMeal": "Load meal",
     "addFood": "Add",
+    "saveMealShort": "Save",
+    "loadMealShort": "Load",
     "unknownFood": "Unknown food",
     "defaultFoodName": "Food item",
     "total": "Total:",

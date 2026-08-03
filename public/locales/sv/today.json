@@ -40,6 +40,8 @@
     "saveMeal": "Spara måltid",
     "loadMeal": "Ladda måltid",
     "addFood": "Lägg till",
+    "saveMealShort": "Spara",
+    "loadMealShort": "Ladda",
     "unknownFood": "Okänd matvara",
     "defaultFoodName": "Matvara",
     "total": "Totalt:",
