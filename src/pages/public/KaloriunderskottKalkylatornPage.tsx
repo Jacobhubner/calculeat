@@ -365,7 +365,7 @@ export default function KaloriunderskottKalkylatornPage() {
 
               {/* Results */}
               {hasResult && tdee && bmr && targetCalories && (
-                <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 space-y-4 dark:bg-neutral-900">
+                <div className="border-t border-neutral-100 dark:border-neutral-700 bg-neutral-50 px-6 py-6 space-y-4 dark:bg-neutral-900">
                   <h2 className="font-semibold text-neutral-800 dark:text-neutral-200">
                     {t('calorie-deficit-calculator.calculator.resultsTitle')}
                   </h2>
@@ -410,7 +410,7 @@ export default function KaloriunderskottKalkylatornPage() {
                           −{deficit} kcal
                         </span>
                       </div>
-                      <div className="flex justify-between border-t border-neutral-100 pt-2 mt-2">
+                      <div className="flex justify-between border-t border-neutral-100 dark:border-neutral-700 pt-2 mt-2">
                         <span className="font-medium">
                           {t('calorie-deficit-calculator.calculator.intakeRow')}
                         </span>
@@ -425,7 +425,7 @@ export default function KaloriunderskottKalkylatornPage() {
                         <span className="font-medium">{selectedGoalConfig?.weeklyLoss}</span>
                       </div>
                       {proteinMin && proteinMax && (
-                        <div className="flex justify-between border-t border-neutral-100 pt-2 mt-2">
+                        <div className="flex justify-between border-t border-neutral-100 dark:border-neutral-700 pt-2 mt-2">
                           <span className="text-neutral-500 dark:text-neutral-400">
                             {t('calorie-deficit-calculator.calculator.proteinRow')}
                           </span>
@@ -469,7 +469,7 @@ export default function KaloriunderskottKalkylatornPage() {
                         {t('calorie-deficit-calculator.calculator.saveCtaButton')}
                         <ArrowRight className="h-4 w-4" />
                       </Link>
-                      <div className="mt-3 pt-3 border-t border-neutral-100 text-xs text-neutral-500 space-y-0.5 dark:text-neutral-400">
+                      <div className="mt-3 pt-3 border-t border-neutral-100 dark:border-neutral-700 text-xs text-neutral-500 space-y-0.5 dark:text-neutral-400">
                         <p className="font-medium text-neutral-700 mb-1 dark:text-neutral-200">
                           {t('calorie-deficit-calculator.calculator.featuresTitle')}
                         </p>

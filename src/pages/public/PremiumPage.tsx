@@ -175,7 +175,7 @@ export default function PremiumPage() {
             {COMPARE_ROWS.map(row => (
               <div
                 key={row}
-                className="grid grid-cols-[1.2fr_0.9fr_1.2fr] border-t border-neutral-100 text-sm"
+                className="grid grid-cols-[1.2fr_0.9fr_1.2fr] border-t border-neutral-100 dark:border-neutral-700 text-sm"
               >
                 <div className="px-4 py-3 font-medium text-neutral-700 dark:text-neutral-200">
                   {tPremium(`upgradeModal.compare.rows.${row}.label`)}

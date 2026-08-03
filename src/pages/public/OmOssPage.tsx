@@ -126,7 +126,7 @@ export default function OmOssPage() {
           </section>
 
           {/* CTA */}
-          <div className="mt-12 pt-8 border-t border-neutral-100">
+          <div className="mt-12 pt-8 border-t border-neutral-100 dark:border-neutral-700">
             <h2 className="text-lg font-semibold text-neutral-800 mb-4 dark:text-neutral-200">
               {t('about.cta.h2')}
             </h2>

@@ -310,7 +310,7 @@ export default function TdeeKalkylatornPage() {
 
               {/* Results */}
               {hasResult && tdee && bmr && (
-                <div className="border-t border-neutral-100 bg-neutral-50 px-6 py-6 dark:bg-neutral-900">
+                <div className="border-t border-neutral-100 dark:border-neutral-700 bg-neutral-50 px-6 py-6 dark:bg-neutral-900">
                   <h2 className="font-semibold text-neutral-800 mb-4 dark:text-neutral-200">
                     {t('tdee-calculator.calculator.resultsTitle')}
                   </h2>
@@ -389,7 +389,7 @@ export default function TdeeKalkylatornPage() {
                       <p className="text-xs text-neutral-400 mt-2 dark:text-neutral-500">
                         {t('tdee-calculator.cta.gated.subtext')}
                       </p>
-                      <div className="mt-3 text-left text-xs space-y-0.5 border-t border-neutral-100 pt-3">
+                      <div className="mt-3 text-left text-xs space-y-0.5 border-t border-neutral-100 dark:border-neutral-700 pt-3">
                         <p className="text-neutral-500 font-medium mb-1 dark:text-neutral-400">
                           {t('tdee-calculator.cta.gated.featuresTitle')}
                         </p>
