@@ -1149,7 +1149,9 @@ function MessageBubble({
         ) : (
           <div>
             <div
-              className={`rounded-2xl px-3 py-2 text-sm ${
+              // whitespace-pre-wrap bevarar radbrytningar (HTML kollapsar dem
+              // annars); break-words hindrar långa URL:er från att spränga bubblan.
+              className={`whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-sm ${
                 isDeleted
                   ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100 dark:bg-neutral-900 dark:text-neutral-500'
                   : isOwn

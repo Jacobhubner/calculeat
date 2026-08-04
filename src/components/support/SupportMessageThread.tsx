@@ -193,7 +193,10 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
               {!isDeleted && msg.image_path && <SupportAttachmentImage path={msg.image_path} />}
               {(isDeleted || msg.content) && (
                 <div
-                  className={`rounded-2xl px-3 py-2 text-sm ${
+                  // whitespace-pre-wrap: HTML kollapsar annars radbrytningar,
+                  // så styckeindelade svar klumpades ihop till en textmassa.
+                  // break-words hindrar att långa URL:er spränger bubblan.
+                  className={`whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-sm ${
                     isDeleted
                       ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100 dark:bg-neutral-900 dark:text-neutral-500'
                       : isOwn
