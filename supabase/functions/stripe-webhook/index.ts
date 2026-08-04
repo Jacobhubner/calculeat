@@ -88,6 +88,7 @@ Deno.serve(async (req: Request) => {
             status: mapStatus(sub.status),
             current_period_end: periodEnd(sub),
             source: 'stripe',
+            cancel_at_period_end: sub.cancel_at_period_end ?? false,
             stripe_customer_id: customerId ?? null,
             stripe_subscription_id: subscriptionId,
           },
@@ -123,6 +124,11 @@ Deno.serve(async (req: Request) => {
             status,
             current_period_end: periodEnd(sub),
             source: 'stripe',
+            // Vid 'deleted' är uppsägningen genomförd, inte längre "pågående"
+            cancel_at_period_end:
+              event.type === 'customer.subscription.deleted'
+                ? false
+                : (sub.cancel_at_period_end ?? false),
             stripe_customer_id: typeof sub.customer === 'string' ? sub.customer : sub.customer?.id,
             stripe_subscription_id: sub.id,
           },

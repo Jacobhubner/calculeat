@@ -67,6 +67,8 @@ export interface MySubscription {
   status: string
   source: 'manual' | 'stripe'
   current_period_end: string | null
+  /** true = uppsagd men fortfarande giltig fram till current_period_end */
+  cancel_at_period_end: boolean
 }
 
 /**
@@ -80,7 +82,7 @@ export function useMySubscription() {
     queryFn: async (): Promise<MySubscription | null> => {
       const { data, error } = await supabase
         .from('user_subscriptions')
-        .select('plan, status, source, current_period_end')
+        .select('plan, status, source, current_period_end, cancel_at_period_end')
         .maybeSingle()
       if (error) throw error
       return data as MySubscription | null

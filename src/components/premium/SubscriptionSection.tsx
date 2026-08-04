@@ -15,7 +15,7 @@ import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
  * - Founder/soft launch → ingenting (osynligt tills hard launch)
  */
 export function SubscriptionSection() {
-  const { t } = useTranslation('premium')
+  const { t, i18n } = useTranslation('premium')
   const { plan } = useEntitlements()
   const { data: subscription } = useMySubscription()
   const openUpgradeModal = useUpgradeModalStore(state => state.open)
@@ -48,6 +48,40 @@ export function SubscriptionSection() {
 
   if (subscription?.source !== 'stripe') return null
 
+  // current_period_end = trialens slut under 'trialing', annars nästa dragning.
+  const periodEnd = subscription.current_period_end
+    ? new Date(subscription.current_period_end).toLocaleDateString(
+        i18n.language === 'sv' ? 'sv-SE' : 'en-GB',
+        { year: 'numeric', month: 'long', day: 'numeric' }
+      )
+    : null
+
+  // Uppsagd men ännu inte utlöpt: Stripe rapporterar fortfarande
+  // trialing/active, bara flaggan skiljer. Då får uppmaningen att säga upp
+  // INTE visas — användaren har redan gjort det.
+  const pendingCancel = subscription.cancel_at_period_end
+  const { status } = subscription
+
+  let statusText: string | null = null
+  if (status === 'past_due') {
+    statusText = t('subscription.pastDue')
+  } else if (periodEnd) {
+    if (status === 'trialing') {
+      statusText = pendingCancel
+        ? t('subscription.trialCancelled', { date: periodEnd })
+        : `${t('subscription.trialUntil', { date: periodEnd })} ${t('subscription.trialCancelHint')}`
+    } else if (status === 'active') {
+      statusText = pendingCancel
+        ? t('subscription.activeCancelled', { date: periodEnd })
+        : t('subscription.renewsOn', { date: periodEnd })
+    } else if (status === 'canceled') {
+      statusText = t('subscription.cancelsOn', { date: periodEnd })
+    }
+  }
+
+  // past_due är det enda som kräver en åtgärd av användaren
+  const isWarning = status === 'past_due'
+
   const openPortal = async () => {
     setLoading(true)
     try {
@@ -71,7 +105,23 @@ export function SubscriptionSection() {
           {t('badge.premium')}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-3">
+        {statusText && (
+          <p
+            className={
+              isWarning
+                ? 'text-sm text-amber-700 dark:text-amber-400'
+                : 'text-sm text-neutral-700 dark:text-neutral-300'
+            }
+          >
+            {statusText}
+          </p>
+        )}
+        {pendingCancel && status !== 'canceled' && (
+          <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            {t('subscription.resumeHint')}
+          </p>
+        )}
         <Button variant="outline" onClick={openPortal} disabled={loading} className="gap-2">
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />

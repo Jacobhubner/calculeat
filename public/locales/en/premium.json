@@ -121,6 +121,14 @@
     "manage": "Manage subscription",
     "upgradeCta": "Upgrade to Premium",
     "freeText": "You are on the free plan. Upgrade for unlimited history, every tool, and full precision.",
-    "portalError": "Could not open the subscription page. Please try again."
+    "portalError": "Could not open the subscription page. Please try again.",
+    "trialUntil": "Free trial through {{date}}.",
+    "trialCancelHint": "Cancel before then and you will not be charged.",
+    "renewsOn": "Renews on {{date}}.",
+    "pastDue": "Your payment did not go through. Update your card to keep Premium.",
+    "cancelsOn": "Premium ends on {{date}}. You keep access until then.",
+    "trialCancelled": "You have cancelled. Your trial ends on {{date}} and you will not be charged.",
+    "activeCancelled": "You have cancelled. Premium ends on {{date}} — you keep access until then.",
+    "resumeHint": "Changed your mind? Resume your subscription under Manage subscription."
   }
 }

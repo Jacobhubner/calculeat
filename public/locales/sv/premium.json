@@ -121,6 +121,14 @@
     "manage": "Hantera prenumeration",
     "upgradeCta": "Uppgradera till Premium",
     "freeText": "Du använder gratisnivån. Uppgradera för obegränsad historik, alla verktyg och full precision.",
-    "portalError": "Kunde inte öppna prenumerationssidan. Försök igen."
+    "portalError": "Kunde inte öppna prenumerationssidan. Försök igen.",
+    "trialUntil": "Provperiod till och med {{date}}.",
+    "trialCancelHint": "Säger du upp innan dess debiteras du inte.",
+    "renewsOn": "Förnyas {{date}}.",
+    "pastDue": "Betalningen gick inte igenom. Uppdatera ditt kort för att behålla Premium.",
+    "cancelsOn": "Premium avslutas {{date}}. Du behåller åtkomsten till dess.",
+    "trialCancelled": "Du har sagt upp. Provperioden löper ut {{date}} och du debiteras inte.",
+    "activeCancelled": "Du har sagt upp. Premium avslutas {{date}} — du behåller åtkomsten till dess.",
+    "resumeHint": "Ångra dig? Återuppta prenumerationen under Hantera prenumeration."
   }
 }
