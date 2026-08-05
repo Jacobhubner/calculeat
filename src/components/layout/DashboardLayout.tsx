@@ -1,6 +1,9 @@
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import SiteHeader from './SiteHeader'
-import { LaunchAnnouncement } from '@/components/premium/LaunchAnnouncement'
+import {
+  LaunchAnnouncement,
+  isLaunchAnnouncementPending,
+} from '@/components/premium/LaunchAnnouncement'
 import { TermsUpdateAnnouncement } from '@/components/legal/TermsUpdateAnnouncement'
 import DashboardNav from './DashboardNav'
 import MobileBottomNav from './MobileBottomNav'
@@ -26,6 +29,13 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
   const foodHubTabs = useFoodHubTabs()
   useSupportAdminUnreadCount() // aktiverar realtime-kanal för admin-inbox
 
+  // Håller TermsUpdateAnnouncement borta tills LaunchAnnouncement faktiskt
+  // stängts av kunden. Lazy-init: körs bara en gång per montering, inte på
+  // varje render — isLaunchAnnouncementPending läser localStorage.
+  const [waitingForLaunch, setWaitingForLaunch] = useState(
+    () => !!user && isLaunchAnnouncementPending(user.id, user.created_at)
+  )
+
   const handleResend = async () => {
     if (!user?.email) return
     const { error } = await supabase.auth.resend({ type: 'signup', email: user.email })
@@ -39,9 +49,9 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
   return (
     <div className={cn('flex flex-col', fullHeight ? 'h-screen' : 'min-h-screen')}>
       {/* Engångsnotis till soft launch-testare efter premium-flippen */}
-      <LaunchAnnouncement />
+      <LaunchAnnouncement onDismiss={() => setWaitingForLaunch(false)} />
       {/* Notis vid ändrade användarvillkor — se komponentens egen kommentar */}
-      <TermsUpdateAnnouncement />
+      <TermsUpdateAnnouncement waitingFor={waitingForLaunch} />
       {/* z-60, inte z-50: avatarmenyn hänger ut ur headern och kan nå ner till
           skärmens botten, där MobileBottomNav ligger på z-50. Vid samma nivå
           vinner det element som kommer senare i DOM:en — bottennavigeringen —

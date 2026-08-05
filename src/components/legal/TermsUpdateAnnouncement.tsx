@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/AuthContext'
-import { isLaunchAnnouncementPending } from '@/components/premium/LaunchAnnouncement'
 
 /**
  * Notis om ändrade användarvillkor — GDPR/konsumenträtt §9 i villkoren kräver
@@ -26,6 +25,14 @@ import { isLaunchAnnouncementPending } from '@/components/premium/LaunchAnnounce
  *
  * Stängs permanent per version och användare via localStorage — ändras
  * villkoren igen visas en ny notis även om en tidigare redan stängts.
+ *
+ * Ordning mot LaunchAnnouncement: den kollades tidigare löpande via
+ * isLaunchAnnouncementPending(), vilket blockerade permanent — en kund som
+ * aldrig stängde lanseringsmodalen (t.ex. lämnade fliken utan att klicka)
+ * fick aldrig se villkorsnotisen alls, gång efter gång. DashboardLayout
+ * skickar nu in en onLaunchDismiss-callback som talar om när lanseringsmodalen
+ * faktiskt stängs, så den här visas direkt efteråt i samma inloggning i
+ * stället för att gissa via en tidsgräns.
  */
 
 /** Nycklarna under legal:termsUpdate.changes — lägg till nya här när sv/legal.json växer. */
@@ -43,7 +50,16 @@ const CHANGES: TermsChange[] = [{ date: '2026-08-03', summaryKey: 'harassment' }
 const dismissKey = (userId: string, date: string) =>
   `calculeat-terms-update-dismissed-${userId}-${date}`
 
-export function TermsUpdateAnnouncement() {
+interface TermsUpdateAnnouncementProps {
+  /**
+   * True medan en LaunchAnnouncement väntar på att stängas av samma kund.
+   * Håller villkorsnotisen borta tills dess, i stället för att riskera att
+   * aldrig visas om lanseringsmodalen aldrig stängs aktivt.
+   */
+  waitingFor?: boolean
+}
+
+export function TermsUpdateAnnouncement({ waitingFor = false }: TermsUpdateAnnouncementProps) {
   const { t } = useTranslation('legal')
   const { user } = useAuth()
   const { pathname } = useLocation()
@@ -53,15 +69,12 @@ export function TermsUpdateAnnouncement() {
 
   const latest = CHANGES[CHANGES.length - 1]
 
-  if (!user || !latest) return null
+  if (!user || !latest || waitingFor) return null
   // Konton skapade efter ändringsdatumet godkände redan den aktuella
   // versionen vid registrering — de har inget att bli notifierade om.
   if (!user.created_at || user.created_at >= `${latest.date}T00:00:00Z`) return null
   if (dismissedNow === latest.date) return null
   if (localStorage.getItem(dismissKey(user.id, latest.date))) return null
-  // Undvik två staplade modaler för soft launch-testare som ännu inte sett
-  // premium-lanseringsnotisen.
-  if (isLaunchAnnouncementPending(user.id, user.created_at)) return null
 
   const dismiss = () => {
     localStorage.setItem(dismissKey(user.id, latest.date), '1')

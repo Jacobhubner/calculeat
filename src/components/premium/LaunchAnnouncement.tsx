@@ -37,7 +37,16 @@ export function isLaunchAnnouncementPending(userId: string, userCreatedAt: strin
   return !localStorage.getItem(dismissKey(userId))
 }
 
-export function LaunchAnnouncement() {
+interface LaunchAnnouncementProps {
+  /**
+   * Anropas när modalen faktiskt stängs (av kunden — inte bara monterad och
+   * övergiven). TermsUpdateAnnouncement använder den för att visa sig
+   * omedelbart efteråt i stället för att gissa via en tidsgräns.
+   */
+  onDismiss?: () => void
+}
+
+export function LaunchAnnouncement({ onDismiss }: LaunchAnnouncementProps = {}) {
   const { t } = useTranslation('premium')
   const { user } = useAuth()
   const { plan, enforcement, isLoading } = useEntitlements()
@@ -52,6 +61,7 @@ export function LaunchAnnouncement() {
   const dismiss = () => {
     localStorage.setItem(dismissKey(user.id), '1')
     setDismissed(true)
+    onDismiss?.()
   }
 
   return (
