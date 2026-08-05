@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import SiteHeader from './SiteHeader'
 import { LaunchAnnouncement } from '@/components/premium/LaunchAnnouncement'
+import { TermsUpdateAnnouncement } from '@/components/legal/TermsUpdateAnnouncement'
 import DashboardNav from './DashboardNav'
 import MobileBottomNav from './MobileBottomNav'
 import { useUIStore } from '@/stores/uiStore'
@@ -39,6 +40,8 @@ export default function DashboardLayout({ children, fullHeight }: DashboardLayou
     <div className={cn('flex flex-col', fullHeight ? 'h-screen' : 'min-h-screen')}>
       {/* Engångsnotis till soft launch-testare efter premium-flippen */}
       <LaunchAnnouncement />
+      {/* Notis vid ändrade användarvillkor — se komponentens egen kommentar */}
+      <TermsUpdateAnnouncement />
       {/* z-60, inte z-50: avatarmenyn hänger ut ur headern och kan nå ner till
           skärmens botten, där MobileBottomNav ligger på z-50. Vid samma nivå
           vinner det element som kommer senare i DOM:en — bottennavigeringen —

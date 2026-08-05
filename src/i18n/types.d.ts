@@ -26,6 +26,7 @@ import type svToday from '../../public/locales/sv/today.json'
 import type svTools from '../../public/locales/sv/tools.json'
 import type svMet from '../../public/locales/sv/met.json'
 import type svSupport from '../../public/locales/sv/support.json'
+import type svLegal from '../../public/locales/sv/legal.json'
 import type svPagesTools from '../../public/locales/sv/pages-tools.json'
 import type svPagesCompare from '../../public/locales/sv/pages-compare.json'
 import type svPagesHubs from '../../public/locales/sv/pages-hubs.json'
@@ -55,6 +56,7 @@ declare module 'i18next' {
       tools: typeof svTools
       met: typeof svMet
       support: typeof svSupport
+      legal: typeof svLegal
       'pages-tools': typeof svPagesTools
       // Artikel-namespaces (articles/{key}) är dynamiska och laddas per artikel —
       // de typas som ArticleContent i ArticlePage, inte här.

@@ -26,6 +26,17 @@ const LAUNCH_DATE = '2026-07-18T00:00:00Z'
 
 const dismissKey = (userId: string) => `calculeat-launch-notice-dismissed-${userId}`
 
+/**
+ * Om lanseringsnotisen fortfarande väntar på att stängas för en användare
+ * (free-plan, konto före lanseringen, inte redan stängd) skulle den och
+ * TermsUpdateAnnouncement annars kunna stapla två modaler direkt efter
+ * varandra. Exporteras så den andra kan skjuta upp sig ett varv.
+ */
+export function isLaunchAnnouncementPending(userId: string, userCreatedAt: string | undefined) {
+  if (!userCreatedAt || userCreatedAt >= LAUNCH_DATE) return false
+  return !localStorage.getItem(dismissKey(userId))
+}
+
 export function LaunchAnnouncement() {
   const { t } = useTranslation('premium')
   const { user } = useAuth()
