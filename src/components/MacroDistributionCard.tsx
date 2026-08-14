@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { ChevronDown, PieChart } from 'lucide-react'
 import { RangeSlider } from './ui/RangeSlider'
 import { useTranslation } from 'react-i18next'
+import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 interface MacroDistributionCardProps {
   caloriesMin?: number
@@ -137,7 +138,7 @@ export default function MacroDistributionCard({
               <label className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                 {t('macroDistribution.fat')}
               </label>
-              <div className="text-sm font-semibold" style={{ color: '#f5c518' }}>
+              <div className="text-sm font-semibold" style={{ color: MACRO_COLORS.fat }}>
                 {fatRange[0].toFixed(0)}% - {fatRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
                   <span className="text-neutral-500 font-normal ml-2 text-xs dark:text-neutral-400">
@@ -167,7 +168,7 @@ export default function MacroDistributionCard({
               <label className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                 {t('macroDistribution.carbs')}
               </label>
-              <div className="text-sm font-semibold" style={{ color: '#fb923c' }}>
+              <div className="text-sm font-semibold" style={{ color: MACRO_COLORS.carbs }}>
                 {carbRange[0].toFixed(0)}% - {carbRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
                   <span className="text-neutral-500 font-normal ml-2 text-xs dark:text-neutral-400">
@@ -197,7 +198,7 @@ export default function MacroDistributionCard({
               <label className="text-sm font-medium text-neutral-700 dark:text-neutral-200">
                 {t('macroDistribution.protein')}
               </label>
-              <div className="text-sm font-semibold" style={{ color: '#f43f5e' }}>
+              <div className="text-sm font-semibold" style={{ color: MACRO_COLORS.protein }}>
                 {proteinRange[0].toFixed(0)}% - {proteinRange[1].toFixed(0)}%
                 {caloriesMin && caloriesMax && (
                   <span className="text-neutral-500 font-normal ml-2 text-xs dark:text-neutral-400">

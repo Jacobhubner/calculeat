@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
+import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 interface MealMacroBreakdownProps {
   fat: number
@@ -114,10 +115,10 @@ export function MealMacroBreakdown({
   const carbMacroPercent = (carbs / totalMacroGrams) * 100
   const proteinMacroPercent = (protein / totalMacroGrams) * 100
 
-  // Segment colors — matches MacroRangeBar in DashboardPage
-  const fatColor = '#f5c518' // skarp smörgul
-  const carbColor = '#fb923c' // orange-400 (ljus varm orange)
-  const proteinColor = '#f43f5e' // rose-500 (klarröd)
+  // Segment colors — se macroColors.ts för varför just dessa värden
+  const fatColor = MACRO_COLORS.fat
+  const carbColor = MACRO_COLORS.carbs
+  const proteinColor = MACRO_COLORS.protein
 
   return (
     <div className={cn('mt-3 pt-2 border-t border-neutral-100 dark:border-neutral-800', className)}>

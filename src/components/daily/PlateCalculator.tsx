@@ -8,6 +8,7 @@ import { calculatePlateAmount, calculatePlateForMacro } from '@/lib/calculations
 import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
 import { ToolInfoButton } from '@/components/daily/ToolInfoButton'
 import { useTranslation } from 'react-i18next'
+import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 type GoalType = 'kcal' | 'carbs' | 'fat' | 'protein'
 
@@ -271,20 +272,29 @@ export function PlateCalculator({ onAddToMeal }: PlateCalculatorProps) {
 
             <div className="flex justify-center gap-3 text-xs mb-2">
               <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#f5c518' }} />
-                <span className="font-semibold" style={{ color: '#f5c518' }}>
+                <span
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ backgroundColor: MACRO_COLORS.fat }}
+                />
+                <span className="font-semibold" style={{ color: MACRO_COLORS.fat }}>
                   F:{calculation.fat}g
                 </span>
               </span>
               <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#fb923c' }} />
-                <span className="font-semibold" style={{ color: '#fb923c' }}>
+                <span
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ backgroundColor: MACRO_COLORS.carbs }}
+                />
+                <span className="font-semibold" style={{ color: MACRO_COLORS.carbs }}>
                   K:{calculation.carbs}g
                 </span>
               </span>
               <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: '#f43f5e' }} />
-                <span className="font-semibold" style={{ color: '#f43f5e' }}>
+                <span
+                  className="w-1.5 h-1.5 rounded-full"
+                  style={{ backgroundColor: MACRO_COLORS.protein }}
+                />
+                <span className="font-semibold" style={{ color: MACRO_COLORS.protein }}>
                   P:{calculation.protein}g
                 </span>
               </span>

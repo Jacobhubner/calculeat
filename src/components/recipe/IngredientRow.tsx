@@ -11,6 +11,7 @@ import {
   getAvailableUnits,
 } from '@/lib/calculations/recipeCalculator'
 import { convertWeightToUnit } from '@/lib/utils/unitConversion'
+import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 // Isolated amount input — local state never causes IngredientRow to re-render.
 // Re-mount via key when parent value changes (e.g. unit conversion) to sync initialValue.
@@ -231,9 +232,9 @@ export function IngredientRow({
           <span className="font-semibold text-primary-600 dark:text-primary-300">
             {Math.round(nutrition.calories)} kcal
           </span>
-          <span style={{ color: '#f5c518' }}>F: {nutrition.fat.toFixed(1)}g</span>
-          <span style={{ color: '#fb923c' }}>K: {nutrition.carbs.toFixed(1)}g</span>
-          <span style={{ color: '#f43f5e' }}>P: {nutrition.protein.toFixed(1)}g</span>
+          <span style={{ color: MACRO_COLORS.fat }}>F: {nutrition.fat.toFixed(1)}g</span>
+          <span style={{ color: MACRO_COLORS.carbs }}>K: {nutrition.carbs.toFixed(1)}g</span>
+          <span style={{ color: MACRO_COLORS.protein }}>P: {nutrition.protein.toFixed(1)}g</span>
         </div>
       )}
     </div>

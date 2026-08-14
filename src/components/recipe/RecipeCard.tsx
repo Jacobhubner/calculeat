@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge'
 import type { Recipe, RecipeIngredient } from '@/hooks/useRecipes'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
+import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 interface RecipeWithIngredients extends Recipe {
   ingredients?: Array<
@@ -146,9 +147,9 @@ export function RecipeCard({
               <span className="font-semibold text-primary-600 dark:text-primary-300">
                 {displayCalories} kcal
               </span>
-              <span style={{ color: '#f5c518' }}>F:{displayFat}g</span>
-              <span style={{ color: '#fb923c' }}>K:{displayCarbs}g</span>
-              <span style={{ color: '#f43f5e' }}>P:{displayProtein}g</span>
+              <span style={{ color: MACRO_COLORS.fat }}>F:{displayFat}g</span>
+              <span style={{ color: MACRO_COLORS.carbs }}>K:{displayCarbs}g</span>
+              <span style={{ color: MACRO_COLORS.protein }}>P:{displayProtein}g</span>
             </div>
           </div>
 

@@ -69,6 +69,7 @@ import {
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 import { useUserLiquidItemsWithoutDensity } from '@/hooks/useUserLiquidItemsWithoutDensity'
+import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 // Display mode type
 type DisplayMode = 'serving' | 'per100g' | 'perVolume' | 'per100ml'
@@ -1133,15 +1134,15 @@ export default function FoodItemsPage() {
                         {displayData ? Math.round(displayData.kcal) : item.calories} kcal
                       </span>
                       <span className="text-neutral-400 dark:text-neutral-500">•</span>
-                      <span style={{ color: '#f5c518' }}>
+                      <span style={{ color: MACRO_COLORS.fat }}>
                         F: {displayData ? displayData.fat.toFixed(1) : item.fat_g}g
                       </span>
                       <span className="text-neutral-400 dark:text-neutral-500">•</span>
-                      <span style={{ color: '#fb923c' }}>
+                      <span style={{ color: MACRO_COLORS.carbs }}>
                         K: {displayData ? displayData.carb.toFixed(1) : item.carb_g}g
                       </span>
                       <span className="text-neutral-400 dark:text-neutral-500">•</span>
-                      <span style={{ color: '#f43f5e' }}>
+                      <span style={{ color: MACRO_COLORS.protein }}>
                         P: {displayData ? displayData.protein.toFixed(1) : item.protein_g}g
                       </span>
                     </div>
@@ -1481,7 +1482,10 @@ export default function FoodItemsPage() {
                             return (
                               <>
                                 <td className="p-4 text-right">
-                                  <span className="font-semibold" style={{ color: '#f5c518' }}>
+                                  <span
+                                    className="font-semibold"
+                                    style={{ color: MACRO_COLORS.fat }}
+                                  >
                                     {item.fat_g}
                                   </span>
                                   <span className="text-xs text-neutral-500 ml-1 dark:text-neutral-400">
@@ -1489,7 +1493,10 @@ export default function FoodItemsPage() {
                                   </span>
                                 </td>
                                 <td className="p-4 text-right">
-                                  <span className="font-semibold" style={{ color: '#fb923c' }}>
+                                  <span
+                                    className="font-semibold"
+                                    style={{ color: MACRO_COLORS.carbs }}
+                                  >
                                     {item.carb_g}
                                   </span>
                                   <span className="text-xs text-neutral-500 ml-1 dark:text-neutral-400">
@@ -1497,7 +1504,10 @@ export default function FoodItemsPage() {
                                   </span>
                                 </td>
                                 <td className="p-4 text-right">
-                                  <span className="font-semibold" style={{ color: '#f43f5e' }}>
+                                  <span
+                                    className="font-semibold"
+                                    style={{ color: MACRO_COLORS.protein }}
+                                  >
                                     {item.protein_g}
                                   </span>
                                   <span className="text-xs text-neutral-500 ml-1 dark:text-neutral-400">
@@ -1511,7 +1521,7 @@ export default function FoodItemsPage() {
                           return (
                             <>
                               <td className="p-4 text-right">
-                                <span className="font-semibold" style={{ color: '#f5c518' }}>
+                                <span className="font-semibold" style={{ color: MACRO_COLORS.fat }}>
                                   {displayData.fat.toFixed(1)}
                                 </span>
                                 <span className="text-xs text-neutral-500 ml-1 dark:text-neutral-400">
@@ -1519,7 +1529,10 @@ export default function FoodItemsPage() {
                                 </span>
                               </td>
                               <td className="p-4 text-right">
-                                <span className="font-semibold" style={{ color: '#fb923c' }}>
+                                <span
+                                  className="font-semibold"
+                                  style={{ color: MACRO_COLORS.carbs }}
+                                >
                                   {displayData.carb.toFixed(1)}
                                 </span>
                                 <span className="text-xs text-neutral-500 ml-1 dark:text-neutral-400">
@@ -1527,7 +1540,10 @@ export default function FoodItemsPage() {
                                 </span>
                               </td>
                               <td className="p-4 text-right">
-                                <span className="font-semibold" style={{ color: '#f43f5e' }}>
+                                <span
+                                  className="font-semibold"
+                                  style={{ color: MACRO_COLORS.protein }}
+                                >
                                   {displayData.protein.toFixed(1)}
                                 </span>
                                 <span className="text-xs text-neutral-500 ml-1 dark:text-neutral-400">

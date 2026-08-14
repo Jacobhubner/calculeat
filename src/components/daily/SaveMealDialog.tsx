@@ -16,6 +16,7 @@ import type { MealEntry } from '@/hooks/useDailyLogs'
 import { useCreateSavedMeal, useSavedMeals, useDeleteSavedMeal } from '@/hooks/useSavedMeals'
 import { handlePremiumLimitError } from '@/stores/upgradeModalStore'
 import { generateDefaultMealName, transformMealToSavedMeal } from '@/lib/meal-utils'
+import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 interface SaveMealDialogProps {
   open: boolean
@@ -212,9 +213,11 @@ export default function SaveMealDialog({ open, onOpenChange, mealEntry }: SaveMe
                   <span className="font-semibold text-primary-600 dark:text-primary-300">
                     {Math.round(totals.calories)} kcal
                   </span>
-                  <span style={{ color: '#f5c518' }}>F: {totals.fat.toFixed(1)}g</span>
-                  <span style={{ color: '#fb923c' }}>K: {totals.carbs.toFixed(1)}g</span>
-                  <span style={{ color: '#f43f5e' }}>P: {totals.protein.toFixed(1)}g</span>
+                  <span style={{ color: MACRO_COLORS.fat }}>F: {totals.fat.toFixed(1)}g</span>
+                  <span style={{ color: MACRO_COLORS.carbs }}>K: {totals.carbs.toFixed(1)}g</span>
+                  <span style={{ color: MACRO_COLORS.protein }}>
+                    P: {totals.protein.toFixed(1)}g
+                  </span>
                 </div>
               </div>
             </div>

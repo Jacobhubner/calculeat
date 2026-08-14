@@ -1,6 +1,7 @@
 import { Card } from './ui/card'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
+import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 interface MacroData {
   grams: number
@@ -25,21 +26,21 @@ export default function MacroBar({ protein, carbs, fat, className }: MacroBarPro
     {
       key: 'fat' as const,
       name: t('macros.fat'),
-      hex: '#f5c518',
+      hex: MACRO_COLORS.fat,
       hexLight: '#fef9c3',
       hexRange: '#fde68a',
     },
     {
       key: 'carbs' as const,
       name: t('macros.carbs'),
-      hex: '#fb923c',
+      hex: MACRO_COLORS.carbs,
       hexLight: '#ffedd5',
       hexRange: '#fed7aa',
     },
     {
       key: 'protein' as const,
       name: t('macros.protein'),
-      hex: '#f43f5e',
+      hex: MACRO_COLORS.protein,
       hexLight: '#ffe4e6',
       hexRange: '#fecdd3',
     },

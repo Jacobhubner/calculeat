@@ -10,6 +10,7 @@ import type { FoodItem } from '@/hooks/useFoodItems'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
 import { DATA_SOURCES } from '@/lib/constants/dataSources'
 import { useTranslation } from 'react-i18next'
+import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 interface FoodSuggestionsProps {
   onAddToMeal?: (food: FoodItem, amount: number, unit: string) => void
@@ -518,7 +519,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                             ? 'font-semibold'
                             : 'text-neutral-500 dark:text-neutral-400'
                         }
-                        style={primaryMacro === 'fat' ? { color: '#f5c518' } : undefined}
+                        style={primaryMacro === 'fat' ? { color: MACRO_COLORS.fat } : undefined}
                       >
                         F:{match.fat.toFixed(0)}g
                       </span>
@@ -528,7 +529,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                             ? 'font-semibold'
                             : 'text-neutral-500 dark:text-neutral-400'
                         }
-                        style={primaryMacro === 'carbs' ? { color: '#fb923c' } : undefined}
+                        style={primaryMacro === 'carbs' ? { color: MACRO_COLORS.carbs } : undefined}
                       >
                         K:{match.carbs.toFixed(0)}g
                       </span>
@@ -538,7 +539,9 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                             ? 'font-semibold'
                             : 'text-neutral-500 dark:text-neutral-400'
                         }
-                        style={primaryMacro === 'protein' ? { color: '#f43f5e' } : undefined}
+                        style={
+                          primaryMacro === 'protein' ? { color: MACRO_COLORS.protein } : undefined
+                        }
                       >
                         P:{match.protein.toFixed(0)}g
                       </span>

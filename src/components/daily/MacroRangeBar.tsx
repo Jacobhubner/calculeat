@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import type { TFunction } from 'i18next'
+import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 interface MacroEntry {
   currentG: number
@@ -37,9 +38,9 @@ function gramStatusText(
 
 function getMacroConfig(t: TFunction<'today'>) {
   return [
-    { key: 'fat' as const, label: t('macroBar.fat'), color: '#f5c518' },
-    { key: 'carbs' as const, label: t('macroBar.carbs'), color: '#fb923c' },
-    { key: 'protein' as const, label: t('macroBar.protein'), color: '#f43f5e' },
+    { key: 'fat' as const, label: t('macroBar.fat'), color: MACRO_COLORS.fat },
+    { key: 'carbs' as const, label: t('macroBar.carbs'), color: MACRO_COLORS.carbs },
+    { key: 'protein' as const, label: t('macroBar.protein'), color: MACRO_COLORS.protein },
   ]
 }
 

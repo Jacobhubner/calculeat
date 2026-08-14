@@ -36,6 +36,7 @@ import { supabase } from '@/lib/supabase'
 import { useTranslation } from 'react-i18next'
 import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 import { useAuth } from '@/contexts/AuthContext'
+import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 // z.preprocess() causes Zod to infer output fields as `unknown` at the type level,
 // even though the runtime values are always the correct types. This explicit type
@@ -1833,7 +1834,7 @@ export function AddFoodItemModal({
                         <div className="space-y-2">
                           <div>
                             <div className="flex justify-between text-xs mb-1">
-                              <span style={{ color: '#f5c518' }}>
+                              <span style={{ color: MACRO_COLORS.fat }}>
                                 {t('addFoodModal.previewFatLabel')}
                               </span>
                               <span className="font-medium">
@@ -1845,7 +1846,7 @@ export function AddFoodItemModal({
                                 className="h-full rounded-full"
                                 style={{
                                   width: `${liveCalculations.fatPercent}%`,
-                                  backgroundColor: '#f5c518',
+                                  backgroundColor: MACRO_COLORS.fat,
                                 }}
                               />
                             </div>
@@ -1853,7 +1854,7 @@ export function AddFoodItemModal({
 
                           <div>
                             <div className="flex justify-between text-xs mb-1">
-                              <span style={{ color: '#fb923c' }}>
+                              <span style={{ color: MACRO_COLORS.carbs }}>
                                 {t('addFoodModal.previewCarbsLabel')}
                               </span>
                               <span className="font-medium">
@@ -1865,7 +1866,7 @@ export function AddFoodItemModal({
                                 className="h-full rounded-full"
                                 style={{
                                   width: `${liveCalculations.carbPercent}%`,
-                                  backgroundColor: '#fb923c',
+                                  backgroundColor: MACRO_COLORS.carbs,
                                 }}
                               />
                             </div>
@@ -1873,7 +1874,7 @@ export function AddFoodItemModal({
 
                           <div>
                             <div className="flex justify-between text-xs mb-1">
-                              <span style={{ color: '#f43f5e' }}>
+                              <span style={{ color: MACRO_COLORS.protein }}>
                                 {t('addFoodModal.previewProteinLabel')}
                               </span>
                               <span className="font-medium">
@@ -1885,7 +1886,7 @@ export function AddFoodItemModal({
                                 className="h-full rounded-full"
                                 style={{
                                   width: `${liveCalculations.proteinPercent}%`,
-                                  backgroundColor: '#f43f5e',
+                                  backgroundColor: MACRO_COLORS.protein,
                                 }}
                               />
                             </div>

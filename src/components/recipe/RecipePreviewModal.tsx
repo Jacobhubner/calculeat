@@ -15,6 +15,7 @@ import type { FoodItem } from '@/hooks/useFoodItems'
 import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 import { useFoodNutrientsBatch } from '@/hooks/useFoodNutrients'
 import { calculateIngredientWeight } from '@/lib/calculations/recipeCalculator'
+import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 interface RecipeIngredientWithFood extends RecipeIngredient {
   food_item?: FoodItem
@@ -194,7 +195,7 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">kcal</p>
                 </div>
                 <div className="flex-1 text-center">
-                  <p className="text-sm font-semibold" style={{ color: '#f5c518' }}>
+                  <p className="text-sm font-semibold" style={{ color: MACRO_COLORS.fat }}>
                     {displayFat}g
                   </p>
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -202,7 +203,7 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
                   </p>
                 </div>
                 <div className="flex-1 text-center">
-                  <p className="text-sm font-semibold" style={{ color: '#fb923c' }}>
+                  <p className="text-sm font-semibold" style={{ color: MACRO_COLORS.carbs }}>
                     {displayCarbs}g
                   </p>
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -210,7 +211,7 @@ export function RecipePreviewModal({ recipe, open, onOpenChange }: RecipePreview
                   </p>
                 </div>
                 <div className="flex-1 text-center">
-                  <p className="text-sm font-semibold" style={{ color: '#f43f5e' }}>
+                  <p className="text-sm font-semibold" style={{ color: MACRO_COLORS.protein }}>
                     {displayProtein}g
                   </p>
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">

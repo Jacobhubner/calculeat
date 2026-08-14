@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import type { RecipeNutrition } from '@/lib/calculations/recipeCalculator'
 import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
+import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 interface NutritionSummaryProps {
   nutrition: RecipeNutrition | null
@@ -98,7 +99,7 @@ export function NutritionSummary({
         {/* Macros grid */}
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-primary-50 rounded-lg p-3 text-center dark:bg-primary-900/25">
-            <div className="text-lg font-semibold" style={{ color: '#f5c518' }}>
+            <div className="text-lg font-semibold" style={{ color: MACRO_COLORS.fat }}>
               {displayValues.fat.toFixed(1)}g
             </div>
             <div className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -106,7 +107,7 @@ export function NutritionSummary({
             </div>
           </div>
           <div className="bg-primary-50 rounded-lg p-3 text-center dark:bg-primary-900/25">
-            <div className="text-lg font-semibold" style={{ color: '#fb923c' }}>
+            <div className="text-lg font-semibold" style={{ color: MACRO_COLORS.carbs }}>
               {displayValues.carbs.toFixed(1)}g
             </div>
             <div className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -114,7 +115,7 @@ export function NutritionSummary({
             </div>
           </div>
           <div className="bg-primary-50 rounded-lg p-3 text-center dark:bg-primary-900/25">
-            <div className="text-lg font-semibold" style={{ color: '#f43f5e' }}>
+            <div className="text-lg font-semibold" style={{ color: MACRO_COLORS.protein }}>
               {displayValues.protein.toFixed(1)}g
             </div>
             <div className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -131,37 +132,37 @@ export function NutritionSummary({
             </p>
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span style={{ color: '#f5c518' }}>{t('nutrition.fat')}</span>
+                <span style={{ color: MACRO_COLORS.fat }}>{t('nutrition.fat')}</span>
                 <span className="font-medium">{Math.round(fatPercent)}%</span>
               </div>
               <div className="h-2 bg-neutral-200 rounded-full overflow-hidden dark:bg-neutral-700">
                 <div
                   className="h-full rounded-full"
-                  style={{ width: `${fatPercent}%`, backgroundColor: '#f5c518' }}
+                  style={{ width: `${fatPercent}%`, backgroundColor: MACRO_COLORS.fat }}
                 />
               </div>
             </div>
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span style={{ color: '#fb923c' }}>{t('nutrition.carbs')}</span>
+                <span style={{ color: MACRO_COLORS.carbs }}>{t('nutrition.carbs')}</span>
                 <span className="font-medium">{Math.round(carbPercent)}%</span>
               </div>
               <div className="h-2 bg-neutral-200 rounded-full overflow-hidden dark:bg-neutral-700">
                 <div
                   className="h-full rounded-full"
-                  style={{ width: `${carbPercent}%`, backgroundColor: '#fb923c' }}
+                  style={{ width: `${carbPercent}%`, backgroundColor: MACRO_COLORS.carbs }}
                 />
               </div>
             </div>
             <div>
               <div className="flex justify-between text-xs mb-1">
-                <span style={{ color: '#f43f5e' }}>{t('nutrition.protein')}</span>
+                <span style={{ color: MACRO_COLORS.protein }}>{t('nutrition.protein')}</span>
                 <span className="font-medium">{Math.round(proteinPercent)}%</span>
               </div>
               <div className="h-2 bg-neutral-200 rounded-full overflow-hidden dark:bg-neutral-700">
                 <div
                   className="h-full rounded-full"
-                  style={{ width: `${proteinPercent}%`, backgroundColor: '#f43f5e' }}
+                  style={{ width: `${proteinPercent}%`, backgroundColor: MACRO_COLORS.protein }}
                 />
               </div>
             </div>
@@ -286,19 +287,19 @@ export function NutritionSummary({
             <div className="text-neutral-500 dark:text-neutral-400">kcal</div>
           </div>
           <div>
-            <div className="font-semibold" style={{ color: '#f5c518' }}>
+            <div className="font-semibold" style={{ color: MACRO_COLORS.fat }}>
               {nutrition.totalFat.toFixed(1)}g
             </div>
             <div className="text-neutral-500 dark:text-neutral-400">F</div>
           </div>
           <div>
-            <div className="font-semibold" style={{ color: '#fb923c' }}>
+            <div className="font-semibold" style={{ color: MACRO_COLORS.carbs }}>
               {nutrition.totalCarbs.toFixed(1)}g
             </div>
             <div className="text-neutral-500 dark:text-neutral-400">K</div>
           </div>
           <div>
-            <div className="font-semibold" style={{ color: '#f43f5e' }}>
+            <div className="font-semibold" style={{ color: MACRO_COLORS.protein }}>
               {nutrition.totalProtein.toFixed(1)}g
             </div>
             <div className="text-neutral-500 dark:text-neutral-400">P</div>

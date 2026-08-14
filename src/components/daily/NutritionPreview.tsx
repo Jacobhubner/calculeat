@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
+import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 interface NutritionPreviewProps {
   calories: number
@@ -80,7 +81,7 @@ export function NutritionPreview({
           <span className="text-neutral-600 dark:text-neutral-300">
             {t('nutritionPreview.fat')}
           </span>
-          <span className="font-medium" style={{ color: '#f5c518' }}>
+          <span className="font-medium" style={{ color: MACRO_COLORS.fat }}>
             {fat.toFixed(1)}g
           </span>
         </div>
@@ -98,7 +99,7 @@ export function NutritionPreview({
           <span className="text-neutral-600 dark:text-neutral-300">
             {t('nutritionPreview.carbs')}
           </span>
-          <span className="font-medium" style={{ color: '#fb923c' }}>
+          <span className="font-medium" style={{ color: MACRO_COLORS.carbs }}>
             {carbs.toFixed(1)}g
           </span>
         </div>
@@ -126,7 +127,7 @@ export function NutritionPreview({
           <span className="text-neutral-600 dark:text-neutral-300">
             {t('nutritionPreview.protein')}
           </span>
-          <span className="font-medium" style={{ color: '#f43f5e' }}>
+          <span className="font-medium" style={{ color: MACRO_COLORS.protein }}>
             {protein.toFixed(1)}g
           </span>
         </div>
