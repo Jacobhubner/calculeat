@@ -10,14 +10,16 @@
     "calculeat": "Calculeat",
     "slv": "Livsmedelsverket",
     "usda": "USDA",
-    "all": "Alla"
+    "all": "Alla",
+    "cofid": "CoFID"
   },
   "source": {
     "user": "Min",
     "manual": "Calculeat",
     "livsmedelsverket": "SLV",
     "usda": "USDA",
-    "shared": "Delad"
+    "shared": "Delad",
+    "cofid": "CoFID"
   },
   "search": {
     "placeholder": "Sök efter matvaror...",
@@ -356,21 +358,54 @@
       "soupLabel": "Soppa (< 0.5 kcal/g):",
       "tip": "👉 Poäng: Mycket vatten + fiber → hög mättnad per kcal",
       "solidItems": [
-        { "label": "Bladgrönsaker (spenat, sallad)", "icon": "🥬" },
-        { "label": "Gurka, tomat, zucchini", "icon": "🥒" },
-        { "label": "Broccoli, blomkål", "icon": "🥦" },
-        { "label": "Bär (jordgubbar, hallon)", "icon": "🍓" },
-        { "label": "Frukt med hög vattenhalt (melon, apelsin)", "icon": "🍉" },
-        { "label": "Potatis (kokt)", "icon": "🥔" }
+        {
+          "label": "Bladgrönsaker (spenat, sallad)",
+          "icon": "🥬"
+        },
+        {
+          "label": "Gurka, tomat, zucchini",
+          "icon": "🥒"
+        },
+        {
+          "label": "Broccoli, blomkål",
+          "icon": "🥦"
+        },
+        {
+          "label": "Bär (jordgubbar, hallon)",
+          "icon": "🍓"
+        },
+        {
+          "label": "Frukt med hög vattenhalt (melon, apelsin)",
+          "icon": "🍉"
+        },
+        {
+          "label": "Potatis (kokt)",
+          "icon": "🥔"
+        }
       ],
       "liquidItems": [
-        { "label": "Vatten", "icon": "💧" },
-        { "label": "Lightdryck", "icon": "🥤" },
-        { "label": "Kaffe/te (utan socker)", "icon": "☕" }
+        {
+          "label": "Vatten",
+          "icon": "💧"
+        },
+        {
+          "label": "Lightdryck",
+          "icon": "🥤"
+        },
+        {
+          "label": "Kaffe/te (utan socker)",
+          "icon": "☕"
+        }
       ],
       "soupItems": [
-        { "label": "Klara grönsakssoppor", "icon": "🥣" },
-        { "label": "Buljongbaserade soppor", "icon": "🥣" }
+        {
+          "label": "Klara grönsakssoppor",
+          "icon": "🥣"
+        },
+        {
+          "label": "Buljongbaserade soppor",
+          "icon": "🥣"
+        }
       ]
     },
     "yellow": {
@@ -381,21 +416,54 @@
       "soupLabel": "Soppa (0.5–1 kcal/g):",
       "tip": "👉 Poäng: Näringstätt men mer kalorier → kräver portionskontroll",
       "solidItems": [
-        { "label": "Kycklingfilé, kalkon", "icon": "🍗" },
-        { "label": "Ägg", "icon": "🥚" },
-        { "label": "Pasta, ris, quinoa", "icon": "🍝" },
-        { "label": "Bröd", "icon": "🍞" },
-        { "label": "Baljväxter (linser, bönor)", "icon": "🫘" },
-        { "label": "Lättare mejeriprodukter (kvarg, yoghurt)", "icon": "🥛" }
+        {
+          "label": "Kycklingfilé, kalkon",
+          "icon": "🍗"
+        },
+        {
+          "label": "Ägg",
+          "icon": "🥚"
+        },
+        {
+          "label": "Pasta, ris, quinoa",
+          "icon": "🍝"
+        },
+        {
+          "label": "Bröd",
+          "icon": "🍞"
+        },
+        {
+          "label": "Baljväxter (linser, bönor)",
+          "icon": "🫘"
+        },
+        {
+          "label": "Lättare mejeriprodukter (kvarg, yoghurt)",
+          "icon": "🥛"
+        }
       ],
       "liquidItems": [
-        { "label": "Mjölk", "icon": "🥛" },
-        { "label": "Juice", "icon": "🧃" }
+        {
+          "label": "Mjölk",
+          "icon": "🥛"
+        },
+        {
+          "label": "Juice",
+          "icon": "🧃"
+        }
       ],
       "soupItems": [
-        { "label": "Linssoppa", "icon": "🥣" },
-        { "label": "Kycklingsoppa", "icon": "🍲" },
-        { "label": "Lätt krämig soppa", "icon": "🍲" }
+        {
+          "label": "Linssoppa",
+          "icon": "🥣"
+        },
+        {
+          "label": "Kycklingsoppa",
+          "icon": "🍲"
+        },
+        {
+          "label": "Lätt krämig soppa",
+          "icon": "🍲"
+        }
       ]
     },
     "orange": {
@@ -406,20 +474,50 @@
       "soupLabel": "Soppa (> 1 kcal/g):",
       "tip": "👉 Poäng: Lite volym, mycket kalorier → lätt att överäta",
       "solidItems": [
-        { "label": "Nötter och frön", "icon": "🥜" },
-        { "label": "Ost", "icon": "🧀" },
-        { "label": "Fett kött (t.ex. entrecôte)", "icon": "🥩" },
-        { "label": "Chips, kex", "icon": "🍟" },
-        { "label": "Godis, choklad", "icon": "🍫" },
-        { "label": "Bakverk", "icon": "🥐" }
+        {
+          "label": "Nötter och frön",
+          "icon": "🥜"
+        },
+        {
+          "label": "Ost",
+          "icon": "🧀"
+        },
+        {
+          "label": "Fett kött (t.ex. entrecôte)",
+          "icon": "🥩"
+        },
+        {
+          "label": "Chips, kex",
+          "icon": "🍟"
+        },
+        {
+          "label": "Godis, choklad",
+          "icon": "🍫"
+        },
+        {
+          "label": "Bakverk",
+          "icon": "🥐"
+        }
       ],
       "liquidItems": [
-        { "label": "Läsk med socker", "icon": "🥤" },
-        { "label": "Milkshakes", "icon": "🧋" },
-        { "label": "Alkohol", "icon": "🍺" }
+        {
+          "label": "Läsk med socker",
+          "icon": "🥤"
+        },
+        {
+          "label": "Milkshakes",
+          "icon": "🧋"
+        },
+        {
+          "label": "Alkohol",
+          "icon": "🍺"
+        }
       ],
       "soupItems": [
-        { "label": "Gräddbaserade soppor (t.ex. potatis- & purjolök med grädde)", "icon": "🍲" }
+        {
+          "label": "Gräddbaserade soppor (t.ex. potatis- & purjolök med grädde)",
+          "icon": "🍲"
+        }
       ]
     }
   }

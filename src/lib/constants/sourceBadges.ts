@@ -24,6 +24,11 @@ export const SOURCE_BADGES: Record<FoodSource, { label: string; className: strin
     className:
       'bg-blue-100 text-blue-700 border-blue-400 dark:bg-blue-500/20 dark:text-blue-200 dark:border-blue-600',
   },
+  cofid: {
+    label: 'CoFID',
+    className:
+      'bg-rose-100 text-rose-700 border-rose-400 dark:bg-rose-500/20 dark:text-rose-200 dark:border-rose-600',
+  },
   shared: {
     label: 'Delad',
     className:

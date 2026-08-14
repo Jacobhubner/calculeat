@@ -36,12 +36,26 @@ export const DATA_SOURCES: DataSourceConfig[] = [
     labelKey: 'tabs.usda',
     badgeClass:
       'bg-blue-100 text-blue-700 border-blue-400 dark:bg-blue-500/20 dark:text-blue-200 dark:border-blue-600',
-    // 'en-US' först så en framtida brittisk källa (CoFID) kan ta 'en-GB' utan
-    // att krocka; 'en' kvar som bred fallback för övrig engelska.
+    // 'en-US' först så CoFID kan ta 'en-GB' utan att krocka; 'en' kvar som
+    // bred fallback för övrig engelska (en-AU, en-NZ …).
     primaryLocales: ['en-US', 'en'],
     defaultQualityScore: 90,
     isVerified: true,
     sourcePriority: 90,
+    includeInAll: true,
+  },
+  {
+    id: 'cofid',
+    tabKey: 'cofid',
+    labelKey: 'tabs.cofid',
+    badgeClass:
+      'bg-rose-100 text-rose-700 border-rose-400 dark:bg-rose-500/20 dark:text-rose-200 dark:border-rose-600',
+    // Mer specifikt än USDA:s 'en' — brittiska användare får CoFID, medan
+    // en-US och en-AU fortsatt landar på USDA.
+    primaryLocales: ['en-GB'],
+    defaultQualityScore: 95,
+    isVerified: true,
+    sourcePriority: 95,
     includeInAll: true,
   },
 ]

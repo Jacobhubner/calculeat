@@ -10,14 +10,16 @@
     "calculeat": "Calculeat",
     "slv": "Livsmedelsverket",
     "usda": "USDA",
-    "all": "All"
+    "all": "All",
+    "cofid": "CoFID"
   },
   "source": {
     "user": "My",
     "manual": "Calculeat",
     "livsmedelsverket": "SLV",
     "usda": "USDA",
-    "shared": "Shared"
+    "shared": "Shared",
+    "cofid": "CoFID"
   },
   "search": {
     "placeholder": "Search food items...",
@@ -356,21 +358,54 @@
       "soupLabel": "Soup (< 0.5 kcal/g):",
       "tip": "👉 Key: High water + fiber content → high satiety per kcal",
       "solidItems": [
-        { "label": "Leafy greens (spinach, lettuce)", "icon": "🥬" },
-        { "label": "Cucumber, tomato, zucchini", "icon": "🥒" },
-        { "label": "Broccoli, cauliflower", "icon": "🥦" },
-        { "label": "Berries (strawberries, raspberries)", "icon": "🍓" },
-        { "label": "High-water fruit (melon, orange)", "icon": "🍉" },
-        { "label": "Potato (boiled)", "icon": "🥔" }
+        {
+          "label": "Leafy greens (spinach, lettuce)",
+          "icon": "🥬"
+        },
+        {
+          "label": "Cucumber, tomato, zucchini",
+          "icon": "🥒"
+        },
+        {
+          "label": "Broccoli, cauliflower",
+          "icon": "🥦"
+        },
+        {
+          "label": "Berries (strawberries, raspberries)",
+          "icon": "🍓"
+        },
+        {
+          "label": "High-water fruit (melon, orange)",
+          "icon": "🍉"
+        },
+        {
+          "label": "Potato (boiled)",
+          "icon": "🥔"
+        }
       ],
       "liquidItems": [
-        { "label": "Water", "icon": "💧" },
-        { "label": "Diet soda", "icon": "🥤" },
-        { "label": "Coffee/tea (no sugar)", "icon": "☕" }
+        {
+          "label": "Water",
+          "icon": "💧"
+        },
+        {
+          "label": "Diet soda",
+          "icon": "🥤"
+        },
+        {
+          "label": "Coffee/tea (no sugar)",
+          "icon": "☕"
+        }
       ],
       "soupItems": [
-        { "label": "Clear vegetable soups", "icon": "🥣" },
-        { "label": "Broth-based soups", "icon": "🥣" }
+        {
+          "label": "Clear vegetable soups",
+          "icon": "🥣"
+        },
+        {
+          "label": "Broth-based soups",
+          "icon": "🥣"
+        }
       ]
     },
     "yellow": {
@@ -381,21 +416,54 @@
       "soupLabel": "Soup (0.5–1 kcal/g):",
       "tip": "👉 Key: Nutrient-dense but higher calories → requires portion control",
       "solidItems": [
-        { "label": "Chicken breast, turkey", "icon": "🍗" },
-        { "label": "Eggs", "icon": "🥚" },
-        { "label": "Pasta, rice, quinoa", "icon": "🍝" },
-        { "label": "Bread", "icon": "🍞" },
-        { "label": "Legumes (lentils, beans)", "icon": "🫘" },
-        { "label": "Light dairy (quark, yoghurt)", "icon": "🥛" }
+        {
+          "label": "Chicken breast, turkey",
+          "icon": "🍗"
+        },
+        {
+          "label": "Eggs",
+          "icon": "🥚"
+        },
+        {
+          "label": "Pasta, rice, quinoa",
+          "icon": "🍝"
+        },
+        {
+          "label": "Bread",
+          "icon": "🍞"
+        },
+        {
+          "label": "Legumes (lentils, beans)",
+          "icon": "🫘"
+        },
+        {
+          "label": "Light dairy (quark, yoghurt)",
+          "icon": "🥛"
+        }
       ],
       "liquidItems": [
-        { "label": "Milk", "icon": "🥛" },
-        { "label": "Juice", "icon": "🧃" }
+        {
+          "label": "Milk",
+          "icon": "🥛"
+        },
+        {
+          "label": "Juice",
+          "icon": "🧃"
+        }
       ],
       "soupItems": [
-        { "label": "Lentil soup", "icon": "🥣" },
-        { "label": "Chicken soup", "icon": "🍲" },
-        { "label": "Light creamy soup", "icon": "🍲" }
+        {
+          "label": "Lentil soup",
+          "icon": "🥣"
+        },
+        {
+          "label": "Chicken soup",
+          "icon": "🍲"
+        },
+        {
+          "label": "Light creamy soup",
+          "icon": "🍲"
+        }
       ]
     },
     "orange": {
@@ -406,19 +474,51 @@
       "soupLabel": "Soup (> 1 kcal/g):",
       "tip": "👉 Key: Small volume, many calories → easy to overeat",
       "solidItems": [
-        { "label": "Nuts and seeds", "icon": "🥜" },
-        { "label": "Cheese", "icon": "🧀" },
-        { "label": "Fatty meat (e.g. ribeye)", "icon": "🥩" },
-        { "label": "Chips, crackers", "icon": "🍟" },
-        { "label": "Candy, chocolate", "icon": "🍫" },
-        { "label": "Pastries", "icon": "🥐" }
+        {
+          "label": "Nuts and seeds",
+          "icon": "🥜"
+        },
+        {
+          "label": "Cheese",
+          "icon": "🧀"
+        },
+        {
+          "label": "Fatty meat (e.g. ribeye)",
+          "icon": "🥩"
+        },
+        {
+          "label": "Chips, crackers",
+          "icon": "🍟"
+        },
+        {
+          "label": "Candy, chocolate",
+          "icon": "🍫"
+        },
+        {
+          "label": "Pastries",
+          "icon": "🥐"
+        }
       ],
       "liquidItems": [
-        { "label": "Sugary soda", "icon": "🥤" },
-        { "label": "Milkshakes", "icon": "🧋" },
-        { "label": "Alcohol", "icon": "🍺" }
+        {
+          "label": "Sugary soda",
+          "icon": "🥤"
+        },
+        {
+          "label": "Milkshakes",
+          "icon": "🧋"
+        },
+        {
+          "label": "Alcohol",
+          "icon": "🍺"
+        }
       ],
-      "soupItems": [{ "label": "Cream-based soups (e.g. potato & leek with cream)", "icon": "🍲" }]
+      "soupItems": [
+        {
+          "label": "Cream-based soups (e.g. potato & leek with cream)",
+          "icon": "🍲"
+        }
+      ]
     }
   }
 }
