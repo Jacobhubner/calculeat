@@ -242,6 +242,12 @@ export interface Profile {
   profile_name: string
   is_active: boolean
   show_energy_density?: boolean
+  /**
+   * 'manual' = användaren trycker "Avsluta dag" själv.
+   * 'auto'   = öppna loggar från tidigare dagar stängs när appen öppnas.
+   * Låg tidigare bara i localStorage och följde därför inte med mellan enheter.
+   */
+  day_completion_mode?: 'manual' | 'auto'
 
   // Personal information
   birth_date?: string
@@ -327,6 +333,7 @@ export interface Profile {
 // Form data for creating/updating profiles
 export interface ProfileFormData {
   profile_name: string
+  day_completion_mode?: 'manual' | 'auto'
   birth_date?: string
   gender?: Gender
   height_cm?: number

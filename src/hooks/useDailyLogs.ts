@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useProfileStore } from '@/stores/profileStore'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import { macroGramsFromPercent, DEFAULT_MACRO_PERCENTS } from '@/lib/calculations/dailySummary'
+import { localDateString } from '@/lib/utils/localDate'
 
 /**
  * Beräknar frysta gram-mål för en daily_log-snapshot från en profils
@@ -129,8 +130,8 @@ export interface DailyLog {
 export function useTodayLog() {
   const { user, isPreviewMode } = useAuth()
   const activeProfile = useProfileStore(state => state.activeProfile)
-  const today = new Date().toISOString().split('T')[0]
-  const completionMode = localStorage.getItem('day-completion-mode') || 'manual'
+  const today = localDateString()
+  const completionMode = activeProfile?.day_completion_mode ?? 'manual'
   const queryClient = useQueryClient()
 
   // In auto mode, invalidate the query at midnight so yesterday's log is
@@ -338,8 +339,8 @@ export function useEnsureTodayLog() {
       if (!user) throw new Error('User not authenticated')
       if (!activeProfile) throw new Error('No active profile')
 
-      const today = new Date().toISOString().split('T')[0]
-      const completionMode = localStorage.getItem('day-completion-mode') || 'manual'
+      const today = localDateString()
+      const completionMode = activeProfile.day_completion_mode ?? 'manual'
 
       // In manual mode, return the latest uncompleted log (don't create a new one)
       if (completionMode === 'manual') {
@@ -391,29 +392,32 @@ export function useEnsureTodayLog() {
 
       if (existing) return existing as DailyLog
 
-      // Auto-complete (or delete if empty) yesterday's log if setting is "auto"
+      // Auto-complete (or delete if empty) alla öppna loggar före idag.
+      //
+      // Tidigare letade koden bara efter exakt gårdagens datum. Hoppade
+      // användaren över en dag — loggade tisdag, öppnade appen torsdag — söktes
+      // onsdag, ingen träff, och tisdagsloggen låg kvar öppen för alltid. Den
+      // fick då städas manuellt trots att läget stod på "auto".
       if (completionMode === 'auto') {
-        const yesterday = new Date()
-        yesterday.setDate(yesterday.getDate() - 1)
-        const yesterdayStr = yesterday.toISOString().split('T')[0]
-
-        const { data: yesterdayLog } = await supabase
+        const { data: staleLogs } = await supabase
           .from('daily_logs')
           .select('id, total_calories')
           .eq('user_id', user.id)
           .eq('is_preview', isPreviewMode ? true : false)
-          .eq('log_date', yesterdayStr)
           .eq('is_completed', false)
-          .maybeSingle()
+          .lt('log_date', today)
 
-        if (yesterdayLog) {
-          if (yesterdayLog.total_calories === 0) {
-            await supabase.from('daily_logs').delete().eq('id', yesterdayLog.id)
-          } else {
-            await supabase
-              .from('daily_logs')
-              .update({ is_completed: true })
-              .eq('id', yesterdayLog.id)
+        if (staleLogs?.length) {
+          // Tomma loggar raderas i stället för att stängas — annars fylls
+          // historiken med nolldagar för varje dag appen råkade öppnas.
+          const empty = staleLogs.filter(l => l.total_calories === 0).map(l => l.id)
+          const used = staleLogs.filter(l => l.total_calories !== 0).map(l => l.id)
+
+          if (empty.length) {
+            await supabase.from('daily_logs').delete().in('id', empty)
+          }
+          if (used.length) {
+            await supabase.from('daily_logs').update({ is_completed: true }).in('id', used)
           }
         }
       }

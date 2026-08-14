@@ -3,7 +3,7 @@
  * Grundläggande information, kontoinställningar, appinställningar och radera konto
  */
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
@@ -134,10 +134,26 @@ export default function SettingsPage() {
   // nu både texten och kontrollen.
   const deleteKeyword = t('settings.deleteAccountKeyword')
 
-  // App settings
-  const [completionMode, setCompletionMode] = useState<CompletionMode>(
-    () => (localStorage.getItem('day-completion-mode') as CompletionMode) || 'manual'
-  )
+  // App settings — läget ligger på profilen så det följer med mellan enheter.
+  const completionMode: CompletionMode = profile?.day_completion_mode ?? 'manual'
+
+  // Engångsmigrering av det gamla localStorage-värdet. Utan detta skulle alla
+  // som redan valt 'auto' tyst hamna på 'manual' när kolumnen tas i bruk.
+  // Nyckeln raderas efteråt så migreringen inte kan skriva över ett senare val.
+  const migratedRef = useRef(false)
+  useEffect(() => {
+    if (migratedRef.current || !profile) return
+    const legacy = localStorage.getItem('day-completion-mode')
+    if (!legacy) return
+    migratedRef.current = true
+    localStorage.removeItem('day-completion-mode')
+    if (legacy !== 'auto' || profile.day_completion_mode === 'auto') return
+    void updateProfile.mutateAsync({
+      profileId: profile.id,
+      data: { day_completion_mode: 'auto' },
+      silent: true,
+    })
+  }, [profile, updateProfile])
 
   // Basic info state (local, saved separately)
   const [birthDate, setBirthDate] = useState<string | undefined>(profile?.birth_date ?? undefined)
@@ -311,10 +327,20 @@ export default function SettingsPage() {
   }
 
   // App settings
-  const handleCompletionModeChange = (mode: CompletionMode) => {
-    setCompletionMode(mode)
-    localStorage.setItem('day-completion-mode', mode)
-    toast.success(mode === 'auto' ? t('settings.toastAuto') : t('settings.toastManual'))
+  const handleCompletionModeChange = async (mode: CompletionMode) => {
+    if (!profile || mode === completionMode) return
+    try {
+      await updateProfile.mutateAsync({
+        profileId: profile.id,
+        data: { day_completion_mode: mode },
+        silent: true,
+      })
+      toast.success(mode === 'auto' ? t('settings.toastAuto') : t('settings.toastManual'))
+    } catch {
+      // Utan detta hade knappen sett vald ut medan valet aldrig sparades —
+      // exakt den tysta återgången till 'manual' som localStorage orsakade.
+      toast.error(t('settings.completionModeError'))
+    }
   }
 
   // Delete account
