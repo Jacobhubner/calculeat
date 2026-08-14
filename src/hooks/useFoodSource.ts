@@ -1,6 +1,12 @@
 import { useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DATA_SOURCES, getDataSourceForLocale } from '@/lib/constants/dataSources'
+import {
+  DATA_SOURCES,
+  getDataSourceForLocale,
+  getDataSourceForTimeZone,
+} from '@/lib/constants/dataSources'
+import { useProfileStore } from '@/stores/profileStore'
+import { deviceTimeZone } from '@/lib/utils/localDate'
 import type { FoodTab } from '@/hooks/useFoodItems'
 
 /**
@@ -44,9 +50,33 @@ function readFromStorage(): PreferredFoodSource {
  * förstahandskälla. Nu bestämmer primaryLocales i DATA_SOURCES, så en ny
  * källa (t.ex. brittisk CoFID på 'en-GB') fungerar utan ändring här.
  */
-function resolveSource(preference: PreferredFoodSource, locale: string): ResolvedFoodSource {
+export function resolveSource(
+  preference: PreferredFoodSource,
+  locale: string,
+  timeZone?: string
+): ResolvedFoodSource {
   if (preference !== 'auto') return preference
-  return getDataSourceForLocale(locale)?.tabKey ?? FALLBACK_SOURCE
+
+  // 1. Språk med region ('sv', 'en-GB') är starkast: användaren har uttryckt
+  //    det aktivt, och en region i taggen är otvetydig.
+  const normalized = locale.toLowerCase()
+  const hasRegion = normalized.includes('-')
+  const byLocale = getDataSourceForLocale(locale)
+  if (byLocale && hasRegion) return byLocale.tabKey
+
+  // 2. Utan region räcker inte språket: i18next normaliserar 'en-GB' → 'en', så
+  //    britt och amerikan ser likadana ut. Tidszonen skiljer dem åt.
+  //
+  //    Gäller bara engelska. 'sv' pekar entydigt på Livsmedelsverket, och en
+  //    svensk på semester i New York ska inte plötsligt få USDA — språket är
+  //    då det stabilare svaret.
+  if (timeZone && normalized.startsWith('en')) {
+    const byZone = getDataSourceForTimeZone(timeZone)
+    if (byZone) return byZone.tabKey
+  }
+
+  // 3. Brett språkval ('en' → USDA) när zonen inte gav svar.
+  return byLocale?.tabKey ?? FALLBACK_SOURCE
 }
 
 export interface UseFoodSourceResult {
@@ -57,11 +87,16 @@ export interface UseFoodSourceResult {
 
 export function useFoodSource(): UseFoodSourceResult {
   const { i18n } = useTranslation()
+  const activeProfile = useProfileStore(state => state.activeProfile)
   const [preference, setPreferenceState] = useState<PreferredFoodSource>(readFromStorage)
 
-  // Härleds synkront ur preferens + språk. useTranslation triggar omrendering
-  // vid språkbyte, så värdet räknas om automatiskt — ingen effekt behövs.
-  const resolved = resolveSource(preference, i18n.language)
+  // Profilens sparade zon går före enhetens: den följer kontot mellan enheter
+  // och är den användaren bekräftat vid en eventuell resa.
+  const timeZone = activeProfile?.timezone ?? deviceTimeZone()
+
+  // Härleds synkront ur preferens + språk + zon. useTranslation triggar
+  // omrendering vid språkbyte, så värdet räknas om automatiskt.
+  const resolved = resolveSource(preference, i18n.language, timeZone)
 
   const setPreference = useCallback((value: PreferredFoodSource) => {
     setPreferenceState(value)

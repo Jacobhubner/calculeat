@@ -12,6 +12,17 @@ export interface DataSourceConfig {
    */
   primaryLocales: string[]
   /**
+   * IANA-tidszoner där källan är förstahandsval när språket inte räcker.
+   *
+   * i18next normaliserar 'en-GB' → 'en', så språket ensamt kan aldrig skilja
+   * en britt från en amerikan. Tidszonen kan. Prefixmatchning på segment:
+   * 'America' fångar hela 'America/New_York'.
+   *
+   * Bara zoner som entydigt pekar ut källans marknad hör hemma här — en zon
+   * som Europe/Stockholm ska INTE ge CoFID bara för att språket är engelska.
+   */
+  primaryTimeZones?: string[]
+  /**
    * Viktar rankingen i search_food_items via food_items.data_quality_score.
    * Importskripten läser värdet härifrån, så registret är facit.
    */
@@ -27,6 +38,7 @@ export const DATA_SOURCES: DataSourceConfig[] = [
     badgeClass:
       'bg-yellow-100 text-yellow-700 border-yellow-400 dark:bg-yellow-500/20 dark:text-yellow-200 dark:border-yellow-600',
     primaryLocales: ['sv'],
+    primaryTimeZones: ['Europe/Stockholm'],
     defaultQualityScore: 100,
     includeInAll: true,
   },
@@ -39,6 +51,9 @@ export const DATA_SOURCES: DataSourceConfig[] = [
     // 'en-US' först så CoFID kan ta 'en-GB' utan att krocka; 'en' kvar som
     // bred fallback för övrig engelska (en-AU, en-NZ …).
     primaryLocales: ['en-US', 'en'],
+    // Hela America-trädet: USA, men även Kanada och Latinamerika, som saknar
+    // egen källa här och står närmare USDA än CoFID.
+    primaryTimeZones: ['America', 'Pacific/Honolulu'],
     defaultQualityScore: 90,
     includeInAll: true,
   },
@@ -51,6 +66,9 @@ export const DATA_SOURCES: DataSourceConfig[] = [
     // Mer specifikt än USDA:s 'en' — brittiska användare får CoFID, medan
     // en-US och en-AU fortsatt landar på USDA.
     primaryLocales: ['en-GB'],
+    // Europe/Dublin: Irland har ingen egen källa och står kostmässigt närmare
+    // CoFID än USDA. GB/GB-Eire är äldre alias som vissa system rapporterar.
+    primaryTimeZones: ['Europe/London', 'Europe/Belfast', 'Europe/Dublin', 'GB'],
     defaultQualityScore: 95,
     includeInAll: true,
   },
@@ -77,6 +95,34 @@ export function getDataSourceForLocale(locale: string): DataSourceConfig | undef
       // Längre mönster = mer specifikt, vinner över bredare träff.
       if (!best || lc.length > best.specificity) {
         best = { source, specificity: lc.length }
+      }
+    }
+  }
+
+  return best?.source
+}
+
+/**
+ * Källa vars primaryTimeZones bäst matchar angiven IANA-tidszon.
+ *
+ * Används bara när språket inte kan avgöra: i18next normaliserar 'en-GB' → 'en',
+ * så en britt och en amerikan ser identiska ut sett till locale. Tidszonen
+ * skiljer dem åt.
+ *
+ * Matchar på hela segment, inte tecken: 'America' fångar 'America/New_York' men
+ * 'Europe/Lon' fångar inte 'Europe/London'. Mest specifik träff vinner, så
+ * 'Europe/London' slår ett bredare 'Europe' om båda skulle finnas.
+ */
+export function getDataSourceForTimeZone(timeZone: string): DataSourceConfig | undefined {
+  const normalized = timeZone.toLowerCase()
+  let best: { source: DataSourceConfig; specificity: number } | undefined
+
+  for (const source of DATA_SOURCES) {
+    for (const candidate of source.primaryTimeZones ?? []) {
+      const tz = candidate.toLowerCase()
+      if (normalized !== tz && !normalized.startsWith(`${tz}/`)) continue
+      if (!best || tz.length > best.specificity) {
+        best = { source, specificity: tz.length }
       }
     }
   }

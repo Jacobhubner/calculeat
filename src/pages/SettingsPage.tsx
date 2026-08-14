@@ -446,8 +446,10 @@ export default function SettingsPage() {
             </div>
 
             {/* Livsmedelsdatabas. i18next normaliserar bort regionen
-                (en-GB → en), så automatiken kan aldrig skilja brittiska
-                användare från amerikanska — därför ett explicit val. */}
+                (en-GB → en), så språket ensamt kan inte skilja brittiska
+                användare från amerikanska — där avgör tidszonen (se
+                resolveSource). Valet finns kvar för dem automatiken gissar
+                fel om, t.ex. en brittisk expat i USA. */}
             <div>
               <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-3">
                 {t('settings.foodDatabase')}
