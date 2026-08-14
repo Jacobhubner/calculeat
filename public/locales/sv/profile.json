@@ -273,7 +273,7 @@
     "language": "Språk",
     "foodDatabase": "Livsmedelsdatabas",
     "foodDatabaseAuto": "Automatiskt",
-    "foodDatabaseDesc": "Vilken databas som visas först när du söker livsmedel. Automatiskt utgår från ditt språk och din tidszon — engelska i Storbritannien ger CoFID, i USA ger det USDA. Alla databaser är alltid sökbara oavsett val."
+    "foodDatabaseDesc": "Vilken databas som visas först när du söker. Automatiskt väljer utifrån var du är. Alla databaser är alltid sökbara."
   },
   "tdeeOptions": {
     "calculateTitle": "Räkna ut hur mycket du kan äta",
