@@ -125,10 +125,12 @@ export default function EnergyGoalReferenceTable({
 
   return (
     <div className="mt-4 rounded-xl border border-neutral-200 bg-white overflow-hidden shadow-sm dark:border-neutral-700 dark:bg-neutral-850">
-      {/* Gradientrubriken fungerar i båda teman och lämnas orörd */}
-      <div className="bg-gradient-to-r from-primary-500 to-accent-500 px-4 py-3">
-        <h4 className="text-sm font-semibold text-white">{t('energyGoalTable.title')}</h4>
-      </div>
+      {/* Ingen egen rubrik här: komponenten renderas inuti ett Card vars
+          CardTitle redan säger "Energimål", så gradientlisten upprepade samma
+          ord direkt under sig själv. Höjden är låst till 44px = den gamla
+          py-3 (12+12) plus text-sm radhöjd (20), så bannern ser exakt likadan
+          ut som förut trots att texten är borta. */}
+      <div className="h-11 bg-gradient-to-r from-primary-500 to-accent-500" />
       <div className="divide-y divide-neutral-200 dark:divide-neutral-700">
         {goals.map((goal, index) => {
           const handleClick = () => {

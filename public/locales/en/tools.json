@@ -775,7 +775,6 @@
     }
   },
   "energyGoalTable": {
-    "title": "Energy goal - Overview",
     "invalidTdee": "Invalid TDEE value. Please calculate your TDEE first.",
     "maintainLabel": "Maintain weight (±3%)",
     "maintainDesc": "For weight stabilisation and maintenance of current weight",

@@ -775,7 +775,6 @@
     }
   },
   "energyGoalTable": {
-    "title": "Energimål - Översikt",
     "invalidTdee": "Ogiltigt TDEE-värde. Vänligen beräkna ditt TDEE först.",
     "maintainLabel": "Behåll vikt (±3%)",
     "maintainDesc": "För viktstabilisering och underhåll av nuvarande vikt",
