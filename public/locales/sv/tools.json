@@ -967,7 +967,7 @@
         {
           "name": "PAL-värden (Aktivitetsnivå × Träningsintensitet)",
           "rows": [
-            ["", "Ingen", "Lätt", "Måttlig", "Kräv.", "Intens"],
+            ["", "Ingen", "Lätt", "Måttlig", "Svår", "Intensiv"],
             ["Stillasittande", "1,1", "1,2", "1,35", "1,45", "1,55"],
             ["Lätt aktiv", "1,2", "1,4", "1,45", "1,55", "1,6"],
             ["Måttligt aktiv", "1,4", "1,45", "1,6", "1,65", "1,7"],

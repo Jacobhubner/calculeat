@@ -967,7 +967,7 @@
         {
           "name": "PAL values (Activity level × Training intensity)",
           "rows": [
-            ["", "None", "Light", "Moderate", "Demand.", "Intense"],
+            ["", "None", "Light", "Moderate", "Demanding", "Intense"],
             ["Sedentary", "1.1", "1.2", "1.35", "1.45", "1.55"],
             ["Lightly active", "1.2", "1.4", "1.45", "1.55", "1.6"],
             ["Moderately active", "1.4", "1.45", "1.6", "1.65", "1.7"],
