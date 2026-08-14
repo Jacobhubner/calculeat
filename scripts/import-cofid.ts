@@ -26,6 +26,7 @@ import { execFileSync } from 'child_process'
 import { mkdtempSync, readFileSync, rmSync } from 'fs'
 import { tmpdir } from 'os'
 import { join } from 'path'
+import { DATA_SOURCES } from '../src/lib/constants/dataSources'
 
 dotenv.config({ path: resolve(import.meta.dirname, '..', '.env') })
 
@@ -58,6 +59,16 @@ const supabase = DRY_RUN ? null : createClient(SUPABASE_URL!, SERVICE_KEY!)
 const SOURCE = 'cofid'
 /** CoFID-versionen som importeras — bump vid ny utgåva från GOV.UK. */
 const IMPORT_VERSION = '2021'
+
+/**
+ * data_quality_score viktar rankingen i search_food_items
+ * (`* COALESCE(data_quality_score, 100) / 100`). Läses ur registret så att
+ * poängen inte kan glida isär från DATA_SOURCES.
+ *
+ * CoFID = 95: analytiska värden från Public Health England, men delvis äldre
+ * mätningar än SLV:s löpande uppdaterade databas.
+ */
+const QUALITY_SCORE = DATA_SOURCES.find(ds => ds.id === SOURCE)?.defaultQualityScore ?? 90
 
 // ---------------------------------------------------------------------------
 // Minimal .xlsx-läsare
@@ -337,8 +348,11 @@ function main() {
     const seenCodes = new Map<string, string>()
     let skippedNoEnergy = 0
     let skippedDuplicate = 0
+    let rowsExamined = 0
+    let stoppedEarly = false
 
     for (const row of dataRows(proximates)) {
+      rowsExamined++
       const cells = row.cells
       const externalId = String(cells[COL.foodCode] ?? '').trim()
       const name = String(cells[COL.name] ?? '').trim()
@@ -397,12 +411,26 @@ function main() {
         nutrients,
       })
 
-      if (LIMIT && foods.length >= LIMIT) break
+      if (LIMIT && foods.length >= LIMIT) {
+        stoppedEarly = true
+        break
+      }
     }
 
-    console.log(`\nInläst: ${foods.length} livsmedel`)
-    console.log(`  Överhoppade (saknar energi/makron): ${skippedNoEnergy}`)
-    console.log(`  Överhoppade (dubblettkod): ${skippedDuplicate}`)
+    // Med --limit bryts loopen efter N lyckade poster, så siffrorna nedan
+    // gäller bara de rader som hann granskas. Utan det förbehållet ser
+    // "Överhoppade: 2" ut som ett omdöme om hela filen, när det egentligen
+    // är 2 av ~22 rader.
+    const totalRows = dataRows(proximates).length
+    console.log(
+      `\nInläst: ${foods.length} livsmedel` +
+        (stoppedEarly
+          ? ` (--limit ${LIMIT}, stannade efter ${rowsExamined}/${totalRows} rader)`
+          : '')
+    )
+    const scope = stoppedEarly ? ' av de granskade' : ''
+    console.log(`  Överhoppade${scope} (saknar energi/makron): ${skippedNoEnergy}`)
+    console.log(`  Överhoppade${scope} (dubblettkod): ${skippedDuplicate}`)
     const liquids = foods.filter(f => f.foodType === 'Liquid').length
     console.log(`  Vätskor (per 100 ml): ${liquids} | Fasta (per 100 g): ${foods.length - liquids}`)
     const totalNutrients = foods.reduce((sum, f) => sum + f.nutrients.length, 0)
@@ -478,6 +506,7 @@ async function writeToDatabase(foods: CofidFood[]) {
         reference_amount: 100,
         reference_unit: food.unit,
         food_type: food.foodType,
+        data_quality_score: QUALITY_SCORE,
       }
 
       let foodItemId: string

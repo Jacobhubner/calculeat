@@ -13,6 +13,7 @@
 import { createClient } from '@supabase/supabase-js'
 import * as dotenv from 'dotenv'
 import { resolve } from 'path'
+import { DATA_SOURCES } from '../src/lib/constants/dataSources'
 
 dotenv.config({ path: resolve(import.meta.dirname, '..', '.env') })
 
@@ -25,6 +26,16 @@ if (!SUPABASE_URL || !SERVICE_KEY) {
 }
 
 const supabase = createClient(SUPABASE_URL, SERVICE_KEY)
+
+/**
+ * data_quality_score viktar rankingen i search_food_items
+ * (`* COALESCE(data_quality_score, 100) / 100`). Läses ur registret så att
+ * poängen inte kan glida isär från DATA_SOURCES.
+ *
+ * SLV = 100: nationell databas med löpande uppdaterade analysvärden.
+ */
+const QUALITY_SCORE =
+  DATA_SOURCES.find(ds => ds.id === 'livsmedelsverket')?.defaultQualityScore ?? 100
 
 // --- SLV API types ---
 
@@ -270,6 +281,7 @@ async function main() {
                 reference_amount: 100,
                 reference_unit: 'g',
                 food_type: 'Solid',
+                data_quality_score: QUALITY_SCORE,
               })
               .eq('id', existing.id)
               .select('id')
@@ -297,6 +309,7 @@ async function main() {
                 reference_amount: 100,
                 reference_unit: 'g',
                 food_type: 'Solid', // Trigger calculates kcal_per_gram + energy_density_color
+                data_quality_score: QUALITY_SCORE,
                 is_recipe: false,
               })
               .select('id')

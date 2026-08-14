@@ -11,9 +11,11 @@ export interface DataSourceConfig {
    * engelska. Matchningen är prefixbaserad, så 'sv' fångar även 'sv-SE'.
    */
   primaryLocales: string[]
+  /**
+   * Viktar rankingen i search_food_items via food_items.data_quality_score.
+   * Importskripten läser värdet härifrån, så registret är facit.
+   */
   defaultQualityScore: number
-  isVerified: boolean
-  sourcePriority: number
   includeInAll: boolean
 }
 
@@ -26,8 +28,6 @@ export const DATA_SOURCES: DataSourceConfig[] = [
       'bg-yellow-100 text-yellow-700 border-yellow-400 dark:bg-yellow-500/20 dark:text-yellow-200 dark:border-yellow-600',
     primaryLocales: ['sv'],
     defaultQualityScore: 100,
-    isVerified: true,
-    sourcePriority: 100,
     includeInAll: true,
   },
   {
@@ -40,8 +40,6 @@ export const DATA_SOURCES: DataSourceConfig[] = [
     // bred fallback för övrig engelska (en-AU, en-NZ …).
     primaryLocales: ['en-US', 'en'],
     defaultQualityScore: 90,
-    isVerified: true,
-    sourcePriority: 90,
     includeInAll: true,
   },
   {
@@ -54,8 +52,6 @@ export const DATA_SOURCES: DataSourceConfig[] = [
     // en-US och en-AU fortsatt landar på USDA.
     primaryLocales: ['en-GB'],
     defaultQualityScore: 95,
-    isVerified: true,
-    sourcePriority: 95,
     includeInAll: true,
   },
 ]
