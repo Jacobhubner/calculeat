@@ -83,7 +83,7 @@
     },
     "breadcrumb": "Användarvillkor",
     "h1": "Användarvillkor",
-    "updated": "Senast uppdaterad: 3 augusti 2026",
+    "updated": "Senast uppdaterad: 14 augusti 2026",
     "intro": "Dessa villkor gäller när du använder Calculeat. Genom att skapa ett konto godkänner du villkoren.",
     "sections": [
       {
@@ -119,11 +119,15 @@
         "body": "Calculeats kalkylatorer och beräkningar är uppskattningar och utgör inte medicinsk rådgivning. Vid sjukdom, ätstörningar eller särskilda medicinska behov ska du alltid rådfråga sjukvården. Tjänsten tillhandahålls i befintligt skick. I den utsträckning tvingande konsumentlagstiftning tillåter är vårt ansvar begränsat till vad du betalat för tjänsten de senaste tolv månaderna. Dina lagstadgade rättigheter som konsument påverkas aldrig av dessa villkor."
       },
       {
-        "h2": "9. Ändringar av villkoren",
+        "h2": "9. Datakällor och licenser",
+        "body": "Näringsdata i Calculeat kommer från flera offentliga databaser. Livsmedelsverkets livsmedelsdatabas används med Livsmedelsverket angivet som källa, enligt Creative Commons Erkännande 4.0 (CC BY 4.0). USDA FoodData Central (U.S. Department of Agriculture, Agricultural Research Service) är public domain. Bearbetningar och beräkningar i Calculeat är våra egna — de ursprungliga myndigheterna står inte bakom och godkänner inte tjänsten. Uppgifter du själv lägger in ansvarar du för."
+      },
+      {
+        "h2": "10. Ändringar av villkoren",
         "body": "Väsentliga ändringar meddelas i appen eller via e-post minst 30 dagar innan de träder i kraft. Fortsatt användning efter det innebär att du godkänner de nya villkoren."
       },
       {
-        "h2": "10. Tillämplig lag och tvist",
+        "h2": "11. Tillämplig lag och tvist",
         "body": "Svensk lag gäller. Vid tvist kan du vända dig till Allmänna reklamationsnämnden (ARN) eller EU:s plattform för tvistlösning online. Frågor besvaras via mejl till info.calculeat@gmail.com."
       }
     ]

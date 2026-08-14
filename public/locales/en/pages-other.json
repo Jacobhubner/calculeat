@@ -86,7 +86,7 @@
     },
     "breadcrumb": "Terms of Service",
     "h1": "Terms of Service",
-    "updated": "Last updated: August 3, 2026",
+    "updated": "Last updated: August 14, 2026",
     "intro": "These terms apply when you use Calculeat. By creating an account you accept the terms.",
     "sections": [
       {
@@ -122,11 +122,15 @@
         "body": "Calculeat's calculators and computations are estimates and do not constitute medical advice. In case of illness, eating disorders, or special medical needs, always consult healthcare professionals. The service is provided as is. To the extent permitted by mandatory consumer law, our liability is limited to what you have paid for the service in the last twelve months. Your statutory consumer rights are never affected by these terms."
       },
       {
-        "h2": "9. Changes to the terms",
+        "h2": "9. Data sources and licences",
+        "body": "Nutrition data in Calculeat comes from several public databases. The Swedish Food Agency's food composition database is used with the Swedish Food Agency stated as the source, under Creative Commons Attribution 4.0 (CC BY 4.0). USDA FoodData Central (U.S. Department of Agriculture, Agricultural Research Service) is in the public domain. Any processing and calculations within Calculeat are our own — the originating agencies do not endorse or approve the service. You are responsible for data you enter yourself."
+      },
+      {
+        "h2": "10. Changes to the terms",
         "body": "Material changes are announced in the app or by email at least 30 days before they take effect. Continued use after that constitutes acceptance of the new terms."
       },
       {
-        "h2": "10. Governing law and disputes",
+        "h2": "11. Governing law and disputes",
         "body": "Swedish law applies. In case of a dispute you can turn to the Swedish National Board for Consumer Disputes (ARN) or the EU online dispute resolution platform. Questions are answered via email at info.calculeat@gmail.com."
       }
     ]
