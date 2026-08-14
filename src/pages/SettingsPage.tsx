@@ -27,6 +27,8 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useThemeStore } from '@/stores/themeStore'
+import { useFoodSource } from '@/hooks/useFoodSource'
+import { DATA_SOURCES } from '@/lib/constants/dataSources'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
 import { translateAuthError } from '@/lib/auth-errors'
@@ -70,6 +72,8 @@ export default function SettingsPage() {
   const { user, deleteAccount, refreshProfile } = useAuth()
   const themePreference = useThemeStore(state => state.preference)
   const setThemePreference = useThemeStore(state => state.setPreference)
+  const { preference: foodSourcePreference, setPreference: setFoodSourcePreference } =
+    useFoodSource()
   const { profile, isReady } = useActiveProfile()
   const updateProfile = useUpdateProfile()
   const { data: userProfile } = useUserProfile()
@@ -407,6 +411,45 @@ export default function SettingsPage() {
               </div>
               <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2">
                 {t('settings.themeDesc')}
+              </p>
+            </div>
+
+            {/* Livsmedelsdatabas. i18next normaliserar bort regionen
+                (en-GB → en), så automatiken kan aldrig skilja brittiska
+                användare från amerikanska — därför ett explicit val. */}
+            <div>
+              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-3">
+                {t('settings.foodDatabase')}
+              </p>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {[
+                  { value: 'auto' as const, label: t('settings.foodDatabaseAuto') },
+                  ...DATA_SOURCES.map(ds => ({
+                    value: ds.tabKey,
+                    label: tAny(`food:${ds.labelKey}`),
+                  })),
+                ].map(({ value, label }) => {
+                  const active = foodSourcePreference === value
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setFoodSourcePreference(value)}
+                      aria-pressed={active}
+                      className={cn(
+                        'rounded-lg border px-3 py-2.5 text-xs font-medium transition-colors',
+                        active
+                          ? 'border-primary-300 bg-primary-50 text-primary-700 dark:border-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
+                          : 'border-neutral-200 text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-neutral-600'
+                      )}
+                    >
+                      {label}
+                    </button>
+                  )
+                })}
+              </div>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2">
+                {t('settings.foodDatabaseDesc')}
               </p>
             </div>
 

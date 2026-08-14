@@ -267,7 +267,10 @@
     "themeLight": "Ljust",
     "themeDark": "Mörkt",
     "themeDesc": "System följer inställningen på din telefon eller dator.",
-    "language": "Språk"
+    "language": "Språk",
+    "foodDatabase": "Livsmedelsdatabas",
+    "foodDatabaseAuto": "Automatiskt",
+    "foodDatabaseDesc": "Vilken databas som visas först när du söker livsmedel. Automatiskt väljer utifrån ditt språk. Alla databaser är alltid sökbara oavsett val."
   },
   "tdeeOptions": {
     "calculateTitle": "Räkna ut hur mycket du kan äta",

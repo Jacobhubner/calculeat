@@ -267,7 +267,10 @@
     "themeLight": "Light",
     "themeDark": "Dark",
     "themeDesc": "System follows the setting on your phone or computer.",
-    "language": "Language"
+    "language": "Language",
+    "foodDatabase": "Food database",
+    "foodDatabaseAuto": "Automatic",
+    "foodDatabaseDesc": "Which database appears first when you search for foods. Automatic picks based on your language. All databases remain searchable regardless of your choice."
   },
   "tdeeOptions": {
     "calculateTitle": "Find out how much you can eat",
