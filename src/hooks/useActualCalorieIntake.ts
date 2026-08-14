@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import type { ActualIntakeData } from '@/lib/types'
+import { localDateString } from '@/lib/utils/localDate'
 
 /**
  * Hook to fetch actual calorie intake from food logs for a date range
@@ -23,8 +24,8 @@ export function useActualCalorieIntake(startDate: Date, endDate: Date) {
         }
       }
 
-      const startDateStr = startDate.toISOString().split('T')[0]
-      const endDateStr = endDate.toISOString().split('T')[0]
+      const startDateStr = localDateString(startDate)
+      const endDateStr = localDateString(endDate)
 
       const { data, error } = await supabase
         .from('daily_logs')

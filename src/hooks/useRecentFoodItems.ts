@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { usePreviewAwareQuery } from '@/hooks/usePreviewAwareQuery'
 import type { FoodItem } from './useFoodItems'
+import { localDateString } from '@/lib/utils/localDate'
 
 export interface RecentFoodItem extends FoodItem {
   last_used_at: string
@@ -23,7 +24,7 @@ export function useRecentFoodItems(limit = 10) {
 
       const sevenDaysAgo = new Date()
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-      const sevenDaysAgoStr = sevenDaysAgo.toISOString().split('T')[0]
+      const sevenDaysAgoStr = localDateString(sevenDaysAgo)
 
       // Get recent meal entry items with food details
       const { data, error } = await supabase
@@ -94,7 +95,7 @@ export function useFrequentFoodItems(limit = 10) {
 
       const thirtyDaysAgo = new Date()
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-      const thirtyDaysAgoStr = thirtyDaysAgo.toISOString().split('T')[0]
+      const thirtyDaysAgoStr = localDateString(thirtyDaysAgo)
 
       // Get meal entry items with food details
       const { data, error } = await supabase

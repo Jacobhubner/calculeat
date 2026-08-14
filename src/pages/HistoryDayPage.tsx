@@ -28,6 +28,7 @@ import { useProfiles } from '@/hooks'
 import { useProfileStore } from '@/stores/profileStore'
 import { AddFoodToMealModal } from '@/components/daily/AddFoodToMealModal'
 import { toast } from 'sonner'
+import { localDateString } from '@/lib/utils/localDate'
 
 export default function HistoryDayPage() {
   const { t } = useTranslation('history')
@@ -41,7 +42,7 @@ export default function HistoryDayPage() {
   const historyLimited = !isUnlimited(limits.history_days)
   const windowStart = new Date()
   windowStart.setDate(windowStart.getDate() - limits.history_days)
-  const outsideWindow = historyLimited && !!date && date < windowStart.toISOString().split('T')[0]
+  const outsideWindow = historyLimited && !!date && date < localDateString(windowStart)
 
   useEffect(() => {
     if (outsideWindow) {

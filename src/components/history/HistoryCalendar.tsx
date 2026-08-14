@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import type { DailyLog } from '@/hooks/useDailyLogs'
+import { localDateString } from '@/lib/utils/localDate'
 
 interface Props {
   logs: DailyLog[]
@@ -118,7 +119,7 @@ export function HistoryCalendar({ logs }: Props) {
   const logMap = new Map<string, DailyLog>()
   for (const log of logs) logMap.set(log.log_date.split('T')[0], log)
 
-  const todayStr = today.toISOString().split('T')[0]
+  const todayStr = localDateString(today)
   const monthNames = isSv ? MONTHS_SV : MONTHS_EN
   const monthShort = isSv ? MONTHS_SV_SHORT : MONTHS_EN_SHORT
   const weekdays = isSv ? WEEKDAYS_SV : WEEKDAYS_EN

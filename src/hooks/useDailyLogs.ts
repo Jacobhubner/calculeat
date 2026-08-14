@@ -859,7 +859,7 @@ export function useStartNewDay() {
 
       const base = new Date(completedLogDate + 'T12:00:00')
       base.setDate(base.getDate() + 1)
-      const nextDay = base.toISOString().split('T')[0]
+      const nextDay = localDateString(base)
 
       const { error: insertError } = await supabase.from('daily_logs').insert({
         user_id: user.id,
@@ -925,7 +925,7 @@ export function useCopyDayToToday() {
       if (fetchError) throw fetchError
 
       // Ensure today's log exists for active profile
-      const today = new Date().toISOString().split('T')[0]
+      const today = localDateString()
       const { data: todayLog } = await supabase
         .from('daily_logs')
         .select('*')

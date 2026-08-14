@@ -44,6 +44,7 @@ import {
 } from '@/lib/calculations/bodyComposition'
 import { calculateBMI } from '@/lib/calculations/helpers'
 import { toast } from 'sonner'
+import { localDateString } from '@/lib/utils/localDate'
 
 function calculateAge(birthDate: string | null): number {
   if (!birthDate) return 0
@@ -502,7 +503,7 @@ export default function BodyCompositionCalculator() {
     const newSet = {
       id: tempId,
       user_id: profile?.id || '',
-      set_date: new Date().toISOString().split('T')[0],
+      set_date: localDateString(),
       created_at: new Date().toISOString(),
       // Caliper measurements
       chest: getCurrentValue('chest'),
@@ -563,7 +564,7 @@ export default function BodyCompositionCalculator() {
     const set = getMeasurementSetById(setId)
     if (!set) return
 
-    const today = new Date().toISOString().split('T')[0]
+    const today = localDateString()
 
     // Collect all measurements, converting undefined to null
     const allMeasurements = {

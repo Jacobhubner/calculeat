@@ -53,6 +53,7 @@ import { useDailySummary } from '@/hooks/useDailySummary'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import type { UserProfile } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { localDateString } from '@/lib/utils/localDate'
 
 /**
  * Sidrubrikens två åtgärdsknappar — samma mönster som i MealSection, men med
@@ -134,7 +135,7 @@ export default function TodayPage() {
   const yesterday = useMemo(() => {
     const date = new Date()
     date.setDate(date.getDate() - 1)
-    return date.toISOString().split('T')[0]
+    return localDateString(date)
   }, [])
   const { data: yesterdayLog } = useDailyLog(yesterday)
 
@@ -150,7 +151,7 @@ export default function TodayPage() {
     return displayDate.toLocaleDateString('sv-SE', options)
   }, [logDate])
 
-  const todayDate = new Date().toISOString().split('T')[0]
+  const todayDate = localDateString()
 
   // Ensure log and settings exist
   useEffect(() => {

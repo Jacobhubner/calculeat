@@ -60,6 +60,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import i18n from '@/i18n'
 import { useChartTheme } from '@/hooks/useChartTheme'
+import { localDateString } from '@/lib/utils/localDate'
 
 function getDateLocale() {
   return i18n.language === 'sv' ? 'sv-SE' : 'en-GB'
@@ -111,7 +112,7 @@ export default function WeightTracker({
   const { t } = useTranslation('profile')
   const [isOpen, setIsOpen] = useState(false)
   const [currentWeight, setCurrentWeight] = useState(profile.weight_kg?.toString() || '')
-  const [recordedDate, setRecordedDate] = useState(new Date().toISOString().split('T')[0])
+  const [recordedDate, setRecordedDate] = useState(localDateString())
   const [bodyFatInput, setBodyFatInput] = useState('')
   const [showAddWeight, setShowAddWeight] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
@@ -194,7 +195,7 @@ export default function WeightTracker({
 
   // Current weight = entry with recorded_at on or before today (end of day)
   const currentWeightFromHistory = useMemo(() => {
-    const todayStr = new Date().toISOString().split('T')[0]
+    const todayStr = localDateString()
     const endOfToday = new Date(todayStr + 'T23:59:59').getTime()
     // Senaste posten t.o.m. idag — ett svep, ingen filter+sort-kedja.
     let latestWeight: number | null = null
@@ -271,7 +272,7 @@ export default function WeightTracker({
 
     setShowAddWeight(false)
     setBodyFatInput('')
-    setRecordedDate(new Date().toISOString().split('T')[0])
+    setRecordedDate(localDateString())
   }
 
   // Build chart data with rolling average (create a copy to avoid mutating the original)

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '@/lib/supabase'
+import { localDateString } from '@/lib/utils/localDate'
 
 /** Exporten kan ta tid för konton med mycket data — men inte hur länge som helst. */
 const EXPORT_TIMEOUT_MS = 90_000
@@ -49,7 +50,8 @@ export function useDataExport() {
       }
 
       const data = (await response.json()) as ExportResponse
-      const date = new Date().toISOString().split('T')[0]
+      // Lokalt datum: en export kl 01:00 ska heta dagens datum, inte gårdagens.
+      const date = localDateString()
 
       if (format === 'json') {
         downloadFile(

@@ -25,6 +25,7 @@ import EmptyState from '@/components/EmptyState'
 import { useProfileStore } from '@/stores/profileStore'
 import { useProfiles } from '@/hooks'
 import type { Profile } from '@/lib/types'
+import { localDateString } from '@/lib/utils/localDate'
 
 const WEEKS_PER_PAGE = 4
 
@@ -50,14 +51,14 @@ export default function HistoryPage() {
     const now = new Date()
     const future = new Date(now)
     future.setFullYear(now.getFullYear() + 1)
-    const end = future.toISOString().split('T')[0]
+    const end = localDateString(future)
     const windowStart = new Date(now)
     if (historyLimited) {
       windowStart.setDate(windowStart.getDate() - historyDays)
     } else {
       windowStart.setFullYear(now.getFullYear() - 10)
     }
-    const start = windowStart.toISOString().split('T')[0]
+    const start = localDateString(windowStart)
     return { endDate: end, startDate: start }
   }, [historyLimited, historyDays])
 
@@ -76,7 +77,7 @@ export default function HistoryPage() {
       return
     }
     if (!logs || logs.length === 0) return
-    const today = new Date().toISOString().split('T')[0]
+    const today = localDateString()
     downloadCsv(`calculeat-historik-${today}.csv`, dailyLogsToCsv(logs))
   }
 
@@ -88,7 +89,7 @@ export default function HistoryPage() {
     if (statsPeriod === null) return logs
     const cutoff = new Date()
     cutoff.setDate(cutoff.getDate() - statsPeriod)
-    const cutoffStr = cutoff.toISOString().split('T')[0]
+    const cutoffStr = localDateString(cutoff)
     return logs.filter(log => log.log_date.split('T')[0] >= cutoffStr)
   }, [logs, statsPeriod])
   const deleteDailyLog = useDeleteDailyLog()
@@ -149,12 +150,12 @@ export default function HistoryPage() {
     )
     let streak = 0
     const cursor = new Date()
-    const todayStr = cursor.toISOString().split('T')[0]
+    const todayStr = localDateString(cursor)
     if (!completedDates.has(todayStr)) {
       cursor.setDate(cursor.getDate() - 1)
     }
     while (true) {
-      const dateStr = cursor.toISOString().split('T')[0]
+      const dateStr = localDateString(cursor)
       if (!completedDates.has(dateStr)) break
       streak++
       cursor.setDate(cursor.getDate() - 1)
@@ -169,7 +170,7 @@ export default function HistoryPage() {
       const weekStart = new Date(date)
       const day = date.getDay()
       weekStart.setDate(date.getDate() - (day === 0 ? 6 : day - 1)) // Monday
-      const weekKey = weekStart.toISOString().split('T')[0]
+      const weekKey = localDateString(weekStart)
       if (!acc[weekKey]) acc[weekKey] = []
       acc[weekKey].push(log)
       return acc
