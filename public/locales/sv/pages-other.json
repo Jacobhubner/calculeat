@@ -22,7 +22,7 @@
         "calculatorsLabel": "Kalkylatorer:",
         "calculatorsBody": "Alla kalkylatorer bygger på publicerad forskning. TDEE-kalkylatorn använder Mifflin-St Jeor för BMR (validerad i oberoende studier som den mest korrekta för normalpopulationen) och fem PAL-nivåer (1.2–1.9) för aktivitetsfaktor. Vi erbjuder även 9 alternativa BMR-formler för olika populationer.",
         "databaseLabel": "Matdatabas:",
-        "databaseBody": "Livsmedelsdata hämtas från Livsmedelsverkets nationella livsmedelsdatabas, USDA FoodData Central och användarinlagda livsmedel. Vi verifierar bidragsdata via ett community-system.",
+        "databaseBody": "Livsmedelsdata hämtas från Livsmedelsverkets nationella livsmedelsdatabas, USDA FoodData Central, brittiska CoFID och användarinlagda livsmedel. Vi verifierar bidragsdata via ett community-system.",
         "contentLabel": "Informationsinnehåll:",
         "contentBody": "Alla artiklar och förklaringar granskas mot publicerad forskning (PubMed, WHO, ACSM, EFSA). Vi inkluderar källhänvisningar så att du kan granska underlagen själv."
       },
@@ -120,7 +120,7 @@
       },
       {
         "h2": "9. Datakällor och licenser",
-        "body": "Näringsdata i Calculeat kommer från flera offentliga databaser. Livsmedelsverkets livsmedelsdatabas används med Livsmedelsverket angivet som källa, enligt Creative Commons Erkännande 4.0 (CC BY 4.0). USDA FoodData Central (U.S. Department of Agriculture, Agricultural Research Service) är public domain. Bearbetningar och beräkningar i Calculeat är våra egna — de ursprungliga myndigheterna står inte bakom och godkänner inte tjänsten. Uppgifter du själv lägger in ansvarar du för."
+        "body": "Näringsdata i Calculeat kommer från flera offentliga databaser. Livsmedelsverkets livsmedelsdatabas används med Livsmedelsverket angivet som källa, enligt Creative Commons Erkännande 4.0 (CC BY 4.0). USDA FoodData Central (U.S. Department of Agriculture, Agricultural Research Service) är public domain. McCance and Widdowson's The Composition of Foods Integrated Dataset (CoFID) innehåller offentlig information som publicerats av Public Health England och används med stöd av Open Government Licence v3.0. Bearbetningar och beräkningar i Calculeat är våra egna — de ursprungliga myndigheterna står inte bakom och godkänner inte tjänsten. Uppgifter du själv lägger in ansvarar du för."
       },
       {
         "h2": "10. Ändringar av villkoren",

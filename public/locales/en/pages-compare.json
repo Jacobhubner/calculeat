@@ -28,7 +28,7 @@
     },
     "comparisonRows": [
       { "feature": "Calorie logging", "note": null },
-      { "feature": "Large food database", "note": "Swedish NFA + USDA" },
+      { "feature": "Large food database", "note": "Swedish NFA, USDA and CoFID" },
       { "feature": "TDEE calculation", "note": "MFP provides basic activity level" },
       { "feature": "Metabolic calibration", "note": "Adjusted based on real weight change" },
       { "feature": "Bulk/Cut phases", "note": "Separate goals per phase" },
@@ -169,7 +169,7 @@
     },
     "comparisonRows": [
       { "feature": "Calorie logging", "note": null },
-      { "feature": "Food database", "note": "Swedish NFA + USDA" },
+      { "feature": "Food database", "note": "Swedish NFA, USDA and CoFID" },
       { "feature": "Diet plans", "note": "Not a Calculeat focus" },
       { "feature": "Recipes", "note": "Calculeat: custom recipes" },
       { "feature": "TDEE calculation", "note": "Lifesum provides basic calorie goal" },
@@ -307,7 +307,7 @@
     },
     "comparisonRows": [
       { "feature": "Calorie logging", "note": null },
-      { "feature": "Large food database", "note": "Swedish NFA + USDA" },
+      { "feature": "Large food database", "note": "Swedish NFA, USDA and CoFID" },
       { "feature": "Intermittent fasting mode", "note": "Not a Calculeat focus" },
       { "feature": "Water tracking", "note": null },
       { "feature": "TDEE calculation", "note": "Yazio provides basic calorie goal" },
@@ -445,7 +445,7 @@
     },
     "comparisonRows": [
       { "feature": "Calorie logging", "note": null },
-      { "feature": "Food database", "note": "Calculeat: NFA + USDA" },
+      { "feature": "Food database", "note": "Calculeat: NFA, USDA and CoFID" },
       { "feature": "English interface", "note": "MacroFactor primarily in English" },
       { "feature": "TDEE calculation", "note": "Both calculate individual TDEE" },
       { "feature": "Metabolic calibration", "note": "Based on real weight data" },
@@ -490,7 +490,7 @@
       },
       {
         "question": "Does MacroFactor support languages other than English?",
-        "answer": "MacroFactor is primarily in English and focuses on the English-speaking market. Calculeat is built for an international audience with food databases from multiple sources (including USDA) and support for multiple nutritional reference values."
+        "answer": "MacroFactor is primarily in English and focuses on the English-speaking market. Calculeat is built for an international audience with food databases from multiple sources (USDA for the US, CoFID for the UK, and the Swedish NFA) and support for multiple nutritional reference values."
       }
     ],
     "related": {
@@ -575,7 +575,7 @@
     "comparisonRows": [
       { "feature": "Calorie logging", "note": null },
       { "feature": "Barcode scanning", "note": null },
-      { "feature": "Food database", "note": "Calculeat: Swedish NFA + USDA" },
+      { "feature": "Food database", "note": "Calculeat: Swedish NFA, USDA and CoFID" },
       { "feature": "TDEE precision", "note": "Adaptive TDEE vs static formula" },
       { "feature": "Metabolic calibration", "note": "Adjusted based on real weight data" },
       { "feature": "Bulk/Cut phases", "note": "Calculeat: separate goals per phase" },

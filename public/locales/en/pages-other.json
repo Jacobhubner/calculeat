@@ -22,7 +22,7 @@
         "calculatorsLabel": "Calculators:",
         "calculatorsBody": "All calculators are based on published research. The TDEE calculator uses Mifflin-St Jeor for BMR (validated in independent studies as the most accurate for the general population) and five PAL levels (1.2–1.9) for activity factor. We also offer 9 alternative BMR formulas for different populations.",
         "databaseLabel": "Food database:",
-        "databaseBody": "Food data is sourced from the Swedish National Food Database (Livsmedelsverket), USDA FoodData Central and user-submitted foods. We verify contributed data via a community system.",
+        "databaseBody": "Food data is sourced from the Swedish National Food Database (Livsmedelsverket), USDA FoodData Central, the UK's CoFID dataset and user-submitted foods. We verify contributed data via a community system.",
         "contentLabel": "Information content:",
         "contentBody": "All articles and explanations are reviewed against published research (PubMed, WHO, ACSM, EFSA). We include source references so you can review the evidence yourself."
       },
@@ -62,7 +62,7 @@
     },
     "breadcrumb": "Premium",
     "h1": "Calculeat Premium",
-    "intro": "The core of Calculeat is free — unlimited food logging, barcode scanning, and the Swedish Food Agency database. Premium unlocks full precision: unlimited history, every calculation formula, and advanced analysis.",
+    "intro": "The core of Calculeat is free — unlimited food logging, barcode scanning, and our official food databases. Premium unlocks full precision: unlimited history, every calculation formula, and advanced analysis.",
     "plans": {
       "monthlyName": "Monthly",
       "monthlyPrice": "45 kr",
@@ -123,7 +123,7 @@
       },
       {
         "h2": "9. Data sources and licences",
-        "body": "Nutrition data in Calculeat comes from several public databases. The Swedish Food Agency's food composition database is used with the Swedish Food Agency stated as the source, under Creative Commons Attribution 4.0 (CC BY 4.0). USDA FoodData Central (U.S. Department of Agriculture, Agricultural Research Service) is in the public domain. Any processing and calculations within Calculeat are our own — the originating agencies do not endorse or approve the service. You are responsible for data you enter yourself."
+        "body": "Nutrition data in Calculeat comes from several public databases. The Swedish Food Agency's food composition database is used with the Swedish Food Agency stated as the source, under Creative Commons Attribution 4.0 (CC BY 4.0). USDA FoodData Central (U.S. Department of Agriculture, Agricultural Research Service) is in the public domain. McCance and Widdowson's The Composition of Foods Integrated Dataset (CoFID) contains public sector information published by Public Health England and licensed under the Open Government Licence v3.0. Any processing and calculations within Calculeat are our own — the originating agencies do not endorse or approve the service. You are responsible for data you enter yourself."
       },
       {
         "h2": "10. Changes to the terms",

@@ -28,7 +28,7 @@
     },
     "comparisonRows": [
       { "feature": "Kaloriloggning", "note": null },
-      { "feature": "Stor matdatabas", "note": "Livsmedelsverket + USDA" },
+      { "feature": "Stor matdatabas", "note": "Livsmedelsverket, USDA och CoFID" },
       { "feature": "TDEE-beräkning", "note": "MFP ger grundläggande aktivitetsnivå" },
       { "feature": "Metabolisk kalibrering", "note": "Justeras baserat på verklig viktförändring" },
       { "feature": "Bulk/Cut-faser", "note": "Separata mål per fas" },
@@ -169,7 +169,7 @@
     },
     "comparisonRows": [
       { "feature": "Kaloriloggning", "note": null },
-      { "feature": "Matdatabas", "note": "Livsmedelsverket + USDA" },
+      { "feature": "Matdatabas", "note": "Livsmedelsverket, USDA och CoFID" },
       { "feature": "Kostplaner / dieter", "note": "Ej fokus för Calculeat" },
       { "feature": "Recept", "note": "Calculeat: egna recept" },
       { "feature": "TDEE-beräkning", "note": "Lifesum ger grundläggande kalorimål" },
@@ -307,7 +307,7 @@
     },
     "comparisonRows": [
       { "feature": "Kaloriloggning", "note": null },
-      { "feature": "Stor matdatabas", "note": "Livsmedelsverket + USDA" },
+      { "feature": "Stor matdatabas", "note": "Livsmedelsverket, USDA och CoFID" },
       { "feature": "Intermittent fasting-läge", "note": "Ej fokus för Calculeat" },
       { "feature": "Vattenkoll", "note": null },
       { "feature": "TDEE-beräkning", "note": "Yazio ger grundläggande kalorimål" },
@@ -445,7 +445,7 @@
     },
     "comparisonRows": [
       { "feature": "Kaloriloggning", "note": null },
-      { "feature": "Matdatabas", "note": "Calculeat: Livsmedelsverket + USDA" },
+      { "feature": "Matdatabas", "note": "Calculeat: Livsmedelsverket, USDA och CoFID" },
       { "feature": "Svenska", "note": "MacroFactor är primärt på engelska" },
       { "feature": "TDEE-beräkning", "note": "Båda beräknar individuellt TDEE" },
       { "feature": "Metabolisk kalibrering", "note": "Baseras på faktisk viktdata" },
@@ -576,7 +576,7 @@
     "comparisonRows": [
       { "feature": "Kaloriloggning", "note": null },
       { "feature": "Streckkodsskanning", "note": null },
-      { "feature": "Matdatabas", "note": "Calculeat: Livsmedelsverket + USDA" },
+      { "feature": "Matdatabas", "note": "Calculeat: Livsmedelsverket, USDA och CoFID" },
       { "feature": "TDEE-precision", "note": "Adaptiv TDEE vs statisk formel" },
       { "feature": "Metabolisk kalibrering", "note": "Justeras baserat på verklig viktdata" },
       { "feature": "Bulk/Cut-faser", "note": "Calculeat: separata mål per fas" },
