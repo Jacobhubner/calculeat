@@ -66,7 +66,10 @@ function getPasswordStrengthMeta(password: string): {
 }
 
 export default function SettingsPage() {
-  const { t } = useTranslation('profile')
+  // 'profile' först = default-namespace, så alla t('...') utan prefix på sidan
+  // fungerar oförändrat. 'food' behövs för källnamnen i livsmedelsdatabas-
+  // väljaren, som slås upp med prefix (food:tabs.slv).
+  const { t } = useTranslation(['profile', 'food'])
   const { t: tSettings } = useTranslation('settings')
   const navigate = useNavigate()
   const { user, deleteAccount, refreshProfile } = useAuth()
@@ -437,7 +440,9 @@ export default function SettingsPage() {
                       onClick={() => setFoodSourcePreference(value)}
                       aria-pressed={active}
                       className={cn(
-                        'rounded-lg border px-3 py-2.5 text-xs font-medium transition-colors',
+                        // min-h + flex: "Livsmedelsverket" bryts till två rader i
+                        // fyrkolumnsläget, och utan detta blir knapparna olika höga.
+                        'flex min-h-[2.75rem] items-center justify-center rounded-lg border px-2 py-2 text-center text-xs font-medium transition-colors',
                         active
                           ? 'border-primary-300 bg-primary-50 text-primary-700 dark:border-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
                           : 'border-neutral-200 text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-neutral-600'

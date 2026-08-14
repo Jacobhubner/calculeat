@@ -37,7 +37,9 @@ function ScoreBadge({ score }: { score: number }) {
 }
 
 export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
-  const { t } = useTranslation('today')
+  // 'today' först = default-namespace, så sidans övriga t('...') är oförändrade.
+  // 'food' måste laddas explicit för att food:tabs.* ska kunna slås upp.
+  const { t } = useTranslation(['today', 'food'])
   // Datakällornas labelKey ligger i food-namespacet och är dynamiska strängar
   // — i18next-typerna kan bara verifiera literaler i det egna namespacet.
   const tAny = t as (key: string) => string
