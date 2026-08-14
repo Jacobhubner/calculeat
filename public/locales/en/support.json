@@ -36,5 +36,13 @@
   "inboxEmpty": "No support tickets yet",
   "selectThread": "Select a ticket from the list",
   "noMessages": "No messages",
-  "noAccess": "You don't have permission to view this page."
+  "noAccess": "You don't have permission to view this page.",
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "edited": "edited",
+  "editButton": "Edit",
+  "deleteButton": "Delete",
+  "assignedToYou": "You're handling this",
+  "assignToMe": "Take ticket",
+  "unassign": "Leave"
 }

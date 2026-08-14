@@ -36,5 +36,13 @@
   "inboxEmpty": "Inga supportärenden ännu",
   "selectThread": "Välj ett ärende från listan",
   "noMessages": "Inga meddelanden",
-  "noAccess": "Du har inte behörighet att se den här sidan."
+  "noAccess": "Du har inte behörighet att se den här sidan.",
+  "today": "Idag",
+  "yesterday": "Igår",
+  "edited": "redigerad",
+  "editButton": "Redigera",
+  "deleteButton": "Radera",
+  "assignedToYou": "Du hanterar",
+  "assignToMe": "Ta ärendet",
+  "unassign": "Lämna"
 }

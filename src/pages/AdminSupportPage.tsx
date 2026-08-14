@@ -30,7 +30,7 @@ import { useSupportMessages, useAdminDeleteSupportMessage } from '@/hooks/useSup
 import { useSupportImageUpload } from '@/hooks/useSupportImageUpload'
 import { useAuth } from '@/contexts/AuthContext'
 import type { SupportInboxEntry, SupportMessage, SupportRpcResult } from '@/lib/types/support'
-import { MessageBubble } from '@/components/support/SupportMessageThread'
+import { MessageBubble, DateSeparator, isNewDay } from '@/components/support/SupportMessageThread'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useEffect, useRef } from 'react'
@@ -251,7 +251,7 @@ function AdminSupportThread({
             <p className="text-xs text-neutral-500 truncate dark:text-neutral-400">{entry.email}</p>
             {entry.assigned_admin_id && (
               <span className="shrink-0 text-[10px] bg-primary-50 text-primary-700 rounded px-1.5 py-0.5 leading-none font-medium dark:bg-primary-900/25 dark:text-primary-300">
-                {isAssignedToMe ? 'Du hanterar' : `@${entry.assigned_admin_username ?? '...'}`}
+                {isAssignedToMe ? t('assignedToYou') : `@${entry.assigned_admin_username ?? '...'}`}
               </span>
             )}
           </div>
@@ -270,7 +270,7 @@ function AdminSupportThread({
               ) : (
                 <UserMinus className="h-3 w-3" />
               )}
-              Lämna
+              {t('unassign')}
             </button>
           ) : (
             <button
@@ -284,7 +284,7 @@ function AdminSupportThread({
               ) : (
                 <UserCheck className="h-3 w-3" />
               )}
-              Ta ärendet
+              {t('assignToMe')}
             </button>
           )}
 
@@ -387,14 +387,16 @@ function AdminSupportThread({
             </button>
           </div>
         )}
-        {messages.map(msg => (
-          <MessageBubble
-            key={msg.id}
-            msg={msg}
-            isOwn={msg.sender_id === user?.id}
-            threadId={entry.thread_id}
-            onAdminDelete={deleteMessage}
-          />
+        {messages.map((msg, i) => (
+          <div key={msg.id}>
+            {isNewDay(msg, messages[i - 1]) && <DateSeparator iso={msg.created_at} />}
+            <MessageBubble
+              msg={msg}
+              isOwn={msg.sender_id === user?.id}
+              threadId={entry.thread_id}
+              onAdminDelete={deleteMessage}
+            />
+          </div>
         ))}
       </div>
 

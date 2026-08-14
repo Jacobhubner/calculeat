@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
-import { format, parseISO } from 'date-fns'
-import { sv, enUS } from 'date-fns/locale'
+import { format, parseISO, isToday, isYesterday, isSameDay } from 'date-fns'
+import { sv, enUS, type Locale } from 'date-fns/locale'
 import { Loader2, Check, CheckCheck, Pencil, X, Send, ImageOff } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from '@tanstack/react-query'
@@ -17,6 +17,48 @@ import type { SupportMessage } from '@/lib/types/support'
 
 function getDateLocale() {
   return i18n.language === 'sv' ? sv : enUS
+}
+
+/**
+ * Meddelandebubblan visade bara "HH:mm" — precis som i vanliga chattar
+ * mellan vänner, men utan datum kan man inte se om ett svar kom samma dag
+ * eller flera dagar senare. isSameDay/isYesterday ger "Idag"/"Igår" som i
+ * WhatsApp/iMessage; äldre datum får kort datumformat.
+ */
+function formatMessageStamp(iso: string, locale: Locale) {
+  const date = parseISO(iso)
+  const time = format(date, 'HH:mm', { locale })
+  if (isToday(date)) return time
+  if (isYesterday(date)) return `${i18n.t('support:yesterday')} ${time}`
+  return `${format(date, 'd MMM', { locale })} ${time}`
+}
+
+/** Dagseparator mellan meddelandeklumpar — samma mönster som formatMessageStamp. */
+function formatDaySeparator(iso: string, locale: Locale) {
+  const date = parseISO(iso)
+  if (isToday(date)) return i18n.t('support:today')
+  if (isYesterday(date)) return i18n.t('support:yesterday')
+  return format(date, 'd MMMM yyyy', { locale })
+}
+
+/**
+ * Delad av kundens chattpanel och adminvyn — visar "Idag"/"Igår"/datum en
+ * gång per dag i stället för att upprepa det på varje bubbla.
+ */
+export function DateSeparator({ iso }: { iso: string }) {
+  return (
+    <div className="flex items-center justify-center py-1">
+      <span className="text-[10px] font-medium text-neutral-400 bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-500 rounded-full px-2.5 py-0.5">
+        {formatDaySeparator(iso, getDateLocale())}
+      </span>
+    </div>
+  )
+}
+
+/** True om msg börjar en ny kalenderdag jämfört med föregående meddelande. */
+export function isNewDay(msg: SupportMessage, prev: SupportMessage | undefined) {
+  if (!prev) return true
+  return !isSameDay(parseISO(msg.created_at), parseISO(prev.created_at))
 }
 
 const SIGNED_URL_TTL_SECONDS = 3600
@@ -227,7 +269,7 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
                     setShowMenu(false)
                   }}
                   className="h-6 w-6 flex items-center justify-center rounded-md text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:text-neutral-500"
-                  title="Redigera"
+                  title={t('editButton')}
                 >
                   <Pencil className="h-3 w-3" />
                 </button>
@@ -237,7 +279,7 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
                   type="button"
                   onClick={() => onAdminDelete!(msg.id)}
                   className="h-6 w-6 flex items-center justify-center rounded-md text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:text-neutral-500"
-                  title="Radera"
+                  title={t('deleteButton')}
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -253,14 +295,14 @@ export function MessageBubble({ msg, isOwn, threadId, onAdminDelete }: MessageBu
           >
             {!isDeleted && (
               <span className="text-[9px] text-neutral-400 dark:text-neutral-500">
-                {format(parseISO(msg.created_at), 'HH:mm', { locale: getDateLocale() })}
+                {formatMessageStamp(msg.created_at, getDateLocale())}
                 {msg.edited_at && msg.original_content && (
                   <button
                     type="button"
                     onClick={() => setShowOriginal(v => !v)}
                     className="ml-1 italic underline underline-offset-2 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
                   >
-                    redigerad
+                    {t('edited')}
                   </button>
                 )}
               </span>
@@ -405,13 +447,11 @@ export function SupportMessageThread({ threadId, isPanelOpen }: Props) {
       )}
 
       {threadId &&
-        messages.map(msg => (
-          <MessageBubble
-            key={msg.id}
-            msg={msg}
-            isOwn={msg.sender_id === user?.id}
-            threadId={threadId}
-          />
+        messages.map((msg, i) => (
+          <div key={msg.id}>
+            {isNewDay(msg, messages[i - 1]) && <DateSeparator iso={msg.created_at} />}
+            <MessageBubble msg={msg} isOwn={msg.sender_id === user?.id} threadId={threadId} />
+          </div>
         ))}
     </div>
   )
