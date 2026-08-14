@@ -424,14 +424,16 @@
       "householdHoursSingular": "hour",
       "householdHoursPlural": "hours",
       "section4Title": "4. SPA factor",
-      "section4Desc": "Spontaneous Physical Activity — your unconscious movements throughout the day",
+      "section4Desc": "How much you move without thinking about it — fidgeting, pacing, standing up. Most people leave this untouched.",
       "spaLabel": "Select your SPA factor",
       "spaLow": "Low spontaneous activity",
       "spaNormal": "Normal spontaneous activity",
       "spaHigh": "High spontaneous activity",
       "spaVeryHigh": "Very high spontaneous activity",
       "spaTip": "Tip: Most people should use 1.00 (default value). Use lower values if you are unusually sedentary and higher if you are constantly moving in ways not captured by training or steps.",
-      "basedOn": "Based on your activity information"
+      "basedOn": "Based on your activity information",
+      "spaAdvancedToggle": "Advanced: fine-tune for spontaneous movement",
+      "missingTitle": "Fill in these to see your result:"
     }
   },
   "missingFieldAlert": {

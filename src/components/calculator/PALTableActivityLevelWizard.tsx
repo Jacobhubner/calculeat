@@ -109,6 +109,28 @@ export default function PALTableActivityLevelWizard({
     return tdee / bmr
   }, [bmr, tdee, allRequiredFieldsFilled])
 
+  // Vilka fält som återstår. Formuläret har nio fält men bara fyra är
+  // obligatoriska, och tidigare hände ingenting alls tills alla fyra var ifyllda
+  // — utan att säga vilket som saknades. Användaren fick gissa.
+  const missingFields = useMemo(() => {
+    const missing: string[] = []
+    if (!(trainingDays > 0)) missing.push(t('tdeeCalc.wizard.trainingDaysLabel'))
+    if (!(trainingMinutes > 0)) missing.push(t('tdeeCalc.wizard.trainingMinsLabel'))
+    if (!trainingActivityId) missing.push(t('tdeeCalc.wizard.activitySelectLabel'))
+    if (!(stepsPerDay > 0)) missing.push(t('tdeeCalc.wizard.stepsLabel'))
+    if (householdHours > 0 && !householdActivityId)
+      missing.push(t('tdeeCalc.wizard.householdSelectLabel'))
+    return missing
+  }, [
+    trainingDays,
+    trainingMinutes,
+    trainingActivityId,
+    stepsPerDay,
+    householdHours,
+    householdActivityId,
+    t,
+  ])
+
   if (!register) {
     return (
       <div className="p-4 text-center text-sm text-neutral-600 dark:text-neutral-400">
@@ -331,61 +353,92 @@ export default function PALTableActivityLevelWizard({
           </div>
         </div>
 
-        {/* Sektion 4: SPA-faktor */}
-        <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200 dark:border-primary-800 dark:bg-neutral-850/50">
-          <div>
-            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
-              {t('tdeeCalc.wizard.section4Title')}
-            </h3>
-            <p className="text-sm text-neutral-600 mt-1 dark:text-neutral-400">
-              {t('tdeeCalc.wizard.section4Desc')}
-            </p>
-          </div>
+        {/* SPA bakom Avancerat: reglaget spänner 0.95-1.15, alltså ~480 kcal
+            på ett TDEE runt 2400 — men tipstexten säger själv att de flesta
+            ska lämna det på 1.00. Att be användaren gissa på något de inte kan
+            veta, med den effekten, hör inte hemma i grundflödet. Förvalt värde
+            gäller när lådan lämnas stängd. */}
+        <details className="group">
+          <summary className="cursor-pointer text-sm text-primary-600 hover:text-primary-700 select-none dark:text-primary-400 dark:hover:text-primary-300">
+            {t('tdeeCalc.wizard.spaAdvancedToggle')}
+          </summary>
+          <div className="mt-3">
+            {/* Sektion 4: SPA-faktor */}
+            <div className="space-y-4 p-4 bg-white/50 rounded-lg border border-primary-200 dark:border-primary-800 dark:bg-neutral-850/50">
+              <div>
+                <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-100">
+                  {t('tdeeCalc.wizard.section4Title')}
+                </h3>
+                <p className="text-sm text-neutral-600 mt-1 dark:text-neutral-400">
+                  {t('tdeeCalc.wizard.section4Desc')}
+                </p>
+              </div>
 
-          {/* SPA Slider */}
-          <div>
-            <Label htmlFor="spa-factor">{t('tdeeCalc.wizard.spaLabel')}</Label>
-            <div className="flex items-center gap-4 mt-2">
-              <span className="text-sm text-neutral-600 font-medium dark:text-neutral-400">
-                0.95
-              </span>
-              <input
-                id="spa-factor"
-                type="range"
-                min="0.95"
-                max="1.15"
-                step="0.01"
-                defaultValue="1.00"
-                className="flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-primary-600 dark:bg-neutral-700"
-                {...register('spa_factor', { valueAsNumber: true })}
-              />
-              <span className="text-sm text-neutral-600 font-medium dark:text-neutral-400">
-                1.15
-              </span>
-            </div>
-            <div className="text-center mt-2">
-              <span className="text-3xl font-bold text-primary-600 dark:text-primary-300">
-                {spaFactor.toFixed(2)}
-              </span>
-              <p className="text-xs text-neutral-500 mt-1 dark:text-neutral-400">
-                {spaFactor < 1.0
-                  ? t('tdeeCalc.wizard.spaLow')
-                  : spaFactor === 1.0
-                    ? t('tdeeCalc.wizard.spaNormal')
-                    : spaFactor <= 1.1
-                      ? t('tdeeCalc.wizard.spaHigh')
-                      : t('tdeeCalc.wizard.spaVeryHigh')}
-              </p>
-            </div>
-          </div>
+              {/* SPA Slider */}
+              <div>
+                <Label htmlFor="spa-factor">{t('tdeeCalc.wizard.spaLabel')}</Label>
+                <div className="flex items-center gap-4 mt-2">
+                  <span className="text-sm text-neutral-600 font-medium dark:text-neutral-400">
+                    0.95
+                  </span>
+                  <input
+                    id="spa-factor"
+                    type="range"
+                    min="0.95"
+                    max="1.15"
+                    step="0.01"
+                    defaultValue="1.00"
+                    className="flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer accent-primary-600 dark:bg-neutral-700"
+                    {...register('spa_factor', { valueAsNumber: true })}
+                  />
+                  <span className="text-sm text-neutral-600 font-medium dark:text-neutral-400">
+                    1.15
+                  </span>
+                </div>
+                <div className="text-center mt-2">
+                  <span className="text-3xl font-bold text-primary-600 dark:text-primary-300">
+                    {spaFactor.toFixed(2)}
+                  </span>
+                  <p className="text-xs text-neutral-500 mt-1 dark:text-neutral-400">
+                    {spaFactor < 1.0
+                      ? t('tdeeCalc.wizard.spaLow')
+                      : spaFactor === 1.0
+                        ? t('tdeeCalc.wizard.spaNormal')
+                        : spaFactor <= 1.1
+                          ? t('tdeeCalc.wizard.spaHigh')
+                          : t('tdeeCalc.wizard.spaVeryHigh')}
+                  </p>
+                </div>
+              </div>
 
-          {/* Tips-ruta */}
-          <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 dark:border-neutral-700 dark:bg-neutral-900">
-            <p className="text-sm text-neutral-700 dark:text-neutral-200">
-              {t('tdeeCalc.wizard.spaTip')}
-            </p>
+              {/* Tips-ruta */}
+              <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-3 dark:border-neutral-700 dark:bg-neutral-900">
+                <p className="text-sm text-neutral-700 dark:text-neutral-200">
+                  {t('tdeeCalc.wizard.spaTip')}
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
+        </details>
+
+        {/* Vad som återstår. Utan detta var enda återkopplingen att ingenting
+            hände — nio fält på skärmen, fyra obligatoriska, ingen ledtråd om
+            vilka. */}
+        {missingFields.length > 0 && (
+          <div
+            role="status"
+            className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm dark:border-amber-700/60 dark:bg-amber-900/20"
+          >
+            <p className="font-medium text-amber-900 dark:text-amber-100">
+              {t('tdeeCalc.wizard.missingTitle')}
+            </p>
+            <ul className="mt-1 list-disc pl-5 text-amber-800 dark:text-amber-200">
+              {missingFields.map(f => (
+                <li key={f}>{f}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       {/* Sticky bottom bar — visas när PAL är beräknat */}

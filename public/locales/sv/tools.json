@@ -424,14 +424,16 @@
       "householdHoursSingular": "timme",
       "householdHoursPlural": "timmar",
       "section4Title": "4. SPA-faktor",
-      "section4Desc": "Spontaneous Physical Activity - dina omedvetna rörelser under dagen",
+      "section4Desc": "Hur mycket du rör dig omedvetet under dagen — pillar, går runt, står upp. De flesta lämnar detta orört.",
       "spaLabel": "Välj din SPA-faktor",
       "spaLow": "Låg spontan aktivitet",
       "spaNormal": "Normal spontan aktivitet",
       "spaHigh": "Hög spontan aktivitet",
       "spaVeryHigh": "Mycket hög spontan aktivitet",
       "spaTip": "Tips: De flesta bör använda 1,00 (normalvärde). Använd lägre värden om du är ovanligt stillasittande och högre om du är konstant i rörelse utan att det syns i träning eller steg.",
-      "basedOn": "Baserat på din aktivitetsinformation"
+      "basedOn": "Baserat på din aktivitetsinformation",
+      "spaAdvancedToggle": "Avancerat: finjustera för spontan rörelse",
+      "missingTitle": "Fyll i detta för att få ditt resultat:"
     }
   },
   "missingFieldAlert": {

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { Save, User } from 'lucide-react'
@@ -222,12 +222,27 @@ export default function TDEECalculatorTool() {
     setBmrFormula(formula)
   }
 
+  // Systemväljaren ligger inuti <details>-blocket medan tabellen renderas
+  // utanför det. Byter man till "Beräkna din aktivitetsnivå" ersätts en liten
+  // dropdown av ett formulär på nio fält som växer fram långt nedanför — sidan
+  // hoppar och det ser ut som en omladdning. Scrollen tar användaren dit.
+  const palTableRef = useRef<HTMLDivElement>(null)
+
   const handlePalSystemChange = (system: PALSystem | '') => {
     if (system && isPalLocked(system)) {
       openUpgradeModal()
       return
     }
     setPalSystem(system)
+    if (!system) return
+    // Efter renderingen av den nya tabellen, annars scrollar vi till den gamla.
+    requestAnimationFrame(() => {
+      const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+      palTableRef.current?.scrollIntoView({
+        behavior: reduced ? 'auto' : 'smooth',
+        block: 'start',
+      })
+    })
   }
 
   const premiumSuffix = (locked: boolean) => (locked ? ' — Premium' : '')
@@ -909,7 +924,7 @@ export default function TDEECalculatorTool() {
 
                 {/* Show PAL table if system is selected */}
                 {palSystem && (
-                  <div className="mt-4">
+                  <div className="mt-4" ref={palTableRef}>
                     <PALTableContainer
                       system={palSystem}
                       register={register}
