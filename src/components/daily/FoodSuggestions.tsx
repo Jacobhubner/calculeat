@@ -8,6 +8,7 @@ import { ToolInfoButton } from '@/components/daily/ToolInfoButton'
 import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
+import { DATA_SOURCES } from '@/lib/constants/dataSources'
 import { useTranslation } from 'react-i18next'
 
 interface FoodSuggestionsProps {
@@ -37,6 +38,9 @@ function ScoreBadge({ score }: { score: number }) {
 
 export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
   const { t } = useTranslation('today')
+  // Datakällornas labelKey ligger i food-namespacet och är dynamiska strängar
+  // — i18next-typerna kan bara verifiera literaler i det egna namespacet.
+  const tAny = t as (key: string) => string
   const showEnergyDensity = useShowEnergyDensity()
 
   const [targetCalories, setTargetCalories] = useState<number | ''>('')
@@ -293,14 +297,16 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
             <div className="flex items-center gap-3">
               <Label className="text-xs shrink-0">{t('foodSuggestions.settings.source')}</Label>
               <div className="flex gap-1 flex-wrap">
-                {(
-                  [
-                    { key: 'alla', labelKey: 'settings.sourceAll' },
-                    { key: 'mina', labelKey: 'settings.sourceMine' },
-                    { key: 'slv', labelKey: 'settings.sourceSlv' },
-                    { key: 'usda', labelKey: 'settings.sourceUsda' },
-                  ] as const
-                ).map(s => (
+                {/* Datakällorna kommer ur DATA_SOURCES; 'alla' och 'mina' är
+                    virtuella filter utan motsvarande källa i registret. */}
+                {[
+                  { key: 'alla' as const, label: t('foodSuggestions.settings.sourceAll') },
+                  { key: 'mina' as const, label: t('foodSuggestions.settings.sourceMine') },
+                  ...DATA_SOURCES.map(ds => ({
+                    key: ds.tabKey,
+                    label: tAny(`food:${ds.labelKey}`),
+                  })),
+                ].map(s => (
                   <button
                     key={s.key}
                     onClick={() => setSourceFilter(s.key)}
@@ -310,7 +316,7 @@ export function FoodSuggestions({ onAddToMeal }: FoodSuggestionsProps) {
                         : 'bg-white dark:bg-neutral-850 text-neutral-500 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-500'
                     }`}
                   >
-                    {t(`foodSuggestions.${s.labelKey}`)}
+                    {s.label}
                   </button>
                 ))}
               </div>

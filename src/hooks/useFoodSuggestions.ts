@@ -6,9 +6,14 @@ import {
   type FoodGoalMatch,
 } from '@/lib/utils/findBestFoodsForGoals'
 import type { FoodColor } from '@/lib/calculations/colorDensity'
-import type { FoodSource } from './useFoodItems'
+import type { FoodSource, FoodTab } from './useFoodItems'
+import { getDataSourceByTabKey, getAllSourceIds } from '@/lib/constants/dataSources'
 
-export type SuggestionSourceFilter = 'alla' | 'mina' | 'slv' | 'usda'
+/**
+ * 'alla' och 'mina' är virtuella filter; övriga värden är tabKey ur
+ * DATA_SOURCES, så en ny datakälla blir giltig utan att typen ändras.
+ */
+export type SuggestionSourceFilter = 'alla' | 'mina' | FoodTab
 
 export interface FoodSuggestionParams {
   targetCalories: number
@@ -53,18 +58,16 @@ export function useFoodSuggestions(
       return []
     }
 
-    // Filter by source
+    // Filter by source — datakällorna slås upp i DATA_SOURCES i stället för
+    // en case per källa, så en ny källa fungerar utan ändring här.
     const sourcesToInclude: FoodSource[] = (() => {
-      switch (params.sourceFilter) {
-        case 'mina':
-          return ['user', 'manual']
-        case 'slv':
-          return ['livsmedelsverket']
-        case 'usda':
-          return ['usda']
-        default:
-          return ['user', 'manual', 'livsmedelsverket', 'usda']
-      }
+      if (params.sourceFilter === 'mina') return ['user', 'manual']
+      const dataSource = params.sourceFilter
+        ? getDataSourceByTabKey(params.sourceFilter)
+        : undefined
+      if (dataSource) return [dataSource.id as FoodSource]
+      // 'alla', utelämnat filter och okända värden: egna + alla registrerade
+      return ['user', 'manual', ...(getAllSourceIds() as FoodSource[])]
     })()
     const filteredFoods = foods.filter(f => sourcesToInclude.includes(f.source))
 

@@ -25,6 +25,7 @@ import { NutritionPreview } from './NutritionPreview'
 import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
 import { toast } from 'sonner'
 import { SOURCE_BADGES, getListItemBadgeConfig } from '@/lib/constants/sourceBadges'
+import { DATA_SOURCES } from '@/lib/constants/dataSources'
 import { AddFoodItemModal } from '@/components/food/AddFoodItemModal'
 import { CopyToCalculeatPrompt } from '@/components/food/CopyToCalculeatPrompt'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
@@ -94,11 +95,13 @@ export function AddFoodToMealModal({
   const { isPreviewMode } = useAuth()
   const [copyPrompt, setCopyPrompt] = useState<FoodItem | null>(null)
 
+  // Datakällsflikarna kommer ur DATA_SOURCES — tidigare var de uppräknade
+  // här och i allTabs nedan, frikopplat från registret, så en ny källa hade
+  // behövt läggas till på båda ställena.
   const STATIC_TABS: { key: FoodTab; label: string }[] = [
     { key: 'mina', label: t('tabs.mine') },
     { key: 'calculeat', label: t('tabs.calculeat') },
-    { key: 'slv', label: t('tabs.slv') },
-    { key: 'usda', label: t('tabs.usda') },
+    ...DATA_SOURCES.map(ds => ({ key: ds.tabKey, label: tAny(ds.labelKey) })),
     { key: 'alla', label: t('tabs.all') },
   ]
 
@@ -180,17 +183,18 @@ export function AddFoodToMealModal({
 
   const allTabs = useMemo<{ key: FoodTab; label: string }[]>(
     () => [
-      STATIC_TABS.find(t => t.key === 'alla')!,
-      STATIC_TABS.find(t => t.key === 'mina')!,
-      STATIC_TABS.find(t => t.key === 'calculeat')!,
-      STATIC_TABS.find(t => t.key === 'slv')!,
-      STATIC_TABS.find(t => t.key === 'usda')!,
+      STATIC_TABS.find(tab => tab.key === 'alla')!,
+      STATIC_TABS.find(tab => tab.key === 'mina')!,
+      STATIC_TABS.find(tab => tab.key === 'calculeat')!,
+      // Datakällorna i registrets ordning, i stället för uppräknade per namn
+      ...DATA_SOURCES.map(ds => STATIC_TABS.find(tab => tab.key === ds.tabKey)!),
       ...sharedLists.map(list => ({
         key: `list:${list.id}` as FoodTab,
         label: list.name,
       })),
     ],
-    [sharedLists]
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- STATIC_TABS byggs om varje render men innehållet ändras bara med språket
+    [sharedLists, t]
   )
   const addFoodToMeal = useAddFoodToMeal()
   const createMealEntry = useCreateMealEntry()
@@ -203,7 +207,7 @@ export function AddFoodToMealModal({
   }, [searchQuery])
 
   // Dead-tab guard: om aktiv lista-flik försvinner, falla tillbaka till 'mina'
-  /* eslint-disable react-hooks/set-state-in-effect -- Legitimate pattern for resetting tab state */
+
   useEffect(() => {
     if (!activeTab.startsWith('list:')) return
     const listId = activeTab.slice(5)
@@ -211,10 +215,9 @@ export function AddFoodToMealModal({
       setActiveTab('alla')
     }
   }, [sharedLists, activeTab])
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Reset page on tab/search/filter change
-  /* eslint-disable react-hooks/set-state-in-effect -- Legitimate pattern for resetting pagination state */
+
   useEffect(() => {
     setPage(0)
   }, [activeTab, debouncedSearch, colorFilter, recipeFilter])
@@ -224,7 +227,6 @@ export function AddFoodToMealModal({
     setColorFilter(null)
     setRecipeFilter(null)
   }, [activeTab])
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Paginated data via RPC
   const { data: paginatedData, isLoading: foodsLoading } = usePaginatedFoodItems({
@@ -251,13 +253,12 @@ export function AddFoodToMealModal({
     recentFoods.length > 0
 
   // Page clamping
-  /* eslint-disable react-hooks/set-state-in-effect -- Legitimate pattern for clamping page on data change */
+
   useEffect(() => {
     if (paginatedData && page >= paginatedData.totalPages && paginatedData.totalPages > 0) {
       setPage(paginatedData.totalPages - 1)
     }
   }, [paginatedData, page])
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Reset form state
   const resetForm = useCallback(() => {
@@ -306,7 +307,7 @@ export function AddFoodToMealModal({
   }, [mealName, mealSettings, preselectedFood, editItem])
 
   // Handle modal open/close
-  /* eslint-disable react-hooks/set-state-in-effect -- Legitimate pattern for syncing state on open/close */
+
   useEffect(() => {
     if (open && !prevOpenRef.current) {
       initializeForm()
@@ -319,7 +320,6 @@ export function AddFoodToMealModal({
     }
     prevOpenRef.current = open
   }, [open, initializeForm, resetForm])
-  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Nutrition preview
   const nutritionPreview = useMemo(() => {

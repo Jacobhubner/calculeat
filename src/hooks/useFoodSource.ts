@@ -1,13 +1,29 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import { DATA_SOURCES, getDataSourceForLocale } from '@/lib/constants/dataSources'
+import type { FoodTab } from '@/hooks/useFoodItems'
 
-export type PreferredFoodSource = 'slv' | 'usda' | 'auto'
-export type ResolvedFoodSource = 'slv' | 'usda'
+/**
+ * 'auto' låter språket avgöra; övriga värden är tabKey från DATA_SOURCES.
+ * Typen härleds ur registret i stället för att räknas upp, så en ny källa
+ * blir giltig automatiskt.
+ */
+export type PreferredFoodSource = FoodTab | 'auto'
+export type ResolvedFoodSource = FoodTab
 
 const STORAGE_KEY = 'calculeat_food_source_preference'
 
+/**
+ * Sista utväg när varken preferens eller språk matchar en känd källa
+ * (t.ex. 'de-DE'). USDA är bredast i innehåll och engelskspråkig, så den
+ * fungerar bäst för användare utan egen nationell databas — samma val som
+ * den tidigare `locale.startsWith('sv') ? 'slv' : 'usda'` gjorde.
+ */
+const FALLBACK_SOURCE: ResolvedFoodSource = 'usda'
+
 function isValidPreference(value: unknown): value is PreferredFoodSource {
-  return value === 'slv' || value === 'usda' || value === 'auto'
+  if (value === 'auto') return true
+  return DATA_SOURCES.some(ds => ds.tabKey === value)
 }
 
 function readFromStorage(): PreferredFoodSource {
@@ -20,11 +36,17 @@ function readFromStorage(): PreferredFoodSource {
   return 'auto'
 }
 
+/**
+ * Slår upp källan i registret i stället för en hårdkodad if-sats.
+ *
+ * Tidigare gällde `locale.startsWith('sv') ? 'slv' : 'usda'`, vilket inte
+ * kunde skilja en-GB från en-US — brittiska användare fick USDA som
+ * förstahandskälla. Nu bestämmer primaryLocales i DATA_SOURCES, så en ny
+ * källa (t.ex. brittisk CoFID på 'en-GB') fungerar utan ändring här.
+ */
 function resolveSource(preference: PreferredFoodSource, locale: string): ResolvedFoodSource {
-  if (preference === 'slv') return 'slv'
-  if (preference === 'usda') return 'usda'
-  // 'auto': derive from locale
-  return locale.startsWith('sv') ? 'slv' : 'usda'
+  if (preference !== 'auto') return preference
+  return getDataSourceForLocale(locale)?.tabKey ?? FALLBACK_SOURCE
 }
 
 export interface UseFoodSourceResult {
@@ -37,13 +59,9 @@ export function useFoodSource(): UseFoodSourceResult {
   const { i18n } = useTranslation()
   const [preference, setPreferenceState] = useState<PreferredFoodSource>(readFromStorage)
 
+  // Härleds synkront ur preferens + språk. useTranslation triggar omrendering
+  // vid språkbyte, så värdet räknas om automatiskt — ingen effekt behövs.
   const resolved = resolveSource(preference, i18n.language)
-
-  // Re-resolve if language changes (only affects 'auto' preference)
-  useEffect(() => {
-    // No state to update — resolved is derived synchronously from preference + language.
-    // This effect intentionally empty; resolved re-computes on every render when i18n.language changes.
-  }, [i18n.language])
 
   const setPreference = useCallback((value: PreferredFoodSource) => {
     setPreferenceState(value)

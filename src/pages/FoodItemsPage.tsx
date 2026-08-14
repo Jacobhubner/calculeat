@@ -243,28 +243,30 @@ const PAGE_SIZE = 50
 
 export default function FoodItemsPage() {
   const { t, i18n } = useTranslation('food')
+  // labelKey i DATA_SOURCES är en dynamisk sträng — i18next-typerna kan bara
+  // verifiera literaler, så uppslag ur registret går via den här.
+  const tAny = t as (key: string) => string
   const queryClient = useQueryClient()
   const { resolved: resolvedSource } = useFoodSource()
   const showEnergyDensity = useShowEnergyDensity()
 
-  // Primary datasource tab driven by resolvedSource from DataSourceConfig
-  const primaryDataSourceTab = useMemo<FoodTab>(() => {
-    const ds = DATA_SOURCES.find(s => s.id === resolvedSource || s.tabKey === resolvedSource)
-    return (ds?.tabKey ?? 'slv') as FoodTab
-  }, [resolvedSource])
+  // useFoodSource returnerar redan en tabKey ur registret
+  const primaryDataSourceTab = resolvedSource
 
-  // Static tabs: Alla | Mina | Calculeat | SLV | USDA — always show all datasources
+  // Static tabs: Alla | Mina | Calculeat | + en flik per datakälla i registret
   const STATIC_TABS = useMemo<{ key: FoodTab; label: string }[]>(
     () => [
       { key: 'alla', label: t('tabs.all') },
       { key: 'mina', label: t('tabs.mine') },
       { key: 'calculeat', label: t('tabs.calculeat') },
+      // labelKey kommer ur registret — tidigare avgjorde en ternär mellan
+      // exakt två källor, vilket tyst hade gett fel etikett på en tredje.
       ...DATA_SOURCES.map(ds => ({
         key: ds.tabKey,
-        label: ds.tabKey === 'usda' ? t('tabs.usda') : t('tabs.slv'),
+        label: tAny(ds.labelKey),
       })),
     ],
-    [t]
+    [t, tAny]
   )
 
   const { data: isAdmin = false } = useIsAdmin()

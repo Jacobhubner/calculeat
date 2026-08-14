@@ -5,6 +5,11 @@ export interface DataSourceConfig {
   tabKey: FoodTab
   labelKey: string
   badgeClass: string
+  /**
+   * Locales där källan är förstahandsval, mest specifik först.
+   * BCP 47-prefix: 'en-GB' matchar bara brittisk engelska, 'en' matchar all
+   * engelska. Matchningen är prefixbaserad, så 'sv' fångar även 'sv-SE'.
+   */
   primaryLocales: string[]
   defaultQualityScore: number
   isVerified: boolean
@@ -31,7 +36,9 @@ export const DATA_SOURCES: DataSourceConfig[] = [
     labelKey: 'tabs.usda',
     badgeClass:
       'bg-blue-100 text-blue-700 border-blue-400 dark:bg-blue-500/20 dark:text-blue-200 dark:border-blue-600',
-    primaryLocales: ['en'],
+    // 'en-US' först så en framtida brittisk källa (CoFID) kan ta 'en-GB' utan
+    // att krocka; 'en' kvar som bred fallback för övrig engelska.
+    primaryLocales: ['en-US', 'en'],
     defaultQualityScore: 90,
     isVerified: true,
     sourcePriority: 90,
@@ -39,7 +46,40 @@ export const DATA_SOURCES: DataSourceConfig[] = [
   },
 ]
 
-export function getDataSourceByTabKey(tabKey: FoodTab): DataSourceConfig | undefined {
+/**
+ * Källa vars primaryLocales bäst matchar angiven locale.
+ *
+ * Väljer mest specifik träff: för 'en-GB' vinner en källa med 'en-GB' över en
+ * med bara 'en'. Utan träff returneras undefined — anroparen avgör fallback.
+ *
+ * Ersätter tidigare hårdkodad `locale.startsWith('sv') ? 'slv' : 'usda'`, som
+ * inte kunde skilja en-GB från en-US och därför gav brittiska användare USDA.
+ */
+export function getDataSourceForLocale(locale: string): DataSourceConfig | undefined {
+  const normalized = locale.toLowerCase()
+  let best: { source: DataSourceConfig; specificity: number } | undefined
+
+  for (const source of DATA_SOURCES) {
+    for (const candidate of source.primaryLocales) {
+      const lc = candidate.toLowerCase()
+      // Exakt ('en-gb' mot 'en-gb') eller prefix på subtag-gräns ('en' mot 'en-gb').
+      if (normalized !== lc && !normalized.startsWith(`${lc}-`)) continue
+      // Längre mönster = mer specifikt, vinner över bredare träff.
+      if (!best || lc.length > best.specificity) {
+        best = { source, specificity: lc.length }
+      }
+    }
+  }
+
+  return best?.source
+}
+
+/**
+ * Tar `string` snarare än `FoodTab`: anroparna har ofta bredare unioner som
+ * även rymmer virtuella flikar ('alla', 'mina'). Funktionen returnerar ändå
+ * undefined vid miss, så en snävare signatur hade bara tvingat fram cast.
+ */
+export function getDataSourceByTabKey(tabKey: string): DataSourceConfig | undefined {
   return DATA_SOURCES.find(ds => ds.tabKey === tabKey)
 }
 
