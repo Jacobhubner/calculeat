@@ -10,6 +10,8 @@ import { toast } from 'sonner'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { SubscriptionSection } from '@/components/premium/SubscriptionSection'
+import { TimeZoneChangePrompt } from '@/components/settings/TimeZoneChangePrompt'
+import { deviceTimeZone } from '@/lib/utils/localDate'
 import { Button } from '@/components/ui/button'
 import {
   AlertTriangle,
@@ -488,6 +490,9 @@ export default function SettingsPage() {
               <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-3">
                 {t('settings.dayCompletion')}
               </p>
+              {/* Ligger här snarare än som global overlay: en tidszonsändring är
+                  inte brådskande, och frågan hör ihop med dygnsgränsen nedan. */}
+              <TimeZoneChangePrompt />
               <div className="space-y-2">
                 <label
                   className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
@@ -538,6 +543,23 @@ export default function SettingsPage() {
                   </div>
                 </label>
               </div>
+              {/* Visas bara i auto-läge: i manuellt läge bestämmer användaren
+                  själv när dagen bryts, och tidszonen saknar då betydelse. */}
+              {completionMode === 'auto' && (
+                <div className="mt-3 rounded-lg border border-neutral-200 p-3 dark:border-neutral-700">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-medium text-neutral-700 dark:text-neutral-300">
+                      {t('settings.timezoneLabel')}
+                    </span>
+                    <span className="text-xs text-neutral-600 dark:text-neutral-400">
+                      {(profile?.timezone ?? deviceTimeZone() ?? '').replace(/_/g, ' ')}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                    {t('settings.timezoneDesc')}
+                  </p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>

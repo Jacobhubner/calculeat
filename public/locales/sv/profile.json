@@ -194,6 +194,8 @@
     "toastAuto": "Dagen avslutas nu av sig själv när du öppnar appen nästa dag",
     "toastManual": "Du avslutar nu dagen manuellt med knappen",
     "completionModeError": "Kunde inte spara inställningen. Försök igen.",
+    "timezoneLabel": "Tidszon",
+    "timezoneDesc": "Dygnet räknas efter denna tidszon. Den ställs in automatiskt efter din enhet — reser du frågar vi innan något ändras.",
     "loading": "Laddar...",
     "account": "Konto",
     "username": "Användarnamn",
@@ -428,5 +430,11 @@
     "labelKcal": "Kalorier",
     "labelPerKg": "Per kg",
     "labelPerKgFFM": "Per kg FFM"
+  },
+  "timezone": {
+    "detectedTitle": "Du verkar vara i {{city}}",
+    "detectedBody": "Din dagavslutning följer {{current}}. Vill du räkna dygnet efter {{detected}} i stället?",
+    "switchTo": "Byt till {{city}}",
+    "keep": "Behåll {{city}}"
   }
 }

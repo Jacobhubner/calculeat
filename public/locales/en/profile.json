@@ -194,6 +194,8 @@
     "toastAuto": "The day will now close itself when you next open the app",
     "toastManual": "You will now end the day manually with the button",
     "completionModeError": "Could not save the setting. Please try again.",
+    "timezoneLabel": "Time zone",
+    "timezoneDesc": "Your day is counted by this time zone. It's set automatically from your device — if you travel, we'll ask before changing anything.",
     "loading": "Loading...",
     "account": "Account",
     "username": "Username",
@@ -428,5 +430,11 @@
     "labelKcal": "Calories",
     "labelPerKg": "Per kg",
     "labelPerKgFFM": "Per kg FFM"
+  },
+  "timezone": {
+    "detectedTitle": "You appear to be in {{city}}",
+    "detectedBody": "Your day currently follows {{current}}. Would you like to count the day by {{detected}} instead?",
+    "switchTo": "Switch to {{city}}",
+    "keep": "Keep {{city}}"
   }
 }

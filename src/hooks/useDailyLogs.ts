@@ -130,7 +130,7 @@ export interface DailyLog {
 export function useTodayLog() {
   const { user, isPreviewMode } = useAuth()
   const activeProfile = useProfileStore(state => state.activeProfile)
-  const today = localDateString()
+  const today = localDateString(new Date(), activeProfile?.timezone)
   const completionMode = activeProfile?.day_completion_mode ?? 'manual'
   const queryClient = useQueryClient()
 
@@ -339,7 +339,7 @@ export function useEnsureTodayLog() {
       if (!user) throw new Error('User not authenticated')
       if (!activeProfile) throw new Error('No active profile')
 
-      const today = localDateString()
+      const today = localDateString(new Date(), activeProfile?.timezone)
       const completionMode = activeProfile.day_completion_mode ?? 'manual'
 
       // In manual mode, return the latest uncompleted log (don't create a new one)
@@ -925,7 +925,7 @@ export function useCopyDayToToday() {
       if (fetchError) throw fetchError
 
       // Ensure today's log exists for active profile
-      const today = localDateString()
+      const today = localDateString(new Date(), activeProfile?.timezone)
       const { data: todayLog } = await supabase
         .from('daily_logs')
         .select('*')

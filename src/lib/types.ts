@@ -248,6 +248,12 @@ export interface Profile {
    * Låg tidigare bara i localStorage och följde därför inte med mellan enheter.
    */
   day_completion_mode?: 'manual' | 'auto'
+  /**
+   * IANA-tidszon ('Europe/Stockholm') som dygnet räknas efter. Sätts automatiskt
+   * från enheten första gången; ändras därefter bara efter användarens samtycke,
+   * så att en resa inte tyst flyttar dygnsgränsen mitt i en pågående dag.
+   */
+  timezone?: string
 
   // Personal information
   birth_date?: string
@@ -334,6 +340,7 @@ export interface Profile {
 export interface ProfileFormData {
   profile_name: string
   day_completion_mode?: 'manual' | 'auto'
+  timezone?: string
   birth_date?: string
   gender?: Gender
   height_cm?: number
