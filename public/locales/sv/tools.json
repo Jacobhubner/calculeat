@@ -310,15 +310,6 @@
       "calculateLevel": "Beräkna din aktivitetsnivå",
       "systems": {
         "basicInternet": "Grundläggande PAL-värden (Rekommenderad)"
-      },
-      "systemNames": {
-        "fao": "FAO/WHO/UNU-baserade PAL-värden",
-        "damnripped": "DAMNRIPPED PAL-värden",
-        "proPhysique": "Pro Physique PAL-värden",
-        "fitnessStuff": "Fitness Stuff PAL-värden",
-        "basic": "Grundläggande PAL-värden",
-        "calculate": "Beräkna din aktivitetsnivå",
-        "custom": "Anpassat PAL-värde"
       }
     },
     "results": {
@@ -330,7 +321,13 @@
       "tdeeExplain": "Ditt totala dagliga kaloribehov — vila plus all rörelse. Utgångspunkten för ditt mål.",
       "kcalPerDay": "kcal/dag",
       "saveButton": "Spara till profil",
-      "saving": "Sparar..."
+      "saving": "Sparar...",
+      "goalTitle": "Ditt kaloriintervall",
+      "goalExplain": "Så mycket bör du äta per dag för att nå ditt mål.",
+      "goalMaintain": "för att behålla vikten",
+      "goalLoss": "för att gå ner i vikt",
+      "goalGain": "för att gå upp i vikt",
+      "goalChangeHint": "Målet ändrar du på profilsidan."
     },
     "toast": {
       "cannotSave": "Kan inte spara: saknade data",
@@ -1563,6 +1560,17 @@
       ],
       "section9p3": "Det är just denna kombination som gör modellen mer stabil än system som enbart jämför start- och slutvikt eller använder enkla rullande medelvärden.",
       "section9p4": "Ju mer konsekvent du loggar mat och vikt över tid, desto mer exakt kan systemet uppskatta ditt verkliga energibehov."
+    }
+  },
+  "pal": {
+    "systemNames": {
+      "fao": "FAO/WHO/UNU-baserade PAL-värden",
+      "damnripped": "DAMNRIPPED PAL-värden",
+      "proPhysique": "Pro Physique PAL-värden",
+      "fitnessStuff": "Fitness Stuff PAL-värden",
+      "basic": "Grundläggande PAL-värden",
+      "calculate": "Beräkna din aktivitetsnivå",
+      "custom": "Anpassat PAL-värde"
     }
   }
 }

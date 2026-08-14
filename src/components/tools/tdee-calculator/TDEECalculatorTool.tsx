@@ -102,9 +102,14 @@ export default function TDEECalculatorTool() {
   ])
 
   // React Hook Form
-  const { register, watch } = useForm({
+  const { register, watch, setValue } = useForm({
     defaultValues: {
-      activity_level: '',
+      // Förvalt i stället för tomt. Utan värde returnerade beräkningen null och
+      // HELA resultatkortet försvann utan felmeddelande — användaren såg en tom
+      // sida utan att förstå vad som saknades. Koden antog redan 'Moderately
+      // active' som fallback på två ställen (se sparningen nedan), men guarden
+      // ovanför hann returnera null först, så den nåddes aldrig.
+      activity_level: 'Moderately active',
       intensity_level: '',
       training_frequency_per_week: '',
       training_duration_minutes: '',
@@ -182,6 +187,14 @@ export default function TDEECalculatorTool() {
       setLocalWeight(profileData.weight_kg.toString())
     }
   }, [useLoggedWeight, latestLoggedWeight, profileData?.weight_kg])
+
+  // Profilens sparade aktivitetsnivå vinner över standardvärdet, så en
+  // återvändande användare möter sitt eget val och inte en tyst återställning.
+  useEffect(() => {
+    if (activeProfile?.activity_level) {
+      setValue('activity_level', activeProfile.activity_level)
+    }
+  }, [activeProfile?.activity_level, setValue])
 
   // BMR and PAL state. Mifflin är förvald standard (grepp 2) — nybörjaren
   // behöver inte välja formel; expertvalet göms bakom "Avancerat".
@@ -368,6 +381,17 @@ export default function TDEECalculatorTool() {
     householdHoursPerDay,
     spaFactor,
   ])
+
+  // Kaloriintervallet för användarens mål — det svar de faktiskt kom för.
+  //
+  // Räknades tidigare ut enbart inne i sparningen, så BMR och TDEE visades på
+  // sidan medan "hur mycket ska jag äta?" bara gick att se efter att man sparat
+  // och navigerat vidare. Samma funktion som sparningen använder, så visat och
+  // sparat värde aldrig kan divergera.
+  const goalCalories = useMemo(() => {
+    if (!tdee) return null
+    return caloriesForGoalPreset(tdee, activeProfile?.calorie_goal, activeProfile?.deficit_level)
+  }, [tdee, activeProfile?.calorie_goal, activeProfile?.deficit_level])
 
   // Save TDEE to profile
   const handleSaveToProfile = async () => {
@@ -556,41 +580,6 @@ export default function TDEECalculatorTool() {
 
       {activeTab === 'kalkylator' && (
         <>
-          {/* Article links */}
-          <div className="grid gap-3 md:grid-cols-2">
-            {[
-              {
-                to: isEn ? '/en/articles/bmr-vs-rmr' : '/artiklar/bmr-vs-rmr',
-                label: isEn ? 'What is BMR and RMR?' : 'Vad är BMR och RMR?',
-              },
-              {
-                to: isEn ? '/en/articles/what-is-pal-and-met' : '/artiklar/vad-ar-pal-och-met',
-                label: isEn ? 'What is PAL and MET?' : 'Vad är PAL och MET?',
-              },
-              {
-                to: isEn ? '/en/articles/what-is-tdee' : '/artiklar/vad-ar-tdee',
-                label: isEn ? 'What is TDEE?' : 'Vad är TDEE?',
-              },
-              {
-                to: isEn ? '/en/articles/lbm-vs-ffm' : '/artiklar/lbm-vs-ffm',
-                label: isEn ? 'Difference between LBM and FFM?' : 'Skillnad på LBM och FFM?',
-              },
-            ].map(({ to, label }) => (
-              <Link
-                key={to}
-                to={to}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-between gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm font-medium text-neutral-700 hover:border-primary-300 hover:text-primary-700 transition-colors dark:border-neutral-700 dark:bg-neutral-850 dark:text-neutral-300 dark:hover:border-primary-700"
-              >
-                {label}
-                <span className="text-xs text-primary-600 dark:text-primary-400 whitespace-nowrap">
-                  Läs mer →
-                </span>
-              </Link>
-            ))}
-          </div>
-
           {/* Weight Input - With Choice Between Latest Logged Weight and Manual Entry */}
           <Card>
             <CardHeader>
@@ -941,6 +930,31 @@ export default function TDEECalculatorTool() {
                 <CardDescription>{t('tdeeCalc.results.description')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Kaloriintervallet först: det är frågan användaren kom med.
+                    BMR och TDEE är underlaget och står därför under. */}
+                {goalCalories && (
+                  <div className="rounded-xl border-2 border-primary-300 bg-primary-50 p-6 text-center dark:border-primary-700 dark:bg-primary-900/25">
+                    <p className="text-xs font-medium uppercase tracking-wide text-primary-800 dark:text-primary-200">
+                      {t('tdeeCalc.results.goalTitle')}
+                    </p>
+                    <p className="mt-2 text-4xl font-bold text-primary-800 dark:text-primary-100">
+                      {Math.round(goalCalories.calories_min)}–
+                      {Math.round(goalCalories.calories_max)}
+                    </p>
+                    <p className="text-sm text-primary-700 dark:text-primary-300">
+                      {t('tdeeCalc.results.kcalPerDay')}{' '}
+                      {goalCalories.calorie_goal === 'Weight loss'
+                        ? t('tdeeCalc.results.goalLoss')
+                        : goalCalories.calorie_goal === 'Weight gain'
+                          ? t('tdeeCalc.results.goalGain')
+                          : t('tdeeCalc.results.goalMaintain')}
+                    </p>
+                    <p className="mt-3 text-xs text-primary-700/80 dark:text-primary-300/80">
+                      {t('tdeeCalc.results.goalExplain')} {t('tdeeCalc.results.goalChangeHint')}
+                    </p>
+                  </div>
+                )}
+
                 {/* Results Grid */}
                 <div className="grid gap-4 md:grid-cols-2">
                   {/* BMR Result */}
@@ -961,8 +975,16 @@ export default function TDEECalculatorTool() {
                       <p className="mt-2 text-xs text-neutral-600 dark:text-neutral-300 leading-relaxed">
                         {t('tdeeCalc.results.bmrExplain')}
                       </p>
+                      {/* Översatt namn, inte råsträngen: {bmrFormula} visade
+                          "Mifflin-St Jeor equation" på engelska mitt i svensk
+                          text, till skillnad från TDEE-kortet som redan
+                          översatte via palSystemName. */}
                       <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400 border-t border-blue-200 dark:border-blue-800 pt-3">
-                        {bmrFormula}
+                        {bmrFormula && BMR_FORMULA_I18N_KEY[bmrFormula]
+                          ? (t as (k: string) => string)(
+                              `tdeeCalc.bmr.formulas.${BMR_FORMULA_I18N_KEY[bmrFormula]}`
+                            )
+                          : bmrFormula}
                       </p>
                     </div>
                   )}
@@ -1010,6 +1032,44 @@ export default function TDEECalculatorTool() {
 
           {/* Metabolic Calibration */}
           {activeProfile && activeProfile.tdee && <MetabolicCalibration profile={activeProfile} />}
+
+          {/* Begreppsartiklar sist: fyra länkar om BMR/RMR/PAL/MET/LBM/FFM
+              låg tidigare FÖRE första inmatningsfältet och signalerade att man
+              måste läsa på innan verktyget gick att använda. Här är de en
+              fördjupning för den som vill förstå sitt resultat. */}
+          <div className="grid gap-3 md:grid-cols-2">
+            {[
+              {
+                to: isEn ? '/en/articles/bmr-vs-rmr' : '/artiklar/bmr-vs-rmr',
+                label: isEn ? 'What is BMR and RMR?' : 'Vad är BMR och RMR?',
+              },
+              {
+                to: isEn ? '/en/articles/what-is-pal-and-met' : '/artiklar/vad-ar-pal-och-met',
+                label: isEn ? 'What is PAL and MET?' : 'Vad är PAL och MET?',
+              },
+              {
+                to: isEn ? '/en/articles/what-is-tdee' : '/artiklar/vad-ar-tdee',
+                label: isEn ? 'What is TDEE?' : 'Vad är TDEE?',
+              },
+              {
+                to: isEn ? '/en/articles/lbm-vs-ffm' : '/artiklar/lbm-vs-ffm',
+                label: isEn ? 'Difference between LBM and FFM?' : 'Skillnad på LBM och FFM?',
+              },
+            ].map(({ to, label }) => (
+              <Link
+                key={to}
+                to={to}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between gap-2 rounded-xl border border-neutral-200 bg-white px-4 py-3 text-sm font-medium text-neutral-700 hover:border-primary-300 hover:text-primary-700 transition-colors dark:border-neutral-700 dark:bg-neutral-850 dark:text-neutral-300 dark:hover:border-primary-700"
+              >
+                {label}
+                <span className="text-xs text-primary-600 dark:text-primary-400 whitespace-nowrap">
+                  Läs mer →
+                </span>
+              </Link>
+            ))}
+          </div>
 
           {/* Modals */}
           {bmrFormula && (
