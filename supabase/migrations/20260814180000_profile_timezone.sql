@@ -2,6 +2,9 @@
 -- MIGRATION: Spara användarens tidszon på profilen
 -- Datum: 2026-08-14
 --
+-- OBS: la kolumnen på FEL TABELL (profiles i stället för user_profiles).
+-- Rättat i 20260814190000, som även tar bort den felplacerade kolumnen.
+--
 -- Efter att datumberäkningen flyttats till lokal tid (localDateString) följer
 -- appen redan enhetens tidszon automatiskt. Kolumnen behövs ändå för tre fall
 -- där enhetens tidszon inte räcker:

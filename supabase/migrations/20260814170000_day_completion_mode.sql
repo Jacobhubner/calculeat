@@ -2,6 +2,9 @@
 -- MIGRATION: Flytta dagavslutningsläget från localStorage till profilen
 -- Datum: 2026-08-14
 --
+-- OBS: la kolumnen på FEL TABELL (profiles i stället för user_profiles).
+-- Rättat i 20260814190000, som även tar bort den felplacerade kolumnen.
+--
 -- Läget låg bara i localStorage under nyckeln 'day-completion-mode'. Det
 -- innebar att valet inte följde med mellan enheter eller webbläsare, och
 -- försvann när webbläsardata rensades — användare som valt 'auto' hamnade
