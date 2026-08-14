@@ -701,6 +701,21 @@ export default function TDEECalculatorTool() {
                         ({t('tdeeCalc.bmr.usingStandard')})
                       </span>
                     )}
+                    {/* Faktaknappen hör hemma här, inte inne i Avancerat: den
+                        förklarar formeln man FAKTISKT använder, vilket är
+                        relevant även för den som aldrig byter. */}
+                    {bmrFormula && (
+                      <>
+                        {' '}
+                        <button
+                          type="button"
+                          onClick={() => setShowBMRModal(true)}
+                          className="text-sm text-primary-600 underline transition-colors hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+                        >
+                          {t('tdeeCalc.bmr.factLink')}
+                        </button>
+                      </>
+                    )}
                   </p>
 
                   {/* Expertval — göms bakom "Avancerat" (grepp 2). */}
@@ -716,15 +731,6 @@ export default function TDEECalculatorTool() {
                           {t('tdeeCalc.bmr.fieldLabel')}{' '}
                           <span className="text-red-600 dark:text-red-400">*</span>
                         </label>
-                        {bmrFormula && (
-                          <button
-                            type="button"
-                            onClick={() => setShowBMRModal(true)}
-                            className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors dark:text-primary-400 dark:hover:text-primary-300"
-                          >
-                            {t('tdeeCalc.bmr.factLink')}
-                          </button>
-                        )}
                       </div>
                       <select
                         value={bmrFormula}
@@ -862,6 +868,19 @@ export default function TDEECalculatorTool() {
                         ({t('tdeeCalc.pal.usingStandard')})
                       </span>
                     )}
+                    {/* Se kommentaren vid BMR-läsraden ovan. */}
+                    {palSystem && (
+                      <>
+                        {' '}
+                        <button
+                          type="button"
+                          onClick={() => setShowPALModal(true)}
+                          className="text-sm text-primary-600 underline transition-colors hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+                        >
+                          {t('tdeeCalc.pal.factLink')}
+                        </button>
+                      </>
+                    )}
                   </p>
 
                   {/* Expertval — göms bakom "Avancerat" (grepp 5). */}
@@ -877,15 +896,6 @@ export default function TDEECalculatorTool() {
                           {t('tdeeCalc.pal.fieldLabel')}{' '}
                           <span className="text-red-600 dark:text-red-400">*</span>
                         </label>
-                        {palSystem && (
-                          <button
-                            type="button"
-                            onClick={() => setShowPALModal(true)}
-                            className="text-sm text-primary-600 hover:text-primary-700 underline transition-colors dark:text-primary-400 dark:hover:text-primary-300"
-                          >
-                            {t('tdeeCalc.pal.factLink')}
-                          </button>
-                        )}
                       </div>
                       <select
                         value={palSystem}
