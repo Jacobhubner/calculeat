@@ -13,6 +13,10 @@
 -- Värdena speglar defaultQualityScore i src/lib/constants/dataSources.ts.
 -- Importskripten sätter dem numera själva; den här migrationen rättar rader
 -- som redan finns.
+--
+-- OBS: satserna nedan träffade ingenting i praktiken. Kolumnen har
+-- DEFAULT 100 sedan 20260601000000, så importerade rader är aldrig NULL.
+-- Rättat i 20260814161000, som riktar sig mot värdet i stället.
 -- =========================================================
 
 -- SLV = 100: nationell databas med löpande uppdaterade analysvärden
