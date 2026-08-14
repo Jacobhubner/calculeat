@@ -432,7 +432,6 @@
       "spaVeryHigh": "Mycket hög spontan aktivitet",
       "spaTip": "Tips: De flesta bör använda 1,00 (normalvärde). Använd lägre värden om du är ovanligt stillasittande och högre om du är konstant i rörelse utan att det syns i träning eller steg.",
       "basedOn": "Baserat på din aktivitetsinformation",
-      "spaAdvancedToggle": "Avancerat: finjustera för spontan rörelse",
       "missingTitle": "Fyll i detta för att få ditt resultat:"
     }
   },

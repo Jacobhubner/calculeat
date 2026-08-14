@@ -432,7 +432,6 @@
       "spaVeryHigh": "Very high spontaneous activity",
       "spaTip": "Tip: Most people should use 1.00 (default value). Use lower values if you are unusually sedentary and higher if you are constantly moving in ways not captured by training or steps.",
       "basedOn": "Based on your activity information",
-      "spaAdvancedToggle": "Advanced: fine-tune for spontaneous movement",
       "missingTitle": "Fill in these to see your result:"
     }
   },
