@@ -430,6 +430,32 @@ async function writeToDatabase(foods: CofidFood[]) {
   let inserted = 0
   let updated = 0
   let errors = 0
+  let nutrientsWritten = 0
+
+  // food_nutrients.nutrient_code har en främmande nyckel mot
+  // nutrient_definitions. CoFID innehåller ämnen som inte nödvändigtvis är
+  // definierade där (biotin, koppar, mangan m.fl.), och en enda okänd kod
+  // fäller hela insert-satsen för livsmedlet — alltså även de giltiga
+  // ämnena. Filtrera mot verkligheten i stället för att anta.
+  const { data: definitions, error: defError } = await supabase!
+    .from('nutrient_definitions')
+    .select('nutrient_code')
+
+  if (defError) {
+    console.error('Kunde inte läsa nutrient_definitions:', defError.message)
+    process.exit(1)
+  }
+
+  const validCodes = new Set((definitions ?? []).map(d => d.nutrient_code as string))
+  const usedCodes = new Set(foods.flatMap(f => f.nutrients.map(n => n.nutrient_code)))
+  const unknown = [...usedCodes].filter(c => !validCodes.has(c)).sort()
+
+  if (unknown.length > 0) {
+    console.log(
+      `\nHoppar över ${unknown.length} näringsämnen utan definition: ${unknown.join(', ')}`
+    )
+    console.log('(lägg till dem i nutrient_definitions för att få med dem)\n')
+  }
 
   for (const [i, food] of foods.entries()) {
     try {
@@ -485,10 +511,11 @@ async function writeToDatabase(foods: CofidFood[]) {
 
       // Delete + insert håller näringsämnena i synk med källan även när ett
       // ämne försvinner mellan CoFID-utgåvor.
-      if (food.nutrients.length > 0) {
+      const insertable = food.nutrients.filter(n => validCodes.has(n.nutrient_code))
+      if (insertable.length > 0) {
         await supabase!.from('food_nutrients').delete().eq('food_item_id', foodItemId)
         const { error } = await supabase!.from('food_nutrients').insert(
-          food.nutrients.map(n => ({
+          insertable.map(n => ({
             food_item_id: foodItemId,
             nutrient_code: n.nutrient_code,
             amount: n.amount,
@@ -498,6 +525,7 @@ async function writeToDatabase(foods: CofidFood[]) {
           }))
         )
         if (error) console.error(`\n  Näringsämnesfel för ${food.name}: ${error.message}`)
+        else nutrientsWritten += insertable.length
       }
     } catch (err) {
       errors++
@@ -512,7 +540,10 @@ async function writeToDatabase(foods: CofidFood[]) {
     }
   }
 
-  console.log(`\n\nKlart: ${inserted} nya, ${updated} uppdaterade, ${errors} fel`)
+  console.log(
+    `\n\nKlart: ${inserted} nya, ${updated} uppdaterade, ${errors} fel, ` +
+      `${nutrientsWritten} näringsvärden skrivna`
+  )
 }
 
 main()
