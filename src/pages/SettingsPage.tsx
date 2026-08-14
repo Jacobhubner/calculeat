@@ -452,14 +452,20 @@ export default function SettingsPage() {
               <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100 mb-3">
                 {t('settings.foodDatabase')}
               </p>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {/* Två kolumner, inte fyra: etiketterna bär nu land + källa och
+                  ryms inte i en fyrkolumnsgrid utan att brytas illa. */}
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {[
-                  { value: 'auto' as const, label: t('settings.foodDatabaseAuto') },
+                  { value: 'auto' as const, label: t('settings.foodDatabaseAuto'), region: '' },
                   ...DATA_SOURCES.map(ds => ({
                     value: ds.tabKey,
+                    // Källans egennamn ('Livsmedelsverket'), oförändrat.
                     label: tAny(`food:${ds.labelKey}`),
+                    // Landet källan gäller — 'USDA' och 'CoFID' säger i sig
+                    // inget om vilken marknad de hör till.
+                    region: tAny(`food:sourcePicker.${ds.tabKey}Region`),
                   })),
-                ].map(({ value, label }) => {
+                ].map(({ value, label, region }) => {
                   const active = foodSourcePreference === value
                   return (
                     <button
@@ -468,15 +474,20 @@ export default function SettingsPage() {
                       onClick={() => setFoodSourcePreference(value)}
                       aria-pressed={active}
                       className={cn(
-                        // min-h + flex: "Livsmedelsverket" bryts till två rader i
-                        // fyrkolumnsläget, och utan detta blir knapparna olika höga.
-                        'flex min-h-[2.75rem] items-center justify-center rounded-lg border px-2 py-2 text-center text-xs font-medium transition-colors',
+                        // min-h håller knapparna lika höga fastän "Automatiskt"
+                        // saknar överrad.
+                        'flex min-h-[3.25rem] flex-col items-center justify-center rounded-lg border px-3 py-2 text-center transition-colors',
                         active
                           ? 'border-primary-300 bg-primary-50 text-primary-700 dark:border-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
                           : 'border-neutral-200 text-neutral-600 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-300 dark:hover:border-neutral-600'
                       )}
                     >
-                      {label}
+                      {region && (
+                        <span className="text-[0.65rem] uppercase tracking-wide opacity-70">
+                          {region}
+                        </span>
+                      )}
+                      <span className="text-xs font-medium">{label}</span>
                     </button>
                   )
                 })}

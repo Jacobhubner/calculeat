@@ -520,5 +520,10 @@
         }
       ]
     }
+  },
+  "sourcePicker": {
+    "slvRegion": "Sverige",
+    "usdaRegion": "USA",
+    "cofidRegion": "Storbritannien"
   }
 }
