@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { ChevronDown, ChevronUp, Eye, EyeOff } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -104,6 +104,19 @@ export default function ComparisonTab({
     setHeight(profileHeight!.toString())
     setBodyFat(profileBodyFat ? profileBodyFat.toString() : '')
   }
+
+  // Fyll i profilens värden direkt i stället för att kräva ett klick på "Använd
+  // mina värden". Fliken startade tom trots att appen redan kände till kön,
+  // ålder, vikt och längd — användaren fick skriva in samma uppgifter en andra
+  // gång. Körs bara när fälten är orörda, så den skriver aldrig över egna
+  // värden (t.ex. när man jämför ett tänkt scenario).
+  const prefilledRef = useRef(false)
+  useEffect(() => {
+    if (prefilledRef.current || !hasProfileData) return
+    if (age || weight || height) return
+    prefilledRef.current = true
+    loadProfileValues()
+  })
 
   const params = useMemo(() => {
     const w = parseFloat(weight)

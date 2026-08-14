@@ -277,7 +277,7 @@
     },
     "bmr": {
       "title": "Beräkningsformel",
-      "description": "Vi använder en väl beprövad standardformel. Du behöver inte ändra något här.",
+      "description": "Vi använder Mifflin-St Jeor, den mest beprövade standardformeln. Du behöver inte ändra något här — värdet är en startpunkt som justeras automatiskt när du loggat en tid.",
       "fieldLabel": "BMR/RMR-formel",
       "factLink": "Fakta om denna formel",
       "usingLabel": "Beräknas med",
@@ -296,7 +296,8 @@
         "macrofactorFFM": "MacroFactor FFM (Kräver kroppsfett%)",
         "macrofactorAthlete": "MacroFactor Athlete (Kräver kroppsfett%)",
         "fitnessStuff": "Fitness Stuff Podcast (Kräver kroppsfett%)"
-      }
+      },
+      "advancedTogglePremium": "Avancerat: byt beräkningsformel (premium)"
     },
     "pal": {
       "title": "Aktivitetsnivå",
@@ -310,7 +311,8 @@
       "calculateLevel": "Beräkna din aktivitetsnivå",
       "systems": {
         "basicInternet": "Grundläggande PAL-värden (Rekommenderad)"
-      }
+      },
+      "advancedTogglePremium": "Avancerat: byt beräkningssystem (premium)"
     },
     "results": {
       "title": "Dina Resultat",

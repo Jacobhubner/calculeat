@@ -691,7 +691,9 @@ export default function TDEECalculatorTool() {
                   {/* Expertval — göms bakom "Avancerat" (grepp 2). */}
                   <details className="mt-3 group">
                     <summary className="cursor-pointer text-sm text-primary-600 hover:text-primary-700 select-none dark:text-primary-400 dark:hover:text-primary-300">
-                      {t('tdeeCalc.bmr.advancedToggle')}
+                      {limits.all_tdee_formulas
+                        ? t('tdeeCalc.bmr.advancedToggle')
+                        : t('tdeeCalc.bmr.advancedTogglePremium')}
                     </summary>
                     <div className="mt-3">
                       <div className="flex items-center gap-2 mb-2">
@@ -850,7 +852,9 @@ export default function TDEECalculatorTool() {
                   {/* Expertval — göms bakom "Avancerat" (grepp 5). */}
                   <details className="mt-3">
                     <summary className="cursor-pointer text-sm text-primary-600 hover:text-primary-700 select-none dark:text-primary-400 dark:hover:text-primary-300">
-                      {t('tdeeCalc.pal.advancedToggle')}
+                      {limits.all_tdee_formulas
+                        ? t('tdeeCalc.pal.advancedToggle')
+                        : t('tdeeCalc.pal.advancedTogglePremium')}
                     </summary>
                     <div className="mt-3">
                       <div className="flex items-center gap-2 mb-2">

@@ -3,11 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useActivityIntensityText } from '@/hooks/useActivityIntensityText'
 import type { PALSystem } from '@/lib/types'
 import { UseFormRegister, UseFormWatch } from 'react-hook-form'
-import PALTableFAO from './PALTableFAO'
 import PALTableDAMNRIPPED from './PALTableDAMNRIPPED'
 import PALTableProPhysique from './PALTableProPhysique'
 import PALTableFitnessStuff from './PALTableFitnessStuff'
-import PALTableBasic from './PALTableBasic'
+import PALTableActivityLevel from './PALTableActivityLevel'
 import PALTableActivityLevelWizard from './PALTableActivityLevelWizard'
 
 interface PALTableContainerProps {
@@ -33,16 +32,17 @@ export default function PALTableContainer({
   const { palSystemName } = useActivityIntensityText()
   const renderTable = () => {
     switch (system) {
+      // Samma komponent för båda: de skiljde sig bara i vilken beskrivningstext
+      // som visas, vilket nu är en prop.
       case 'FAO/WHO/UNU based PAL values':
-        return <PALTableFAO register={register} watch={watch} />
+      case 'Basic internet PAL values':
+        return <PALTableActivityLevel palSystem={system} register={register} watch={watch} />
       case 'DAMNRIPPED PAL values':
         return <PALTableDAMNRIPPED register={register} watch={watch} />
       case 'Pro Physique PAL values':
         return <PALTableProPhysique register={register} watch={watch} />
       case 'Fitness Stuff PAL values':
         return <PALTableFitnessStuff register={register} watch={watch} />
-      case 'Basic internet PAL values':
-        return <PALTableBasic register={register} watch={watch} />
       case 'Beräkna din aktivitetsnivå':
         return (
           <PALTableActivityLevelWizard

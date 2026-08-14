@@ -277,7 +277,7 @@
     },
     "bmr": {
       "title": "Calculation formula",
-      "description": "We use a well-established standard formula. You don't need to change anything here.",
+      "description": "We use Mifflin-St Jeor, the most widely validated standard formula. You do not need to change anything here — the value is a starting point that adjusts automatically once you have logged for a while.",
       "fieldLabel": "BMR/RMR formula",
       "factLink": "Facts about this formula",
       "usingLabel": "Calculated with",
@@ -296,7 +296,8 @@
         "macrofactorFFM": "MacroFactor FFM (Requires body fat%)",
         "macrofactorAthlete": "MacroFactor Athlete (Requires body fat%)",
         "fitnessStuff": "Fitness Stuff Podcast (Requires body fat%)"
-      }
+      },
+      "advancedTogglePremium": "Advanced: change calculation formula (premium)"
     },
     "pal": {
       "title": "Activity level",
@@ -310,7 +311,8 @@
       "calculateLevel": "Calculate your activity level",
       "systems": {
         "basicInternet": "Basic PAL values (Recommended)"
-      }
+      },
+      "advancedTogglePremium": "Advanced: change calculation system (premium)"
     },
     "results": {
       "title": "Your Results",

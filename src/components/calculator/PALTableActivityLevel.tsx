@@ -4,8 +4,18 @@ import { Select } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
 import { UseFormRegister, UseFormWatch } from 'react-hook-form'
 import type { ActivityLevel } from '@/lib/types'
+import type { PALSystem } from '@/lib/calculations/tdee'
 
-interface PALTableFAOProps {
+/**
+ * Aktivitetsnivå-dropdown för de PAL-system som bara behöver den.
+ *
+ * Ersätter PALTableFAO + PALTableBasic, som var teckenidentiska bortsett från
+ * vilket system beskrivningstexten hämtades för — alltså en parameter, inte två
+ * komponenter.
+ */
+interface PALTableActivityLevelProps {
+  /** Styr vilken beskrivningstext som visas under valet. */
+  palSystem: PALSystem
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register?: UseFormRegister<any>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,13 +30,17 @@ const LEVELS: ActivityLevel[] = [
   'Extremely active',
 ]
 
-export default function PALTableFAO({ register, watch }: PALTableFAOProps) {
+export default function PALTableActivityLevel({
+  palSystem,
+  register,
+  watch,
+}: PALTableActivityLevelProps) {
   const { t } = useTranslation('tools')
   const { activityLabel, activityDescription } = useActivityIntensityText()
   const selectedActivityLevel = watch?.('activity_level') as ActivityLevel | undefined
 
   const description = selectedActivityLevel
-    ? activityDescription('FAO/WHO/UNU based PAL values', selectedActivityLevel)
+    ? activityDescription(palSystem, selectedActivityLevel)
     : ''
 
   return (
