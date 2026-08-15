@@ -9,6 +9,16 @@ interface BodyFatReferenceTableProps {
   userBodyFat?: number | null
   gender?: Gender
   fullWidthImages?: boolean
+  /**
+   * true = framträdande utfällningsknapp (14 px, primärfärgad, ikon).
+   * Endast för beräknarens resultatvy, där jämförelsen är ett STEG i flödet:
+   * verifiera innan du sparar. Övriga vyer visar tabellen som referens-
+   * material och behåller den diskreta knappen.
+   *
+   * Egen prop — fullWidthImages duger inte som signal, den används av
+   * samtliga fyra anropsställen.
+   */
+  prominentToggle?: boolean
 }
 
 // Helper function to determine if user's body fat falls within a category range
@@ -33,6 +43,7 @@ export function BodyFatReferenceTable({
   userBodyFat,
   gender,
   fullWidthImages = false,
+  prominentToggle = false,
 }: BodyFatReferenceTableProps) {
   const { t } = useTranslation('body')
   const [showMale, setShowMale] = useState(gender !== 'female')
@@ -160,7 +171,7 @@ export function BodyFatReferenceTable({
       {/* Expandable section: images + insights */}
       <div className="border-t border-gray-200 dark:border-neutral-700">
         {/*
-          Framträdande variant där tabellen är huvudinnehåll (fullWidthImages
+          Framträdande variant där tabellen är huvudinnehåll (prominentToggle
           = beräknarens resultatvy). I 11 px grå text såg knappen ut som en
           fotnot och missades — här är den en verklig uppmaning att verifiera
           sitt resultat innan det sparas.
@@ -172,19 +183,19 @@ export function BodyFatReferenceTable({
           type="button"
           onClick={() => setExpanded(v => !v)}
           className={
-            fullWidthImages
+            prominentToggle
               ? 'w-full flex items-center justify-between gap-2 px-3 py-3 text-sm font-semibold text-primary-700 hover:bg-primary-50 dark:text-primary-300 dark:hover:bg-primary-900/25 transition-colors'
               : 'w-full flex items-center justify-between px-3 py-2 text-[11px] text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors'
           }
         >
           <span className="flex items-center gap-2">
-            {fullWidthImages && <Images size={16} className="shrink-0" />}
+            {prominentToggle && <Images size={16} className="shrink-0" />}
             {t('refTable.whatDoRangesMean')}
           </span>
           {expanded ? (
-            <ChevronUp size={fullWidthImages ? 18 : 13} />
+            <ChevronUp size={prominentToggle ? 18 : 13} />
           ) : (
-            <ChevronDown size={fullWidthImages ? 18 : 13} />
+            <ChevronDown size={prominentToggle ? 18 : 13} />
           )}
         </button>
 

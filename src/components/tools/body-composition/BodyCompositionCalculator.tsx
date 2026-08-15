@@ -982,6 +982,10 @@ export default function BodyCompositionCalculator() {
                         userBodyFat={bodyFatPercentage}
                         gender={profile?.gender}
                         fullWidthImages
+                        // Bara här: jämförelsen är ett STEG i flödet
+                        // (verifiera innan du sparar), inte referensmaterial
+                        // som på hubben och i Målsättning.
+                        prominentToggle
                       />
 
                       {/* Sist: spara är det avslutande steget, efter att
