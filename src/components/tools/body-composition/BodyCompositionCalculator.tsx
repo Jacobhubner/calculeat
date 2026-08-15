@@ -972,10 +972,18 @@ export default function BodyCompositionCalculator() {
                         <summary className="cursor-pointer list-none px-4 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:text-neutral-200 dark:hover:bg-neutral-800">
                           {t('calculator.compareVisually')}
                         </summary>
-                        <div className="border-t border-neutral-200 px-4 py-4 dark:border-neutral-700">
+                        {/* Smal padding: bilderna ska få så mycket bredd som
+                            möjligt i den redan smala resultatkolumnen. */}
+                        <div className="border-t border-neutral-200 px-2 py-4 dark:border-neutral-700">
                           <BodyFatReferenceTable
                             userBodyFat={bodyFatPercentage}
                             gender={profile?.gender}
+                            // Öppen direkt: den som fällt ut "Jämför visuellt"
+                            // vill se bilderna, inte klicka en gång till.
+                            defaultExpanded
+                            // Full bredd — i 3/4 blev kroppsbilderna för små
+                            // för att gå att jämföra sig mot.
+                            fullWidthImages
                           />
                         </div>
                       </details>

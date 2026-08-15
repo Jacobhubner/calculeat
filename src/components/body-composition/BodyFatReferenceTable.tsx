@@ -9,6 +9,8 @@ interface BodyFatReferenceTableProps {
   userBodyFat?: number | null
   gender?: Gender
   fullWidthImages?: boolean
+  /** true = "Vad betyder intervallen?" (med bilderna) öppen från start */
+  defaultExpanded?: boolean
 }
 
 // Helper function to determine if user's body fat falls within a category range
@@ -33,6 +35,7 @@ export function BodyFatReferenceTable({
   userBodyFat,
   gender,
   fullWidthImages = false,
+  defaultExpanded = false,
 }: BodyFatReferenceTableProps) {
   const { t } = useTranslation('body')
   const [showMale, setShowMale] = useState(gender !== 'female')
@@ -56,7 +59,7 @@ export function BodyFatReferenceTable({
   }
 
   const userCategory = getUserCategory()
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(defaultExpanded)
 
   const maleInsights = [
     {
