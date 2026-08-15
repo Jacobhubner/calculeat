@@ -85,8 +85,7 @@
     "profileFieldWeightValue": "{{value}} kg",
     "profileFieldMissing": "Saknas",
     "noMethodSelected": "Välj en beräkningsmetod för att börja",
-    "missingFields": "Fyll i alla obligatoriska fält för att se resultat",
-    "compareVisually": "Jämför visuellt — stämmer resultatet?"
+    "missingFields": "Fyll i alla obligatoriska fält för att se resultat"
   },
   "results": {
     "bodyDensity": "Kroppsdensitet",
@@ -227,7 +226,7 @@
     "men": "Män",
     "women": "Kvinnor",
     "source": "Källa: American Council on Exercise",
-    "whatDoRangesMean": "Vad betyder intervallen?",
+    "whatDoRangesMean": "Jämför visuellt — stämmer resultatet?",
     "description": "Beskrivning",
     "bodyFat": "Kroppsfett",
     "ffmiMen": "FFMI (män)",

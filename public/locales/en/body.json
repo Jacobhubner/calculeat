@@ -85,8 +85,7 @@
     "profileFieldWeightValue": "{{value}} kg",
     "profileFieldMissing": "Missing",
     "noMethodSelected": "Select a calculation method to get started",
-    "missingFields": "Fill in all required fields to see results",
-    "compareVisually": "Compare visually — does the result look right?"
+    "missingFields": "Fill in all required fields to see results"
   },
   "results": {
     "bodyDensity": "Body density",
@@ -227,7 +226,7 @@
     "men": "Men",
     "women": "Women",
     "source": "Source: American Council on Exercise",
-    "whatDoRangesMean": "What do the ranges mean?",
+    "whatDoRangesMean": "Compare visually — does the result look right?",
     "description": "Description",
     "bodyFat": "Body fat",
     "ffmiMen": "FFMI (men)",

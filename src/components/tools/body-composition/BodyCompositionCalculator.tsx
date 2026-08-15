@@ -968,25 +968,21 @@ export default function BodyCompositionCalculator() {
 
                         userBodyFat markerar användarens kategori i tabellen.
                       */}
-                      <details className="rounded-2xl border border-neutral-200 dark:border-neutral-700">
-                        <summary className="cursor-pointer list-none px-4 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:text-neutral-200 dark:hover:bg-neutral-800">
-                          {t('calculator.compareVisually')}
-                        </summary>
-                        {/* Smal padding: bilderna ska få så mycket bredd som
-                            möjligt i den redan smala resultatkolumnen. */}
-                        <div className="border-t border-neutral-200 px-2 py-4 dark:border-neutral-700">
-                          <BodyFatReferenceTable
-                            userBodyFat={bodyFatPercentage}
-                            gender={profile?.gender}
-                            // Öppen direkt: den som fällt ut "Jämför visuellt"
-                            // vill se bilderna, inte klicka en gång till.
-                            defaultExpanded
-                            // Full bredd — i 3/4 blev kroppsbilderna för små
-                            // för att gå att jämföra sig mot.
-                            fullWidthImages
-                          />
-                        </div>
-                      </details>
+                      {/*
+                        Ingen yttre <details> här: referenstabellen har redan
+                        rätt uppdelning inbyggd — kategoritabellen syns alltid,
+                        bilderna ligger bakom komponentens egen knapp. Ett
+                        extra skal runt om gjorde att man fick klicka två
+                        gånger för att se bilderna.
+
+                        fullWidthImages: i 3/4 blev kroppsbilderna för små för
+                        att gå att jämföra sig mot i den smala kolumnen.
+                      */}
+                      <BodyFatReferenceTable
+                        userBodyFat={bodyFatPercentage}
+                        gender={profile?.gender}
+                        fullWidthImages
+                      />
 
                       {/* Sist: spara är det avslutande steget, efter att
                           resultatet verifierats mot referensbilderna. */}
