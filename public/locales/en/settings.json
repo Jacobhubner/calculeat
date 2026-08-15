@@ -35,8 +35,7 @@
     "activeInfo": "You are now navigating as a new user. The banner at the top confirms the mode.",
     "exit": "Exit preview and delete test data",
     "exiting": "Exiting…",
-    "blockedByFreeView": "Free view is active. The two test modes would override each other — exit free view first.",
-    "exitFreeView": "Exit free view"
+    "withFreeView": "Free view is active too — you will see the app as a new free user, which is what most new users actually are."
   },
   "dataExport": {
     "title": "Export my data",

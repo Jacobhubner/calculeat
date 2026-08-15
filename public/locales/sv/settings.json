@@ -35,8 +35,7 @@
     "activeInfo": "Du navigerar nu som ny användare. Bannern längst upp bekräftar läget.",
     "exit": "Avsluta preview och radera testdata",
     "exiting": "Avslutar…",
-    "blockedByFreeView": "Gratis-vyn är aktiv. De två testlägena skulle skriva över varandra — avsluta gratis-vyn först.",
-    "exitFreeView": "Avsluta gratis-vy"
+    "withFreeView": "Gratis-vyn är också aktiv — du ser appen som en ny gratisanvändare, vilket de flesta nya användare faktiskt är."
   },
   "dataExport": {
     "title": "Exportera min data",

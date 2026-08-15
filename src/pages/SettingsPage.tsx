@@ -88,7 +88,7 @@ export default function SettingsPage() {
   const { data: isSuperAdmin = false } = useIsSuperAdmin()
   const { data: isAdmin = false } = useIsAdmin()
   const { isPreviewActive, enterPreview, exitPreview } = usePreviewMode()
-  const { isFreeViewActive, exitFreeView } = useFreeViewMode()
+  const { isFreeViewActive } = useFreeViewMode()
   const { data: adminList = [] } = useListAdmins()
   const addAdmin = useAddAdmin()
   const sendAdminMessage = useSendAdminMessage()
@@ -1105,30 +1105,22 @@ export default function SettingsPage() {
               {!isPreviewActive ? (
                 <>
                   {/*
-                    De två admin-testlägena krockar: gratis-vyn tvingar fram
-                    gratis-entitlements i klienten, preview byter till en tom
-                    sandlådeprofil. Körs båda samtidigt går det inte att veta
-                    vilket läge som orsakar det man ser. Knappen var tidigare
-                    bara utgråad utan förklaring — nu står skälet, med en väg
-                    ur låset.
+                    Lägena går att kombinera — och kombinationen är den mest
+                    realistiska: en ny användare har nästan alltid gratisnivån.
+                    De överlappar inte heller tekniskt: preview byter PROFIL
+                    (tom sandlådedata), gratis-vyn byter ENTITLEMENTS
+                    (klientspegel i useEntitlements). Spärren fanns tidigare
+                    här utan grund.
                   */}
                   {isFreeViewActive && (
-                    <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700 dark:border-amber-800 dark:bg-amber-900/25 dark:text-amber-300">
-                      <p>{tSettings('preview.blockedByFreeView')}</p>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="mt-2 text-xs"
-                        onClick={exitFreeView}
-                      >
-                        {tSettings('preview.exitFreeView')}
-                      </Button>
-                    </div>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                      {tSettings('preview.withFreeView')}
+                    </p>
                   )}
                   <Button
                     variant="outline"
                     onClick={() => enterPreview.mutate()}
-                    disabled={enterPreview.isPending || isFreeViewActive}
+                    disabled={enterPreview.isPending}
                     className="self-start"
                   >
                     {enterPreview.isPending
