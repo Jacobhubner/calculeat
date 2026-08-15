@@ -375,8 +375,13 @@ export interface ProfileFormData {
   spa_factor?: number
 
   // Body composition
-  body_fat_percentage?: number
-  body_composition_method?: BodyCompositionMethod
+  /**
+   * null = rensa fältet. useUpdateProfile strippar `undefined` (så att en
+   * utelämnad nyckel inte skriver över befintligt värde) — den som VILL tömma
+   * fältet måste därför skicka null explicit.
+   */
+  body_fat_percentage?: number | null
+  body_composition_method?: BodyCompositionMethod | null
 
   // Goals
   calorie_goal?: CalorieGoal

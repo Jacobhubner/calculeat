@@ -94,8 +94,9 @@ export default function ProfilePage() {
     birth_date?: string
     gender?: Gender | ''
     height_cm?: number
-    // Body composition
-    body_fat_percentage?: number
+    // Body composition — null = användaren har tömt fältet
+    body_fat_percentage?: number | null
+    body_composition_method?: string | null
     weight_kg?: number
     // TDEE
     tdee?: number
@@ -200,7 +201,17 @@ export default function ProfilePage() {
         const { body_fat_percentage, ...rest } = prev
         return rest
       }
-      return { ...prev, body_fat_percentage: bodyFat }
+      // NULL, inte undefined, när fältet töms: useUpdateProfile strippar
+      // undefined så att en utelämnad nyckel inte skriver över befintligt
+      // värde. Med undefined försvann alltså raderingen tyst och det gamla
+      // värdet låg kvar efter "Spara".
+      // Metoden nollställs samtidigt — en beräkningsmetod utan resultat
+      // pekar på ett värde som inte längre finns.
+      return {
+        ...prev,
+        body_fat_percentage: bodyFat ?? null,
+        ...(bodyFat === undefined ? { body_composition_method: null } : {}),
+      }
     })
   }
 
@@ -796,7 +807,7 @@ export default function ProfilePage() {
                 birthDate={displayProfile.birth_date}
                 gender={displayProfile.gender}
                 tdee={displayProfile.tdee}
-                bodyFatPercentage={displayProfile.body_fat_percentage}
+                bodyFatPercentage={displayProfile.body_fat_percentage ?? undefined}
                 onTDEEChange={handleTDEEChange}
                 manualOnly={openManualEntry}
                 onBeforeNavigate={async () => {
