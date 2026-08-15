@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useSearchParams } from 'react-router-dom'
 import { TrendingDown, TrendingUp, Minus, ArrowUpRight, Target, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useEntitlements } from '@/hooks/useEntitlements'
@@ -53,7 +54,26 @@ export function DietPhaseCard({
   const { t } = useTranslation('dashboard')
   const { data: phase } = useActiveDietPhase()
   const endPhase = useEndDietPhase()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [pickerOpen, setPickerOpen] = useState(false)
+
+  /**
+   * Öppna dialogen igen när användaren kommer tillbaka från
+   * kroppssammansättning (?phase=open). Perioddialogen skickar dit den som
+   * valt styrkespåret utan uppmätt kroppsfett — utan den här återkomsten
+   * blev det en återvändsgränd: mätningen sparades men användaren fick själv
+   * hitta tillbaka till periodvalet.
+   *
+   * Parametern städas bort direkt så att en omladdning inte öppnar dialogen
+   * på nytt.
+   */
+  useEffect(() => {
+    if (searchParams.get('phase') !== 'open') return
+    setPickerOpen(true)
+    const next = new URLSearchParams(searchParams)
+    next.delete('phase')
+    setSearchParams(next, { replace: true })
+  }, [searchParams, setSearchParams])
 
   // Fasen bygger på TDEE och kroppsvikt — utan dem går inga mål att föreslå.
   const canPickPhase = !!tdee && !!weightKg

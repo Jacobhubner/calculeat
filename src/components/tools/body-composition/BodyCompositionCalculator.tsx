@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { BackToHubButton } from '@/components/tools/common/BackToHubButton'
 import MethodSelectionCard from '@/components/body-composition/MethodSelectionCard'
@@ -60,6 +61,8 @@ function calculateAge(birthDate: string | null): number {
 
 export default function BodyCompositionCalculator() {
   const { t } = useTranslation('body')
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const activeProfile = useProfileStore(state => state.activeProfile)
   const { data: allProfiles } = useProfiles()
   const profile = allProfiles?.find(p => p.id === activeProfile?.id)
@@ -412,6 +415,20 @@ export default function BodyCompositionCalculator() {
     setAllTapeMeasurements(prev => ({ ...prev, [field]: value }))
   }
 
+  /**
+   * Tillbaka dit användaren kom ifrån efter sparad mätning.
+   *
+   * Perioddialogen kräver kroppsfett för styrkespåret och skickar hit med
+   * ?returnTo=phase. Utan den här returen blev det en återvändsgränd:
+   * dialogen stängdes, mätningen sparades, och användaren fick själv lista
+   * ut var perioden låg. Målsättningssidan äger periodkortet.
+   */
+  const returnToOrigin = () => {
+    if (searchParams.get('returnTo') === 'phase') {
+      navigate('/app/tools/goal-calculator?phase=open')
+    }
+  }
+
   const handleSaveToProfile = async () => {
     if (!activeProfile || bodyFatPercentage === null) {
       toast.error(t('calculator.toastNoProfile'))
@@ -430,6 +447,7 @@ export default function BodyCompositionCalculator() {
       })
 
       toast.success(t('calculator.toastProfileUpdated'))
+      returnToOrigin()
     } catch (error) {
       toast.error(t('calculator.toastSaveError'))
       console.error(error)
@@ -453,6 +471,7 @@ export default function BodyCompositionCalculator() {
       })
 
       toast.success(t('calculator.toastProfileUpdated'))
+      returnToOrigin()
     } catch (error) {
       toast.error(t('calculator.toastSaveError'))
       console.error(error)

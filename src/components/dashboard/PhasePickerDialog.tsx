@@ -281,7 +281,11 @@ export function PhasePickerDialog({
                   className="mt-3 text-xs"
                   onClick={() => {
                     onOpenChange(false)
-                    navigate('/app/body-composition')
+                    // ?returnTo=phase gör att beräknaren visar en väg
+                    // tillbaka hit efter sparad mätning. Utan det var detta
+                    // en återvändsgränd: dialogen stängdes och användaren
+                    // fick själv lista ut var perioden låg.
+                    navigate('/app/body-composition/calculate?returnTo=phase')
                   }}
                 >
                   {t('phase.bodyFatNeeded.cta')}
