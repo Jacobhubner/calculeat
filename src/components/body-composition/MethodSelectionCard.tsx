@@ -38,7 +38,7 @@ export default function MethodSelectionCard({
 
   const handleMethodChange = (method: BodyCompositionMethod | '') => {
     if (method && isMethodLocked(method)) {
-      openUpgradeModal()
+      openUpgradeModal('advanced_body_comp')
       return
     }
     onMethodChange(method)

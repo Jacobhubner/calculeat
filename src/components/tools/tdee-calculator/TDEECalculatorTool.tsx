@@ -216,7 +216,7 @@ export default function TDEECalculatorTool() {
 
   const handleBmrFormulaChange = (formula: BMRFormula | '') => {
     if (formula && isFormulaLocked(formula)) {
-      openUpgradeModal()
+      openUpgradeModal('all_tdee_formulas')
       return
     }
     setBmrFormula(formula)
@@ -230,7 +230,7 @@ export default function TDEECalculatorTool() {
 
   const handlePalSystemChange = (system: PALSystem | '') => {
     if (system && isPalLocked(system)) {
-      openUpgradeModal()
+      openUpgradeModal('all_tdee_formulas')
       return
     }
     setPalSystem(system)

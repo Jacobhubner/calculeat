@@ -23,7 +23,7 @@ export function RecipeImageUpload({ value, onChange }: RecipeImageUploadProps) {
     // Nya uppladdningar är premium; befintliga bilder visas alltid kvar
     // (nedgraderingsregel: läsbar men låst, se docs/PREMIUM_SPEC.md)
     if (!limits.recipe_images) {
-      openUpgradeModal()
+      openUpgradeModal('recipe_images')
       return
     }
     const result = await uploadImage(file)
@@ -85,7 +85,7 @@ export function RecipeImageUpload({ value, onChange }: RecipeImageUploadProps) {
           type="button"
           onClick={() => {
             if (!limits.recipe_images) {
-              openUpgradeModal()
+              openUpgradeModal('recipe_images')
               return
             }
             inputRef.current?.click()

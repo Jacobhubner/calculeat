@@ -33,7 +33,7 @@ export function EquationGate({ feature, children }: EquationGateProps) {
   return (
     <button
       type="button"
-      onClick={() => openUpgradeModal()}
+      onClick={() => openUpgradeModal(feature)}
       className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-100 dark:border-amber-800 dark:bg-amber-900/25 dark:text-amber-300 dark:hover:bg-amber-900/40"
     >
       <Lock className="h-4 w-4 shrink-0" aria-hidden="true" />
