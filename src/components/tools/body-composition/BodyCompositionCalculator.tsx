@@ -15,6 +15,7 @@ import { PremiumGate } from '@/components/premium/PremiumGate'
 import MeasurementSetSidebar from '@/components/body-composition/MeasurementSetSidebar'
 import CollapsibleSidebar from '@/components/CollapsibleSidebar'
 import EmptyState from '@/components/EmptyState'
+import { BodyFatReferenceTable } from '@/components/body-composition/BodyFatReferenceTable'
 import { Activity, Scale } from 'lucide-react'
 import { useProfileStore } from '@/stores/profileStore'
 import { useMeasurementSetStore } from '@/stores/measurementSetStore'
@@ -951,6 +952,29 @@ export default function BodyCompositionCalculator() {
                         onSave={handleSaveToProfile}
                         isSaving={isSaving}
                       />
+
+                      {/*
+                        Visuell rimlighetskontroll före sparning.
+                        Särskilt viktig för Heritage BMI, som räknar på BMI,
+                        ålder och kön utan att mäta något på kroppen — en
+                        muskulös person får för högt värde och en otränad för
+                        lågt. Bilderna är enda sättet användaren kan upptäcka
+                        att siffran inte stämmer INNAN den sparas och börjar
+                        driva kalori- och proteinmål i alla perioder framåt.
+
+                        userBodyFat markerar användarens kategori i tabellen.
+                      */}
+                      <details className="rounded-2xl border border-neutral-200 dark:border-neutral-700">
+                        <summary className="cursor-pointer list-none px-4 py-3 text-sm font-medium text-neutral-700 hover:bg-neutral-50 dark:text-neutral-200 dark:hover:bg-neutral-800">
+                          {t('calculator.compareVisually')}
+                        </summary>
+                        <div className="border-t border-neutral-200 px-4 py-4 dark:border-neutral-700">
+                          <BodyFatReferenceTable
+                            userBodyFat={bodyFatPercentage}
+                            gender={profile?.gender}
+                          />
+                        </div>
+                      </details>
                     </div>
                   )}
 

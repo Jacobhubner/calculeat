@@ -85,7 +85,8 @@
     "profileFieldWeightValue": "{{value}} kg",
     "profileFieldMissing": "Saknas",
     "noMethodSelected": "Välj en beräkningsmetod för att börja",
-    "missingFields": "Fyll i alla obligatoriska fält för att se resultat"
+    "missingFields": "Fyll i alla obligatoriska fält för att se resultat",
+    "compareVisually": "Jämför visuellt — stämmer resultatet?"
   },
   "results": {
     "bodyDensity": "Kroppsdensitet",

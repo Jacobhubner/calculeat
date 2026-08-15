@@ -85,7 +85,8 @@
     "profileFieldWeightValue": "{{value}} kg",
     "profileFieldMissing": "Missing",
     "noMethodSelected": "Select a calculation method to get started",
-    "missingFields": "Fill in all required fields to see results"
+    "missingFields": "Fill in all required fields to see results",
+    "compareVisually": "Compare visually — does the result look right?"
   },
   "results": {
     "bodyDensity": "Body density",
