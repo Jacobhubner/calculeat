@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ChevronDown, ChevronUp } from 'lucide-react'
+import { ChevronDown, ChevronUp, Images } from 'lucide-react'
 import { BODY_FAT_CATEGORIES_ACE } from '../../lib/constants/bodyCompositionReferenceData'
 import type { Gender } from '@/lib/types'
 
@@ -159,13 +159,33 @@ export function BodyFatReferenceTable({
 
       {/* Expandable section: images + insights */}
       <div className="border-t border-gray-200 dark:border-neutral-700">
+        {/*
+          Framträdande variant där tabellen är huvudinnehåll (fullWidthImages
+          = beräknarens resultatvy). I 11 px grå text såg knappen ut som en
+          fotnot och missades — här är den en verklig uppmaning att verifiera
+          sitt resultat innan det sparas.
+
+          Hubben och Målsättning behåller den diskreta varianten: där är
+          tabellen referensmaterial, inte ett steg i ett flöde.
+        */}
         <button
           type="button"
           onClick={() => setExpanded(v => !v)}
-          className="w-full flex items-center justify-between px-3 py-2 text-[11px] text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors dark:hover:bg-neutral-800"
+          className={
+            fullWidthImages
+              ? 'w-full flex items-center justify-between gap-2 px-3 py-3 text-sm font-semibold text-primary-700 hover:bg-primary-50 dark:text-primary-300 dark:hover:bg-primary-900/25 transition-colors'
+              : 'w-full flex items-center justify-between px-3 py-2 text-[11px] text-gray-600 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-800 transition-colors'
+          }
         >
-          <span>{t('refTable.whatDoRangesMean')}</span>
-          {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+          <span className="flex items-center gap-2">
+            {fullWidthImages && <Images size={16} className="shrink-0" />}
+            {t('refTable.whatDoRangesMean')}
+          </span>
+          {expanded ? (
+            <ChevronUp size={fullWidthImages ? 18 : 13} />
+          ) : (
+            <ChevronDown size={fullWidthImages ? 18 : 13} />
+          )}
         </button>
 
         {expanded && (
