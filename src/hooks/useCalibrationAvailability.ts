@@ -13,8 +13,12 @@ import {
 } from '@/lib/calculations/calibration'
 import { useEntitlements, isUnlimited } from '@/hooks/useEntitlements'
 
-/** Dagar mellan kalibreringar på gratisnivån (1×/kvartal, se docs/PREMIUM_SPEC.md) */
-const FREE_CALIBRATION_INTERVAL_DAYS = 90
+/**
+ * Fallback om entitlements-svaret saknar de nya nycklarna (äldre RPC-version).
+ * Skarpa värden kommer från get_plan_limits(), se docs/PREMIUM_SPEC.md.
+ */
+const DEFAULT_FREE_CALIBRATION_GRACE = 2
+const DEFAULT_FREE_CALIBRATION_INTERVAL_DAYS = 180
 
 /**
  * Determine if TDEE calibration is available and recommended.
@@ -28,7 +32,10 @@ export function useCalibrationAvailability(
   lastCalibration: CalibrationHistory | null | undefined
 ): CalibrationAvailability {
   const { limits } = useEntitlements()
-  const quarterLimited = !isUnlimited(limits.calibrations_per_quarter)
+  const graceCount = limits.free_calibration_grace ?? DEFAULT_FREE_CALIBRATION_GRACE
+  const intervalDays = limits.calibration_interval_days ?? DEFAULT_FREE_CALIBRATION_INTERVAL_DAYS
+  /** premium/founder har grace = -1 (obegränsat) och passerar utan gräns */
+  const planLimited = !isUnlimited(graceCount)
 
   return useMemo(() => {
     const unavailable: CalibrationAvailability = {
@@ -99,19 +106,24 @@ export function useCalibrationAvailability(
       )
     }
 
-    // Plan-gräns: gratisnivån får kalibrera 1×/kvartal (premium/founder obegränsat)
-    if (
-      quarterLimited &&
-      daysSinceLastCalibration !== null &&
-      daysSinceLastCalibration < FREE_CALIBRATION_INTERVAL_DAYS
-    ) {
-      const daysLeft = FREE_CALIBRATION_INTERVAL_DAYS - daysSinceLastCalibration
-      return {
-        ...unavailable,
-        currentDataPoints: weightHistory.length,
-        daysSinceLastCalibration,
-        daysUntilNextRecommended: daysLeft,
-        reason: `Nästa kalibrering om ${daysLeft} dagar — gratisnivån kalibrerar 1 gång per kvartal`,
+    // Plan-gräns: gratisnivån får två fria kalibreringar, därefter 1×/6 mån.
+    // De två fria finns för att användaren ska hinna uppleva loopen
+    // (kalibrera → se TDEE justeras) innan intervallet börjar gälla.
+    // premium/founder är obegränsat och passerar rakt igenom.
+    if (planLimited && daysSinceLastCalibration !== null) {
+      const usedCalibrations = profile.lifetime_calibration_count ?? 0
+      const withinGrace = usedCalibrations < graceCount
+
+      if (!withinGrace && daysSinceLastCalibration < intervalDays) {
+        const daysLeft = intervalDays - daysSinceLastCalibration
+        const months = Math.round(intervalDays / 30)
+        return {
+          ...unavailable,
+          currentDataPoints: weightHistory.length,
+          daysSinceLastCalibration,
+          daysUntilNextRecommended: daysLeft,
+          reason: `Nästa kalibrering om ${daysLeft} dagar — gratisnivån kalibrerar 1 gång var ${months}:e månad`,
+        }
       }
     }
 
@@ -220,5 +232,5 @@ export function useCalibrationAvailability(
       suggestedTimePeriod: bestPeriod,
       confidencePreview,
     }
-  }, [profile, weightHistory, lastCalibration, quarterLimited])
+  }, [profile, weightHistory, lastCalibration, planLimited, graceCount, intervalDays])
 }

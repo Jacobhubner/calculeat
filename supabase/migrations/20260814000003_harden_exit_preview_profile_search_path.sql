@@ -1,0 +1,25 @@
+-- =========================================================
+-- Säkerhet: fast search_path på exit_preview_profile
+-- Date: 2026-08-14
+--
+-- Supabase säkerhetsrådgivare flaggar funktionen för
+-- function_search_path_mutable: den är SECURITY DEFINER men saknar fast
+-- search_path, vilket i teorin gör den känslig för search_path-manipulation.
+--
+-- Bristen är äldre än fasmigrationen — den fanns redan i den live-definition
+-- som verifierades 2026-08-15 — men åtgärdas här eftersom 20260814000002
+-- ändå rörde funktionen.
+--
+-- ALTER FUNCTION ... SET ändrar ENBART konfigurationen; funktionskroppen
+-- lämnas orörd. Det är avsiktligt: att återskapa kroppen (~4,7 kB med 40+
+-- kolumnåterställningar) vore en onödig risk för en konfigurationsändring.
+--
+-- Kvarvarande flaggade funktioner med samma brist, ej rörda här eftersom de
+-- ligger utanför det här arbetets omfång:
+--   calculate_food_item_derived_values, calculate_food_item_nutrition,
+--   calculate_meal_entry_item_nutrition, create_preview_profile,
+--   find_available_username, handle_new_user, normalize_username
+--   (get_plan_limits är IMMUTABLE och inte SECURITY DEFINER — låg risk)
+-- =========================================================
+
+ALTER FUNCTION public.exit_preview_profile() SET search_path = public;

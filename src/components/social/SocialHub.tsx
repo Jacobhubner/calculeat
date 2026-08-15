@@ -22,6 +22,7 @@ import {
   CheckCheck,
   MoreHorizontal,
   ShieldCheck,
+  Zap,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -1532,6 +1533,8 @@ function notificationIcon(type: Notification['type']) {
       return <X className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />
     case 'admin_message':
       return <Megaphone className="h-4 w-4 text-primary-600 dark:text-primary-300" />
+    case 'calibration_recommended':
+      return <Zap className="h-4 w-4 text-primary-600 dark:text-primary-300" />
   }
 }
 
