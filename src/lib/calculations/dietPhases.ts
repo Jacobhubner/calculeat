@@ -510,6 +510,49 @@ export function phaseProgress(phase: DietPhase): number | null {
  * cut → reverse (trappa upp kontrollerat istället för att hoppa till
  * maintenance), reverse → maintenance, bulk → cut, maintenance → valfritt.
  */
+/**
+ * Vilket calorie_goal en periodtyp motsvarar.
+ *
+ * Speglar databastriggern sync_calorie_goal_from_phase exakt — ändras
+ * mappningen där måste den ändras här. Används för att upptäcka när ett mål
+ * som sätts någon annanstans (Målsättning, profilsidan) krockar med den
+ * pågående perioden.
+ */
+export function calorieGoalForPhase(phaseType: DietPhaseType): string {
+  switch (phaseType) {
+    case 'cut':
+      return 'Weight loss'
+    case 'bulk':
+      return 'Weight gain'
+    case 'maintenance':
+    case 'reverse':
+      // Upptrappning går MOT underhåll — kalorimålet styrs av periodens
+      // target_calories, inte av ett procentuellt underskott.
+      return 'Maintain weight'
+  }
+}
+
+/**
+ * true när ett nytt calorie_goal motsäger den aktiva perioden.
+ *
+ * Triggern går bara ÅT ETT HÅLL (diet_phases → profiles), så en skrivning
+ * till profiles kan annars lämna perioden orörd: dashboarden visar
+ * "Bygga muskler, vecka 3" medan profilen räknar viktnedgång. Det påverkar
+ * inte bara etiketten — MetabolicCalibration och revert_calibration_v2
+ * läser calorie_goal för att räkna om kalorimål.
+ *
+ * 'Custom TDEE' räknas aldrig som en krock: det betyder "eget värde", inte
+ * en riktning som kan motsäga något.
+ */
+export function goalConflictsWithPhase(
+  newGoal: string | null | undefined,
+  phase: Pick<DietPhase, 'phase_type' | 'ended_at'> | null | undefined
+): boolean {
+  if (!phase || phase.ended_at !== null) return false
+  if (!newGoal || newGoal === 'Custom TDEE') return false
+  return newGoal !== calorieGoalForPhase(phase.phase_type)
+}
+
 export function suggestedNextPhase(current: DietPhaseType): DietPhaseType | null {
   switch (current) {
     case 'cut':

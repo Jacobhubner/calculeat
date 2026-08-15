@@ -7,6 +7,8 @@ import {
   suggestedNextPhase,
   macroModeForPhase,
   phaseNeedsBodyFat,
+  calorieGoalForPhase,
+  goalConflictsWithPhase,
 } from './dietPhases'
 import type { DietPhase } from '@/lib/types'
 
@@ -290,6 +292,49 @@ describe('macroModeForPhase / phaseNeedsBodyFat', () => {
     expect(phaseNeedsBodyFat('cut', 'strength')).toBe(true)
     expect(phaseNeedsBodyFat('cut', 'health')).toBe(false)
     expect(phaseNeedsBodyFat('bulk', 'strength')).toBe(false)
+  })
+})
+
+describe('goalConflictsWithPhase', () => {
+  it('speglar databastriggerns mappning', () => {
+    // Måste stämma med sync_calorie_goal_from_phase — annars upptäcks
+    // krockar felaktigt eller inte alls.
+    expect(calorieGoalForPhase('cut')).toBe('Weight loss')
+    expect(calorieGoalForPhase('bulk')).toBe('Weight gain')
+    expect(calorieGoalForPhase('maintenance')).toBe('Maintain weight')
+    expect(calorieGoalForPhase('reverse')).toBe('Maintain weight')
+  })
+
+  it('flaggar mål som pekar åt ett annat håll än perioden', () => {
+    const bulk = makePhase({ phase_type: 'bulk' })
+    expect(goalConflictsWithPhase('Weight loss', bulk)).toBe(true)
+    expect(goalConflictsWithPhase('Maintain weight', bulk)).toBe(true)
+    expect(goalConflictsWithPhase('Weight gain', bulk)).toBe(false)
+  })
+
+  it('flaggar inte när ingen period är aktiv', () => {
+    expect(goalConflictsWithPhase('Weight loss', null)).toBe(false)
+    // Avslutad period kan inte krocka
+    const ended = makePhase({ phase_type: 'bulk', ended_at: '2026-02-01' })
+    expect(goalConflictsWithPhase('Weight loss', ended)).toBe(false)
+  })
+
+  it('behandlar Custom TDEE som neutralt', () => {
+    // "Eget värde" är ingen riktning och kan inte motsäga en period
+    expect(goalConflictsWithPhase('Custom TDEE', makePhase({ phase_type: 'cut' }))).toBe(false)
+  })
+
+  it('flaggar inte när målet saknas', () => {
+    const cut = makePhase({ phase_type: 'cut' })
+    expect(goalConflictsWithPhase(undefined, cut)).toBe(false)
+    expect(goalConflictsWithPhase(null, cut)).toBe(false)
+  })
+
+  it('låter upptrappning samexistera med underhållsmål', () => {
+    // Reverse går MOT underhåll — 'Maintain weight' är inte en krock
+    const reverse = makePhase({ phase_type: 'reverse' })
+    expect(goalConflictsWithPhase('Maintain weight', reverse)).toBe(false)
+    expect(goalConflictsWithPhase('Weight gain', reverse)).toBe(true)
   })
 })
 

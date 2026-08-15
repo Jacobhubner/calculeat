@@ -32,6 +32,9 @@ import SetupProfileForm from '@/components/profile/SetupProfileForm'
 import MacroDistributionCard from '@/components/MacroDistributionCard'
 import MealSettingsCard from '@/components/MealSettingsCard'
 import MacroModesCard from '@/components/MacroModesCard'
+import { PhaseConflictDialog } from '@/components/dashboard/PhaseConflictDialog'
+import { useActiveDietPhase, useEndDietPhase } from '@/hooks/useDietPhases'
+import { goalConflictsWithPhase } from '@/lib/calculations/dietPhases'
 import MacroConverterCard from '@/components/profile/MacroConverterCard'
 import { freeMacrosForGoal } from '@/lib/utils/macroModes'
 
@@ -123,6 +126,10 @@ export default function ProfilePage() {
     // Display preferences
     show_energy_density?: boolean
   }>({})
+
+  const { data: activePhase } = useActiveDietPhase()
+  const endPhase = useEndDietPhase()
+  const [conflictOpen, setConflictOpen] = useState(false)
 
   // Presentation-only save state — pendingChanges is source-of-truth
   type SaveState = 'pristine' | 'dirty' | 'saving' | 'saved' | 'error'
@@ -686,6 +693,21 @@ export default function ProfilePage() {
       return
     }
 
+    // Sist av kontrollerna: krockar det nya målet med en pågående period?
+    // Fråga i stället för att låta de två divergera tyst — triggern speglar
+    // bara diet_phases → profiles, aldrig tvärtom. Ligger efter validering
+    // så att frågan inte ställs för ett formulär som ändå inte kan sparas.
+    if (goalConflictsWithPhase(pendingChanges.calorie_goal, activePhase)) {
+      setConflictOpen(true)
+      return
+    }
+
+    await persistProfile()
+  }
+
+  /** Själva sparningen — anropas direkt eller efter att en periodkrock bekräftats. */
+  const persistProfile = async () => {
+    if (!activeProfile) return
     try {
       setSaveState('saving')
 
@@ -972,6 +994,23 @@ export default function ProfilePage() {
             )}
           </div>
         </>
+      )}
+
+      {activePhase && (
+        <PhaseConflictDialog
+          open={conflictOpen}
+          onOpenChange={setConflictOpen}
+          phase={activePhase}
+          isPending={endPhase.isPending || updateProfile.isPending}
+          onConfirm={async () => {
+            // Perioden avslutas FÖRE profilskrivningen: triggern sätter
+            // calorie_goal när en period ändras, så motsatt ordning skulle
+            // skriva över det mål användaren just valde.
+            await endPhase.mutateAsync(activePhase.id)
+            setConflictOpen(false)
+            await persistProfile()
+          }}
+        />
       )}
     </DashboardLayout>
   )

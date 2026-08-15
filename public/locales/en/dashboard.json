@@ -262,6 +262,12 @@
       "confirmDelete": "Delete",
       "cancelDelete": "Cancel",
       "deleted": "Period removed from history"
+    },
+    "conflict": {
+      "title": "This will end your active period",
+      "body": "You have the period \"{{phase}}\" running. A new target pointing in a different direction will end it — the period is kept in your history.",
+      "confirm": "End it and save the target",
+      "cancel": "Keep the period"
     }
   }
 }

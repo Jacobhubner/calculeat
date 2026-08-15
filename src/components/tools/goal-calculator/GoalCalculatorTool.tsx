@@ -24,6 +24,9 @@ import { calculateBMI, getBMICategory, calculateIdealWeightRange } from '@/lib/c
 import { BodyFatReferenceTable } from '@/components/body-composition/BodyFatReferenceTable'
 import { DietPhaseCard } from '@/components/dashboard/DietPhaseCard'
 import { PhaseHistoryCard } from '@/components/dashboard/PhaseHistoryCard'
+import { PhaseConflictDialog } from '@/components/dashboard/PhaseConflictDialog'
+import { useActiveDietPhase, useEndDietPhase } from '@/hooks/useDietPhases'
+import { goalConflictsWithPhase } from '@/lib/calculations/dietPhases'
 import { toast } from 'sonner'
 import type { Profile, CalorieGoal } from '@/lib/types'
 import { useTranslation } from 'react-i18next'
@@ -32,6 +35,9 @@ export default function GoalCalculatorTool() {
   const navigate = useNavigate()
   const { t } = useTranslation('tools')
   const { profile } = useActiveProfile()
+  const { data: activePhase } = useActiveDietPhase()
+  const endPhase = useEndDietPhase()
+  const [conflictOpen, setConflictOpen] = useState(false)
   const profileData = useProfileData([
     'weight_kg',
     'body_fat_percentage',
@@ -314,9 +320,16 @@ export default function GoalCalculatorTool() {
     profile?.calories_min === appliedCalories.min &&
     profile?.calories_max === appliedCalories.max
 
-  const handleApplyToProfile = async () => {
+  /** Skriver målet till profilen. Avslutar först perioden om den motsäger målet. */
+  const applyGoalToProfile = async (endPhaseFirst: boolean) => {
     if (!profile?.id || !appliedCalories || !appliedGoalMeta) return
     try {
+      // Perioden avslutas FÖRE profilskrivningen: triggern sätter
+      // calorie_goal när en period ändras, så motsatt ordning skulle
+      // skriva över det mål användaren just valde.
+      if (endPhaseFirst && activePhase) {
+        await endPhase.mutateAsync(activePhase.id)
+      }
       await updateProfileMutation.mutateAsync({
         profileId: profile.id,
         data: {
@@ -328,10 +341,21 @@ export default function GoalCalculatorTool() {
           }),
         },
       })
+      setConflictOpen(false)
       toast.success(t('goalCalc.toast.profileUpdated'))
     } catch {
       toast.error(t('goalCalc.toast.profileUpdateFailed'))
     }
+  }
+
+  const handleApplyToProfile = async () => {
+    // Krockar målet med en pågående period? Fråga i stället för att låta de
+    // två divergera tyst — se PhaseConflictDialog.
+    if (goalConflictsWithPhase(appliedGoalMeta?.calorie_goal, activePhase)) {
+      setConflictOpen(true)
+      return
+    }
+    await applyGoalToProfile(false)
   }
 
   const handleSaveMissingData = async (data: Partial<Profile>) => {
@@ -1204,6 +1228,16 @@ export default function GoalCalculatorTool() {
           </div>
         )}
       </div>
+
+      {activePhase && (
+        <PhaseConflictDialog
+          open={conflictOpen}
+          onOpenChange={setConflictOpen}
+          phase={activePhase}
+          isPending={endPhase.isPending || updateProfileMutation.isPending}
+          onConfirm={() => applyGoalToProfile(true)}
+        />
+      )}
     </div>
   )
 }

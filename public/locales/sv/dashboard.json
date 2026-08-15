@@ -262,6 +262,12 @@
       "confirmDelete": "Ta bort",
       "cancelDelete": "Avbryt",
       "deleted": "Perioden borttagen ur historiken"
+    },
+    "conflict": {
+      "title": "Detta avslutar din pågående period",
+      "body": "Du har perioden \"{{phase}}\" igång. Ett nytt mål som pekar åt ett annat håll avslutar den — perioden sparas i historiken.",
+      "confirm": "Avsluta och spara målet",
+      "cancel": "Behåll perioden"
     }
   }
 }
