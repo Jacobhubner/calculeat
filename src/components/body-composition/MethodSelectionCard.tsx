@@ -48,10 +48,16 @@ export default function MethodSelectionCard({
     const name = t(`methodNames.${methodNameKeyMap[method]}`, {
       defaultValue: methodNameTranslations[method],
     })
-    // Märk de FRIA, inte de låsta. Tio av tolv metoder är premium — med
-    // suffix på dem läser ögat mönstret "allt är låst" och missar de två
-    // undantagen. Två markeringar sticker ut; tio blir bakgrundsbrus.
-    return isMethodLocked(method) ? name : `${name} — ${t('methodSelection.freeSuffix')}`
+    // Låset som PREFIX på premium, "ingår gratis" som SUFFIX på de fria.
+    //
+    // Nativ <select> renderar sina <option> själv — CSS för opacitet, färg
+    // eller ikoner ignoreras av webbläsaren. Emojin fungerar däremot, eftersom
+    // den är text. Prefix i vänsterkanten är dessutom lättare att skanna än
+    // ett suffix i radslutet.
+    //
+    // Båda märks: enbart lås gav mönstret "allt är låst" (tio av tolv), och
+    // enbart gratis-suffix sa inget om varför de övriga saknade märkning.
+    return isMethodLocked(method) ? `🔒 ${name}` : `${name} — ${t('methodSelection.freeSuffix')}`
   }
 
   const methodNameKeyMap: Record<string, string> = {

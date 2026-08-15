@@ -194,7 +194,7 @@
     "showInfo": "Show information about method",
     "infoButton": "Info",
     "freeSuffix": "included free",
-    "freeHint": "Two methods are included in the free plan. The rest require Premium."
+    "freeHint": "🔒 = requires Premium. Two methods are included in the free plan."
   },
   "comparison": {
     "loading": "Loading methods...",
