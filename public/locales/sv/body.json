@@ -226,7 +226,7 @@
     "men": "Män",
     "women": "Kvinnor",
     "source": "Källa: American Council on Exercise",
-    "whatDoRangesMean": "Jämför visuellt — stämmer resultatet?",
+    "whatDoRangesMean": "Vad betyder intervallen?",
     "description": "Beskrivning",
     "bodyFat": "Kroppsfett",
     "ffmiMen": "FFMI (män)",
@@ -294,7 +294,8 @@
         "range": "40% och uppåt",
         "text": "Klassas ofta som övervikt eller fetma, vilket kan öka risken för livsstilssjukdomar."
       }
-    }
+    },
+    "compareVisually": "Jämför visuellt — stämmer resultatet?"
   },
   "methodCategories": {
     "caliper": "Kalipermetoder (Hudveck)",

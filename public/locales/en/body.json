@@ -226,7 +226,7 @@
     "men": "Men",
     "women": "Women",
     "source": "Source: American Council on Exercise",
-    "whatDoRangesMean": "Compare visually — does the result look right?",
+    "whatDoRangesMean": "What do the ranges mean?",
     "description": "Description",
     "bodyFat": "Body fat",
     "ffmiMen": "FFMI (men)",
@@ -294,7 +294,8 @@
         "range": "40% and above",
         "text": "Often classified as overweight or obesity, which can increase the risk of lifestyle diseases."
       }
-    }
+    },
+    "compareVisually": "Compare visually — does the result look right?"
   },
   "methodCategories": {
     "caliper": "Caliper methods (Skinfold)",

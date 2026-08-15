@@ -190,7 +190,10 @@ export function BodyFatReferenceTable({
         >
           <span className="flex items-center gap-2">
             {prominentToggle && <Images size={16} className="shrink-0" />}
-            {t('refTable.whatDoRangesMean')}
+            {/* Olika text per läge: i beräknaren är det en uppmaning att
+                verifiera sitt resultat, i referensvyerna en förklaring av
+                vad kategorierna betyder. */}
+            {prominentToggle ? t('refTable.compareVisually') : t('refTable.whatDoRangesMean')}
           </span>
           {expanded ? (
             <ChevronUp size={prominentToggle ? 18 : 13} />
