@@ -9,6 +9,7 @@ import {
   phaseNeedsBodyFat,
   calorieGoalForPhase,
   goalConflictsWithPhase,
+  phaseTypeForCalorieGoal,
 } from './dietPhases'
 import type { DietPhase } from '@/lib/types'
 
@@ -292,6 +293,30 @@ describe('macroModeForPhase / phaseNeedsBodyFat', () => {
     expect(phaseNeedsBodyFat('cut', 'strength')).toBe(true)
     expect(phaseNeedsBodyFat('cut', 'health')).toBe(false)
     expect(phaseNeedsBodyFat('bulk', 'strength')).toBe(false)
+  })
+})
+
+describe('phaseTypeForCalorieGoal', () => {
+  it('härleder periodtyp ur profilens riktning', () => {
+    // Appen frågar om riktning innan TDEE finns; förvalet gör att frågan inte
+    // ställs två gånger med olika ord.
+    expect(phaseTypeForCalorieGoal('Weight loss')).toBe('cut')
+    expect(phaseTypeForCalorieGoal('Weight gain')).toBe('bulk')
+    expect(phaseTypeForCalorieGoal('Maintain weight')).toBe('maintenance')
+  })
+
+  it('gissar inte när riktningen saknas eller är egen', () => {
+    expect(phaseTypeForCalorieGoal('Custom TDEE')).toBeUndefined()
+    expect(phaseTypeForCalorieGoal(null)).toBeUndefined()
+    expect(phaseTypeForCalorieGoal(undefined)).toBeUndefined()
+  })
+
+  it('är omvändningen av calorieGoalForPhase', () => {
+    // De två måste följas åt — annars förväljs en periodtyp som sedan
+    // rapporteras som en krock mot samma mål.
+    for (const type of ['cut', 'bulk', 'maintenance'] as const) {
+      expect(phaseTypeForCalorieGoal(calorieGoalForPhase(type))).toBe(type)
+    }
   })
 })
 

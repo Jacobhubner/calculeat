@@ -12,6 +12,7 @@ import {
   phaseProgress,
   currentPhaseCalories,
   suggestedNextPhase,
+  phaseTypeForCalorieGoal,
 } from '@/lib/calculations/dietPhases'
 import { useActiveDietPhase, useEndDietPhase } from '@/hooks/useDietPhases'
 import { PhasePickerDialog } from './PhasePickerDialog'
@@ -38,9 +39,17 @@ interface Props {
   currentCalories?: number
   /** Uppmätt kroppsfett — Deff-läget kräver det för proteinmål mot FFM */
   bodyFatPercentage?: number
+  /** Profilens riktning — förväljer periodtyp så frågan inte ställs två gånger */
+  calorieGoal?: string | null
 }
 
-export function DietPhaseCard({ tdee, weightKg, currentCalories, bodyFatPercentage }: Props) {
+export function DietPhaseCard({
+  tdee,
+  weightKg,
+  currentCalories,
+  bodyFatPercentage,
+  calorieGoal,
+}: Props) {
   const { t } = useTranslation('dashboard')
   const { data: phase } = useActiveDietPhase()
   const endPhase = useEndDietPhase()
@@ -81,7 +90,14 @@ export function DietPhaseCard({ tdee, weightKg, currentCalories, bodyFatPercenta
           weightKg={weightKg}
           currentCalories={currentCalories}
           bodyFatPercentage={bodyFatPercentage}
-          initialPhase={phase ? (suggestedNextPhase(phase.phase_type) ?? undefined) : undefined}
+          initialPhase={
+            phase
+              ? // Byter man period föreslås nästa steg i kedjan
+                (suggestedNextPhase(phase.phase_type) ?? undefined)
+              : // Första perioden: utgå från riktningen användaren redan
+                // angett i profilen, så frågan inte ställs två gånger
+                phaseTypeForCalorieGoal(calorieGoal)
+          }
           initialFocus={phase?.focus}
         />
       )}

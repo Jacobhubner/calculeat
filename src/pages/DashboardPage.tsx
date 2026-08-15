@@ -253,6 +253,7 @@ export default function DashboardPage() {
                   : undefined
               }
               bodyFatPercentage={profile?.body_fat_percentage}
+              calorieGoal={profile?.calorie_goal}
             />
 
             {/* Kalibrering — visas bara när tillräckligt med viktdata finns */}

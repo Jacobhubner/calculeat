@@ -421,6 +421,7 @@ export default function GoalCalculatorTool() {
             : undefined
         }
         bodyFatPercentage={profile?.body_fat_percentage}
+        calorieGoal={profile?.calorie_goal}
       />
       <PhaseHistoryCard />
 

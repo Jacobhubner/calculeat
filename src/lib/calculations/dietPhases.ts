@@ -533,6 +533,35 @@ export function calorieGoalForPhase(phaseType: DietPhaseType): string {
 }
 
 /**
+ * Periodtypen som motsvarar profilens riktning (`calorie_goal`).
+ *
+ * Appen frågar redan om riktning när användaren fyller i grunduppgifterna
+ * — innan TDEE finns och en period alls är möjlig. Utan den här kopplingen
+ * ställs samma fråga två gånger med olika ord: "Vad är ditt mål?" i profilen
+ * och "Vad vill du göra nu?" i perioddialogen. Genom att förvälja perioden
+ * blir steg två en BEKRÄFTELSE i stället för en upprepad fråga.
+ *
+ * Omvänd riktning mot calorieGoalForPhase. 'reverse' härleds aldrig här —
+ * upptrappning väljs inte spontant, den föreslås efter en avslutad nedgång.
+ */
+export function phaseTypeForCalorieGoal(
+  calorieGoal: string | null | undefined
+): DietPhaseType | undefined {
+  switch (calorieGoal) {
+    case 'Weight loss':
+      return 'cut'
+    case 'Weight gain':
+      return 'bulk'
+    case 'Maintain weight':
+      return 'maintenance'
+    default:
+      // 'Custom TDEE' eller inget mål satt — låt dialogen använda sitt eget
+      // standardval i stället för att gissa.
+      return undefined
+  }
+}
+
+/**
  * true när ett nytt calorie_goal motsäger den aktiva perioden.
  *
  * Triggern går bara ÅT ETT HÅLL (diet_phases → profiles), så en skrivning
