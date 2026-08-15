@@ -244,14 +244,14 @@
       "cancel": "Avbryt",
       "needsTdee": "Du behöver räkna ut ditt TDEE innan du kan välja en period.",
       "goToTdee": "Räkna ut TDEE",
-      "close": "Stäng"
+      "close": "Stäng",
+      "next": "Fortsätt"
     },
     "toast": {
       "started": "Perioden har startat",
       "ended": "Perioden är avslutad"
     },
     "endConfirm": "Avsluta den pågående perioden?",
-    "typeLabelFocus": "— utifrån {{focus}}",
     "history": {
       "title": "Tidigare perioder",
       "empty": "Inga avslutade perioder än. När du avslutar en period hamnar den här.",

@@ -244,14 +244,14 @@
       "cancel": "Cancel",
       "needsTdee": "You need to calculate your TDEE before choosing a period.",
       "goToTdee": "Calculate TDEE",
-      "close": "Close"
+      "close": "Close",
+      "next": "Continue"
     },
     "toast": {
       "started": "Period started",
       "ended": "Period ended"
     },
     "endConfirm": "End the current period?",
-    "typeLabelFocus": "— based on {{focus}}",
     "history": {
       "title": "Past periods",
       "empty": "No completed periods yet. When you end a period it shows up here.",
