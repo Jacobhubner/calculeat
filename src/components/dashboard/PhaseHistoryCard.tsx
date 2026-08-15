@@ -56,16 +56,18 @@ export function PhaseHistoryCard() {
         <CardTitle className="text-base">{t('phase.history.title')}</CardTitle>
       </CardHeader>
       <CardContent>
-        {!hasPlanning ? (
-          <button
-            type="button"
-            onClick={() => openUpgradeModal('diet_phase_planning')}
-            className="flex w-full items-start gap-2 rounded-lg border border-dashed border-amber-300 bg-amber-50 px-3 py-3 text-left text-xs text-amber-800 transition-colors hover:bg-amber-100 dark:border-amber-800 dark:bg-amber-900/25 dark:text-amber-200 dark:hover:bg-amber-900/40"
-          >
-            <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            <span>{t('phase.history.locked')}</span>
-          </button>
-        ) : ended.length === 0 ? (
+        {/*
+          Listan visas för ALLA. Att se och RADERA sin egen data får aldrig
+          vara en betald funktion — och specens princip är "läsbar men låst".
+          En helt gömd historik var en hårdare gate än avsett.
+
+          Det som faktiskt är premium är planeringen framåt (progressmätare,
+          planerad längd, guidat nästa steg), inte listan bakåt. Uppsäljningen
+          ligger därför UNDER listan: användaren ser sin historik och förstår
+          vad premium skulle tillföra, i stället för att möta en vägg framför
+          något hen inte vet vad det är.
+        */}
+        {ended.length === 0 ? (
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
             {t('phase.history.empty')}
           </p>
@@ -83,6 +85,17 @@ export function PhaseHistoryCard() {
               />
             ))}
           </ul>
+        )}
+
+        {!hasPlanning && (
+          <button
+            type="button"
+            onClick={() => openUpgradeModal('diet_phase_planning')}
+            className="mt-3 flex w-full items-start gap-2 rounded-lg border border-dashed border-amber-300 bg-amber-50 px-3 py-3 text-left text-xs text-amber-800 transition-colors hover:bg-amber-100 dark:border-amber-800 dark:bg-amber-900/25 dark:text-amber-200 dark:hover:bg-amber-900/40"
+          >
+            <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span>{t('phase.history.upsell')}</span>
+          </button>
         )}
       </CardContent>
     </Card>
@@ -122,7 +135,12 @@ function HistoryRow({
           </p>
           <p className="text-xs text-neutral-500 dark:text-neutral-400">
             {formatDate(phase.started_at)} – {phase.ended_at ? formatDate(phase.ended_at) : ''} ·{' '}
+            {/* Faktisk längd. Perioder utan planerad längd (gratisnivån) visar
+                bara hur länge de pågick — inte hur länge de var tänkta. */}
             {t('phase.history.weeks', { count: weeks })}
+            {phase.planned_weeks
+              ? ` ${t('phase.history.ofPlanned', { total: phase.planned_weeks })}`
+              : ''}
             {phase.start_weight_kg != null
               ? ` · ${t('phase.startWeight')} ${phase.start_weight_kg} kg`
               : ''}

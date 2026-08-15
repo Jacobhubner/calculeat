@@ -255,13 +255,14 @@
     "history": {
       "title": "Tidigare perioder",
       "empty": "Inga avslutade perioder än. När du avslutar en period hamnar den här.",
-      "locked": "Med Premium ser du alla dina tidigare perioder — längd, startvikt och vad du gjorde.",
       "weeks": "{{count}} veckor",
       "weeks_one": "{{count}} vecka",
       "delete": "Ta bort",
       "confirmDelete": "Ta bort",
       "cancelDelete": "Avbryt",
-      "deleted": "Perioden borttagen ur historiken"
+      "deleted": "Perioden borttagen ur historiken",
+      "upsell": "Med Premium får du planerad längd, framstegsmätare och förslag på nästa period.",
+      "ofPlanned": "av {{total}} planerade"
     },
     "conflict": {
       "title": "Detta avslutar din pågående period",

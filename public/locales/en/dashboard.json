@@ -255,13 +255,14 @@
     "history": {
       "title": "Past periods",
       "empty": "No completed periods yet. When you end a period it shows up here.",
-      "locked": "With Premium you can see all your past periods — length, starting weight and what you did.",
       "weeks": "{{count}} weeks",
       "weeks_one": "{{count}} week",
       "delete": "Delete",
       "confirmDelete": "Delete",
       "cancelDelete": "Cancel",
-      "deleted": "Period removed from history"
+      "deleted": "Period removed from history",
+      "upsell": "With Premium you get planned length, a progress bar and suggestions for your next period.",
+      "ofPlanned": "of {{total}} planned"
     },
     "conflict": {
       "title": "This will end your active period",
