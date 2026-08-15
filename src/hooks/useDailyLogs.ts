@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useProfileStore } from '@/stores/profileStore'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import { macroGramsFromPercent, DEFAULT_MACRO_PERCENTS } from '@/lib/calculations/dailySummary'
-import { localDateString } from '@/lib/utils/localDate'
+import { localDateString, msUntilNextLocalMidnight } from '@/lib/utils/localDate'
 
 /**
  * Beräknar frysta gram-mål för en daily_log-snapshot från en profils
@@ -136,18 +136,20 @@ export function useTodayLog() {
 
   // In auto mode, invalidate the query at midnight so yesterday's log is
   // closed and a new one is created without requiring a manual page reload.
+  //
+  // Timern räknar mot profilens tidszon, samma dygnsgräns som `today` ovan.
+  // Med enhetens midnatt i stället sköt de två isär för alla vars profilzon
+  // skiljer sig från enhetens.
   useEffect(() => {
     if (completionMode !== 'auto') return
-    const now = new Date()
-    const midnight = new Date(now)
-    midnight.setDate(midnight.getDate() + 1)
-    midnight.setHours(0, 0, 0, 500) // 500ms after midnight to avoid edge cases
-    const msUntilMidnight = midnight.getTime() - now.getTime()
-    const timer = setTimeout(() => {
-      queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
-    }, msUntilMidnight)
+    const timer = setTimeout(
+      () => {
+        queryClient.invalidateQueries({ queryKey: ['dailyLogs'] })
+      },
+      msUntilNextLocalMidnight(new Date(), activeProfile?.timezone)
+    )
     return () => clearTimeout(timer)
-  }, [completionMode, today, queryClient])
+  }, [completionMode, today, activeProfile?.timezone, queryClient])
 
   return useQuery({
     queryKey: ['dailyLogs', 'today', user?.id, completionMode],
@@ -189,7 +191,13 @@ export function useTodayLog() {
 
       // In auto mode (or no open log found), look up the most recent open log
       // (handles the case where user pressed "Start new day" which creates a future-dated log)
-      const { data: openLog, error: openError } = await supabase
+      //
+      // I auto-läget får sökningen ALDRIG plocka upp en logg före idag. Gjorde
+      // den det returnerades gårdagens öppna logg, TodayPage såg en logg och
+      // hoppade över useEnsureTodayLog — där städningen bor — så autoavslutet
+      // kördes aldrig och gårdagens loggning låg kvar. Med golvet blir svaret
+      // null, ensure-anropet går igång och stänger den gamla loggen.
+      const openLogQuery = supabase
         .from('daily_logs')
         .select(
           `
@@ -206,6 +214,12 @@ export function useTodayLog() {
         .eq('user_id', user.id)
         .eq('is_completed', false)
         .eq('is_preview', isPreviewMode ? true : false)
+
+      if (completionMode === 'auto') {
+        openLogQuery.gte('log_date', today)
+      }
+
+      const { data: openLog, error: openError } = await openLogQuery
         .order('log_date', { ascending: false })
         .order('meal_order', { foreignTable: 'meal_entries' })
         .order('item_order', { foreignTable: 'meal_entries.meal_entry_items' })
@@ -381,23 +395,17 @@ export function useEnsureTodayLog() {
         }
       }
 
-      // Check if log exists for today
-      const { data: existing } = await supabase
-        .from('daily_logs')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('is_preview', isPreviewMode ? true : false)
-        .eq('log_date', today)
-        .maybeSingle()
-
-      if (existing) return existing as DailyLog
-
       // Auto-complete (or delete if empty) alla öppna loggar före idag.
       //
       // Tidigare letade koden bara efter exakt gårdagens datum. Hoppade
       // användaren över en dag — loggade tisdag, öppnade appen torsdag — söktes
       // onsdag, ingen träff, och tisdagsloggen låg kvar öppen för alltid. Den
       // fick då städas manuellt trots att läget stod på "auto".
+      //
+      // Städningen måste ligga FÖRE "finns dagens logg?"-kollen nedan. Låg den
+      // efter hoppades den över så fort dagens logg redan hunnit skapas (t.ex.
+      // via snabbloggsknappen eller "Starta ny dag"), och gårdagens logg låg
+      // kvar öppen bredvid dagens.
       if (completionMode === 'auto') {
         const { data: staleLogs } = await supabase
           .from('daily_logs')
@@ -421,6 +429,17 @@ export function useEnsureTodayLog() {
           }
         }
       }
+
+      // Check if log exists for today
+      const { data: existing } = await supabase
+        .from('daily_logs')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
+        .eq('log_date', today)
+        .maybeSingle()
+
+      if (existing) return existing as DailyLog
 
       // Calculate macro goals in grams from profile percentages
       // Create new log — ignore conflict if row already exists (race condition / double-click)

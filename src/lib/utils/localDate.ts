@@ -76,6 +76,49 @@ export function zonesDiffer(a: string, b: string, at: Date = new Date()): boolea
 }
 
 /**
+ * Millisekunder kvar till nästa dygnsskifte i en given tidszon.
+ *
+ * Timers som ska fyra av vid midnatt måste räkna mot SAMMA dygnsgräns som
+ * localDateString använder. Räknade timern mot enhetens midnatt medan datumet
+ * kom från profiles.timezone sköt de isär för alla vars profilzon skiljer sig
+ * från enhetens: timern invaliderade antingen för tidigt (datumet var oförändrat,
+ * inget hände) eller för sent (dagen hade redan bytt utan att vyn uppdaterades).
+ *
+ * Implementationen letar upp skiftet i stället för att räkna aritmetiskt, så
+ * sommartidsövergångar — då dygnet är 23 eller 25 timmar — hanteras av samma
+ * kod som allt annat. Vi stegar från "om en minut" tills datumsträngen ändras,
+ * först i timsteg för att hitta rätt timme och sedan i minutsteg. Söket är
+ * begränsat till 26 timmar; slår det i taket returneras det taket, vilket ger
+ * en ofarlig extra invalidering i stället för en timer som aldrig fyrar.
+ */
+export function msUntilNextLocalMidnight(from: Date = new Date(), timeZone?: string): number {
+  const MINUTE = 60_000
+  const HOUR = 60 * MINUTE
+  const MAX = 26 * HOUR
+
+  const startDay = localDateString(from, timeZone)
+
+  // Grovsök i timsteg: hitta första timmen där datumet har bytt.
+  let coarse = MAX
+  for (let ms = MINUTE; ms <= MAX; ms += HOUR) {
+    if (localDateString(new Date(from.getTime() + ms), timeZone) !== startDay) {
+      coarse = ms
+      break
+    }
+  }
+
+  // Finsök bakåt i minutsteg till den exakta minuten skiftet sker.
+  let fine = coarse
+  for (let ms = coarse - MINUTE; ms >= 0; ms -= MINUTE) {
+    if (localDateString(new Date(from.getTime() + ms), timeZone) === startDay) break
+    fine = ms
+  }
+
+  // 500 ms marginal så timern garanterat landar efter skiftet, aldrig precis på.
+  return Math.min(fine + 500, MAX)
+}
+
+/**
  * Lokalt datum N dagar bakåt (negativt tal) eller framåt.
  *
  * Går via setDate, som hanterar månads- och årsskiften åt oss.

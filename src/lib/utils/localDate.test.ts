@@ -5,6 +5,7 @@ import {
   dateStringInZone,
   zonesDiffer,
   deviceTimeZone,
+  msUntilNextLocalMidnight,
 } from './localDate'
 
 describe('localDateString', () => {
@@ -88,6 +89,90 @@ describe('localDateOffset med zon', () => {
   it('räknar bakåt i angiven zon', () => {
     const t = new Date('2026-08-14T23:30:00Z') // 15:e i Stockholm
     expect(localDateOffset(-1, t, 'Europe/Stockholm')).toBe('2026-08-14')
+  })
+})
+
+describe('msUntilNextLocalMidnight', () => {
+  const MINUTE = 60_000
+  const HOUR = 60 * MINUTE
+
+  /** Datumet timern landar på ska alltid vara dagen efter startdatumet. */
+  const landsOnNextDay = (from: Date, tz?: string) => {
+    const landing = new Date(from.getTime() + msUntilNextLocalMidnight(from, tz))
+    return {
+      before: localDateString(from, tz),
+      after: localDateString(landing, tz),
+    }
+  }
+
+  it('fyrar strax efter midnatt, inte precis på', () => {
+    // 23:00 lokal tid → drygt en timme kvar, med marginal efter skiftet.
+    const from = new Date(2026, 7, 14, 23, 0, 0)
+    const ms = msUntilNextLocalMidnight(from)
+    expect(ms).toBeGreaterThan(HOUR)
+    expect(ms).toBeLessThan(HOUR + 2 * MINUTE)
+  })
+
+  it('landar alltid på nästa dag', () => {
+    const { before, after } = landsOnNextDay(new Date(2026, 7, 14, 23, 59, 0))
+    expect(before).toBe('2026-08-14')
+    expect(after).toBe('2026-08-15')
+  })
+
+  it('räknar mot angiven zon, inte enhetens', () => {
+    // 2026-08-14 23:30 UTC är redan den 15:e i Stockholm men den 14:e i New York.
+    // Zonerna har därför olika lång tid kvar till sitt nästa dygnsskifte.
+    const t = new Date('2026-08-14T23:30:00Z')
+    const sthlm = msUntilNextLocalMidnight(t, 'Europe/Stockholm')
+    const ny = msUntilNextLocalMidnight(t, 'America/New_York')
+    expect(sthlm).not.toBe(ny)
+
+    expect(landsOnNextDay(t, 'Europe/Stockholm')).toEqual({
+      before: '2026-08-15',
+      after: '2026-08-16',
+    })
+    expect(landsOnNextDay(t, 'America/New_York')).toEqual({
+      before: '2026-08-14',
+      after: '2026-08-15',
+    })
+  })
+
+  it('hanterar sommartidens start (23-timmarsdygn)', () => {
+    // Sverige ställer fram 29 mars 2026, 02:00 → 03:00.
+    const from = new Date('2026-03-28T22:00:00Z') // 23:00 svensk tid, 28 mars
+    expect(landsOnNextDay(from, 'Europe/Stockholm')).toEqual({
+      before: '2026-03-28',
+      after: '2026-03-29',
+    })
+  })
+
+  it('hanterar sommartidens slut (25-timmarsdygn)', () => {
+    // Sverige ställer tillbaka 25 oktober 2026, 03:00 → 02:00.
+    const from = new Date('2026-10-24T21:00:00Z') // 23:00 svensk tid, 24 okt
+    expect(landsOnNextDay(from, 'Europe/Stockholm')).toEqual({
+      before: '2026-10-24',
+      after: '2026-10-25',
+    })
+  })
+
+  it('ger nästan ett helt dygn strax efter midnatt', () => {
+    const from = new Date(2026, 7, 14, 0, 1, 0)
+    const ms = msUntilNextLocalMidnight(from)
+    expect(ms).toBeGreaterThan(23 * HOUR)
+    expect(ms).toBeLessThanOrEqual(24 * HOUR)
+  })
+
+  it('faller tillbaka på enhetens tid vid ogiltig zon i stället för att kasta', () => {
+    const from = new Date(2026, 7, 14, 23, 0, 0)
+    expect(msUntilNextLocalMidnight(from, 'Inte/EnZon')).toBe(msUntilNextLocalMidnight(from))
+  })
+
+  it('returnerar alltid ett positivt värde inom ett dygn med marginal', () => {
+    for (const hour of [0, 1, 6, 12, 18, 22, 23]) {
+      const ms = msUntilNextLocalMidnight(new Date(2026, 7, 14, hour, 30, 0))
+      expect(ms).toBeGreaterThan(0)
+      expect(ms).toBeLessThanOrEqual(26 * HOUR)
+    }
   })
 })
 
