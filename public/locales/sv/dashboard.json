@@ -230,8 +230,8 @@
       "cta": "Gå till Kroppssammansättning"
     },
     "weeksNotice": "Föreslagen längd är ett riktvärde — justera efter hur du svarar.",
-    "planningLocked": "Med Premium får du planerad längd, framstegsmätare, historik och förslag på nästa period.",
-    "planningLockedReverse": "Med Premium höjer appen ditt kalorimål automatiskt varje vecka tills du är uppe på underhåll — plus planerad längd och historik.",
+    "planningLocked": "Med Premium får du planerad längd, framstegsmätare och förslag på nästa period.",
+    "planningLockedReverse": "Med Premium höjer appen ditt kalorimål automatiskt varje vecka tills du är uppe på underhåll — plus planerad längd och framstegsmätare.",
     "nextSuggested": "Föreslagen nästa period",
     "reverseStep": "+{{amount}} kcal per vecka",
     "reverseProgress": "Nuvarande nivå: {{calories}} kcal",
@@ -261,7 +261,7 @@
       "confirmDelete": "Ta bort",
       "cancelDelete": "Avbryt",
       "deleted": "Perioden borttagen ur historiken",
-      "upsell": "Med Premium får du planerad längd, framstegsmätare och förslag på nästa period.",
+      "upsell": "Med Premium ser du även planerad längd och hur långt varje period hann.",
       "ofPlanned": "av {{total}} planerade"
     },
     "conflict": {

@@ -230,8 +230,8 @@
       "cta": "Go to Body composition"
     },
     "weeksNotice": "The suggested length is a guideline — adjust it based on how you respond.",
-    "planningLocked": "With Premium you get planned length, a progress bar, history and suggestions for your next period.",
-    "planningLockedReverse": "With Premium the app raises your calorie target automatically every week until you're back at maintenance — plus planned length and history.",
+    "planningLocked": "With Premium you get planned length, a progress bar and suggestions for your next period.",
+    "planningLockedReverse": "With Premium the app raises your calorie target automatically every week until you're back at maintenance — plus planned length and a progress bar.",
     "nextSuggested": "Suggested next period",
     "reverseStep": "+{{amount}} kcal per week",
     "reverseProgress": "Current level: {{calories}} kcal",
@@ -261,7 +261,7 @@
       "confirmDelete": "Delete",
       "cancelDelete": "Cancel",
       "deleted": "Period removed from history",
-      "upsell": "With Premium you get planned length, a progress bar and suggestions for your next period.",
+      "upsell": "With Premium you also see planned length and how far each period got.",
       "ofPlanned": "of {{total}} planned"
     },
     "conflict": {
