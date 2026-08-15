@@ -87,7 +87,10 @@ export function UpgradeModal({ open, onOpenChange, limitKey }: UpgradeModalProps
     'recipeBank',
     'meals',
     'tdee',
-    'dietModes',
+    // 'dietModes' borttagen 2026-08-15: alla fem kostlägen är gratis, så
+    // raden hade visat "Alla 5 / Alla 5" och bara tagit plats. Premium
+    // flyttades till perioder — se docs/PREMIUM_SPEC.md.
+    'phases',
     'calibration',
     'bodyComp',
     'equations',

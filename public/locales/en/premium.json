@@ -72,14 +72,14 @@
           "free": "1 formula",
           "premium": "All 10 + comparison"
         },
-        "dietModes": {
-          "label": "Diet modes",
-          "free": "2 (NNR + Weight Loss)",
-          "premium": "All 5"
+        "phases": {
+          "label": "Periods (cut/bulk/maintenance)",
+          "free": "Targets + week counter",
+          "premium": "Plan, progress & history"
         },
         "calibration": {
           "label": "Calibration",
-          "free": "1×/quarter",
+          "free": "2 free, then 1×/6 months",
           "premium": "Unlimited"
         },
         "bodyComp": {

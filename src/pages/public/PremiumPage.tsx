@@ -20,7 +20,9 @@ const COMPARE_ROWS = [
   'recipes',
   'meals',
   'tdee',
-  'dietModes',
+  // 'dietModes' borttagen 2026-08-15: alla fem kostlägen är gratis. Premium
+  // flyttades till perioder — se docs/PREMIUM_SPEC.md.
+  'phases',
   'calibration',
   'bodyComp',
   'equations',

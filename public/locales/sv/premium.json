@@ -72,14 +72,14 @@
           "free": "1 formel",
           "premium": "Alla 10 + jämförelse"
         },
-        "dietModes": {
-          "label": "Kostlägen",
-          "free": "2 (NNR + Viktminskning)",
-          "premium": "Alla 5"
+        "phases": {
+          "label": "Perioder (cut/bulk/underhåll)",
+          "free": "Mål + veckoräknare",
+          "premium": "Plan, framsteg & historik"
         },
         "calibration": {
           "label": "Kalibrering",
-          "free": "1×/kvartal",
+          "free": "2 fria, sedan 1×/halvår",
           "premium": "Obegränsad"
         },
         "bodyComp": {
