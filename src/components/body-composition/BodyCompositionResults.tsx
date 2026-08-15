@@ -12,6 +12,8 @@ interface BodyCompositionResultsProps {
   isEstimatedBMR?: boolean
   onSave: () => void
   isSaving: boolean
+  /** false = anroparen renderar knappen själv, t.ex. efter referensbilderna */
+  showSaveButton?: boolean
 }
 
 export default function BodyCompositionResults({
@@ -22,6 +24,7 @@ export default function BodyCompositionResults({
   isEstimatedBMR,
   onSave,
   isSaving,
+  showSaveButton = true,
 }: BodyCompositionResultsProps) {
   const { t } = useTranslation('body')
   return (
@@ -77,11 +80,17 @@ export default function BodyCompositionResults({
         </CardContent>
       </Card>
 
-      {/* Save Button */}
-      <Button onClick={onSave} disabled={isSaving} className="w-full" size="lg">
-        <Save className="h-4 w-4 mr-2" />
-        {isSaving ? t('results.saving') : t('results.saveToProfile')}
-      </Button>
+      {/*
+        Spara-knappen kan flyttas ut av anroparen (showSaveButton=false) så
+        att den hamnar EFTER den visuella rimlighetskontrollen. Att spara är
+        sista steget — verifiera först, spara sedan.
+      */}
+      {showSaveButton && (
+        <Button onClick={onSave} disabled={isSaving} className="w-full" size="lg">
+          <Save className="h-4 w-4 mr-2" />
+          {isSaving ? t('results.saving') : t('results.saveToProfile')}
+        </Button>
+      )}
     </div>
   )
 }

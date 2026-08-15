@@ -15,8 +15,9 @@ import { PremiumGate } from '@/components/premium/PremiumGate'
 import MeasurementSetSidebar from '@/components/body-composition/MeasurementSetSidebar'
 import CollapsibleSidebar from '@/components/CollapsibleSidebar'
 import EmptyState from '@/components/EmptyState'
+import { Button } from '@/components/ui/button'
 import { BodyFatReferenceTable } from '@/components/body-composition/BodyFatReferenceTable'
-import { Activity, Scale } from 'lucide-react'
+import { Activity, Scale, Save } from 'lucide-react'
 import { useProfileStore } from '@/stores/profileStore'
 import { useMeasurementSetStore } from '@/stores/measurementSetStore'
 import {
@@ -951,6 +952,9 @@ export default function BodyCompositionCalculator() {
                         isEstimatedBMR={isEstimatedBMR}
                         onSave={handleSaveToProfile}
                         isSaving={isSaving}
+                        // Knappen renderas nedan i stället — verifiera
+                        // resultatet visuellt FÖRE sparning.
+                        showSaveButton={false}
                       />
 
                       {/*
@@ -975,6 +979,18 @@ export default function BodyCompositionCalculator() {
                           />
                         </div>
                       </details>
+
+                      {/* Sist: spara är det avslutande steget, efter att
+                          resultatet verifierats mot referensbilderna. */}
+                      <Button
+                        onClick={handleSaveToProfile}
+                        disabled={isSaving}
+                        className="w-full"
+                        size="lg"
+                      >
+                        <Save className="mr-2 h-4 w-4" />
+                        {isSaving ? t('results.saving') : t('results.saveToProfile')}
+                      </Button>
                     </div>
                   )}
 
