@@ -238,9 +238,21 @@ export function onSeasonMode(
 /**
  * Apply a macro mode to user profile
  */
-// Gratis kostlägen (se PREMIUM_SPEC: all_diet_modes). Atletlägena
-// (active, offseason, onseason) kräver premium.
-export const FREE_MACRO_MODES: MacroModeId[] = ['nnr', 'weightloss']
+/**
+ * Gratis kostlägen. ALLA fem sedan 2026-08-15 — premium flyttades till
+ * `diet_phase_planning` (fasplanering över tid), se docs/PREMIUM_SPEC.md.
+ *
+ * Konstanten behålls eftersom `isLocked` och `freeMacrosForGoal` läser den,
+ * och för att gränsen ska gå att flytta tillbaka på ett ställe om beslutet
+ * omprövas.
+ */
+export const FREE_MACRO_MODES: MacroModeId[] = [
+  'nnr',
+  'weightloss',
+  'active',
+  'offseason',
+  'onseason',
+]
 
 // Standardläge för ett kalorimål — används vid onboarding/TDEE-beräkning för
 // att sätta en makrofördelning som matchar målet direkt (annars matchar inget
@@ -252,8 +264,13 @@ export function macroModeForGoal(goal?: string | null): MacroModeId {
 }
 
 // Makrofördelning för målets standardläge — MEN endast om det läget är gratis.
-// Viktuppgång mappar till offseason (premium) och returnerar därför null, så att
-// onboarding inte tvingar på ett premium-läge. Då sätts bara mål + kalorier.
+//
+// Sedan alla kostlägen blev fria (2026-08-15) returnerar denna aldrig null i
+// praktiken. Tidigare mappade viktuppgång till offseason (premium) och gav
+// null, vilket lämnade onboarding UTAN makrofördelning för den som ville gå
+// upp i vikt. Den skaven är därmed borta.
+// Gate-kontrollen behålls så att funktionen fortsätter vara korrekt om
+// gränsen någon gång flyttas tillbaka.
 export function freeMacrosForGoal(
   goal: string | null | undefined,
   params: { weight: number; caloriesMin: number; caloriesMax: number }

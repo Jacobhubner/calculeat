@@ -5,9 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { MacroRangeBar } from '@/components/daily/MacroRangeBar'
 import { TDEEScenarioCard } from '@/components/dashboard/TDEEScenarioCard'
 import { DashboardHeroSection } from '@/components/dashboard/DashboardHeroSection'
+import CalibrationPrompt from '@/components/profile/CalibrationPrompt'
+import { DietPhaseCard } from '@/components/dashboard/DietPhaseCard'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
-import { useProfiles, useOnboarding } from '@/hooks'
+import { useProfiles, useOnboarding, useWeightHistory } from '@/hooks'
+import { useLastCalibration } from '@/hooks/useCalibrationHistory'
+import { useCalibrationAvailability } from '@/hooks/useCalibrationAvailability'
+import { useCalibrationNotifier } from '@/hooks/useCalibrationNotifier'
 import { useTodayLog } from '@/hooks/useDailyLogs'
 import { useProfileStore } from '@/stores/profileStore'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -35,6 +40,18 @@ export default function DashboardPage() {
   const profile = allProfiles?.find(p => p.id === activeProfile?.id)
 
   const dailySummary = useDailySummary(todayLog, profile)
+
+  // Kalibrering är produktens starkaste differentierare men låg tidigare bara
+  // inne i TDEE-verktyget under Verktyg. Den visas nu där användaren faktiskt
+  // är dagligen — prompten renderar sig själv till null när den inte är aktuell.
+  const { data: weightHistory } = useWeightHistory()
+  const { data: lastCalibration } = useLastCalibration(profile?.user_id)
+  const calibrationAvailability = useCalibrationAvailability(
+    profile,
+    weightHistory,
+    lastCalibration
+  )
+  useCalibrationNotifier(calibrationAvailability)
 
   const calculations = useMemo(() => {
     if (!profile) {
@@ -225,6 +242,25 @@ export default function DashboardPage() {
                   </Card>
                 )
               })()}
+
+            {/* Fas — ramen för kalorimålet; kalibreringen justerar inuti den */}
+            <DietPhaseCard
+              tdee={profile?.tdee}
+              weightKg={profile?.weight_kg}
+              currentCalories={
+                profile?.calories_min && profile?.calories_max
+                  ? Math.round((profile.calories_min + profile.calories_max) / 2)
+                  : undefined
+              }
+              bodyFatPercentage={profile?.body_fat_percentage}
+            />
+
+            {/* Kalibrering — visas bara när tillräckligt med viktdata finns */}
+            <CalibrationPrompt
+              availability={calibrationAvailability}
+              lastCalibration={lastCalibration ?? null}
+              onCalibrate={() => navigate('/app/tools/tdee-calculator')}
+            />
 
             {/* TDEE Scenarios */}
             {profile?.bmr && profile?.tdee && (

@@ -167,5 +167,101 @@
     "recipes": "Create a recipe",
     "profile": "Go to your profile",
     "goalCalc": "Set your goal"
+  },
+  "phase": {
+    "noPhaseTitle": "What are you working toward right now?",
+    "noPhaseBody": "Choose whether you want to lose weight, build muscle or hold steady — and we adapt your calorie and protein targets to match.",
+    "startPhase": "Choose a direction",
+    "changePhase": "Change period",
+    "endPhase": "End period",
+    "week": "Week {{current}}",
+    "weekOf": "Week {{current}} of {{total}}",
+    "startWeight": "Starting weight",
+    "focusLabel": "What's your focus?",
+    "typeLabel": "What do you want to do now?",
+    "focus": {
+      "strength": "Maximise muscle growth",
+      "strengthDesc": "You lift and want to build or keep muscle mass.",
+      "health": "Health and balance",
+      "healthDesc": "You want to reach a healthy weight with balanced food."
+    },
+    "types": {
+      "strength": {
+        "cut": "Losing fat",
+        "bulk": "Building muscle",
+        "maintenance": "Holding weight",
+        "reverse": "Ramping up"
+      },
+      "health": {
+        "cut": "Weight loss",
+        "bulk": "Weight gain",
+        "maintenance": "Maintenance",
+        "reverse": "Ramping up"
+      }
+    },
+    "aliases": {
+      "strength": {
+        "cut": "cut",
+        "bulk": "bulk",
+        "maintenance": "maintenance",
+        "reverse": "reverse diet"
+      },
+      "health": {
+        "reverse": "reverse diet"
+      }
+    },
+    "descriptions": {
+      "cut": "Eat below your needs so fat comes off — with enough protein to keep your muscle.",
+      "bulk": "Eat slightly above your needs to build muscle, without adding more fat than necessary.",
+      "maintenance": "Eat around your needs and keep weight stable — good between phases or once you're where you want to be.",
+      "reverse": "Raise calories step by step after a period in deficit, so your body keeps up and the weight doesn't rush back."
+    },
+    "macroMode": {
+      "label": "Diet mode",
+      "energy": "Calorie target",
+      "protein": "Protein",
+      "hint": "The same numbers as the diet mode in your profile. The diet mode splits them across fat, carbs and protein.",
+      "apply": "Apply diet mode"
+    },
+    "strengthNeedsBodyFat": "Maximising muscle growth needs your body fat percentage — the diet modes calculate protein against your fat-free mass.",
+    "bodyFatNeeded": {
+      "title": "Measure your body fat first",
+      "body": "Cutting mode calculates protein against your fat-free mass, so it needs your body fat percentage to give the right numbers.",
+      "cta": "Go to Body composition"
+    },
+    "weeksNotice": "The suggested length is a guideline — adjust it based on how you respond.",
+    "planningLocked": "With Premium you get planned length, a progress bar, history and suggestions for your next period.",
+    "planningLockedReverse": "With Premium the app raises your calorie target automatically every week until you're back at maintenance — plus planned length and history.",
+    "nextSuggested": "Suggested next period",
+    "reverseStep": "+{{amount}} kcal per week",
+    "reverseProgress": "Current level: {{calories}} kcal",
+    "modal": {
+      "title": "Choose a period",
+      "subtitle": "We suggest targets based on your TDEE. You can adjust them.",
+      "plannedWeeks": "Planned length (weeks)",
+      "weeklyStepLabel": "Weekly increase (kcal)",
+      "start": "Start period",
+      "cancel": "Cancel",
+      "needsTdee": "You need to calculate your TDEE before choosing a period.",
+      "goToTdee": "Calculate TDEE",
+      "close": "Close"
+    },
+    "toast": {
+      "started": "Period started",
+      "ended": "Period ended"
+    },
+    "endConfirm": "End the current period?",
+    "typeLabelFocus": "— based on {{focus}}",
+    "history": {
+      "title": "Past periods",
+      "empty": "No completed periods yet. When you end a period it shows up here.",
+      "locked": "With Premium you can see all your past periods — length, starting weight and what you did.",
+      "weeks": "{{count}} weeks",
+      "weeks_one": "{{count}} week",
+      "delete": "Delete",
+      "confirmDelete": "Delete",
+      "cancelDelete": "Cancel",
+      "deleted": "Period removed from history"
+    }
   }
 }

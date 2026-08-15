@@ -302,6 +302,13 @@ export interface Profile {
     | 'metabolic_calibration'
   tdee_calculation_snapshot?: TDEECalculationSnapshot
 
+  /**
+   * Antal skarpa kalibreringar genom tiderna. Sätts av databastrigger och
+   * minskas aldrig — radering av kalibreringshistorik får inte nollställa
+   * gratisnivåns kvot. Preview-kalibreringar räknas inte.
+   */
+  lifetime_calibration_count?: number
+
   // Goals
   calorie_goal?: CalorieGoal
   deficit_level?: DeficitLevel
@@ -462,6 +469,55 @@ export interface WeightHistory {
   notes?: string
   body_fat_percentage?: number
   created_at: string
+}
+
+/**
+ * Fastyp. 'reverse' = strukturerad upptrappning efter avslutad cut, där
+ * kalorimålet höjs stegvis mot beräknat TDEE istället för i ett hopp.
+ */
+export type DietPhaseType = 'cut' | 'bulk' | 'maintenance' | 'reverse'
+
+/**
+ * Fokusspår — styr både fasernas namn och vilket kostläge de pekar mot.
+ * 'strength' = maximera muskeluppbyggnad (gymspråk, atletlägen),
+ * 'health'   = hälsa och balans (allmänspråk, NNR/viktminskning).
+ */
+export type PhaseFocus = 'strength' | 'health'
+
+/**
+ * En fas i användarens planering. Till skillnad från profiles.calorie_goal
+ * (ett riktningsval utan tidslinje) har fasen start, planerad längd, egna
+ * mål och bevaras som historik när den avslutas.
+ *
+ * Den aktiva fasen (ended_at === null) speglas till profiles.calorie_goal
+ * via databastrigger, så befintlig kod som läser calorie_goal fortsätter
+ * fungera oförändrad.
+ */
+export interface DietPhase {
+  id: string
+  user_id: string
+  phase_type: DietPhaseType
+  /**
+   * Fokusspåret fasen startades i. Avgör vilket namn som visas och vilket
+   * kostläge fasen pekar mot — måste sparas, annars byter en pågående fas
+   * namn om användaren senare väljer ett annat fokus.
+   */
+  focus: PhaseFocus
+  /** ISO-datum (YYYY-MM-DD) */
+  started_at: string
+  /** null = pågående fas */
+  ended_at: string | null
+  planned_weeks?: number | null
+  target_calories?: number | null
+  /** Proteinmål i g per kg kroppsvikt */
+  protein_g_per_kg?: number | null
+  start_weight_kg?: number | null
+  /** Reverse diet: kalorihöjning per vecka */
+  weekly_calorie_step?: number | null
+  notes?: string | null
+  is_preview: boolean
+  created_at: string
+  updated_at: string
 }
 
 // Weight cluster for calibration (averaged group of measurements)

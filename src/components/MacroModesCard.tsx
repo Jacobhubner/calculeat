@@ -25,7 +25,7 @@ import {
 import { applyMacroMode, FREE_MACRO_MODES, type MacroModeId } from '@/lib/utils/macroModes'
 import { useEntitlements } from '@/hooks/useEntitlements'
 import { PremiumBadge } from '@/components/premium/PremiumBadge'
-import { UpgradeModal } from '@/components/premium/UpgradeModal'
+import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
 import type { Profile } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -114,7 +114,11 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
   const { limits } = useEntitlements()
   const [isOpen, setIsOpen] = useState(false)
   const [activeRef, setActiveRef] = useState<MacroModeId | null>(null)
-  const [upgradeOpen, setUpgradeOpen] = useState(false)
+  // Delad store i stället för lokal state: den bär limitKey vidare till
+  // trackConversion('paywall_shown'), så vi kan se VILKEN gräns som utlöste
+  // betalväggen. Med lokal UpgradeModal loggades metadata som null.
+  const openUpgradeModal = useUpgradeModalStore(state => state.open)
+  const showUpgrade = () => openUpgradeModal('all_diet_modes')
 
   // Kostlägen: allmänhetslägena (NNR + Weight Loss) alltid gratis,
   // atletlägena (Active, Off-/On-Season) premium (all_diet_modes, se PREMIUM_SPEC)
@@ -304,7 +308,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                       {mode.hasRef && (
                         <button
                           type="button"
-                          onClick={() => (locked ? setUpgradeOpen(true) : setActiveRef(mode.id))}
+                          onClick={() => (locked ? showUpgrade() : setActiveRef(mode.id))}
                           className="text-neutral-400 hover:text-primary-600 transition-colors flex-shrink-0 dark:text-neutral-500"
                           aria-label={tm(`showRef`, { mode: tm(`${mode.id}Name`) })}
                         >
@@ -319,7 +323,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                     <Button
                       size="sm"
                       variant={active ? 'primary' : 'outline'}
-                      onClick={() => (locked ? setUpgradeOpen(true) : handleApplyMode(mode.id))}
+                      onClick={() => (locked ? showUpgrade() : handleApplyMode(mode.id))}
                       disabled={active || (!locked && !canApply)}
                       className={cn(
                         'flex-shrink-0',
@@ -348,7 +352,7 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                         locked ? 'blur-sm select-none cursor-pointer' : ''
                       }`}
                       aria-hidden={locked || undefined}
-                      onClick={locked ? () => setUpgradeOpen(true) : undefined}
+                      onClick={locked ? () => showUpgrade() : undefined}
                     >
                       <div className="font-medium text-neutral-800 dark:text-neutral-200">
                         <span className="text-neutral-600 dark:text-neutral-400">
@@ -408,7 +412,8 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
         </InfoModal>
       )}
 
-      <UpgradeModal open={upgradeOpen} onOpenChange={setUpgradeOpen} />
+      {/* UpgradeModal renderas globalt (GlobalUpgradeModal i App.tsx) och
+          öppnas via storen ovan — den bär limitKey till konverteringsmätningen. */}
     </Card>
   )
 }

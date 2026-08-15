@@ -167,5 +167,101 @@
     "recipes": "Skapa recept",
     "profile": "Gå till din profil",
     "goalCalc": "Sätt ditt mål"
+  },
+  "phase": {
+    "noPhaseTitle": "Vad jobbar du mot just nu?",
+    "noPhaseBody": "Välj om du vill gå ner i vikt, bygga muskler eller hålla vikten — så anpassar vi ditt kalori- och proteinmål efter det.",
+    "startPhase": "Välj inriktning",
+    "changePhase": "Byt period",
+    "endPhase": "Avsluta period",
+    "week": "Vecka {{current}}",
+    "weekOf": "Vecka {{current}} av {{total}}",
+    "startWeight": "Startvikt",
+    "focusLabel": "Vad är ditt fokus?",
+    "typeLabel": "Vad vill du göra nu?",
+    "focus": {
+      "strength": "Maximera muskeluppbyggnad",
+      "strengthDesc": "Du styrketränar och vill bygga eller behålla muskelmassa.",
+      "health": "Hälsa och balans",
+      "healthDesc": "Du vill nå en hälsosam vikt med balanserad kost."
+    },
+    "types": {
+      "strength": {
+        "cut": "Ner i vikt",
+        "bulk": "Bygga muskler",
+        "maintenance": "Hålla vikten",
+        "reverse": "Trappa upp"
+      },
+      "health": {
+        "cut": "Viktminskning",
+        "bulk": "Viktuppgång",
+        "maintenance": "Underhåll",
+        "reverse": "Trappa upp"
+      }
+    },
+    "aliases": {
+      "strength": {
+        "cut": "cut / deff",
+        "bulk": "bulk",
+        "maintenance": "underhåll",
+        "reverse": "reverse diet"
+      },
+      "health": {
+        "reverse": "reverse diet"
+      }
+    },
+    "descriptions": {
+      "cut": "Ät under ditt behov så att fettet minskar — med tillräckligt protein för att muskelmassan ska sitta kvar.",
+      "bulk": "Ät något över ditt behov så att du kan bygga muskler, utan att lägga på dig mer fett än nödvändigt.",
+      "maintenance": "Ät runt ditt behov och håll vikten stabil — bra mellan två perioder eller när du landat där du vill.",
+      "reverse": "Höj kalorierna stegvis efter en period i underskott, så att kroppen hinner med och vikten inte rusar tillbaka."
+    },
+    "macroMode": {
+      "label": "Kostläge",
+      "energy": "Kalorimål",
+      "protein": "Protein",
+      "hint": "Samma siffror som kostläget i din profil. Kostläget fördelar dem på fett, kolhydrater och protein.",
+      "apply": "Använd kostläget"
+    },
+    "strengthNeedsBodyFat": "Maximera muskeluppbyggnad kräver din kroppsfettprocent — kostlägena räknar proteinmålet mot din fettfria massa.",
+    "bodyFatNeeded": {
+      "title": "Mät din kroppsfettprocent först",
+      "body": "Deff-läget räknar protein mot din fettfria massa, så det behöver din kroppsfettprocent för att ge rätt siffror.",
+      "cta": "Gå till Kroppssammansättning"
+    },
+    "weeksNotice": "Föreslagen längd är ett riktvärde — justera efter hur du svarar.",
+    "planningLocked": "Med Premium får du planerad längd, framstegsmätare, historik och förslag på nästa period.",
+    "planningLockedReverse": "Med Premium höjer appen ditt kalorimål automatiskt varje vecka tills du är uppe på underhåll — plus planerad längd och historik.",
+    "nextSuggested": "Föreslagen nästa period",
+    "reverseStep": "+{{amount}} kcal per vecka",
+    "reverseProgress": "Nuvarande nivå: {{calories}} kcal",
+    "modal": {
+      "title": "Välj period",
+      "subtitle": "Vi föreslår mål utifrån ditt TDEE. Du kan justera dem.",
+      "plannedWeeks": "Planerad längd (veckor)",
+      "weeklyStepLabel": "Upptrappning per vecka (kcal)",
+      "start": "Starta perioden",
+      "cancel": "Avbryt",
+      "needsTdee": "Du behöver räkna ut ditt TDEE innan du kan välja en period.",
+      "goToTdee": "Räkna ut TDEE",
+      "close": "Stäng"
+    },
+    "toast": {
+      "started": "Perioden har startat",
+      "ended": "Perioden är avslutad"
+    },
+    "endConfirm": "Avsluta den pågående perioden?",
+    "typeLabelFocus": "— utifrån {{focus}}",
+    "history": {
+      "title": "Tidigare perioder",
+      "empty": "Inga avslutade perioder än. När du avslutar en period hamnar den här.",
+      "locked": "Med Premium ser du alla dina tidigare perioder — längd, startvikt och vad du gjorde.",
+      "weeks": "{{count}} veckor",
+      "weeks_one": "{{count}} vecka",
+      "delete": "Ta bort",
+      "confirmDelete": "Ta bort",
+      "cancelDelete": "Avbryt",
+      "deleted": "Perioden borttagen ur historiken"
+    }
   }
 }

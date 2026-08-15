@@ -22,6 +22,8 @@ import {
 } from '@/lib/calculations/goalCalculations'
 import { calculateBMI, getBMICategory, calculateIdealWeightRange } from '@/lib/calculations/helpers'
 import { BodyFatReferenceTable } from '@/components/body-composition/BodyFatReferenceTable'
+import { DietPhaseCard } from '@/components/dashboard/DietPhaseCard'
+import { PhaseHistoryCard } from '@/components/dashboard/PhaseHistoryCard'
 import { toast } from 'sonner'
 import type { Profile, CalorieGoal } from '@/lib/types'
 import { useTranslation } from 'react-i18next'
@@ -379,6 +381,24 @@ export default function GoalCalculatorTool() {
           {t('goalCalc.header.badge')}
         </Badge>
       </div>
+
+      {/*
+        Fasen först: den är det löpande — vad användaren jobbar mot just nu —
+        medan kalkylatorn nedanför är utforskande. Sidorna slogs ihop
+        2026-08-15; fasen hade en egen sida (/app/phase) men två navposter för
+        samma sak ("Din fas" och "Målsättning") var förvirrande.
+      */}
+      <DietPhaseCard
+        tdee={profile?.tdee}
+        weightKg={profile?.weight_kg}
+        currentCalories={
+          profile?.calories_min && profile?.calories_max
+            ? Math.round((profile.calories_min + profile.calories_max) / 2)
+            : undefined
+        }
+        bodyFatPercentage={profile?.body_fat_percentage}
+      />
+      <PhaseHistoryCard />
 
       {/* Saknad Data */}
       {missingFields.length > 0 && (

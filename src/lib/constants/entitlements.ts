@@ -21,13 +21,29 @@ export interface PlanLimits {
   advanced_trends: boolean
   period_stats: boolean
   all_tdee_formulas: boolean
+  /** @deprecated Ersatt av free_calibration_grace + calibration_interval_days. Kvar för bakåtkompatibilitet. */
   calibrations_per_quarter: number
+  /** Antal kalibreringar helt utan intervallkrav (gratis: 2, premium: obegränsat) */
+  free_calibration_grace: number
+  /** Intervall i dagar som gäller efter grace-kvoten (gratis: 180, premium: 0) */
+  calibration_interval_days: number
   advanced_body_comp: boolean
   genetic_potential: boolean
   owned_shared_lists: number
   label_scans_per_month: number
   food_suggestions: boolean
+  /**
+   * @deprecated Alltid true sedan 2026-08-15 — alla fem kostlägen är gratis.
+   * Nyckeln finns kvar för bakåtkompatibilitet; premium säljs istället på
+   * `diet_phase_planning`. Se docs/PREMIUM_SPEC.md.
+   */
   all_diet_modes: boolean
+  /**
+   * Fasplanering över tid: fashistorik, planerad längd + progressbar,
+   * guidat nästa steg och reverse dietens veckoupptrappning.
+   * Att VÄLJA fas och få kalori-/proteinmål är alltid gratis.
+   */
+  diet_phase_planning: boolean
   /** Full tillgång till receptbanken (premium_only-recept). Gratis ser dem blurrade. */
   recipe_bank_full: boolean
 }
@@ -42,12 +58,16 @@ export const FREE_LIMITS: PlanLimits = {
   period_stats: false,
   all_tdee_formulas: false,
   calibrations_per_quarter: 1,
+  free_calibration_grace: 2,
+  calibration_interval_days: 180,
   advanced_body_comp: false,
   genetic_potential: false,
   owned_shared_lists: 1,
   label_scans_per_month: 5,
   food_suggestions: false,
-  all_diet_modes: false,
+  /** Fri sedan 2026-08-15 — premium flyttades till diet_phase_planning */
+  all_diet_modes: true,
+  diet_phase_planning: false,
   recipe_bank_full: false,
 }
 
@@ -61,12 +81,15 @@ export const PREMIUM_LIMITS: PlanLimits = {
   period_stats: true,
   all_tdee_formulas: true,
   calibrations_per_quarter: UNLIMITED,
+  free_calibration_grace: UNLIMITED,
+  calibration_interval_days: 0,
   advanced_body_comp: true,
   genetic_potential: true,
   owned_shared_lists: UNLIMITED,
   label_scans_per_month: UNLIMITED,
   food_suggestions: true,
   all_diet_modes: true,
+  diet_phase_planning: true,
   recipe_bank_full: true,
 }
 
