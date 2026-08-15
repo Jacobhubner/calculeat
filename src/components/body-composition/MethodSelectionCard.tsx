@@ -48,7 +48,10 @@ export default function MethodSelectionCard({
     const name = t(`methodNames.${methodNameKeyMap[method]}`, {
       defaultValue: methodNameTranslations[method],
     })
-    return isMethodLocked(method) ? `${name} — ${t('premium:badge.premium')}` : name
+    // Märk de FRIA, inte de låsta. Tio av tolv metoder är premium — med
+    // suffix på dem läser ögat mönstret "allt är låst" och missar de två
+    // undantagen. Två markeringar sticker ut; tio blir bakgrundsbrus.
+    return isMethodLocked(method) ? name : `${name} — ${t('methodSelection.freeSuffix')}`
   }
 
   const methodNameKeyMap: Record<string, string> = {
@@ -128,6 +131,13 @@ export default function MethodSelectionCard({
                     ))}
                   </optgroup>
                 </Select>
+                {/* Utan den här raden framgår inte varför bara två metoder är
+                    märkta — suffixet ensamt säger inget om de övriga. */}
+                {!limits.advanced_body_comp && (
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                    {t('methodSelection.freeHint')}
+                  </p>
+                )}
               </div>
 
               {/* Info button - only show when method is selected */}

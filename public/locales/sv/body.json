@@ -192,7 +192,9 @@
     "label": "Beräkningsmetod",
     "placeholder": "Välj en metod...",
     "showInfo": "Visa information om metoden",
-    "infoButton": "Info"
+    "infoButton": "Info",
+    "freeSuffix": "ingår gratis",
+    "freeHint": "Två metoder ingår i gratisnivån. Övriga kräver Premium."
   },
   "comparison": {
     "loading": "Laddar metoder...",

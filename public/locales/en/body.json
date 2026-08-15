@@ -192,7 +192,9 @@
     "label": "Calculation method",
     "placeholder": "Select a method...",
     "showInfo": "Show information about method",
-    "infoButton": "Info"
+    "infoButton": "Info",
+    "freeSuffix": "included free",
+    "freeHint": "Two methods are included in the free plan. The rest require Premium."
   },
   "comparison": {
     "loading": "Loading methods...",
