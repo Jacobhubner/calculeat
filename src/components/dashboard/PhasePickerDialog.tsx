@@ -28,7 +28,15 @@ import { useStartDietPhase } from '@/hooks/useDietPhases'
 import { useEntitlements } from '@/hooks/useEntitlements'
 import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 
-const PHASE_TYPES: readonly DietPhaseType[] = ['cut', 'bulk', 'maintenance', 'reverse'] as const
+/**
+ * Visningsordning i väljaren. Underhåll först — det är utgångsläget och
+ * kräver minst av användaren — sedan de två riktningarna, och upptrappning
+ * sist eftersom den bara är relevant efter en avslutad nedgång.
+ *
+ * Endast presentation: `initialPhase` styr vad som är förvalt, och ordningen
+ * påverkar varken lagring eller beräkning.
+ */
+const PHASE_TYPES: readonly DietPhaseType[] = ['maintenance', 'bulk', 'cut', 'reverse'] as const
 // Hälsa först: det är det bredare spåret och kräver ingen kroppsfettmätning.
 // Styrkespåret ligger tvåa och är låst tills kroppsfett är angivet.
 const FOCUS_OPTIONS: readonly PhaseFocus[] = ['health', 'strength'] as const
