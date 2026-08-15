@@ -26,6 +26,8 @@ import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 import { FREE_BMR_FORMULAS, FREE_PAL_SYSTEMS } from '@/lib/constants/entitlements'
 import { freeMacrosForGoal } from '@/lib/utils/macroModes'
 import MetabolicCalibration from '@/components/profile/MetabolicCalibration'
+import { PhasePickerDialog } from '@/components/dashboard/PhasePickerDialog'
+import { useActiveDietPhase } from '@/hooks/useDietPhases'
 
 // Returns a finite number, or undefined. Handles '', NaN, null, and non-numeric strings.
 function toFiniteOrUndefined(value: unknown): number | undefined {
@@ -151,6 +153,9 @@ export default function TDEECalculatorTool() {
 
   // Local state
   const [isSaving, setIsSaving] = useState(false)
+  /** Öppnas direkt efter sparat TDEE när användaren saknar pågående period */
+  const [phasePickerOpen, setPhasePickerOpen] = useState(false)
+  const { data: activePhase } = useActiveDietPhase()
 
   // Get user's weight history (shared across all profiles)
   const { data: weightHistory = [] } = useWeightHistory()
@@ -519,6 +524,16 @@ export default function TDEECalculatorTool() {
       })
 
       toast.success(t('tdeeCalc.toast.saved'))
+
+      // Riktningen frågas inte längre i grunduppgifterna — den väljs som en
+      // period, och först HÄR finns TDEE så att dialogen kan visa kalorier och
+      // makron för varje alternativ. Utan detta steg landar användaren på ett
+      // underhållsmål hen aldrig valt och måste själv hitta periodkortet.
+      // Har man redan en pågående period behövs ingen fråga.
+      if (!activePhase) {
+        setPhasePickerOpen(true)
+        return
+      }
       navigate('/app/profile')
     } catch (error) {
       console.error('Error saving TDEE:', error)
@@ -1117,6 +1132,24 @@ export default function TDEECalculatorTool() {
             />
           )}
         </>
+      )}
+
+      {/*
+        Riktningsvalet efter sparat TDEE. Stänger användaren dialogen utan att
+        välja hamnar hen ändå på profilen — periodkortet på dashboarden ställer
+        samma fråga, så ingen fastnar.
+      */}
+      {tdee && activeProfile?.weight_kg && (
+        <PhasePickerDialog
+          open={phasePickerOpen}
+          onOpenChange={open => {
+            setPhasePickerOpen(open)
+            if (!open) navigate('/app/profile')
+          }}
+          tdee={tdee}
+          weightKg={activeProfile.weight_kg}
+          bodyFatPercentage={activeProfile.body_fat_percentage}
+        />
       )}
     </div>
   )
