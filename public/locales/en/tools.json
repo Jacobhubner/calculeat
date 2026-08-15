@@ -329,7 +329,9 @@
       "goalMaintain": "to maintain your weight",
       "goalLoss": "to lose weight",
       "goalGain": "to gain weight",
-      "goalChangeHint": "You can change your goal on the profile page."
+      "goalChangeHint": "You can change your goal on the profile page.",
+      "missingActivityLevel": "Choose your activity level to see your TDEE.",
+      "missingFields": "Fill in the fields above to see your TDEE."
     },
     "toast": {
       "cannotSave": "Cannot save: missing data",

@@ -106,12 +106,17 @@ export default function TDEECalculatorTool() {
   // React Hook Form
   const { register, watch, setValue } = useForm({
     defaultValues: {
-      // Förvalt i stället för tomt. Utan värde returnerade beräkningen null och
-      // HELA resultatkortet försvann utan felmeddelande — användaren såg en tom
-      // sida utan att förstå vad som saknades. Koden antog redan 'Moderately
-      // active' som fallback på två ställen (se sparningen nedan), men guarden
-      // ovanför hann returnera null först, så den nåddes aldrig.
-      activity_level: 'Moderately active',
+      // TOMT, inte förvalt. Ett förvalt 'Moderately active' (3-5 pass/vecka)
+      // stämmer inte för de flesta, och en ifylld dropdown läses som ett svar
+      // användaren gett — resultatet blev ett TDEE som ser klart ut men bygger
+      // på en gissning. Det är värre än ett synligt tomrum, särskilt när hela
+      // poängen är att siffran ska vara individuell.
+      //
+      // Förvalet infördes ursprungligen för att beräkningen returnerade null
+      // utan värde och HELA resultatkortet försvann utan förklaring. Det
+      // problemet löses nu i stället med ett tydligt meddelande där kortet
+      // skulle ha stått (se "saknas-meddelande" längre ned).
+      activity_level: '',
       intensity_level: '',
       training_frequency_per_week: '',
       training_duration_minutes: '',
@@ -354,7 +359,7 @@ export default function TDEECalculatorTool() {
     const calculatedTDEE = calculateTDEE({
       bmr,
       palSystem: palSystem as PALSystem,
-      activityLevel: (activityLevel || 'Moderately active') as ActivityLevel,
+      activityLevel: activityLevel as ActivityLevel,
       gender: profileData.gender,
       intensityLevel: (intensityLevel || undefined) as IntensityLevel | undefined,
       trainingFrequencyPerWeek: trainingFrequency ? parseFloat(trainingFrequency) : undefined,
@@ -442,7 +447,7 @@ export default function TDEECalculatorTool() {
         body_fat_percentage: bodyFatNum,
         bmr_formula: bmrFormula || undefined,
         pal_system: palSystem as PALSystem,
-        activity_level: (activityLevel || 'Moderately active') as ActivityLevel,
+        activity_level: activityLevel as ActivityLevel,
         intensity_level: (intensityLevel || undefined) as IntensityLevel | undefined,
         training_frequency_per_week: trainingFrequency ? parseFloat(trainingFrequency) : undefined,
         training_duration_minutes: trainingDuration ? parseFloat(trainingDuration) : undefined,
@@ -483,7 +488,7 @@ export default function TDEECalculatorTool() {
           tdee,
           bmr_formula: bmrFormula || undefined,
           pal_system: palSystem as PALSystem,
-          activity_level: (activityLevel || 'Moderately active') as ActivityLevel,
+          activity_level: activityLevel as ActivityLevel,
           intensity_level: (intensityLevel || undefined) as IntensityLevel | undefined,
           training_frequency_per_week: toFiniteOrUndefined(trainingFrequency),
           training_duration_minutes: toFiniteOrUndefined(trainingDuration),
@@ -1029,6 +1034,23 @@ export default function TDEECalculatorTool() {
                               `tdeeCalc.bmr.formulas.${BMR_FORMULA_I18N_KEY[bmrFormula]}`
                             )
                           : bmrFormula}
+                      </p>
+                    </div>
+                  )}
+
+                  {/*
+                    Saknas-meddelande. Utan detta försvinner resultatkortet
+                    tyst när ett obligatoriskt fält saknas, och användaren ser
+                    en tom yta utan att förstå varför. Det var skälet till att
+                    aktivitetsnivån en gång förvaldes — problemet löses här
+                    i stället, utan att gissa åt användaren.
+                  */}
+                  {!tdee && bmr && (
+                    <div className="rounded-xl border-2 border-dashed border-neutral-300 p-6 text-center dark:border-neutral-600">
+                      <p className="text-sm text-neutral-600 dark:text-neutral-300">
+                        {!activityLevel
+                          ? t('tdeeCalc.results.missingActivityLevel')
+                          : t('tdeeCalc.results.missingFields')}
                       </p>
                     </div>
                   )}

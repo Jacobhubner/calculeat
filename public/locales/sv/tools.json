@@ -329,7 +329,9 @@
       "goalMaintain": "för att behålla vikten",
       "goalLoss": "för att gå ner i vikt",
       "goalGain": "för att gå upp i vikt",
-      "goalChangeHint": "Målet ändrar du på profilsidan."
+      "goalChangeHint": "Målet ändrar du på profilsidan.",
+      "missingActivityLevel": "Välj din aktivitetsnivå för att se ditt TDEE.",
+      "missingFields": "Fyll i fälten ovan för att se ditt TDEE."
     },
     "toast": {
       "cannotSave": "Kan inte spara: saknade data",
