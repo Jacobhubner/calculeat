@@ -65,10 +65,6 @@
   "setup": {
     "title": "Fill in your basic information",
     "description": "We need this information to calculate your energy needs.",
-    "goalLabel": "What do you want to do with your weight?",
-    "goalLoss": "Lose",
-    "goalMaintain": "Hold",
-    "goalGain": "Gain",
     "saveAndContinue": "Save and continue",
     "methodTitle": "How do you want to find your calorie needs?",
     "methodHint": "We'll estimate it for you from a few simple questions — or enter it yourself if you already know it.",

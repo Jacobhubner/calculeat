@@ -11,8 +11,6 @@ import { Button } from '@/components/ui/button'
 import { User } from 'lucide-react'
 import type { Gender } from '@/lib/types'
 
-type CalorieGoal = 'Weight loss' | 'Maintain weight' | 'Weight gain'
-
 interface SetupProfileFormProps {
   onSave: (
     data: {
@@ -20,7 +18,6 @@ interface SetupProfileFormProps {
       gender: Gender
       height_cm: number
       weight_kg: number
-      calorie_goal: CalorieGoal
     },
     // 'calculate' = spara och gå till TDEE-kalkylatorn; 'manual' = spara och
     // öppna manuell inmatning. Slår ihop grunduppgifter + metodval till en vy.
@@ -37,7 +34,6 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
   const [gender, setGender] = useState<Gender | ''>('')
   const [heightString, setHeightString] = useState('')
   const [weightString, setWeightString] = useState('')
-  const [goal, setGoal] = useState<CalorieGoal | ''>('')
 
   const birthDate =
     birthDay && birthMonth && birthYear
@@ -50,7 +46,6 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
   const isValid =
     !!birthDate &&
     !!gender &&
-    !!goal &&
     !isNaN(height) &&
     height >= 100 &&
     height <= 250 &&
@@ -59,14 +54,13 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
     weight <= 400
 
   const handleSubmit = async (method: 'calculate' | 'manual') => {
-    if (!isValid || !gender || !goal) return
+    if (!isValid || !gender) return
     await onSave(
       {
         birth_date: birthDate,
         gender: gender as Gender,
         height_cm: height,
         weight_kg: weight,
-        calorie_goal: goal,
       },
       method
     )
@@ -197,34 +191,16 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
           />
         </div>
 
-        {/* Mål — styr förvalt underskott och kaloritäthetsindikatorn (grepp 4) */}
-        <div>
-          <p className="text-sm font-medium text-neutral-700 mb-2 dark:text-neutral-200">
-            {t('setup.goalLabel')}
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            {(
-              [
-                ['Weight loss', 'setup.goalLoss'],
-                ['Maintain weight', 'setup.goalMaintain'],
-                ['Weight gain', 'setup.goalGain'],
-              ] as const
-            ).map(([value, key]) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setGoal(value)}
-                className={`px-4 py-3 rounded-xl border text-sm font-medium transition-colors ${
-                  goal === value
-                    ? 'border-primary-400 bg-primary-50 text-primary-700 dark:bg-primary-900/25 dark:text-primary-300'
-                    : 'border-neutral-200 text-neutral-700 hover:border-neutral-300 dark:border-neutral-700 dark:text-neutral-200'
-                }`}
-              >
-                {t(key)}
-              </button>
-            ))}
-          </div>
-        </div>
+        {/*
+          Riktningsfrågan ("Vad vill du med vikten?") togs bort 2026-08-15.
+          Den behövdes aldrig för TDEE — det beräknas ur ålder, kön, längd,
+          vikt och aktivitetsnivå. Frågan ställdes dessutom en gång till i
+          perioddialogen, med andra ord.
+
+          Riktningen väljs nu EFTER att TDEE finns, som en period. Först då
+          kan appen visa vad valet innebär i kalorier och makron i stället för
+          att be om ett abstrakt svar.
+        */}
 
         {/* Metodval — slås ihop med grunduppgifterna på samma vy (steg 1+2).
             Båda knapparna sparar grunduppgifterna först och går sedan vidare. */}

@@ -445,7 +445,6 @@ export default function ProfilePage() {
       gender: Gender
       height_cm: number
       weight_kg: number
-      calorie_goal: 'Weight loss' | 'Maintain weight' | 'Weight gain'
     },
     method: 'calculate' | 'manual'
   ) => {
@@ -453,14 +452,6 @@ export default function ProfilePage() {
 
     const isNetworkError = (error: unknown) =>
       error instanceof TypeError && /fetch/i.test(error.message)
-
-    // Kaloritäthetsindikatorn förväljs vid viktnedgång OCH underhåll (hjälper både
-    // kaloriundvikande och aptitkontroll — mätta sig på volym), men av vid
-    // viktuppgång (då man snarare vill ha kaloritäta livsmedel). Sätts explicit så
-    // inget gammalt värde ligger kvar vid målbyte. Vid viktnedgång även normalt
-    // underskott (20-25%). Användaren kan ändra efteråt.
-    const isWeightLoss = data.calorie_goal === 'Weight loss'
-    const isWeightGain = data.calorie_goal === 'Weight gain'
 
     const attemptSave = async () => {
       await updateProfile.mutateAsync({
@@ -471,9 +462,10 @@ export default function ProfilePage() {
           height_cm: data.height_cm,
           weight_kg: data.weight_kg,
           initial_weight_kg: data.weight_kg,
-          calorie_goal: data.calorie_goal,
-          show_energy_density: !isWeightGain,
-          ...(isWeightLoss ? { deficit_level: '20-25%' } : {}),
+          // calorie_goal, deficit_level och show_energy_density sätts INTE
+          // här längre — de härleds från periodvalet efter att TDEE finns
+          // (se applyPhaseSideEffects i useDietPhases). Att gissa dem innan
+          // användaren angett riktning gav ett mål som inte matchade avsikten.
         },
       })
       await createWeightHistory.mutateAsync({ weight_kg: data.weight_kg })
