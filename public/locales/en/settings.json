@@ -34,7 +34,9 @@
     "activating": "Activating…",
     "activeInfo": "You are now navigating as a new user. The banner at the top confirms the mode.",
     "exit": "Exit preview and delete test data",
-    "exiting": "Exiting…"
+    "exiting": "Exiting…",
+    "blockedByFreeView": "Free view is active. The two test modes would override each other — exit free view first.",
+    "exitFreeView": "Exit free view"
   },
   "dataExport": {
     "title": "Export my data",

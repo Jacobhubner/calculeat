@@ -88,7 +88,7 @@ export default function SettingsPage() {
   const { data: isSuperAdmin = false } = useIsSuperAdmin()
   const { data: isAdmin = false } = useIsAdmin()
   const { isPreviewActive, enterPreview, exitPreview } = usePreviewMode()
-  const { isFreeViewActive } = useFreeViewMode()
+  const { isFreeViewActive, exitFreeView } = useFreeViewMode()
   const { data: adminList = [] } = useListAdmins()
   const addAdmin = useAddAdmin()
   const sendAdminMessage = useSendAdminMessage()
@@ -601,7 +601,7 @@ export default function SettingsPage() {
                         setBirthDay(e.target.value)
                         updateBirthDate(e.target.value, birthMonth, birthYear)
                       }}
-                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
+                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
                     >
                       <option value="">{t('birthDate.day')}</option>
                       {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
@@ -616,7 +616,7 @@ export default function SettingsPage() {
                         setBirthMonth(e.target.value)
                         updateBirthDate(birthDay, e.target.value, birthYear)
                       }}
-                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
+                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
                     >
                       <option value="">{t('birthDate.month')}</option>
                       {Array.from({ length: 12 }, (_, i) => i + 1).map(i => (
@@ -631,7 +631,7 @@ export default function SettingsPage() {
                         setBirthYear(e.target.value)
                         updateBirthDate(birthDay, birthMonth, e.target.value)
                       }}
-                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
+                      className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
                     >
                       <option value="">{t('birthDate.year')}</option>
                       {Array.from({ length: 105 }, (_, i) => new Date().getFullYear() - i).map(
@@ -696,7 +696,7 @@ export default function SettingsPage() {
                     placeholder="180"
                     min="100"
                     max="250"
-                    className="w-full max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
+                    className="w-full max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
                   />
                 </div>
 
@@ -739,7 +739,7 @@ export default function SettingsPage() {
                       onChange={e => setUsernameInput(e.target.value)}
                       placeholder={t('settings.usernamePlaceholder')}
                       disabled={updateUsername.isPending}
-                      className="flex-1 px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed dark:border-neutral-600"
+                      className="flex-1 px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
                       onKeyDown={e => {
                         if (e.key === 'Enter') handleSaveUsername()
                         if (e.key === 'Escape') closeEditor()
@@ -808,7 +808,7 @@ export default function SettingsPage() {
                         value={emailInput}
                         onChange={e => setEmailInput(e.target.value)}
                         placeholder="ny@email.se"
-                        className="flex-1 px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
+                        className="flex-1 px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
                         onKeyDown={e => {
                           if (e.key === 'Enter') handleSaveEmail()
                           if (e.key === 'Escape') closeEditor()
@@ -881,7 +881,7 @@ export default function SettingsPage() {
                     value={passwordInput}
                     onChange={e => setPasswordInput(e.target.value)}
                     placeholder={t('settings.passwordPlaceholder')}
-                    className="w-full px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
+                    className="w-full px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
                     autoFocus
                   />
                   {passwordInput.length > 0 && (
@@ -1016,7 +1016,7 @@ export default function SettingsPage() {
                   value={newAdminIdentifier}
                   onChange={e => setNewAdminIdentifier(e.target.value)}
                   placeholder={t('settings.adminPlaceholder')}
-                  className="flex-1 px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
+                  className="flex-1 px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
                 />
                 <button
                   onClick={async () => {
@@ -1063,7 +1063,7 @@ export default function SettingsPage() {
                 value={adminMsgTo}
                 onChange={e => setAdminMsgTo(e.target.value)}
                 placeholder={t('settings.adminMsgToPlaceholder')}
-                className="px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
+                className="px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
               />
               <textarea
                 value={adminMsgText}
@@ -1071,7 +1071,7 @@ export default function SettingsPage() {
                 placeholder={t('settings.adminMsgTextPlaceholder')}
                 maxLength={1000}
                 rows={3}
-                className="px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none dark:border-neutral-600"
+                className="px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
               />
               <button
                 onClick={handleSendAdminMessage}
@@ -1103,16 +1103,39 @@ export default function SettingsPage() {
                 {tSettings('preview.description')}
               </p>
               {!isPreviewActive ? (
-                <Button
-                  variant="outline"
-                  onClick={() => enterPreview.mutate()}
-                  disabled={enterPreview.isPending || isFreeViewActive}
-                  className="self-start"
-                >
-                  {enterPreview.isPending
-                    ? tSettings('preview.activating')
-                    : tSettings('preview.activate')}
-                </Button>
+                <>
+                  {/*
+                    De två admin-testlägena krockar: gratis-vyn tvingar fram
+                    gratis-entitlements i klienten, preview byter till en tom
+                    sandlådeprofil. Körs båda samtidigt går det inte att veta
+                    vilket läge som orsakar det man ser. Knappen var tidigare
+                    bara utgråad utan förklaring — nu står skälet, med en väg
+                    ur låset.
+                  */}
+                  {isFreeViewActive && (
+                    <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-700 dark:border-amber-800 dark:bg-amber-900/25 dark:text-amber-300">
+                      <p>{tSettings('preview.blockedByFreeView')}</p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="mt-2 text-xs"
+                        onClick={exitFreeView}
+                      >
+                        {tSettings('preview.exitFreeView')}
+                      </Button>
+                    </div>
+                  )}
+                  <Button
+                    variant="outline"
+                    onClick={() => enterPreview.mutate()}
+                    disabled={enterPreview.isPending || isFreeViewActive}
+                    className="self-start"
+                  >
+                    {enterPreview.isPending
+                      ? tSettings('preview.activating')
+                      : tSettings('preview.activate')}
+                  </Button>
+                </>
               ) : (
                 <>
                   <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 dark:bg-amber-900/25 dark:text-amber-300 dark:border-amber-800">

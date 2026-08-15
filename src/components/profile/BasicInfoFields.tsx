@@ -400,7 +400,7 @@ export default function BasicInfoFields({
                 value={weightString}
                 onChange={e => handleWeightInput(e.target.value)}
                 onBlur={handleWeightBlur}
-                className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600"
+                className="mt-1 block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
                 placeholder="80"
                 min="30"
                 max="300"

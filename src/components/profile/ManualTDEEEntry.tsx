@@ -128,7 +128,7 @@ export default function ManualTDEEEntry({
               handleContinue()
             }
           }}
-          className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600"
+          className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
           placeholder="2500"
           min="500"
           max="10000"
@@ -150,7 +150,7 @@ export default function ManualTDEEEntry({
                 handleContinue()
               }
             }}
-            className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600"
+            className="block w-full rounded-xl border-neutral-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
             placeholder="15"
             min="0"
             max="100"

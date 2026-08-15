@@ -34,7 +34,9 @@
     "activating": "Aktiverar…",
     "activeInfo": "Du navigerar nu som ny användare. Bannern längst upp bekräftar läget.",
     "exit": "Avsluta preview och radera testdata",
-    "exiting": "Avslutar…"
+    "exiting": "Avslutar…",
+    "blockedByFreeView": "Gratis-vyn är aktiv. De två testlägena skulle skriva över varandra — avsluta gratis-vyn först.",
+    "exitFreeView": "Avsluta gratis-vy"
   },
   "dataExport": {
     "title": "Exportera min data",

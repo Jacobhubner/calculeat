@@ -87,7 +87,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
             <select
               value={birthDay}
               onChange={e => setBirthDay(e.target.value)}
-              className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
+              className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
             >
               <option value="">{t('birthDate.day')}</option>
               {Array.from({ length: 31 }, (_, i) => i + 1).map(d => (
@@ -99,7 +99,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
             <select
               value={birthMonth}
               onChange={e => setBirthMonth(e.target.value)}
-              className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
+              className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
             >
               <option value="">{t('birthDate.month')}</option>
               {Array.from({ length: 12 }, (_, i) => i + 1).map(i => (
@@ -111,7 +111,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
             <select
               value={birthYear}
               onChange={e => setBirthYear(e.target.value)}
-              className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
+              className="block w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
             >
               <option value="">{t('birthDate.year')}</option>
               {Array.from({ length: 105 }, (_, i) => new Date().getFullYear() - i).map(y => (
@@ -170,7 +170,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
             placeholder="180"
             min="100"
             max="250"
-            className="w-full max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
+            className="w-full max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
           />
         </div>
 
@@ -187,7 +187,7 @@ export default function SetupProfileForm({ onSave, isSaving }: SetupProfileFormP
             min="20"
             max="400"
             step="0.1"
-            className="w-full max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600"
+            className="w-full max-w-xs px-3 py-2 text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
           />
         </div>
 
