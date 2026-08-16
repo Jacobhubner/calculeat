@@ -335,10 +335,17 @@ export function PhasePickerDialog({
             </div>
 
             <div className="flex flex-col-reverse gap-2 pt-1 sm:flex-row">
-              <Button variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
+              <Button
+                variant="outline"
+                className="h-12 flex-1 text-base sm:h-11 sm:text-sm"
+                onClick={() => onOpenChange(false)}
+              >
                 {t('phase.modal.cancel')}
               </Button>
-              <Button className="flex-1" onClick={() => setView('type')}>
+              <Button
+                className="h-12 flex-1 text-base sm:h-11 sm:text-sm"
+                onClick={() => setView('type')}
+              >
                 {t('phase.modal.next')}
               </Button>
             </div>
@@ -534,14 +541,18 @@ export function PhasePickerDialog({
             <div className="flex flex-col-reverse gap-2 pt-1 sm:flex-row">
               <Button
                 variant="outline"
-                className="flex-1"
+                className="h-12 flex-1 text-base sm:h-11 sm:text-sm"
                 onClick={() => onOpenChange(false)}
                 disabled={startPhase.isPending}
               >
                 {needsBodyFatFirst ? t('phase.modal.close') : t('phase.modal.cancel')}
               </Button>
               {!needsBodyFatFirst && (
-                <Button className="flex-1" onClick={handleStart} disabled={startPhase.isPending}>
+                <Button
+                  className="h-12 flex-1 text-base sm:h-11 sm:text-sm"
+                  onClick={handleStart}
+                  disabled={startPhase.isPending}
+                >
                   {t('phase.modal.start')}
                 </Button>
               )}
