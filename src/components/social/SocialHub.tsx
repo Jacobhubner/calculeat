@@ -991,7 +991,7 @@ function MessageAttachmentImage({
     ? 'aspect-square w-full object-cover'
     : wide
       ? 'aspect-[16/9] w-full object-cover'
-      : 'max-h-72 w-auto max-w-full object-contain'
+      : 'max-h-48 max-w-[240px] object-cover'
 
   // Platshållarna måste hålla samma form som bilden, annars hoppar layouten
   // när bilden laddat.
@@ -1063,10 +1063,7 @@ function MessageAttachmentGrid({ paths, onLoaded }: { paths: string[]; onLoaded?
   }
 
   return (
-    // Ingen egen maxbredd: rutnätet ska fylla bubblan (som redan är begränsad
-    // till 88% av tråden för bildmeddelanden). En fast 240px hade gett ~118px
-    // per ruta — för smått för att se något på t.ex. en skärmdump.
-    <div className="grid grid-cols-2 gap-1 w-full">
+    <div className="grid grid-cols-2 gap-1 max-w-[240px]">
       {paths.map((p, i) => {
         // Udda antal: första bilden spänner över båda kolumnerna så
         // rutnätet inte får ett hål i sista raden.
@@ -1198,10 +1195,7 @@ function MessageBubble({
       {/* Meddelandebubbla */}
       <div
         ref={menuRef}
-        // 75% är lagom för text — en textbubbla ska inte fylla hela bredden.
-        // Bilder behöver däremot ytan: på telefon gav 75% rutor på ~130px,
-        // för smått för att se något på t.ex. en skärmdump.
-        className={`relative ${attachments.length > 0 && !isDeleted ? 'max-w-[88%]' : 'max-w-[75%]'}`}
+        className="relative max-w-[75%]"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchMove={handleTouchEnd}
