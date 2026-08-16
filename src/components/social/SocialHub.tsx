@@ -26,6 +26,7 @@ import {
   ImagePlus,
   ImageOff,
   Image as ImageIcon,
+  Maximize2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -952,10 +953,14 @@ const SIGNED_URL_TTL_SECONDS = 3600
 function MessageAttachmentImage({
   path,
   square = false,
+  wide = false,
   onLoaded,
 }: {
   path: string
+  /** Kvadratisk ruta i rutnätet */
   square?: boolean
+  /** Bred toppbild i rutnätet vid udda antal — lägre än en kvadrat */
+  wide?: boolean
   /** Anropas när bilden fått sina mått — tråden kan då korrigera skrollningen */
   onLoaded?: () => void
 }) {
@@ -979,12 +984,27 @@ function MessageAttachmentImage({
     retry: 1,
   })
 
+  // I rutnätet fyller bilden sin ruta; ensam styr bilden sin egen storlek.
+  // wide = bred toppbild vid udda antal — plattare än en kvadrat så den inte
+  // dominerar rutorna under.
+  const imageClass = square
+    ? 'aspect-square w-full object-cover'
+    : wide
+      ? 'aspect-[16/9] w-full object-cover'
+      : 'max-h-72 w-auto max-w-full object-contain'
+
+  // Platshållarna måste hålla samma form som bilden, annars hoppar layouten
+  // när bilden laddat.
+  const placeholderClass = square
+    ? 'aspect-square w-full'
+    : wide
+      ? 'aspect-[16/9] w-full'
+      : 'h-32 w-44'
+
   if (isLoading) {
     return (
       <div
-        className={`rounded-xl bg-neutral-100 animate-pulse flex items-center justify-center dark:bg-neutral-800 ${
-          square ? 'aspect-square w-full' : 'h-32 w-44'
-        }`}
+        className={`rounded-xl bg-neutral-100 animate-pulse flex items-center justify-center dark:bg-neutral-800 ${placeholderClass}`}
       >
         <Loader2 className="h-4 w-4 animate-spin text-neutral-300" />
       </div>
@@ -995,10 +1015,11 @@ function MessageAttachmentImage({
     return (
       <div
         className={`rounded-xl bg-neutral-50 border border-neutral-100 flex items-center justify-center gap-1.5 text-neutral-400 dark:bg-neutral-900 dark:text-neutral-500 ${
-          square ? 'aspect-square w-full' : 'h-16 w-44'
+          square || wide ? placeholderClass : 'h-16 w-44'
         }`}
       >
         <ImageOff className="h-3.5 w-3.5" />
+        {/* Texten får inte plats i en liten ruta — ikonen får tala där */}
         {!square && <span className="text-[11px]">{t('social.messages.image_load_error')}</span>}
       </div>
     )
@@ -1008,8 +1029,8 @@ function MessageAttachmentImage({
     <button
       type="button"
       onClick={() => window.open(signedUrl, '_blank', 'noopener,noreferrer')}
-      className={`block rounded-xl overflow-hidden border border-neutral-200 hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-700 ${
-        square ? 'w-full' : ''
+      className={`group relative block rounded-xl overflow-hidden border border-neutral-200 hover:opacity-95 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-700 ${
+        square || wide ? 'w-full' : ''
       }`}
       title={t('social.messages.open_image')}
     >
@@ -1018,10 +1039,16 @@ function MessageAttachmentImage({
         alt={t('social.messages.attached_image_alt')}
         loading="lazy"
         onLoad={onLoaded}
-        className={
-          square ? 'aspect-square w-full object-cover' : 'max-h-48 max-w-[240px] object-cover'
-        }
+        className={imageClass}
       />
+      {/* Miniatyren räcker inte för t.ex. en skärmdump — markera att bilden
+          går att öppna i full storlek. */}
+      <span
+        className="absolute bottom-1 right-1 rounded-md bg-black/55 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100"
+        aria-hidden="true"
+      >
+        <Maximize2 className="h-3 w-3" />
+      </span>
     </button>
   )
 }
@@ -1036,21 +1063,25 @@ function MessageAttachmentGrid({ paths, onLoaded }: { paths: string[]; onLoaded?
   }
 
   return (
-    <div className="grid grid-cols-2 gap-1 max-w-[240px]">
-      {paths.map((p, i) => (
-        <div
-          key={p}
-          // Udda antal: första bilden spänner över båda kolumnerna så
-          // rutnätet inte får ett hål i sista raden.
-          className={paths.length % 2 === 1 && i === 0 ? 'col-span-2' : undefined}
-        >
-          <MessageAttachmentImage
-            path={p}
-            square={!(paths.length % 2 === 1 && i === 0)}
-            onLoaded={onLoaded}
-          />
-        </div>
-      ))}
+    // Ingen egen maxbredd: rutnätet ska fylla bubblan (som redan är begränsad
+    // till 88% av tråden för bildmeddelanden). En fast 240px hade gett ~118px
+    // per ruta — för smått för att se något på t.ex. en skärmdump.
+    <div className="grid grid-cols-2 gap-1 w-full">
+      {paths.map((p, i) => {
+        // Udda antal: första bilden spänner över båda kolumnerna så
+        // rutnätet inte får ett hål i sista raden.
+        const isWideTop = paths.length % 2 === 1 && i === 0
+        return (
+          <div key={p} className={isWideTop ? 'col-span-2' : undefined}>
+            <MessageAttachmentImage
+              path={p}
+              square={!isWideTop}
+              wide={isWideTop}
+              onLoaded={onLoaded}
+            />
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -1167,7 +1198,10 @@ function MessageBubble({
       {/* Meddelandebubbla */}
       <div
         ref={menuRef}
-        className="relative max-w-[75%]"
+        // 75% är lagom för text — en textbubbla ska inte fylla hela bredden.
+        // Bilder behöver däremot ytan: på telefon gav 75% rutor på ~130px,
+        // för smått för att se något på t.ex. en skärmdump.
+        className={`relative ${attachments.length > 0 && !isDeleted ? 'max-w-[88%]' : 'max-w-[75%]'}`}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onTouchMove={handleTouchEnd}
