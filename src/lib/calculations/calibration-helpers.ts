@@ -45,9 +45,17 @@ export function getEffectiveKcalPerKg(weeklyChangePct: number): number {
     const t = Math.max(0, Math.min(1, (weeklyChangePct + 1.5) / 1.25))
     return Math.round(6500 + t * 1200)
   }
-  if (weeklyChangePct > 0.5) {
-    // Gain side: glycogen refill, conservative 6800
-    return 6800
+  if (weeklyChangePct > 0) {
+    // Gain side: rampas linjärt 7700 → 6800 mellan +0,25 och +1,0 %/vecka,
+    // spegelvänt mot förlustsidan.
+    //
+    // Tidigare var detta en TRÖSKEL vid +0,5 %/vecka: 7700 upp till gränsen,
+    // 6800 efter. Två användare som skilde sig med 0,01 %/vecka fick då
+    // ~46 kcal olika TDEE — trots att funktionens egen dokumentation säger
+    // "smooth linear interpolation to avoid step-function discontinuities".
+    // Förlustsidan rampade redan; uppgångssidan gjorde inte det.
+    const t = Math.max(0, Math.min(1, (weeklyChangePct - 0.25) / 0.75))
+    return Math.round(7700 - t * 900)
   }
   return KCAL_PER_KG
 }

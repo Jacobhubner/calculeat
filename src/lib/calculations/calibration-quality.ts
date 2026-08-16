@@ -41,6 +41,91 @@ export interface SelectiveLoggingIndicator {
   loggedVsTargetRatio: number
 }
 
+export interface UnderreportingResult {
+  /** Skillnad mellan vad vikten implicerar och vad användaren loggat, kcal/dag */
+  gapKcalPerDay: number
+  /** Gapet som andel av loggat intag */
+  gapFraction: number
+  isLikely: boolean
+  severity: 'none' | 'mild' | 'strong'
+}
+
+/**
+ * Upptäck underrapportering genom att jämföra loggen med vågen.
+ *
+ * VARFÖR DETTA ÄR MODELLENS VIKTIGASTE SKYDD:
+ * TDEE = genomsnittligt intag − energibalans. Ett fel i intaget går rakt in
+ * i TDEE, 1:1, utan dämpning — medan ett viktfel divideras med antalet dagar.
+ * Vid 28 dagar dämpas 0,5 kg viktfel till 138 kcal, men 100 kcal intagsfel
+ * förblir 100 kcal.
+ *
+ * Underrapportering är dessutom stor och systematisk, inte slumpmässig:
+ * validering mot dubbelmärkt vatten visar 12–27 % underrapportering beroende
+ * på metod och population (Trabulsi & Schoeller 2001,
+ * doi: 10.1152/ajpendo.2001.281.5.E891; Nature Food 2024,
+ * doi: 10.1038/s43016-024-01089-5, n=6497).
+ *
+ * Vid 15 % underrapportering blir TDEE ~420 kcal för lågt. Värre: felet
+ * SJÄLVFÖRSTÄRKS — ett för lågt mål gör att användaren går ner snabbare än
+ * planerat, vilket nästa kalibrering tolkar som bekräftelse.
+ *
+ * METOD: vikten är en oberoende mätning av energibalansen. Utifrån FÖREGÅENDE
+ * TDEE-skattning och uppmätt viktförändring kan vi räkna ut vilket intag som
+ * KRÄVS för att förklara vikten. Ligger det systematiskt över vad användaren
+ * loggat är loggen ofullständig.
+ *
+ * Vi jämför mot föregående TDEE — inte mot det nyberäknade — eftersom det
+ * senare härleds ur samma logg och jämförelsen då blir cirkulär.
+ *
+ * BEGRÄNSNING: en användare vars föregående TDEE redan är fel får ett gap som
+ * speglar det felet i stället för underrapportering. Signalen används därför
+ * bara för att BEGRÄNSA justeringen och varna — aldrig för att korrigera
+ * siffran uppåt. Att gissa en korrektionsfaktor vore att lägga ett antagande
+ * ovanpå ett annat.
+ */
+export function detectUnderreporting(params: {
+  loggedCaloriesAvg: number | null
+  previousTDEE: number
+  weightChangeKg: number
+  actualDays: number
+  effectiveKcalPerKg: number
+}): UnderreportingResult {
+  const { loggedCaloriesAvg, previousTDEE, weightChangeKg, actualDays, effectiveKcalPerKg } = params
+
+  const none: UnderreportingResult = {
+    gapKcalPerDay: 0,
+    gapFraction: 0,
+    isLikely: false,
+    severity: 'none',
+  }
+
+  if (!loggedCaloriesAvg || loggedCaloriesAvg <= 0 || actualDays <= 0 || previousTDEE <= 0) {
+    return none
+  }
+
+  // Vilket intag krävs för att förklara den uppmätta viktförändringen?
+  const balancePerDay = (weightChangeKg * effectiveKcalPerKg) / actualDays
+  const impliedIntake = previousTDEE + balancePerDay
+  const gapKcalPerDay = impliedIntake - loggedCaloriesAvg
+  const gapFraction = gapKcalPerDay / loggedCaloriesAvg
+
+  // Bara positiva gap är intressanta: loggen visar MINDRE än vikten säger.
+  // Ett negativt gap (loggat > implicerat) betyder överrapportering eller att
+  // föregående TDEE var för lågt — inte samma risk, och inte samma åtgärd.
+  //
+  // Trösklarna följer litteraturens spann: 12 % är den nedre änden av
+  // observerad underrapportering, 25 % den övre.
+  const severity: UnderreportingResult['severity'] =
+    gapFraction >= 0.25 ? 'strong' : gapFraction >= 0.12 ? 'mild' : 'none'
+
+  return {
+    gapKcalPerDay,
+    gapFraction,
+    isLikely: severity !== 'none',
+    severity,
+  }
+}
+
 export interface WeekdayBiasResult {
   /** Andel av loggade dagar som är helg (lör/sön). Förväntat ≈ 2/7 = 0.286 */
   weekendShare: number
@@ -318,6 +403,18 @@ export function calculateConfidence(
   if (actualSpanDays !== undefined && actualSpanDays / periodDays < 0.5) {
     level = level === 'high' ? 'standard' : 'low'
     degradeReasons.push('sparse_coverage')
+  }
+
+  // Degrade om matloggen är gles. Loggen väger 45 % av datakvalitetsindexet
+  // — tyngst av alla faktorer — men påverkade tidigare INTE confidence alls:
+  // parametern togs emot, returnerades i objektet och användes aldrig. En
+  // profil med perfekt vikthistorik och 7 av 28 loggdagar kunde få 'high',
+  // vilket överskattar tillförlitligheten i det som visas för användaren.
+  //
+  // 60 % motsvarar ungefär den nivå där DQI:s logScore når 'bra data'.
+  if (foodLogCompleteness < 60) {
+    level = level === 'high' ? 'standard' : 'low'
+    degradeReasons.push('sparse_food_log')
   }
 
   // Degrade if signal-to-noise ratio is very low (t-statistic of slope < 1.0).

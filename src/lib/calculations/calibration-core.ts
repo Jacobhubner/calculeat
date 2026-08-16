@@ -30,6 +30,7 @@ import {
   getCalorieEstimate,
   detectSelectiveLogging,
   detectWeekdayBias,
+  detectUnderreporting,
   EXPECTED_WEEKEND_SHARE,
   calculateDataQualityIndex,
   calculateConfidence,
@@ -310,6 +311,23 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     maxAdjPercent *= 0.8
   }
 
+  // Underrapportering: loggen visar mindre än vågen säger. Detta är modellens
+  // största felkälla eftersom intagsfel går rakt in i TDEE utan dämpning.
+  // Vi korrigerar INTE siffran — vi vet inte hur mycket som saknas — utan
+  // begränsar hur långt den får flytta sig och varnar.
+  const underreporting = detectUnderreporting({
+    loggedCaloriesAvg: input.actualCaloriesAvg,
+    previousTDEE: input.currentTDEE,
+    weightChangeKg,
+    actualDays,
+    effectiveKcalPerKg,
+  })
+  if (underreporting.severity === 'strong') {
+    maxAdjPercent *= 0.5
+  } else if (underreporting.severity === 'mild') {
+    maxAdjPercent *= 0.75
+  }
+
   // Two separate clamps applied in series — tighter of the two wins.
   //
   // DQI clamp: precision bound centred on rawTDEE.
@@ -390,6 +408,16 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
       type: 'selective_logging',
       message:
         'Systemet fungerar bäst när alla dagar loggas — även de där man äter mer än planerat.',
+    })
+  }
+
+  if (underreporting.isLikely) {
+    warnings.push({
+      type: 'underreporting',
+      message:
+        `Vikten tyder på ett intag omkring ${Math.round(underreporting.gapKcalPerDay)} kcal/dag ` +
+        `högre än det du loggat. Ofta beror det på ologgade tillbehör — olja, dressing, ` +
+        `drycker — eller portioner som är större än de ser ut. Justeringen begränsas därför.`,
     })
   }
 
@@ -555,6 +583,7 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     actualDays,
     averageCalories,
     loggedCaloriesAvg: input.actualCaloriesAvg,
+    targetCaloriesUsed: input.targetCalories,
     calorieSource,
     foodLogCompleteness: input.foodLogCompleteness,
     foodLogWeight: adjustedFoodLogWeight,

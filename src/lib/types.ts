@@ -537,7 +537,9 @@ export interface WeightCluster {
 // Calibration confidence level
 export interface CalibrationConfidence {
   level: 'high' | 'standard' | 'low'
-  degradeReasons: Array<'low_cluster_size' | 'sparse_coverage' | 'nonlinear_trend'>
+  degradeReasons: Array<
+    'low_cluster_size' | 'sparse_coverage' | 'nonlinear_trend' | 'sparse_food_log'
+  >
   startClusterSize: number
   endClusterSize: number
   foodLogCompleteness: number
@@ -558,6 +560,7 @@ export interface CalibrationWarning {
     | 'low_signal'
     | 'selective_logging'
     | 'weekday_bias'
+    | 'underreporting'
     | 'large_deficit'
   message: string
 }
@@ -568,8 +571,19 @@ export interface CalibrationResult {
   endCluster: WeightCluster
   weightChangeKg: number
   actualDays: number
+  /** Det värde som faktiskt användes i beräkningen (loggat blandat med mål) */
   averageCalories: number
+  /** Loggat dagssnitt, oblandat. null när inget loggats. */
   loggedCaloriesAvg: number | null
+  /**
+   * Användarens kalorimål under perioden, oblandat.
+   *
+   * Sparas separat från loggedCaloriesAvg för att skillnaden dem emellan är
+   * den enda signal vi har på underrapportering: loggar användaren
+   * systematiskt under sitt mål samtidigt som vikten inte följer med, är
+   * loggen sannolikt ofullständig.
+   */
+  targetCaloriesUsed: number
   calorieSource: 'food_log' | 'target_calories' | 'blended'
   foodLogCompleteness: number
   foodLogWeight: number

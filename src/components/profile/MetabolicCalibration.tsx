@@ -367,8 +367,12 @@ export default function MetabolicCalibration({
         start_weight_kg: data.startCluster.average,
         end_weight_kg: data.endCluster.average,
         weight_change_kg: data.weightChangeKg,
-        target_calories: data.averageCalories,
-        actual_calories_avg: data.calorieSource !== 'target_calories' ? data.averageCalories : null,
+        // Spara de RÅA storheterna, inte det blandade värdet. Tidigare fick
+        // båda kolumnerna data.averageCalories, så de var identiska i varje
+        // rad — historiken kunde då inte användas för att upptäcka
+        // underrapportering, vilket är modellens största felkälla.
+        target_calories: data.targetCaloriesUsed,
+        actual_calories_avg: data.loggedCaloriesAvg,
         used_food_log: data.calorieSource !== 'target_calories',
         days_with_log_data: actualIntake?.daysWithData || 0,
         previous_tdee: profile.tdee || 0,
