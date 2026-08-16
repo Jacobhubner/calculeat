@@ -546,6 +546,15 @@ export function PhasePickerDialog({
               </>
             )}
 
+            {/* Perioden fungerar tekniskt utan loggning, men appen kan då
+                varken visa om du följer den eller om den ger resultat.
+                Formulerat som uppföljning, inte som en tröskel. */}
+            {!needsBodyFatFirst && (
+              <p className="pt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                {t('phase.trackingNotice')}
+              </p>
+            )}
+
             <div className="flex flex-col-reverse gap-2 pt-1 sm:flex-row">
               <Button
                 variant="outline"

@@ -9,6 +9,7 @@ import type { WeightHistory, CalibrationResult, CalibrationWarning } from '@/lib
 import {
   KCAL_PER_KG,
   MIN_DATA_POINTS,
+  MIN_LOG_DAYS_FOR_CALIBRATION,
   TDEE_FLOOR,
   TDEE_CEILING,
   MAX_WEEKLY_CHANGE_PERCENT,
@@ -136,6 +137,20 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     return validationError.message
   }
 
+  // Step 2b: Kräv matloggdata.
+  //
+  // Utan loggade dagar faller getCalorieEstimate tillbaka på targetCalories,
+  // dvs. TDEE kalibreras mot vad användaren TÄNKTE äta i stället för vad hen
+  // åt. Det ger ett cirkulärt resultat som ser lika trovärdigt ut som en
+  // riktig mätning. Blockeras hellre än att visas.
+  if (input.daysWithLogData < MIN_LOG_DAYS_FOR_CALIBRATION) {
+    return (
+      `Behöver minst ${MIN_LOG_DAYS_FOR_CALIBRATION} loggade dagar för att jämföra ` +
+      `intaget med viktförändringen (har ${input.daysWithLogData}). ` +
+      `Utan matloggning kan TDEE bara gissas utifrån ditt mål, inte mätas.`
+    )
+  }
+
   // Step 3: Calculate weight change via OLS (primary) + EMA (secondary for divergence detection)
   // Theil-Sen runs in parallel as a robust cross-check — not used as primary estimator.
   const olsResult = calculateWeightTrendOLS(allMeasurements)
@@ -186,12 +201,16 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
   // adjustedFoodLogWeight kept for return object / UI compatibility
   const adjustedFoodLogWeight = input.actualCaloriesAvg !== null ? 1 - priorWeight : 0
 
-  const calorieSource: CalibrationResult['calorieSource'] =
-    priorWeight <= 0.05
+  // Saknad loggdata måste avgöras FÖRE priorWeight-testet: utan observationer
+  // returnerar getCalorieEstimate priorWeight = 0, vilket annars märkte
+  // resultatet som 'food_log' trots att ingen mat loggats — och sparade
+  // used_food_log: true i historiken.
+  const hasLoggedIntake = input.actualCaloriesAvg !== null && input.daysWithLogData > 0
+  const calorieSource: CalibrationResult['calorieSource'] = !hasLoggedIntake
+    ? 'target_calories'
+    : priorWeight <= 0.05
       ? 'food_log'
-      : input.actualCaloriesAvg === null
-        ? 'target_calories'
-        : 'blended'
+      : 'blended'
 
   // Step 5: Calculate TDEE with context-aware energy density
   const startWeight = olsResult ? olsResult.trendStart : startCluster.average

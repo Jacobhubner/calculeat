@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import type {
   WeightHistory,
   CalibrationHistory,
@@ -9,6 +9,7 @@ import {
   MIN_DATA_POINTS,
   MIN_CLUSTER_SIZE,
   MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
+  MIN_LOG_DAYS_FOR_CALIBRATION,
   buildClusters,
 } from '@/lib/calculations/calibration'
 import { useEntitlements, isUnlimited } from '@/hooks/useEntitlements'
@@ -29,7 +30,14 @@ const DEFAULT_FREE_CALIBRATION_INTERVAL_DAYS = 180
 export function useCalibrationAvailability(
   profile: Profile | null | undefined,
   weightHistory: WeightHistory[] | undefined,
-  lastCalibration: CalibrationHistory | null | undefined
+  lastCalibration: CalibrationHistory | null | undefined,
+  /**
+   * Loggade dagar i den period som utvärderas. Kalibreringen kräver dem
+   * (se MIN_LOG_DAYS_FOR_CALIBRATION) — utan dem kalibreras TDEE mot målet
+   * i stället för mot faktiskt intag. Utelämnas den antas 0, vilket gör att
+   * kalibrering inte erbjuds; anropare som har siffran ska skicka in den.
+   */
+  logDaysInPeriod?: number
 ): CalibrationAvailability {
   const { limits } = useEntitlements()
   const graceCount = limits.free_calibration_grace ?? DEFAULT_FREE_CALIBRATION_GRACE
@@ -37,7 +45,33 @@ export function useCalibrationAvailability(
   /** premium/founder har grace = -1 (obegränsat) och passerar utan gräns */
   const planLimited = !isUnlimited(graceCount)
 
+  // Klockan läses en gång vid mount i stället för under varje rendering.
+  // Utan det blir resultatet instabilt när komponenten råkar rendera om, och
+  // react-hooks/purity flaggar anropet.
+  const [mountedAt] = useState(() => Date.now())
+
   return useMemo(() => {
+    const logDays = logDaysInPeriod ?? 0
+
+    /**
+     * Framsteg mot båda kraven. Räknas mot 14-dagarsperioden — den kortaste
+     * vägen till en kalibrering, så nedräkningen visar det närmaste målet
+     * i stället för det mest avlägsna.
+     */
+    const fourteenDaysAgo = new Date(mountedAt - 14 * 24 * 60 * 60 * 1000)
+    const weighInsNow = weightHistory
+      ? weightHistory.filter(w => new Date(w.recorded_at) >= fourteenDaysAgo).length
+      : 0
+    const weighInsNeeded = MIN_DATA_POINTS[14]
+    const buildProgress = (): CalibrationAvailability['progress'] => ({
+      weighIns: { current: weighInsNow, required: weighInsNeeded },
+      logDays: { current: logDays, required: MIN_LOG_DAYS_FOR_CALIBRATION },
+      daysRemaining: Math.max(
+        Math.max(0, weighInsNeeded - weighInsNow),
+        Math.max(0, MIN_LOG_DAYS_FOR_CALIBRATION - logDays)
+      ),
+    })
+
     const unavailable: CalibrationAvailability = {
       isAvailable: false,
       isRecommended: false,
@@ -49,6 +83,7 @@ export function useCalibrationAvailability(
       weightTrend: 'insufficient_data',
       suggestedTimePeriod: 21,
       confidencePreview: 'unknown',
+      progress: buildProgress(),
     }
 
     if (!profile || !weightHistory) {
@@ -62,7 +97,9 @@ export function useCalibrationAvailability(
       }
     }
 
-    const now = new Date()
+    // Samma klocka som framstegsberäkningen ovan — annars kan de två svara
+    // mot olika tidpunkter i samma rendering.
+    const now = new Date(mountedAt)
     const periods: Array<14 | 21 | 28> = [28, 21, 14]
 
     // Find the best available period (longest first)
@@ -95,6 +132,17 @@ export function useCalibrationAvailability(
         ...unavailable,
         currentDataPoints: weightHistory.length,
         reason: `Behöver minst ${MIN_DATA_POINTS[14]} viktmätningar under 14 dagar`,
+      }
+    }
+
+    // Matloggning krävs lika mycket som vägningar. Utan den kalibreras TDEE
+    // mot målet i stället för mot faktiskt intag — samma grind som
+    // runCalibration, så knappen aldrig leder till ett felmeddelande.
+    if (logDays < MIN_LOG_DAYS_FOR_CALIBRATION) {
+      return {
+        ...unavailable,
+        currentDataPoints: weightHistory.length,
+        reason: `Behöver minst ${MIN_LOG_DAYS_FOR_CALIBRATION} loggade dagar för att jämföra intaget med viktförändringen (har ${logDays})`,
       }
     }
 
@@ -231,6 +279,16 @@ export function useCalibrationAvailability(
       weightTrend,
       suggestedTimePeriod: bestPeriod,
       confidencePreview,
+      progress: buildProgress(),
     }
-  }, [profile, weightHistory, lastCalibration, planLimited, graceCount, intervalDays])
+  }, [
+    profile,
+    weightHistory,
+    lastCalibration,
+    planLimited,
+    graceCount,
+    intervalDays,
+    logDaysInPeriod,
+    mountedAt,
+  ])
 }

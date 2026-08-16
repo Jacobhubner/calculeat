@@ -686,6 +686,17 @@ export interface CalibrationAvailability {
   weightTrend: 'stable' | 'gaining' | 'losing' | 'erratic' | 'insufficient_data'
   suggestedTimePeriod: 14 | 21 | 28
   confidencePreview: 'high' | 'standard' | 'low' | 'unknown'
+  /**
+   * Framsteg mot de två datakraven. Driver beredskapskortet i Översikt, som
+   * visas INNAN användaren kvalificerar — utan det får den som inte når kraven
+   * bara tystnad och vet varken att funktionen finns eller hur nära hen är.
+   */
+  progress: {
+    weighIns: { current: number; required: number }
+    logDays: { current: number; required: number }
+    /** Dagar kvar i värsta fall (0 = allt uppfyllt) */
+    daysRemaining: number
+  }
 }
 
 // Actual calorie intake data from food logs

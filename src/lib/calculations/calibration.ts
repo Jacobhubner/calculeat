@@ -97,6 +97,7 @@ export {
   MIN_CLUSTER_SIZE,
   MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
   MIN_DAILY_KCAL_FOR_LOG,
+  MIN_LOG_DAYS_FOR_CALIBRATION,
 } from './calibration-constants'
 
 export type { OutlierResult } from './calibration-outliers'

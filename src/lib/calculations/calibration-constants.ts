@@ -45,6 +45,20 @@ export const CV_BLOCK_THRESHOLD = 3.0
 /** Min daily kcal to count as a real food-log day */
 export const MIN_DAILY_KCAL_FOR_LOG = 800
 
+/**
+ * Minsta antal loggade dagar för att kalibrering ska tillåtas.
+ *
+ * VARFÖR (2026-08-16): utan loggdata föll modellen tillbaka på
+ * targetCalories — den kalibrerade alltså TDEE mot vad användaren TÄNKTE äta
+ * i stället för vad hen åt. Resultatet blir cirkulärt men presenterades med
+ * samma auktoritet som en riktig mätning.
+ *
+ * 7 dagar är vald som lägsta nivå där veckorytm (vardag/helg) fångas.
+ * Matloggen väger 45 % av datakvalitetsindexet — tyngst av alla faktorer —
+ * så under den nivån är resultatet inte värt att visa.
+ */
+export const MIN_LOG_DAYS_FOR_CALIBRATION = 7
+
 /** Confidence floor: Δweight below this % of body weight = low signal */
 export const LOW_SIGNAL_THRESHOLD_PERCENT = 0.25
 

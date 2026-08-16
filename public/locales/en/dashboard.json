@@ -270,6 +270,18 @@
       "body": "You have the period \"{{phase}}\" running. A new target pointing in a different direction will end it — the period is kept in your history.",
       "confirm": "End it and save the target",
       "cancel": "Keep the period"
-    }
+    },
+    "trackingNotice": "Log your food and weigh in regularly during the period — that is how the app can show whether you are following the plan and whether it is working."
+  },
+  "calibrationReadiness": {
+    "title": "On your way to calibration",
+    "countdown_one": "In {{count}} day the app can work out your real TDEE",
+    "countdown_other": "In {{count}} days the app can work out your real TDEE",
+    "almostThere": "Soon the app can work out your real TDEE",
+    "weighIns": "Weigh-ins",
+    "weighInsHint": "Weigh yourself in the morning before breakfast — same time each day gives the steadiest result.",
+    "logDays": "Logged days",
+    "logDaysHint": "Without food logging, TDEE can only be guessed from your goal, not measured.",
+    "explainer": "Calibration compares what you ate with how your weight responded. That makes your TDEE your own — not a formula estimate."
   }
 }

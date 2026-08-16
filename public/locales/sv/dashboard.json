@@ -270,6 +270,18 @@
       "body": "Du har perioden \"{{phase}}\" igång. Ett nytt mål som pekar åt ett annat håll avslutar den — perioden sparas i historiken.",
       "confirm": "Avsluta och spara målet",
       "cancel": "Behåll perioden"
-    }
+    },
+    "trackingNotice": "Logga mat och väg dig regelbundet under perioden — det är så appen kan visa om du följer planen och om den ger resultat."
+  },
+  "calibrationReadiness": {
+    "title": "På väg mot kalibrering",
+    "countdown_one": "Om {{count}} dag kan appen räkna ut ditt verkliga TDEE",
+    "countdown_other": "Om {{count}} dagar kan appen räkna ut ditt verkliga TDEE",
+    "almostThere": "Snart kan appen räkna ut ditt verkliga TDEE",
+    "weighIns": "Vägningar",
+    "weighInsHint": "Väg dig på morgonen före frukost — samma tid varje gång ger jämnast resultat.",
+    "logDays": "Loggade dagar",
+    "logDaysHint": "Utan matloggning kan TDEE bara gissas utifrån ditt mål, inte mätas.",
+    "explainer": "Kalibreringen jämför vad du ätit med hur vikten svarat. Då blir ditt TDEE ditt eget — inte en formels uppskattning."
   }
 }

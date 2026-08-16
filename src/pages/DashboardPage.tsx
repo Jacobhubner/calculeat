@@ -6,6 +6,8 @@ import { MacroRangeBar } from '@/components/daily/MacroRangeBar'
 import { TDEEScenarioCard } from '@/components/dashboard/TDEEScenarioCard'
 import { DashboardHeroSection } from '@/components/dashboard/DashboardHeroSection'
 import CalibrationPrompt from '@/components/profile/CalibrationPrompt'
+import CalibrationReadinessCard from '@/components/dashboard/CalibrationReadinessCard'
+import { useActualCalorieIntake } from '@/hooks/useActualCalorieIntake'
 import { DietPhaseCard } from '@/components/dashboard/DietPhaseCard'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
@@ -18,7 +20,7 @@ import { useProfileStore } from '@/stores/profileStore'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Scale, UtensilsCrossed, BookOpen, User, Target } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDailySummary } from '@/hooks/useDailySummary'
 import { macroGramsFromPercent } from '@/lib/calculations/dailySummary'
@@ -46,10 +48,28 @@ export default function DashboardPage() {
   // är dagligen — prompten renderar sig själv till null när den inte är aktuell.
   const { data: weightHistory } = useWeightHistory()
   const { data: lastCalibration } = useLastCalibration(profile?.user_id)
+
+  // Loggdagar krävs lika mycket som vägningar: utan dem kalibreras TDEE mot
+  // målet i stället för mot faktiskt intag. Fönstret matchar kortaste
+  // kalibreringsperioden (14 dagar).
+  //
+  // Lazy useState, inte useMemo: klockan läses en gång vid mount i stället för
+  // under rendering, vilket håller query-nyckeln stabil över omrenderingar.
+  const [calibrationWindow] = useState(() => {
+    const end = new Date()
+    const start = new Date(end.getTime() - 14 * 24 * 60 * 60 * 1000)
+    return { start, end }
+  })
+  const { data: intakeWindow } = useActualCalorieIntake(
+    calibrationWindow.start,
+    calibrationWindow.end
+  )
+
   const calibrationAvailability = useCalibrationAvailability(
     profile,
     weightHistory,
-    lastCalibration
+    lastCalibration,
+    intakeWindow?.daysWithData ?? 0
   )
   useCalibrationNotifier(calibrationAvailability)
 
@@ -256,11 +276,19 @@ export default function DashboardPage() {
               calorieGoal={profile?.calorie_goal}
             />
 
-            {/* Kalibrering — visas bara när tillräckligt med viktdata finns */}
+            {/* Kalibrering — visas bara när tillräckligt med data finns */}
             <CalibrationPrompt
               availability={calibrationAvailability}
               lastCalibration={lastCalibration ?? null}
               onCalibrate={() => navigate('/app/tools/tdee-calculator')}
+            />
+
+            {/* ...och nedräkningen dit för den som ännu inte kvalificerar.
+                De två utesluter varandra (kortet renderar null när
+                kalibrering är tillgänglig). */}
+            <CalibrationReadinessCard
+              availability={calibrationAvailability}
+              hasCalibratedBefore={!!lastCalibration}
             />
 
             {/* TDEE Scenarios */}
