@@ -39,3 +39,25 @@ export function hasScrollSettled(previousTop: number, currentTop: number): boole
 
 /** Övre gräns för omsiktningar, så en ständigt växande sida inte loopar. */
 export const MAX_SCROLL_FRAMES = 40
+
+/**
+ * Ska djuplänken utlösa en scroll, givet URL-parametern och om avsikten
+ * redan registrerats?
+ *
+ * VARFÖR DETTA ÄR EN EGEN FUNKTION: den första implementationen gjorde
+ * både städningen av URL-parametern och scrollen i EN effekt, med
+ * searchParams i beroendelistan. Borttagningen av parametern startade om
+ * effekten, och cleanup körde cancelAnimationFrame innan första ramen
+ * hunnit köra. Sektionen expanderade men scrollen dog omedelbart.
+ *
+ * Avsikten måste alltså bäras av något som överlever att parametern
+ * försvinner — en ref, inte URL:en.
+ */
+export function shouldTriggerDeepLinkScroll(params: {
+  /** Finns parametern i URL:en just nu? */
+  paramPresent: boolean
+  /** Har avsikten redan registrerats i en ref? */
+  intentRegistered: boolean
+}): boolean {
+  return params.paramPresent || params.intentRegistered
+}

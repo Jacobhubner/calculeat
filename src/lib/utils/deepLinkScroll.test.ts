@@ -4,6 +4,7 @@ import {
   hasScrollSettled,
   DEEP_LINK_PARAMS,
   MAX_SCROLL_FRAMES,
+  shouldTriggerDeepLinkScroll,
 } from './deepLinkScroll'
 
 /**
@@ -58,6 +59,30 @@ describe('hasScrollSettled', () => {
   it('hanterar rörelse åt båda håll', () => {
     expect(hasScrollSettled(300, 120)).toBe(false)
     expect(hasScrollSettled(120, 300)).toBe(false)
+  })
+})
+
+describe('shouldTriggerDeepLinkScroll', () => {
+  /**
+   * Buggen som motiverar funktionen: en enda effekt gjorde både städningen
+   * av URL-parametern och scrollen. Borttagningen triggade en omkörning vars
+   * cleanup dödade animationen innan första ramen kört. Sektionen öppnades
+   * men scrollen uteblev.
+   */
+
+  it('scrollar när parametern finns', () => {
+    expect(shouldTriggerDeepLinkScroll({ paramPresent: true, intentRegistered: false })).toBe(true)
+  })
+
+  it('scrollar fortfarande efter att parametern städats bort', () => {
+    // Kärnan: avsikten måste överleva att URL:en ändras
+    expect(shouldTriggerDeepLinkScroll({ paramPresent: false, intentRegistered: true })).toBe(true)
+  })
+
+  it('scrollar inte vid vanlig navigering', () => {
+    expect(shouldTriggerDeepLinkScroll({ paramPresent: false, intentRegistered: false })).toBe(
+      false
+    )
   })
 })
 

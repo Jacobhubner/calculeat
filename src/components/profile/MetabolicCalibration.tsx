@@ -168,13 +168,33 @@ export default function MetabolicCalibration({
    * sektionen igen.
    */
   const [searchParams, setSearchParams] = useSearchParams()
+
+  // Två separata effekter, och det är avsiktligt.
+  //
+  // Tidigare gjorde EN effekt både städningen av URL-parametern och
+  // scrollen. Eftersom searchParams låg i beroendelistan startade
+  // borttagningen om effekten, och cleanup-funktionen körde
+  // cancelAnimationFrame INNAN första ramen hunnit köra. Sektionen
+  // expanderade (setIsOpen hann köra) men scrollen dog omedelbart —
+  // vilket är precis vad man såg: rätt sida, fel plats.
+  //
+  // Nu bär en ref själva avsikten. Den överlever att parametern försvinner.
+  const shouldScrollToSection = useRef(false)
+
   useEffect(() => {
     if (searchParams.get('calibrate') !== 'open') return
 
+    shouldScrollToSection.current = true
     setIsOpen(true)
+
     const next = new URLSearchParams(searchParams)
     next.delete('calibrate')
     setSearchParams(next, { replace: true })
+  }, [searchParams, setSearchParams])
+
+  useEffect(() => {
+    if (!shouldScrollToSection.current) return
+    shouldScrollToSection.current = false
 
     // Scrollen måste upprepas, inte köras en gång.
     //
@@ -212,7 +232,10 @@ export default function MetabolicCalibration({
 
     raf = requestAnimationFrame(aim)
     return () => cancelAnimationFrame(raf)
-  }, [searchParams, setSearchParams])
+    // Kör när sektionen öppnas — INTE på searchParams. Den listan var det
+    // som avbröt loopen: parametern städas bort i effekten ovan, vilket
+    // triggade en omkörning vars cleanup dödade animationen direkt.
+  }, [isOpen])
   const [warningSectionOpen, setWarningSectionOpen] = useState(false)
   const [expandedWarnings, setExpandedWarnings] = useState<Set<number>>(new Set())
   const toggleWarning = (i: number) =>
