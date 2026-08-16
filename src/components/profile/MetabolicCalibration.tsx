@@ -35,6 +35,7 @@ import { startOfDay, endOfDay, subDays, addDays, isBefore, format } from 'date-f
 import { sv } from 'date-fns/locale'
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { hasScrollSettled, MAX_SCROLL_FRAMES } from '@/lib/utils/deepLinkScroll'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -175,12 +176,42 @@ export default function MetabolicCalibration({
     next.delete('calibrate')
     setSearchParams(next, { replace: true })
 
-    // Vänta på att innehållet renderats innan vi scrollar, annars hamnar
-    // positionen fel eftersom sektionen just expanderat.
-    const id = requestAnimationFrame(() => {
-      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    })
-    return () => cancelAnimationFrame(id)
+    // Scrollen måste upprepas, inte köras en gång.
+    //
+    // Tre saker rör målet samtidigt: App.tsx har en global ScrollToTop som
+    // körs vid varje pathname-ändring, kalibreringen renderas först när
+    // profilen laddats (villkoret kräver activeProfile.tdee), och sektionen
+    // expanderar just nu vilket får sidan att växa. Ett enda scrollIntoView
+    // landade därför mitt i formuläret ovanför.
+    //
+    // Vi siktar om under ~600 ms och avbryter så fort positionen är stabil.
+    // 'auto' i stället för 'smooth': en mjuk animation hinner inte klart
+    // mellan omsiktningarna och ser hackig ut när målet flyttar sig.
+    let frames = 0
+    let lastTop = -1
+    let raf = 0
+
+    const aim = () => {
+      const el = sectionRef.current
+      if (!el) {
+        // Komponenten är monterad men noden kan saknas en kort stund
+        raf = requestAnimationFrame(aim)
+        return
+      }
+      const top = el.getBoundingClientRect().top
+      el.scrollIntoView({ behavior: 'auto', block: 'start' })
+
+      // Stabil position två ramar i rad => klart
+      const settled = hasScrollSettled(lastTop, top)
+      lastTop = top
+      frames++
+      if (!settled && frames < MAX_SCROLL_FRAMES) {
+        raf = requestAnimationFrame(aim)
+      }
+    }
+
+    raf = requestAnimationFrame(aim)
+    return () => cancelAnimationFrame(raf)
   }, [searchParams, setSearchParams])
   const [warningSectionOpen, setWarningSectionOpen] = useState(false)
   const [expandedWarnings, setExpandedWarnings] = useState<Set<number>>(new Set())

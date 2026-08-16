@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { shouldSkipScrollToTop } from '@/lib/utils/deepLinkScroll'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './contexts/AuthContext'
 import { PresenceProvider } from './contexts/PresenceContext'
@@ -149,10 +150,17 @@ function PageLoader() {
 }
 
 function ScrollToTop() {
-  const { pathname } = useLocation()
+  const { pathname, search } = useLocation()
   useEffect(() => {
+    // Hoppa över när URL:en pekar ut ett mål på sidan. Vissa vyer navigerar
+    // hit med en parameter som säger vilken sektion som ska öppnas och
+    // scrollas fram (t.ex. ?calibrate=open från Översikt). Utan undantaget
+    // konkurrerar den här scrollen med sektionens egen och användaren
+    // landar mitt i sidan.
+    if (shouldSkipScrollToTop(search)) return
+
     window.scrollTo(0, 0)
-  }, [pathname])
+  }, [pathname, search])
   return null
 }
 
