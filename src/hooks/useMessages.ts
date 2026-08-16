@@ -90,10 +90,20 @@ export function useSendMessage() {
   const queryClient = useQueryClient()
 
   return usePreviewMutation({
-    mutationFn: async ({ friendshipId, content }: { friendshipId: string; content: string }) => {
+    mutationFn: async ({
+      friendshipId,
+      content,
+      imagePath,
+    }: {
+      friendshipId: string
+      content: string
+      /** Storage-path från useMessageImageUpload — utelämnas för rena textmeddelanden */
+      imagePath?: string | null
+    }) => {
       const { data, error } = await supabase.rpc('send_message', {
         p_friendship_id: friendshipId,
         p_content: content,
+        p_image_path: imagePath ?? null,
       })
       if (error) throw error
       return data as { success: boolean; message_id?: string; error?: string }

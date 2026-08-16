@@ -199,6 +199,12 @@
       "no_messages": "Inga meddelanden än. Skriv något!",
       "input_placeholder": "Skriv ett meddelande...",
       "edited": "(redigerat)",
+      "attach_image": "Bifoga bild",
+      "remove_image": "Ta bort bilden",
+      "open_image": "Öppna bilden i full storlek",
+      "attached_image_alt": "Bifogad bild",
+      "image_load_error": "Bilden kunde inte laddas",
+      "image_label": "Bild",
       "error": {
         "empty": "Meddelandet är tomt.",
         "too_long": "Meddelandet är för långt (max 2000 tecken)."

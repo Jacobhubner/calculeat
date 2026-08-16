@@ -199,6 +199,12 @@
       "no_messages": "No messages yet. Write something!",
       "input_placeholder": "Write a message...",
       "edited": "(edited)",
+      "attach_image": "Attach image",
+      "remove_image": "Remove image",
+      "open_image": "Open image full size",
+      "attached_image_alt": "Attached image",
+      "image_load_error": "The image could not be loaded",
+      "image_label": "Image",
       "error": {
         "empty": "The message is empty.",
         "too_long": "The message is too long (max 2000 characters)."

@@ -23,6 +23,9 @@ import {
   MoreHorizontal,
   ShieldCheck,
   Zap,
+  ImagePlus,
+  ImageOff,
+  Image as ImageIcon,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -79,7 +82,9 @@ import {
   useDeleteConversation,
   messageKeys,
 } from '@/hooks/useMessages'
-import { useQueryClient } from '@tanstack/react-query'
+import { useMessageImageUpload, MESSAGE_ATTACHMENTS_BUCKET } from '@/hooks/useMessageImageUpload'
+import { useQueryClient, useQuery } from '@tanstack/react-query'
+import { supabase } from '@/lib/supabase'
 import type { PendingInvitation } from '@/lib/types/sharing'
 import type { Friend, FriendRequest, SentFriendRequest } from '@/lib/types/friends'
 import type { Conversation, Message } from '@/lib/types/messages'
@@ -908,9 +913,12 @@ function ConversationList({ onOpenThread }: { onOpenThread: (conv: Conversation)
               </div>
               <div className="flex items-center justify-between gap-2">
                 <p
-                  className={`text-xs truncate ${isUnread ? 'text-neutral-700 dark:text-neutral-200' : 'text-neutral-400 dark:text-neutral-500'}`}
+                  className={`text-xs truncate flex items-center gap-1 ${isUnread ? 'text-neutral-700 dark:text-neutral-200' : 'text-neutral-400 dark:text-neutral-500'}`}
                 >
-                  {conv.last_message_content ?? ''}
+                  {/* Bild utan bildtext skulle annars ge en tom rad */}
+                  {conv.last_message_has_image && <ImageIcon className="h-3 w-3 shrink-0" />}
+                  {conv.last_message_content ||
+                    (conv.last_message_has_image ? t('social.messages.image_label') : '')}
                 </p>
                 {isUnread && (
                   <span className="shrink-0 flex items-center justify-center bg-primary-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-4 px-1 leading-none">
@@ -923,6 +931,71 @@ function ConversationList({ onOpenThread }: { onOpenThread: (conv: Conversation)
         )
       })}
     </div>
+  )
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// MessageAttachmentImage — bilaga i meddelandebubbla
+// ──────────────────────────────────────────────────────────────────────────────
+
+const SIGNED_URL_TTL_SECONDS = 3600
+
+/**
+ * Bucketen är privat — bilden hämtas via en signerad URL där RLS avgör vem
+ * som får signera. Samma mönster som supportchattens bilagor.
+ */
+function MessageAttachmentImage({ path }: { path: string }) {
+  const { t } = useTranslation('social')
+
+  const {
+    data: signedUrl,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['message-attachment-url', path],
+    queryFn: async () => {
+      const { data, error } = await supabase.storage
+        .from(MESSAGE_ATTACHMENTS_BUCKET)
+        .createSignedUrl(path, SIGNED_URL_TTL_SECONDS)
+      if (error) throw error
+      return data.signedUrl
+    },
+    // Förnya innan signaturen går ut så <img> aldrig pekar på en död länk
+    staleTime: (SIGNED_URL_TTL_SECONDS - 300) * 1000,
+    retry: 1,
+  })
+
+  if (isLoading) {
+    return (
+      <div className="h-32 w-44 rounded-xl bg-neutral-100 animate-pulse flex items-center justify-center dark:bg-neutral-800">
+        <Loader2 className="h-4 w-4 animate-spin text-neutral-300" />
+      </div>
+    )
+  }
+
+  if (isError || !signedUrl) {
+    return (
+      <div className="h-16 w-44 rounded-xl bg-neutral-50 border border-neutral-100 flex items-center justify-center gap-1.5 text-neutral-400 dark:bg-neutral-900 dark:text-neutral-500">
+        <ImageOff className="h-3.5 w-3.5" />
+        <span className="text-[11px]">{t('social.messages.image_load_error')}</span>
+      </div>
+    )
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => window.open(signedUrl, '_blank', 'noopener,noreferrer')}
+      className="block rounded-xl overflow-hidden border border-neutral-200 hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-700"
+      title={t('social.messages.open_image')}
+    >
+      <img
+        src={signedUrl}
+        alt={t('social.messages.attached_image_alt')}
+        loading="lazy"
+        className="max-h-48 max-w-[240px] object-cover"
+      />
+    </button>
   )
 }
 
@@ -1149,19 +1222,29 @@ function MessageBubble({
           </div>
         ) : (
           <div>
-            <div
-              // whitespace-pre-wrap bevarar radbrytningar (HTML kollapsar dem
-              // annars); break-words hindrar långa URL:er från att spränga bubblan.
-              className={`whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-sm ${
-                isDeleted
-                  ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100 dark:bg-neutral-900 dark:text-neutral-500'
-                  : isOwn
-                    ? 'bg-primary-600 text-white rounded-br-sm'
-                    : 'bg-neutral-100 text-neutral-900 rounded-bl-sm dark:bg-neutral-800 dark:text-neutral-100'
-              }`}
-            >
-              {isDeleted ? t('social.messages.deleted_message') : msg.content}
-            </div>
+            {/* Bilaga ovanför texten. Raderade meddelanden döljer bilden. */}
+            {!isDeleted && msg.image_path && (
+              <div className={`mb-1 flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                <MessageAttachmentImage path={msg.image_path} />
+              </div>
+            )}
+            {/* Textbubblan hoppas över för bild utan bildtext — annars blir
+                det en tom ruta under bilden. */}
+            {(isDeleted || msg.content) && (
+              <div
+                // whitespace-pre-wrap bevarar radbrytningar (HTML kollapsar dem
+                // annars); break-words hindrar långa URL:er från att spränga bubblan.
+                className={`whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-sm ${
+                  isDeleted
+                    ? 'bg-neutral-50 text-neutral-400 italic border border-neutral-100 dark:bg-neutral-900 dark:text-neutral-500'
+                    : isOwn
+                      ? 'bg-primary-600 text-white rounded-br-sm'
+                      : 'bg-neutral-100 text-neutral-900 rounded-bl-sm dark:bg-neutral-800 dark:text-neutral-100'
+                }`}
+              >
+                {isDeleted ? t('social.messages.deleted_message') : msg.content}
+              </div>
+            )}
             {/* Metadata-rad */}
             <div
               className={`flex items-center gap-1 mt-0.5 ${isOwn ? 'justify-end' : 'justify-start'}`}
@@ -1208,8 +1291,15 @@ function MessageThread({
   const { user } = useAuth()
   const [input, setInput] = useState('')
   const [confirmDeleteConv, setConfirmDeleteConv] = useState(false)
+  // Uppladdad bilaga som ännu inte skickats: { path, previewUrl }.
+  // previewUrl är en lokal object-URL så förhandsvisningen inte kräver en
+  // signerad URL innan meddelandet finns.
+  const [pendingImage, setPendingImage] = useState<{ path: string; previewUrl: string } | null>(
+    null
+  )
   const scrollRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const didInitialScroll = useRef(false)
   const rafRef = useRef<number | null>(null)
 
@@ -1219,6 +1309,7 @@ function MessageThread({
 
   const { mutateAsync: sendMessage, isPending: isSending } = useSendMessage()
   const { mutateAsync: deleteConversation, isPending: isDeletingConv } = useDeleteConversation()
+  const { uploadImage, removeImage, isUploading } = useMessageImageUpload()
   useMarkMessagesRead(conversation.friendship_id)
 
   // Bygg platt meddelandelista: RPC ger nyaste-först, vi reverserar
@@ -1290,14 +1381,43 @@ function MessageThread({
     el.style.height = `${Math.min(el.scrollHeight, 120)}px`
   }, [input])
 
+  const handlePickImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    // Nollställ direkt så samma fil kan väljas igen efter en borttagning
+    e.target.value = ''
+    if (!file) return
+
+    const { path, error } = await uploadImage(file)
+    if (error || !path) {
+      toast.error(error ?? t('invitations.error.generic'))
+      return
+    }
+    setPendingImage({ path, previewUrl: URL.createObjectURL(file) })
+  }
+
+  const handleRemovePendingImage = async () => {
+    if (!pendingImage) return
+    const { path, previewUrl } = pendingImage
+    setPendingImage(null)
+    URL.revokeObjectURL(previewUrl)
+    // Städa bort filen ur storage — den blev aldrig ett meddelande
+    await removeImage(path)
+  }
+
   const handleSend = async () => {
     const trimmed = input.trim()
-    if (!trimmed || isSending) return
+    // Bild utan text är tillåtet, men något av dem måste finnas
+    if ((!trimmed && !pendingImage) || isSending || isUploading) return
+
+    const sentImage = pendingImage
     setInput('')
+    setPendingImage(null)
+
     try {
       const result = await sendMessage({
         friendshipId: conversation.friendship_id,
         content: trimmed,
+        imagePath: sentImage?.path ?? null,
       })
       if (!result.success) {
         toast.error(
@@ -1307,13 +1427,17 @@ function MessageThread({
               ? t('social.messages.error.too_long')
               : t('invitations.error.generic')
         )
+        // Återställ utkastet så inget går förlorat
         setInput(trimmed)
+        setPendingImage(sentImage)
         return
       }
+      if (sentImage) URL.revokeObjectURL(sentImage.previewUrl)
       scrollToBottom()
     } catch {
       toast.error(t('invitations.error.generic'))
       setInput(trimmed)
+      setPendingImage(sentImage)
     }
   }
 
@@ -1472,7 +1596,46 @@ function MessageThread({
             {charCount}/2000
           </p>
         )}
+        {/* Förhandsvisning av vald bild innan den skickas */}
+        {pendingImage && (
+          <div className="mb-2 relative inline-block">
+            <img
+              src={pendingImage.previewUrl}
+              alt={t('social.messages.attached_image_alt')}
+              className="max-h-24 rounded-xl border border-neutral-200 dark:border-neutral-700"
+            />
+            <button
+              type="button"
+              onClick={handleRemovePendingImage}
+              title={t('social.messages.remove_image')}
+              className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-neutral-800 text-white flex items-center justify-center hover:bg-neutral-900"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </div>
+        )}
         <div className="flex items-end gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handlePickImage}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading || !!pendingImage || isSending}
+            title={t('social.messages.attach_image')}
+            aria-label={t('social.messages.attach_image')}
+            className="shrink-0 h-9 w-9 rounded-xl border border-neutral-200 text-neutral-500 flex items-center justify-center hover:bg-neutral-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed dark:border-neutral-700 dark:hover:bg-neutral-800"
+          >
+            {isUploading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <ImagePlus className="h-4 w-4" />
+            )}
+          </button>
           <textarea
             ref={textareaRef}
             value={input}
@@ -1486,7 +1649,7 @@ function MessageThread({
           <button
             type="button"
             onClick={handleSend}
-            disabled={!input.trim() || isSending || isOverLimit}
+            disabled={(!input.trim() && !pendingImage) || isSending || isUploading || isOverLimit}
             className="shrink-0 h-9 w-9 rounded-xl bg-primary-600 text-white flex items-center justify-center hover:bg-primary-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {isSending ? (
@@ -1700,6 +1863,7 @@ export function SocialHub({ onClose: _onClose, onOpenShareDialog }: SocialHubPro
       friend_username: friend.friend_username ?? null,
       friend_alias: friend.alias ?? null,
       last_message_content: null,
+      last_message_has_image: false,
       last_message_at: null,
       last_message_sender_id: null,
       unread_count: 0,
