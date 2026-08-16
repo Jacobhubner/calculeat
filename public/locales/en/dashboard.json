@@ -271,7 +271,15 @@
       "confirm": "End it and save the target",
       "cancel": "Keep the period"
     },
-    "trackingNotice": "Log your food and weigh in regularly during the period — that is how the app can show whether you are following the plan and whether it is working."
+    "trackingNotice": "Log your food and weigh in regularly during the period — that is how the app can show whether you are following the plan and whether it is working.",
+    "tracking": {
+      "on_track": "You are in line with the plan",
+      "ahead": "This is going faster than planned",
+      "behind": "This is going slower than planned",
+      "too_early": "Too early to tell — weight swings with fluid in the first weeks",
+      "detail": "{{actual}} over {{days}} days · expected {{expected}}",
+      "needsWeights": "Weigh in regularly so the app can show whether the period is working."
+    }
   },
   "calibrationReadiness": {
     "title": "On your way to calibration",

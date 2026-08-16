@@ -271,7 +271,15 @@
       "confirm": "Avsluta och spara målet",
       "cancel": "Behåll perioden"
     },
-    "trackingNotice": "Logga mat och väg dig regelbundet under perioden — det är så appen kan visa om du följer planen och om den ger resultat."
+    "trackingNotice": "Logga mat och väg dig regelbundet under perioden — det är så appen kan visa om du följer planen och om den ger resultat.",
+    "tracking": {
+      "on_track": "Du ligger i linje med planen",
+      "ahead": "Det går snabbare än planerat",
+      "behind": "Det går långsammare än planerat",
+      "too_early": "För tidigt att säga — vikten svänger av vätska de första veckorna",
+      "detail": "{{actual}} på {{days}} dagar · förväntat {{expected}}",
+      "needsWeights": "Väg dig regelbundet så kan appen visa om perioden ger resultat."
+    }
   },
   "calibrationReadiness": {
     "title": "På väg mot kalibrering",

@@ -16,6 +16,7 @@
 import type { DietPhaseType, DietPhase, PhaseFocus } from '@/lib/types'
 import { applyMacroMode, type MacroModeId } from '@/lib/utils/macroModes'
 import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
+import { KCAL_PER_KG } from '@/lib/calculations/calibration-constants'
 
 /** Underskott/överskott per fas, som andel av TDEE. */
 const PHASE_CALORIE_FACTOR: Record<DietPhaseType, number> = {
@@ -501,6 +502,107 @@ export function weeksSince(isoDate: string): number {
 export function phaseProgress(phase: DietPhase): number | null {
   if (!phase.planned_weeks) return null
   return Math.min(1, weeksSince(phase.started_at) / phase.planned_weeks)
+}
+
+export interface PhaseTracking {
+  /** Faktisk viktförändring sedan periodstart, kg (negativ = nedgång) */
+  actualChangeKg: number
+  /** Förväntad förändring vid nuvarande tidpunkt, kg */
+  expectedChangeKg: number
+  /** Faktisk takt, kg/vecka */
+  actualPerWeek: number
+  /** Förväntad takt, kg/vecka */
+  expectedPerWeek: number
+  /** Dagar sedan periodstart */
+  daysElapsed: number
+  /**
+   * Hur det går. 'on_track' inom ±40 % av förväntad takt, annars 'ahead'
+   * (går fortare än planerat) eller 'behind'. 'too_early' innan det finns
+   * underlag att uttala sig om.
+   */
+  status: 'on_track' | 'ahead' | 'behind' | 'too_early'
+}
+
+/**
+ * Hur går perioden? Jämför uppmätt viktförändring med den takt periodens
+ * kaloriunderskott/överskott implicerar.
+ *
+ * VARFÖR: periodkortet visade bara MÅLET (kalorier, vecka, protein) men aldrig
+ * UTFALLET. En period utan uppföljning är bara ett kalorital — det är
+ * återkopplingen som gör den till en plan.
+ *
+ * Kräver minst 10 dagar och två vägningar. Under det domineras vikten av
+ * vätske- och glykogensvängningar (0,5–2 kg), och en tidig avläsning skulle
+ * säga "du ligger efter" åt någon som gör allting rätt.
+ */
+export function phaseTracking(
+  phase: DietPhase,
+  weights: Array<{ weight_kg: number; recorded_at: string }>,
+  tdee?: number
+): PhaseTracking | null {
+  const startMs = new Date(phase.started_at + 'T00:00:00').getTime()
+  const inPhase = weights
+    .filter(w => new Date(w.recorded_at).getTime() >= startMs)
+    .sort((a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime())
+
+  if (inPhase.length < 2) return null
+
+  const first = inPhase[0]
+  const last = inPhase[inPhase.length - 1]
+  const daysElapsed = Math.round(
+    (new Date(last.recorded_at).getTime() - new Date(first.recorded_at).getTime()) / 86400000
+  )
+
+  // Startvikten från perioden är mer tillförlitlig än första vägningen efter
+  // start, om den finns — den sattes vid periodstart.
+  const startWeight = phase.start_weight_kg ?? first.weight_kg
+  const actualChangeKg = last.weight_kg - startWeight
+  const actualPerWeek = daysElapsed > 0 ? (actualChangeKg / daysElapsed) * 7 : 0
+
+  // Förväntad takt ur periodens energibalans
+  const calories = currentPhaseCalories(phase, tdee)
+  const expectedPerWeek = calories != null && tdee ? ((calories - tdee) * 7) / KCAL_PER_KG : 0
+  const expectedChangeKg = (expectedPerWeek / 7) * daysElapsed
+
+  if (daysElapsed < 10) {
+    return {
+      actualChangeKg,
+      expectedChangeKg,
+      actualPerWeek,
+      expectedPerWeek,
+      daysElapsed,
+      status: 'too_early',
+    }
+  }
+
+  // Underhållsperiod: ingen riktning att jämföra mot, håll det enkelt och
+  // bedöm mot stabilitet i stället.
+  if (Math.abs(expectedPerWeek) < 0.05) {
+    const stable = Math.abs(actualPerWeek) < 0.25
+    return {
+      actualChangeKg,
+      expectedChangeKg,
+      actualPerWeek,
+      expectedPerWeek,
+      daysElapsed,
+      status: stable ? 'on_track' : actualPerWeek > 0 ? 'ahead' : 'behind',
+    }
+  }
+
+  // ±40 % tolerans: smalare än så och normalt vätskebrus skulle få en
+  // följsam användare att se ut att misslyckas.
+  const ratio = actualPerWeek / expectedPerWeek
+  const status: PhaseTracking['status'] =
+    ratio > 1.4 ? 'ahead' : ratio < 0.6 ? 'behind' : 'on_track'
+
+  return {
+    actualChangeKg,
+    expectedChangeKg,
+    actualPerWeek,
+    expectedPerWeek,
+    daysElapsed,
+    status,
+  }
 }
 
 /**

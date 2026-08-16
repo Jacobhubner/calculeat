@@ -1,7 +1,18 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useSearchParams } from 'react-router-dom'
-import { TrendingDown, TrendingUp, Minus, ArrowUpRight, Target, Lock } from 'lucide-react'
+import {
+  TrendingDown,
+  TrendingUp,
+  Minus,
+  ArrowUpRight,
+  Target,
+  Lock,
+  Check,
+  Clock,
+  AlertCircle,
+  Scale,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useEntitlements } from '@/hooks/useEntitlements'
 import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
@@ -14,8 +25,11 @@ import {
   currentPhaseCalories,
   suggestedNextPhase,
   phaseTypeForCalorieGoal,
+  phaseTracking,
+  type PhaseTracking,
 } from '@/lib/calculations/dietPhases'
 import { useActiveDietPhase, useEndDietPhase } from '@/hooks/useDietPhases'
+import { useWeightHistory } from '@/hooks/useWeightHistory'
 import { PhasePickerDialog } from './PhasePickerDialog'
 
 const PHASE_ICON = {
@@ -31,6 +45,25 @@ const PHASE_ACCENT: Record<DietPhaseType, string> = {
   bulk: 'text-amber-600 dark:text-amber-300',
   maintenance: 'text-neutral-600 dark:text-neutral-300',
   reverse: 'text-green-600 dark:text-green-300',
+}
+
+/**
+ * Färg per uppföljningsstatus. Grönt bara för on_track — 'ahead' är inte
+ * nödvändigtvis bra: snabbare nedgång än planerat ökar risken för
+ * muskelförlust (Garthe 2011).
+ */
+const TRACKING_ACCENT: Record<PhaseTracking['status'], string> = {
+  on_track: 'text-green-600 dark:text-green-300',
+  ahead: 'text-amber-600 dark:text-amber-300',
+  behind: 'text-amber-600 dark:text-amber-300',
+  too_early: 'text-neutral-400 dark:text-neutral-500',
+}
+
+/** Viktförändring med explicit tecken: "−1,2 kg" / "+0,4 kg" */
+function formatKg(kg: number): string {
+  const rounded = Math.round(kg * 10) / 10
+  const sign = rounded > 0 ? '+' : rounded < 0 ? '−' : ''
+  return `${sign}${Math.abs(rounded).toFixed(1).replace('.', ',')} kg`
 }
 
 interface Props {
@@ -178,6 +211,17 @@ function ActivePhase({
   const calories = currentPhaseCalories(phase, tdee)
   const next = suggestedNextPhase(phase.phase_type)
 
+  // Uppföljning mot uppmätt vikt. Returnerar null tills det finns underlag.
+  const { data: weightHistory } = useWeightHistory()
+  const tracking = phaseTracking(phase, weightHistory ?? [], tdee)
+  const TrackingIcon = tracking
+    ? tracking.status === 'on_track'
+      ? Check
+      : tracking.status === 'too_early'
+        ? Clock
+        : AlertCircle
+    : Clock
+
   return (
     <div>
       <div className="flex items-start justify-between gap-3">
@@ -207,6 +251,41 @@ function ActivePhase({
           </div>
         </div>
       </div>
+
+      {/* Uppföljning: går perioden som planerat? Utan detta visar kortet bara
+          MÅLET och aldrig UTFALLET — en period utan återkoppling är bara ett
+          kalorital. Gratis, eftersom det är själva poängen med en period. */}
+      {tracking && (
+        <div className="mt-3 flex items-start gap-2 rounded-lg bg-neutral-50 px-3 py-2 dark:bg-neutral-900">
+          <TrackingIcon
+            className={cn('mt-0.5 h-3.5 w-3.5 shrink-0', TRACKING_ACCENT[tracking.status])}
+          />
+          <div className="min-w-0">
+            <p className="text-xs text-neutral-700 dark:text-neutral-200">
+              {t(`phase.tracking.${tracking.status}`)}
+            </p>
+            {tracking.status !== 'too_early' && (
+              <p className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+                {t('phase.tracking.detail', {
+                  actual: formatKg(tracking.actualChangeKg),
+                  expected: formatKg(tracking.expectedChangeKg),
+                  days: tracking.daysElapsed,
+                })}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Utan vägningar går perioden inte att följa upp. Säg det i stället för
+          att visa ingenting — samma resonemang som beredskapskortet för
+          kalibrering. */}
+      {!tracking && (
+        <p className="mt-3 flex items-start gap-2 rounded-lg bg-neutral-50 px-3 py-2 text-[11px] text-neutral-500 dark:bg-neutral-900 dark:text-neutral-400">
+          <Scale className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          {t('phase.tracking.needsWeights')}
+        </p>
+      )}
 
       {/* Progressbar = planering över tid → premium (diet_phase_planning) */}
       {hasPlanning && progress !== null && (
