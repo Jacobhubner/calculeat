@@ -33,7 +33,8 @@ import {
 
 import { startOfDay, endOfDay, subDays, addDays, isBefore, format } from 'date-fns'
 import { sv } from 'date-fns/locale'
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -152,6 +153,35 @@ export default function MetabolicCalibration({
 }: MetabolicCalibrationProps) {
   const { t } = useTranslation('tools')
   const [isOpen, setIsOpen] = useState(false)
+  const sectionRef = useRef<HTMLDivElement>(null)
+
+  /**
+   * Öppna och scrolla fram sektionen när användaren kommer från
+   * "Kalibrera nu" i Översikt (?calibrate=open).
+   *
+   * Utan detta landade knappen bara på sidan Kaloribehov — kalibreringen
+   * ligger långt ned och är dessutom kollapsad, så användaren fick leta
+   * själv. Samma mönster som periodsdialogens ?phase=open.
+   *
+   * Parametern städas bort direkt så att en omladdning inte öppnar
+   * sektionen igen.
+   */
+  const [searchParams, setSearchParams] = useSearchParams()
+  useEffect(() => {
+    if (searchParams.get('calibrate') !== 'open') return
+
+    setIsOpen(true)
+    const next = new URLSearchParams(searchParams)
+    next.delete('calibrate')
+    setSearchParams(next, { replace: true })
+
+    // Vänta på att innehållet renderats innan vi scrollar, annars hamnar
+    // positionen fel eftersom sektionen just expanderat.
+    const id = requestAnimationFrame(() => {
+      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+    return () => cancelAnimationFrame(id)
+  }, [searchParams, setSearchParams])
   const [warningSectionOpen, setWarningSectionOpen] = useState(false)
   const [expandedWarnings, setExpandedWarnings] = useState<Set<number>>(new Set())
   const toggleWarning = (i: number) =>
@@ -447,7 +477,7 @@ export default function MetabolicCalibration({
     : ''
 
   return (
-    <Card>
+    <Card ref={sectionRef}>
       <CardHeader className="pb-3">
         <button
           onClick={() => setIsOpen(!isOpen)}

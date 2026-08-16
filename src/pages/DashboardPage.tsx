@@ -290,7 +290,10 @@ export default function DashboardPage() {
             <CalibrationPrompt
               availability={calibrationAvailability}
               lastCalibration={lastCalibration ?? null}
-              onCalibrate={() => navigate('/app/tools/tdee-calculator')}
+              // ?calibrate=open öppnar och scrollar fram kalibreringen på
+              // målsidan. Utan parametern landade knappen bara på Kaloribehov,
+              // där sektionen ligger långt ned och är kollapsad.
+              onCalibrate={() => navigate('/app/tools/tdee-calculator?calibrate=open')}
             />
 
             {/* ...och nedräkningen dit för den som ännu inte kvalificerar.
