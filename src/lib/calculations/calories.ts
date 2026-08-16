@@ -4,6 +4,7 @@
  */
 
 import type { CalorieGoal } from '../types'
+import { dailyCalorieDeltaToKgPerWeek } from './weeklyRate'
 
 // Local deficit level for calorie calculation (different from DB DeficitLevel)
 type CalcDeficitLevel = 'Slow' | 'Moderate' | 'Aggressive'
@@ -11,20 +12,24 @@ type CalcDeficitLevel = 'Slow' | 'Moderate' | 'Aggressive'
 /**
  * Kaloriöverskott/underskott för olika mål
  * 7700 kcal ≈ 1 kg kroppsvikt
+ *
+ * Veckotalen härleds nu (dailyCalorieDeltaToKgPerWeek) i stället för att
+ * skrivas för hand. Kommentarerna här påstod tidigare 0,3/0,5/0,75 kg/v,
+ * vilket överskattade takten med ~10 % — 500*7/7700 är 0,45, inte 0,5.
  */
 export const CALORIE_ADJUSTMENTS = {
   // Viktnedgång
-  lose_weight_slow: -300, // ~0.3 kg/vecka
-  lose_weight_moderate: -500, // ~0.5 kg/vecka
-  lose_weight_fast: -750, // ~0.75 kg/vecka
+  lose_weight_slow: -300, // ~0.27 kg/vecka
+  lose_weight_moderate: -500, // ~0.45 kg/vecka
+  lose_weight_fast: -750, // ~0.68 kg/vecka
 
   // Bibehålla
   maintain_weight: 0,
 
   // Viktuppgång
-  gain_weight_slow: 200, // ~0.2 kg/vecka
-  gain_weight_moderate: 350, // ~0.35 kg/vecka
-  gain_weight_fast: 500, // ~0.5 kg/vecka
+  gain_weight_slow: 200, // ~0.18 kg/vecka
+  gain_weight_moderate: 350, // ~0.32 kg/vecka
+  gain_weight_fast: 500, // ~0.45 kg/vecka
 } as const
 
 /**
@@ -62,15 +67,16 @@ function calculateWeightLossCalories(
   bmr: number = 1200,
   deficitLevel: CalcDeficitLevel = 'Moderate'
 ): CalorieRange {
-  // Deficitlägen med olika veckoupptempo
-  const deficits: Record<CalcDeficitLevel, { daily: number; weekly: number }> = {
-    Slow: { daily: -300, weekly: -0.3 }, // ~0.3 kg/vecka
-    Moderate: { daily: -500, weekly: -0.5 }, // ~0.5 kg/vecka
-    Aggressive: { daily: -750, weekly: -0.75 }, // ~0.75 kg/vecka
+  // Veckotakten HÄRLEDS ur det dagliga underskottet i stället för att anges
+  // för hand — de handskrivna talen (0,3/0,5/0,75) var ~10 % för höga.
+  const dailyDeficits: Record<CalcDeficitLevel, number> = {
+    Slow: -300,
+    Moderate: -500,
+    Aggressive: -750,
   }
 
-  const deficit = deficits[deficitLevel]
-  const target = Math.max(tdee + deficit.daily, bmr)
+  const daily = dailyDeficits[deficitLevel]
+  const target = Math.max(tdee + daily, bmr)
 
   // Skapa ett intervall ±100 kcal från target
   const min = Math.max(target - 100, bmr)
@@ -80,7 +86,9 @@ function calculateWeightLossCalories(
     min: min, // NO ROUNDING - keep exact decimals
     max: max, // NO ROUNDING - keep exact decimals
     target: target, // NO ROUNDING - keep exact decimals
-    weeklyChange: deficit.weekly,
+    // Räknas från FAKTISKT underskott (target - tdee), inte det begärda:
+    // target kan ha klippts av BMR-golvet, och då blir tappet långsammare.
+    weeklyChange: dailyCalorieDeltaToKgPerWeek(target - tdee),
   }
 }
 
@@ -112,7 +120,8 @@ function calculateWeightGainCalories(tdee: number): CalorieRange {
     min: min, // NO ROUNDING - keep exact decimals
     max: max, // NO ROUNDING - keep exact decimals
     target: target, // NO ROUNDING - keep exact decimals
-    weeklyChange: 0.4,
+    // +400 kcal/dag ger 0,36 kg/v, inte 0,4 som stod här tidigare
+    weeklyChange: dailyCalorieDeltaToKgPerWeek(target - tdee),
   }
 }
 

@@ -27,6 +27,7 @@ import { useEntitlements } from '@/hooks/useEntitlements'
 import { PremiumBadge } from '@/components/premium/PremiumBadge'
 import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
+import { WEEKLY_RATE_PERCENT } from '@/lib/calculations/weeklyRate'
 import type { Profile } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
@@ -68,6 +69,14 @@ const MODES: ModeConfig[] = [
     badgeClass:
       'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/25 dark:text-rose-300 dark:border-rose-800',
     energyLabelKey: 'weightLossModerate',
+    // Läget HETER viktminskning men saknade veckotakt — det enda av lägena
+    // som inte berättade hur snabbt man går ner.
+    weekly: {
+      labelKey: 'weeklyLoss',
+      valueKey: 'weeklyLossValue',
+      minFactor: WEEKLY_RATE_PERCENT.loss.cautious / 100,
+      maxFactor: WEEKLY_RATE_PERCENT.loss.moderate / 100,
+    },
     hasRef: true,
   },
   {
@@ -87,8 +96,8 @@ const MODES: ModeConfig[] = [
     weekly: {
       labelKey: 'weeklyGain',
       valueKey: 'weeklyGainValue',
-      minFactor: 0.0025,
-      maxFactor: 0.005,
+      minFactor: WEEKLY_RATE_PERCENT.gain.min / 100,
+      maxFactor: WEEKLY_RATE_PERCENT.gain.max / 100,
     },
     hasRef: true,
   },
@@ -99,11 +108,15 @@ const MODES: ModeConfig[] = [
       'bg-success-50 text-success-700 border-success-200 dark:bg-success-900/25 dark:text-success-300 dark:border-success-800',
     energyLabelKey: 'weightLoss',
     requiresBodyFat: true,
+    // Taket sänkt från 1,0 % till 0,75 %: 1,0 %/v motsvarade ~35 % underskott
+    // av TDEE, alltså mer aggressivt än Målsättnings mest aggressiva val
+    // (30 %). Garthe 2011 visar dessutom att 1,4 %/v inte bevarar fettfri
+    // massa medan 0,7 %/v gör det.
     weekly: {
       labelKey: 'weeklyLoss',
       valueKey: 'weeklyLossValue',
-      minFactor: 0.005,
-      maxFactor: 0.01,
+      minFactor: WEEKLY_RATE_PERCENT.loss.moderate / 100,
+      maxFactor: WEEKLY_RATE_PERCENT.loss.aggressive / 100,
     },
     hasRef: true,
   },
@@ -368,6 +381,11 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                           {tm(mode.weekly.valueKey, {
                             min: (weightKg * mode.weekly.minFactor).toFixed(2),
                             max: (weightKg * mode.weekly.maxFactor).toFixed(2),
+                            // Procenten visas också: den är den gemensamma
+                            // enheten, kg-talet beror på kroppsvikten.
+                            // parseFloat trimmar efterföljande nollor (0.50 -> 0.5).
+                            pctMin: parseFloat((mode.weekly.minFactor * 100).toFixed(2)),
+                            pctMax: parseFloat((mode.weekly.maxFactor * 100).toFixed(2)),
                           })}
                         </div>
                       )}
