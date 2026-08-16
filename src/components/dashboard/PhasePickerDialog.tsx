@@ -173,7 +173,15 @@ export function PhasePickerDialog({
         plannedWeeks: hasPlanning && weeks ? Number(weeks) : null,
         // Mittpunkten i kostlägets spann — samma tal som visas i rutan ovan
         targetCalories: suggestion.targetCalories,
-        proteinGPerKg: suggestion.proteinMaxGPerKg,
+        // Kolumnen är g/kg (CHECK 0,5–4,0). NNR-läget anger protein i
+        // ENERGIPROCENT (10–20 E%), så proteinMaxGPerKg är 20 där — det
+        // bröt mot villkoret och gav 400 för hälsospårets Underhåll och
+        // Viktuppgång. Räkna om till g/kg ur kalorierna i stället:
+        // E% av kcal / 4 kcal per gram / kroppsvikt.
+        proteinGPerKg:
+          suggestion.proteinBasis === 'energyPercent'
+            ? Math.round((suggestion.proteinGramsMax / weightKg) * 100) / 100
+            : suggestion.proteinMaxGPerKg,
         weeklyCalorieStep: hasPlanning && selected === 'reverse' && step ? Number(step) : null,
       },
       {

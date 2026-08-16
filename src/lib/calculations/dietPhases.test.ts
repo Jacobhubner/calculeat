@@ -183,6 +183,26 @@ describe('suggestPhaseTargets', () => {
     expect(maint.targetCaloriesMax).toBe(Math.round(tdee * 1.03))
   })
 
+  it('ger proteinvärden som ryms i diet_phases-kolumnens CHECK', () => {
+    // protein_g_per_kg har CHECK (0,5–4,0). NNR-läget anger protein i
+    // ENERGIPROCENT (10–20 E%), så proteinMaxGPerKg är 20 där — skickades
+    // det rått till RPC:n bröt det mot villkoret och gav 400 för
+    // hälsospårets Underhåll och Viktuppgång.
+    //
+    // Testet låser fast att ett g/kg-värde alltid går att härleda: antingen
+    // direkt (bodyweight/ffm) eller via gram / kroppsvikt (energyPercent).
+    const weightKg = 91.1
+    for (const focus of ['health', 'strength'] as const) {
+      for (const type of ['maintenance', 'bulk', 'cut', 'reverse'] as const) {
+        const s = suggestPhaseTargets(type, 2770, weightKg, focus, undefined, 15)
+        const gPerKg =
+          s.proteinBasis === 'energyPercent' ? s.proteinGramsMax / weightKg : s.proteinMaxGPerKg
+        expect(gPerKg, `${focus}/${type}`).toBeGreaterThanOrEqual(0.5)
+        expect(gPerKg, `${focus}/${type}`).toBeLessThanOrEqual(4.0)
+      }
+    }
+  })
+
   it('lägger mittpunkten mitt i spannet', () => {
     const s = suggestPhaseTargets('cut', 2770, 80, 'health')
     expect(s.targetCalories).toBe(Math.round((s.targetCaloriesMin + s.targetCaloriesMax) / 2))
