@@ -7,7 +7,6 @@
 
 import type { WeightHistory, CalibrationResult, CalibrationWarning } from '@/lib/types'
 import {
-  KCAL_PER_KG,
   MIN_DATA_POINTS,
   MIN_LOG_DAYS_FOR_CALIBRATION,
   MIN_LOG_COVERAGE_OF_PERIOD,
@@ -561,7 +560,12 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
   if (olsResult) {
     const weightChangeSE = (olsResult.residualSd / Math.sqrt(olsResult.ssXX)) * actualDays
     const calorieSE = (averageCalories * 0.2) / Math.sqrt(Math.max(1, input.daysWithLogData))
-    const balanceSE = (weightChangeSE * KCAL_PER_KG) / actualDays
+    // Samma energitäthet som punktskattningen använder. Tidigare stod här
+    // KCAL_PER_KG (fast 7700), vilket gjorde intervallet inkonsekvent med
+    // det TDEE det omger: samma storhet räknades med två olika värden.
+    // Effekten var liten (15–26 kcal) och åt det försiktiga hållet, men ett
+    // konfidensintervall ska spegla den modell det hör till.
+    const balanceSE = (weightChangeSE * effectiveKcalPerKg) / actualDays
     const autocorrFactor = allMeasurements.length >= 7 ? 1.53 : 1.0
     tdeeSE = Math.sqrt(calorieSE ** 2 + balanceSE ** 2) * autocorrFactor
     tdeeLower90 = Math.round(rawTDEE - tCrit * tdeeSE)

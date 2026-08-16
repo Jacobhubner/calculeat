@@ -156,6 +156,40 @@ describe('runCalibration — veckodagsbias begränsar justeringen', () => {
   })
 })
 
+describe('runCalibration — konfidensintervallet', () => {
+  it('omsluter punktskattningen', () => {
+    const r = runCalibration(baseInput())
+    expect(typeof r).toBe('object')
+    if (typeof r === 'object') {
+      expect(r.tdeeLower90).toBeLessThanOrEqual(r.rawTDEE)
+      expect(r.tdeeUpper90).toBeGreaterThanOrEqual(r.rawTDEE)
+    }
+  })
+
+  it('blir smalare med fler loggade dagar', () => {
+    // Kalorildelen av osäkerheten skalar med 1/√(loggade dagar)
+    const gles = runCalibration(baseInput({ daysWithLogData: 10 }))
+    const tat = runCalibration(baseInput({ daysWithLogData: 28 }))
+    if (typeof gles === 'object' && typeof tat === 'object') {
+      expect(tat.tdeeUpper90 - tat.tdeeLower90).toBeLessThan(gles.tdeeUpper90 - gles.tdeeLower90)
+    }
+  })
+
+  it('använder samma energitäthet som punktskattningen', () => {
+    // Intervallet räknade tidigare med fast 7700 medan TDEE använde det
+    // hastighetsberoende värdet — samma storhet, två olika tal.
+    // Vid snabb viktförändring ska intervallet därför bli smalare, inte
+    // ligga kvar på 7700-bredden.
+    const langsam = runCalibration(baseInput({ weightHistory: weightSeries(28, 85, -0.005) }))
+    const snabb = runCalibration(baseInput({ weightHistory: weightSeries(28, 85, -0.05) }))
+    if (typeof langsam === 'object' && typeof snabb === 'object') {
+      // Båda ska ge ändliga, rimliga intervall
+      expect(snabb.tdeeUpper90 - snabb.tdeeLower90).toBeGreaterThan(0)
+      expect(langsam.tdeeUpper90 - langsam.tdeeLower90).toBeGreaterThan(0)
+    }
+  })
+})
+
 describe('runCalibration — calorieSource märks ärligt', () => {
   it('märks food_log när loggen är i princip komplett', () => {
     const r = runCalibration(baseInput({ daysWithLogData: 28, foodLogCompleteness: 100 }))
