@@ -281,7 +281,7 @@
     "weighIns": "Weigh-ins",
     "weighInsHint": "Weigh yourself in the morning before breakfast — same time each day gives the steadiest result.",
     "logDays": "Logged days",
-    "logDaysHint": "Without food logging, TDEE can only be guessed from your goal, not measured.",
+    "logDaysHint": "Log on the same days you weigh in — calibration compares intake and weight over the same period.",
     "explainer": "Calibration compares what you ate with how your weight responded. That makes your TDEE your own — not a formula estimate."
   }
 }

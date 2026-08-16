@@ -59,6 +59,21 @@ export const MIN_DAILY_KCAL_FOR_LOG = 800
  */
 export const MIN_LOG_DAYS_FOR_CALIBRATION = 7
 
+/**
+ * Andel av mätperioden (viktklustrens tidsspann) som måste vara täckt av
+ * loggade dagar.
+ *
+ * VARFÖR (2026-08-16): daysWithLogData är bara ett ANTAL — modellen visste
+ * inte NÄR dagarna inföll. Sju loggdagar i periodens första halva plus
+ * vägningar spridda över hela perioden uppfyllde båda kraven, trots att
+ * intaget och viktförändringen då beskriver olika tidsfönster. Kalibreringen
+ * bygger på att de jämförs över SAMMA tid.
+ *
+ * 0.5 = minst halva mätperioden måste vara loggad. Lägre än så blir den
+ * omätta halvan ren gissning via priorWeight.
+ */
+export const MIN_LOG_COVERAGE_OF_PERIOD = 0.5
+
 /** Confidence floor: Δweight below this % of body weight = low signal */
 export const LOW_SIGNAL_THRESHOLD_PERCENT = 0.25
 

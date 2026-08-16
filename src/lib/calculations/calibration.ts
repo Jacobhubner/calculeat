@@ -98,6 +98,7 @@ export {
   MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
   MIN_DAILY_KCAL_FOR_LOG,
   MIN_LOG_DAYS_FOR_CALIBRATION,
+  MIN_LOG_COVERAGE_OF_PERIOD,
 } from './calibration-constants'
 
 export type { OutlierResult } from './calibration-outliers'

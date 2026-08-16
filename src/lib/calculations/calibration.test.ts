@@ -73,6 +73,44 @@ describe('runCalibration — krav på matloggdata', () => {
   })
 })
 
+describe('runCalibration — loggningen måste täcka mätperioden', () => {
+  /** Datum N dagar tillbaka, som YYYY-MM-DD */
+  const dayISO = (daysAgo: number) =>
+    new Date(NOW.getTime() - daysAgo * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
+
+  it('blockerar när loggdagarna ligger samlade i periodens ena halva', () => {
+    // 7 loggdagar, men alla i den äldre halvan: intaget beskriver en annan
+    // tid än den viktförändring som mätts över hela perioden.
+    const r = runCalibration(
+      baseInput({
+        daysWithLogData: 7,
+        loggedDates: [21, 22, 23, 24, 25, 26, 27].map(dayISO),
+      })
+    )
+    expect(typeof r).toBe('string')
+    expect(r).toContain('täcker')
+  })
+
+  it('tillåter när loggningen är spridd över perioden', () => {
+    const spread = Array.from({ length: 20 }, (_, i) => dayISO(i))
+    const r = runCalibration(baseInput({ daysWithLogData: 20, loggedDates: spread }))
+    expect(typeof r).toBe('object')
+  })
+
+  it('hoppar över kontrollen när datum saknas (bakåtkompatibelt)', () => {
+    const r = runCalibration(baseInput({ loggedDates: undefined }))
+    expect(typeof r).toBe('object')
+  })
+
+  it('felmeddelandet säger hur många dagar som behövs', () => {
+    const r = runCalibration(
+      baseInput({ daysWithLogData: 7, loggedDates: [24, 25, 26, 27, 28, 29, 30].map(dayISO) })
+    )
+    expect(typeof r).toBe('string')
+    expect(r).toMatch(/\d+ av \d+ dagar/)
+  })
+})
+
 describe('runCalibration — calorieSource märks ärligt', () => {
   it('märks food_log när loggen är i princip komplett', () => {
     const r = runCalibration(baseInput({ daysWithLogData: 28, foodLogCompleteness: 100 }))

@@ -281,7 +281,7 @@
     "weighIns": "Vägningar",
     "weighInsHint": "Väg dig på morgonen före frukost — samma tid varje gång ger jämnast resultat.",
     "logDays": "Loggade dagar",
-    "logDaysHint": "Utan matloggning kan TDEE bara gissas utifrån ditt mål, inte mätas.",
+    "logDaysHint": "Logga samma dagar som du väger dig — kalibreringen jämför intag och vikt över samma period.",
     "explainer": "Kalibreringen jämför vad du ätit med hur vikten svarat. Då blir ditt TDEE ditt eget — inte en formels uppskattning."
   }
 }

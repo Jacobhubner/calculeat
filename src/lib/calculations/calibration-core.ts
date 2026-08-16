@@ -10,6 +10,7 @@ import {
   KCAL_PER_KG,
   MIN_DATA_POINTS,
   MIN_LOG_DAYS_FOR_CALIBRATION,
+  MIN_LOG_COVERAGE_OF_PERIOD,
   TDEE_FLOOR,
   TDEE_CEILING,
   MAX_WEEKLY_CHANGE_PERCENT,
@@ -106,6 +107,15 @@ export interface CalibrationInput {
   actualCaloriesAvg: number | null
   foodLogCompleteness: number
   daysWithLogData: number
+  /**
+   * Datum (YYYY-MM-DD) för de dagar som faktiskt loggats. Används för att
+   * kontrollera att loggningen TÄCKER mätperioden — enbart antalet räcker
+   * inte, eftersom sju dagar i periodens ena halva ger ett intag som inte
+   * hör ihop med den uppmätta viktförändringen.
+   *
+   * Utelämnas den hoppas täckningskontrollen över (bakåtkompatibelt).
+   */
+  loggedDates?: string[]
   isFirstCalibration: boolean
   deficitPercent?: number
   now?: Date
@@ -149,6 +159,31 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
       `intaget med viktförändringen (har ${input.daysWithLogData}). ` +
       `Utan matloggning kan TDEE bara gissas utifrån ditt mål, inte mätas.`
     )
+  }
+
+  // Step 2c: Loggningen måste TÄCKA mätperioden, inte bara vara tillräckligt
+  // många dagar. Sju loggdagar i periodens ena halva ger ett intag som inte
+  // hör ihop med den viktförändring som mätts över hela perioden.
+  if (input.loggedDates && input.loggedDates.length > 0) {
+    const periodStart = startCluster.dates[0]
+    const periodEnd = endCluster.dates[endCluster.dates.length - 1]
+    const spanDays = Math.max(1, daysBetween(periodStart, periodEnd) + 1)
+
+    const loggedInSpan = input.loggedDates.filter(iso => {
+      const d = new Date(`${iso}T12:00:00`)
+      return d >= periodStart && d <= periodEnd
+    }).length
+
+    const coverage = loggedInSpan / spanDays
+    if (coverage < MIN_LOG_COVERAGE_OF_PERIOD) {
+      const pct = Math.round(coverage * 100)
+      const needed = Math.ceil(spanDays * MIN_LOG_COVERAGE_OF_PERIOD)
+      return (
+        `Loggningen täcker bara ${pct} % av mätperioden (${loggedInSpan} av ${spanDays} dagar). ` +
+        `Kalibreringen jämför intag mot viktförändring över samma tid, så minst ` +
+        `${needed} av dagarna mellan första och sista vägningen behöver vara loggade.`
+      )
+    }
   }
 
   // Step 3: Calculate weight change via OLS (primary) + EMA (secondary for divergence detection)

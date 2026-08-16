@@ -49,6 +49,7 @@ import {
   runCalibration,
   MIN_DATA_POINTS,
   MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
+  MIN_DAILY_KCAL_FOR_LOG,
   buildClusters,
 } from '@/lib/calculations/calibration'
 import type { Profile, CalibrationResult, ProfileFormData } from '@/lib/types'
@@ -297,6 +298,11 @@ export default function MetabolicCalibration({
       actualCaloriesAvg: actualIntake?.averageCalories ?? null,
       foodLogCompleteness: actualIntake?.completenessPercent ?? 0,
       daysWithLogData: actualIntake?.daysWithData ?? 0,
+      // Datumen, inte bara antalet: kalibreringen kontrollerar att loggningen
+      // täcker mätperioden och inte ligger samlad i ena halvan.
+      loggedDates: actualIntake?.dailyCalories
+        .filter(d => d.calories > MIN_DAILY_KCAL_FOR_LOG)
+        .map(d => d.date),
       isFirstCalibration,
       deficitPercent: deficitPercent && deficitPercent > 0 ? deficitPercent : undefined,
       now,
