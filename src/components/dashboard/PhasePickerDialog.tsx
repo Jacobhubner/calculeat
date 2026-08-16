@@ -249,6 +249,19 @@ export function PhasePickerDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
+          {/* Tillbakaknappen hör till huvudet, inte till innehållet: inklämd
+              under beskrivningen såg den ut att tillhöra periodlistan, och
+              på smal skärm hamnade den mitt i en textmassa. */}
+          {view === 'type' && (
+            <button
+              type="button"
+              onClick={() => setView('focus')}
+              className="-ml-1 mb-1 flex items-center gap-1 self-start rounded px-1 py-0.5 text-xs font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-100"
+            >
+              <ChevronLeft className="h-3.5 w-3.5 shrink-0" />
+              {t(`phase.focus.${focus}`)}
+            </button>
+          )}
           <DialogTitle>{t('phase.modal.title')}</DialogTitle>
           <DialogDescription>{t('phase.modal.subtitle')}</DialogDescription>
         </DialogHeader>
@@ -321,7 +334,7 @@ export function PhasePickerDialog({
               })}
             </div>
 
-            <div className="flex flex-col gap-2 pt-1 sm:flex-row">
+            <div className="flex flex-col-reverse gap-2 pt-1 sm:flex-row">
               <Button variant="outline" className="flex-1" onClick={() => onOpenChange(false)}>
                 {t('phase.modal.cancel')}
               </Button>
@@ -332,16 +345,6 @@ export function PhasePickerDialog({
           </div>
         ) : (
           <div className="space-y-5">
-            {/* Tillbaka till fokusvalet — valet ligger kvar */}
-            <button
-              type="button"
-              onClick={() => setView('focus')}
-              className="flex items-center gap-1.5 text-xs font-medium text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
-            >
-              <ChevronLeft className="h-3.5 w-3.5" />
-              {t(`phase.focus.${focus}`)}
-            </button>
-
             {/*
             Styrkespåret valt utan kroppsfett: uppmaningen ERSÄTTER steg 2 och
             allt nedanför. Att visa fasval + kostläge + start-knapp här vore
@@ -378,7 +381,10 @@ export function PhasePickerDialog({
                   visar vilket spår man kommer från. */}
                 <Label className="text-sm font-semibold">{t('phase.typeLabel')}</Label>
 
-                <div className="-mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {/* Inget negativt marginaltillägg: -mt-2 kompenserade tidigare
+                    space-y-5 när rubriken hade ett stegnummer bredvid sig, men
+                    drog korten upp ÖVER rubriken på smala skärmar. */}
+                <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {PHASE_TYPES.map(type => {
                     const Icon = PHASE_ICON[type]
                     const active = selected === type
@@ -446,7 +452,9 @@ export function PhasePickerDialog({
                         )}
                       </dd>
                     </div>
-                    <div className="flex gap-1.5">
+                    {/* flex-wrap: proteinraden är lång (g/kg + gram inom
+                        parentes) och bröt inte på smal skärm. */}
+                    <div className="flex flex-wrap gap-x-1.5">
                       <dt>{t('phase.macroMode.protein')}:</dt>
                       <dd className="font-medium text-neutral-800 dark:text-neutral-200">
                         {/* NNR anger protein i energiprocent (E%), övriga i g/kg */}
@@ -523,7 +531,7 @@ export function PhasePickerDialog({
               </>
             )}
 
-            <div className="flex flex-col gap-2 pt-1 sm:flex-row">
+            <div className="flex flex-col-reverse gap-2 pt-1 sm:flex-row">
               <Button
                 variant="outline"
                 className="flex-1"
