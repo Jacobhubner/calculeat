@@ -89,6 +89,7 @@ import {
 } from '@/hooks/useMessageImageUpload'
 import { useQueryClient, useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import { shouldScrollOnListChange, shouldFollowBottomOnResize } from '@/lib/utils/chatScroll'
 import type { PendingInvitation } from '@/lib/types/sharing'
 import type { Friend, FriendRequest, SentFriendRequest } from '@/lib/types/friends'
 import type { Conversation, Message } from '@/lib/types/messages'
@@ -948,7 +949,16 @@ const SIGNED_URL_TTL_SECONDS = 3600
  * Bucketen är privat — bilden hämtas via en signerad URL där RLS avgör vem
  * som får signera. Samma mönster som supportchattens bilagor.
  */
-function MessageAttachmentImage({ path, square = false }: { path: string; square?: boolean }) {
+function MessageAttachmentImage({
+  path,
+  square = false,
+  onLoaded,
+}: {
+  path: string
+  square?: boolean
+  /** Anropas när bilden fått sina mått — tråden kan då korrigera skrollningen */
+  onLoaded?: () => void
+}) {
   const { t } = useTranslation('social')
 
   const {
@@ -1007,6 +1017,7 @@ function MessageAttachmentImage({ path, square = false }: { path: string; square
         src={signedUrl}
         alt={t('social.messages.attached_image_alt')}
         loading="lazy"
+        onLoad={onLoaded}
         className={
           square ? 'aspect-square w-full object-cover' : 'max-h-48 max-w-[240px] object-cover'
         }
@@ -1019,9 +1030,9 @@ function MessageAttachmentImage({ path, square = false }: { path: string; square
  * Rutnät för 1–5 bilagor i samma bubbla. En bild visas stor; flera läggs i
  * två kolumner med kvadratiska rutor så bubblan inte blir ojämn.
  */
-function MessageAttachmentGrid({ paths }: { paths: string[] }) {
+function MessageAttachmentGrid({ paths, onLoaded }: { paths: string[]; onLoaded?: () => void }) {
   if (paths.length === 1) {
-    return <MessageAttachmentImage path={paths[0]} />
+    return <MessageAttachmentImage path={paths[0]} onLoaded={onLoaded} />
   }
 
   return (
@@ -1033,7 +1044,11 @@ function MessageAttachmentGrid({ paths }: { paths: string[] }) {
           // rutnätet inte får ett hål i sista raden.
           className={paths.length % 2 === 1 && i === 0 ? 'col-span-2' : undefined}
         >
-          <MessageAttachmentImage path={p} square={!(paths.length % 2 === 1 && i === 0)} />
+          <MessageAttachmentImage
+            path={p}
+            square={!(paths.length % 2 === 1 && i === 0)}
+            onLoaded={onLoaded}
+          />
         </div>
       ))}
     </div>
@@ -1048,10 +1063,13 @@ function MessageBubble({
   msg,
   isOwn,
   friendshipId,
+  onAttachmentLoaded,
 }: {
   msg: Message
   isOwn: boolean
   friendshipId: string
+  /** Bubblan blir högre när en bilaga laddat — tråden korrigerar skrollningen */
+  onAttachmentLoaded?: () => void
 }) {
   const { t } = useTranslation('social')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -1274,7 +1292,7 @@ function MessageBubble({
             {/* Bilagor ovanför texten. Raderade meddelanden döljer bilderna. */}
             {!isDeleted && attachments.length > 0 && (
               <div className={`mb-1 flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                <MessageAttachmentGrid paths={attachments} />
+                <MessageAttachmentGrid paths={attachments} onLoaded={onAttachmentLoaded} />
               </div>
             )}
             {/* Textbubblan hoppas över för bild utan bildtext — annars blir
@@ -1420,6 +1438,47 @@ function MessageThread({
     }
   }, [messages.length, scrollToBottom])
 
+  // Skrolla ner när listan faktiskt VÄXER.
+  //
+  // handleSend kan inte skrolla direkt efter sendMessage: RPC:n returnerar
+  // bara ett id, och listan uppdateras först när invalidateQueries hämtat om
+  // den. Skrollningen träffade alltså den gamla listan och positionen stod
+  // kvar när det nya meddelandet renderades.
+  //
+  // Vid "ladda äldre" växer listan också, men uppåt — då ska positionen
+  // lämnas i fred, annars kastas man ner till botten.
+  const prevCountRef = useRef(0)
+  const prevLastIdRef = useRef<string | null>(null)
+  useEffect(() => {
+    const nextLastId = messages[messages.length - 1]?.id ?? null
+    const shouldScroll = shouldScrollOnListChange({
+      prevCount: prevCountRef.current,
+      nextCount: messages.length,
+      prevLastId: prevLastIdRef.current,
+      nextLastId,
+      hasScrolledInitially: didInitialScroll.current,
+    })
+    prevCountRef.current = messages.length
+    prevLastIdRef.current = nextLastId
+
+    // pin=true eftersom bilagor laddar asynkront och gör bubblan högre efter
+    // att vi skrollat — utan ompinning hamnar man en bit ovanför botten.
+    if (shouldScroll) scrollToBottom(true)
+  }, [messages, scrollToBottom])
+
+  /**
+   * En bilaga i sista meddelandet har laddat och gjort bubblan högre.
+   * Följ med ner bara om användaren redan står nära botten — den som
+   * medvetet skrollat upp ska inte ryckas tillbaka.
+   */
+  const handleAttachmentLoaded = useCallback(() => {
+    const el = scrollRef.current
+    if (!el) return
+    if (shouldFollowBottomOnResize(el)) {
+      el.scrollTop = el.scrollHeight - el.clientHeight
+    }
+  }, [])
+
   // Auto-resize textarea
   useEffect(() => {
     const el = textareaRef.current
@@ -1495,7 +1554,9 @@ function MessageThread({
         return
       }
       sentImages.forEach(i => URL.revokeObjectURL(i.previewUrl))
-      scrollToBottom()
+      // Ingen scrollToBottom här — listan har inte hämtats om ännu.
+      // Effekten som bevakar messages sköter skrollningen när meddelandet
+      // faktiskt renderats.
     } catch {
       toast.error(t('invitations.error.generic'))
       setInput(trimmed)
@@ -1643,7 +1704,14 @@ function MessageThread({
                     </span>
                   </div>
                 )}
-                <MessageBubble msg={msg} isOwn={isOwn} friendshipId={conversation.friendship_id} />
+                <MessageBubble
+                  msg={msg}
+                  isOwn={isOwn}
+                  friendshipId={conversation.friendship_id}
+                  // Bara sista meddelandet: en bild som laddas längre upp
+                  // (vid "ladda äldre") ska inte kasta ner användaren.
+                  onAttachmentLoaded={idx === arr.length - 1 ? handleAttachmentLoaded : undefined}
+                />
               </div>
             )
           })}
