@@ -91,26 +91,48 @@ describe('getEffectiveKcalPerKg — kontinuitet', () => {
     expect(Math.abs(a - b)).toBeLessThan(50)
   })
 
+  it('har inget hopp vid nollpunkten', () => {
+    // Uppgångssidan startar på 6600, nedgångssidan på 7700 — utan en
+    // övergångszon skulle funktionen hoppa 1100 kcal/kg vid 0.
+    const a = getEffectiveKcalPerKg(-0.01)
+    const b = getEffectiveKcalPerKg(0.01)
+    expect(Math.abs(a - b)).toBeLessThan(60)
+  })
+
   it('är kontinuerlig över hela intervallet', () => {
     let prev = getEffectiveKcalPerKg(-2)
     let maxJump = 0
-    for (let p = -2; p <= 2; p += 0.05) {
+    for (let p = -2; p <= 2; p += 0.01) {
       const v = getEffectiveKcalPerKg(Math.round(p * 100) / 100)
       maxJump = Math.max(maxJump, Math.abs(v - prev))
       prev = v
     }
-    // Rampens lutning ger ~60 kcal/kg per 0,05 %-steg
-    expect(maxJump).toBeLessThanOrEqual(70)
+    expect(maxJump).toBeLessThanOrEqual(50)
   })
 
-  it('behåller 7700 vid mycket långsam förändring', () => {
+  it('behåller 7700 vid stabil vikt', () => {
     expect(getEffectiveKcalPerKg(0)).toBe(7700)
-    expect(getEffectiveKcalPerKg(0.2)).toBe(7700)
     expect(getEffectiveKcalPerKg(-0.2)).toBe(7700)
   })
 
   it('sänker densiteten vid snabb förändring åt båda håll', () => {
     expect(getEffectiveKcalPerKg(1.5)).toBeLessThan(7000)
     expect(getEffectiveKcalPerKg(-1.5)).toBeLessThan(7000)
+  })
+
+  it('uppgång har lägre energitäthet än nedgång vid samma takt', () => {
+    // Bray & Bouchard 2020: en kilo UPP innehåller mer fettfri massa och
+    // vatten än en kilo NED, och kostar därför färre kalorier per kilo.
+    // Asymmetrin är alltså avsiktlig och källbelagd — inte ett förbiseende.
+    for (const rate of [0.5, 0.75, 1.0]) {
+      expect(getEffectiveKcalPerKg(rate)).toBeLessThan(getEffectiveKcalPerKg(-rate))
+    }
+  })
+
+  it('ligger i linje med Brays 19-gruppssnitt i mitten av spannet', () => {
+    // 6064 kcal/kg är snittet över 19 överutfodringsgrupper
+    const mid = getEffectiveKcalPerKg(0.6)
+    expect(mid).toBeGreaterThan(5800)
+    expect(mid).toBeLessThan(6400)
   })
 })
