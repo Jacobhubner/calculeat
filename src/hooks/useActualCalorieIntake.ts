@@ -7,12 +7,23 @@ import { localDateString } from '@/lib/utils/localDate'
 /**
  * Hook to fetch actual calorie intake from food logs for a date range
  * Used by Metabolic Calibration to get real calorie data instead of assuming target calories
+ *
+ * PREVIEW: filtrerar på is_preview enligt projektregeln (samma mönster som
+ * useDailyLogs och useWeightHistory). Utan filtret läckte det riktiga kontots
+ * loggdagar in i sandlådan — beredskapskortet visade "7/7 loggade dagar" för
+ * en ny användare vars logg var tom.
  */
 export function useActualCalorieIntake(startDate: Date, endDate: Date) {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
 
   return useQuery({
-    queryKey: ['actual-calorie-intake', user?.id, startDate.toISOString(), endDate.toISOString()],
+    queryKey: [
+      'actual-calorie-intake',
+      user?.id,
+      isPreviewMode,
+      startDate.toISOString(),
+      endDate.toISOString(),
+    ],
     queryFn: async (): Promise<ActualIntakeData> => {
       if (!user) {
         return {
@@ -31,6 +42,7 @@ export function useActualCalorieIntake(startDate: Date, endDate: Date) {
         .from('daily_logs')
         .select('log_date, total_calories, is_completed')
         .eq('user_id', user.id)
+        .eq('is_preview', isPreviewMode ? true : false)
         .gte('log_date', startDateStr)
         .lte('log_date', endDateStr)
         .order('log_date', { ascending: true })

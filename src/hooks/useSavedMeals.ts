@@ -284,7 +284,7 @@ export function useDeleteSavedMeal() {
  * Pattern based on useCopyDayToToday from useDailyLogs.ts
  */
 export function useLoadSavedMealToSlot() {
-  const { user } = useAuth()
+  const { user, isPreviewMode } = useAuth()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -332,6 +332,9 @@ export function useLoadSavedMealToSlot() {
             meal_fat_g: 0,
             meal_carb_g: 0,
             meal_protein_g: 0,
+            // Kolumnens default är false — utan detta hade en måltid som
+            // lades till i sandlådan markerats som riktig och överlevt exit.
+            is_preview: isPreviewMode,
           })
           .select()
           .single()
