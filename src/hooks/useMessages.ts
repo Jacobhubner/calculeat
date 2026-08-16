@@ -93,17 +93,17 @@ export function useSendMessage() {
     mutationFn: async ({
       friendshipId,
       content,
-      imagePath,
+      imagePaths,
     }: {
       friendshipId: string
       content: string
-      /** Storage-path från useMessageImageUpload — utelämnas för rena textmeddelanden */
-      imagePath?: string | null
+      /** Storage-paths från useMessageImageUpload (max 5) — tom för rena textmeddelanden */
+      imagePaths?: string[] | null
     }) => {
       const { data, error } = await supabase.rpc('send_message', {
         p_friendship_id: friendshipId,
         p_content: content,
-        p_image_path: imagePath ?? null,
+        p_image_paths: imagePaths?.length ? imagePaths : null,
       })
       if (error) throw error
       return data as { success: boolean; message_id?: string; error?: string }

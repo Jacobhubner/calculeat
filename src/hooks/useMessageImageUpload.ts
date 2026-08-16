@@ -16,11 +16,17 @@ import { MAX_RAW_BYTES, MAX_PROCESSED_BYTES, resizeAndConvertToWebP } from '@/li
 
 export const MESSAGE_ATTACHMENTS_BUCKET = 'message-attachments'
 
+/** Måste matcha taket i send_message och enforce_message_attachment_limit */
+export const MAX_IMAGES_PER_MESSAGE = 5
+
 type UploadResult = { path: string; error: null } | { path: null; error: string }
 
 export function useMessageImageUpload() {
   const { user } = useAuth()
-  const [isUploading, setIsUploading] = useState(false)
+  // Räknare, inte boolean: vid parallell uppladdning skulle den första
+  // avslutade filen annars släcka spinnern medan övriga fortfarande laddar.
+  const [activeUploads, setActiveUploads] = useState(0)
+  const isUploading = activeUploads > 0
 
   /**
    * Validerar, komprimerar och laddar upp en bild till användarens egen mapp.
@@ -39,7 +45,7 @@ export function useMessageImageUpload() {
       return { path: null, error: 'Bilden är för stor (max 15 MB)' }
     }
 
-    setIsUploading(true)
+    setActiveUploads(n => n + 1)
 
     try {
       const blob = await resizeAndConvertToWebP(file)
@@ -64,17 +70,39 @@ export function useMessageImageUpload() {
       const msg = err instanceof Error ? err.message : 'Uppladdning misslyckades'
       return { path: null, error: msg }
     } finally {
-      setIsUploading(false)
+      setActiveUploads(n => n - 1)
     }
   }
 
   /**
-   * Tar bort en uppladdad bilaga (t.ex. när användaren ångrar innan sändning).
-   * RLS tillåter endast borttagning i egen mapp.
+   * Laddar upp flera bilder parallellt. En trasig bild ska inte fälla hela
+   * urvalet, så varje fil rapporteras för sig.
+   *
+   * `uploaded` parar ihop path med KÄLLFILEN — anroparen behöver den för att
+   * skapa rätt förhandsvisning. Att matcha på index mot indata går inte när
+   * någon fil fallerat.
    */
-  async function removeImage(path: string): Promise<void> {
-    await supabase.storage.from(MESSAGE_ATTACHMENTS_BUCKET).remove([path])
+  async function uploadImages(
+    files: File[]
+  ): Promise<{ uploaded: { file: File; path: string }[]; errors: string[] }> {
+    const results = await Promise.all(
+      files.map(async file => ({ file, ...(await uploadImage(file)) }))
+    )
+    return {
+      uploaded: results.flatMap(r => (r.path ? [{ file: r.file, path: r.path }] : [])),
+      errors: results.flatMap(r => (r.error ? [r.error] : [])),
+    }
   }
 
-  return { uploadImage, removeImage, isUploading }
+  /**
+   * Tar bort uppladdade bilagor (t.ex. när användaren ångrar innan sändning).
+   * RLS tillåter endast borttagning i egen mapp.
+   */
+  async function removeImage(path: string | string[]): Promise<void> {
+    const paths = Array.isArray(path) ? path : [path]
+    if (paths.length === 0) return
+    await supabase.storage.from(MESSAGE_ATTACHMENTS_BUCKET).remove(paths)
+  }
+
+  return { uploadImage, uploadImages, removeImage, isUploading }
 }

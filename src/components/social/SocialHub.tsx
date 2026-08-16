@@ -82,7 +82,11 @@ import {
   useDeleteConversation,
   messageKeys,
 } from '@/hooks/useMessages'
-import { useMessageImageUpload, MESSAGE_ATTACHMENTS_BUCKET } from '@/hooks/useMessageImageUpload'
+import {
+  useMessageImageUpload,
+  MESSAGE_ATTACHMENTS_BUCKET,
+  MAX_IMAGES_PER_MESSAGE,
+} from '@/hooks/useMessageImageUpload'
 import { useQueryClient, useQuery } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import type { PendingInvitation } from '@/lib/types/sharing'
@@ -944,7 +948,7 @@ const SIGNED_URL_TTL_SECONDS = 3600
  * Bucketen är privat — bilden hämtas via en signerad URL där RLS avgör vem
  * som får signera. Samma mönster som supportchattens bilagor.
  */
-function MessageAttachmentImage({ path }: { path: string }) {
+function MessageAttachmentImage({ path, square = false }: { path: string; square?: boolean }) {
   const { t } = useTranslation('social')
 
   const {
@@ -967,7 +971,11 @@ function MessageAttachmentImage({ path }: { path: string }) {
 
   if (isLoading) {
     return (
-      <div className="h-32 w-44 rounded-xl bg-neutral-100 animate-pulse flex items-center justify-center dark:bg-neutral-800">
+      <div
+        className={`rounded-xl bg-neutral-100 animate-pulse flex items-center justify-center dark:bg-neutral-800 ${
+          square ? 'aspect-square w-full' : 'h-32 w-44'
+        }`}
+      >
         <Loader2 className="h-4 w-4 animate-spin text-neutral-300" />
       </div>
     )
@@ -975,9 +983,13 @@ function MessageAttachmentImage({ path }: { path: string }) {
 
   if (isError || !signedUrl) {
     return (
-      <div className="h-16 w-44 rounded-xl bg-neutral-50 border border-neutral-100 flex items-center justify-center gap-1.5 text-neutral-400 dark:bg-neutral-900 dark:text-neutral-500">
+      <div
+        className={`rounded-xl bg-neutral-50 border border-neutral-100 flex items-center justify-center gap-1.5 text-neutral-400 dark:bg-neutral-900 dark:text-neutral-500 ${
+          square ? 'aspect-square w-full' : 'h-16 w-44'
+        }`}
+      >
         <ImageOff className="h-3.5 w-3.5" />
-        <span className="text-[11px]">{t('social.messages.image_load_error')}</span>
+        {!square && <span className="text-[11px]">{t('social.messages.image_load_error')}</span>}
       </div>
     )
   }
@@ -986,16 +998,45 @@ function MessageAttachmentImage({ path }: { path: string }) {
     <button
       type="button"
       onClick={() => window.open(signedUrl, '_blank', 'noopener,noreferrer')}
-      className="block rounded-xl overflow-hidden border border-neutral-200 hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-700"
+      className={`block rounded-xl overflow-hidden border border-neutral-200 hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-700 ${
+        square ? 'w-full' : ''
+      }`}
       title={t('social.messages.open_image')}
     >
       <img
         src={signedUrl}
         alt={t('social.messages.attached_image_alt')}
         loading="lazy"
-        className="max-h-48 max-w-[240px] object-cover"
+        className={
+          square ? 'aspect-square w-full object-cover' : 'max-h-48 max-w-[240px] object-cover'
+        }
       />
     </button>
+  )
+}
+
+/**
+ * Rutnät för 1–5 bilagor i samma bubbla. En bild visas stor; flera läggs i
+ * två kolumner med kvadratiska rutor så bubblan inte blir ojämn.
+ */
+function MessageAttachmentGrid({ paths }: { paths: string[] }) {
+  if (paths.length === 1) {
+    return <MessageAttachmentImage path={paths[0]} />
+  }
+
+  return (
+    <div className="grid grid-cols-2 gap-1 max-w-[240px]">
+      {paths.map((p, i) => (
+        <div
+          key={p}
+          // Udda antal: första bilden spänner över båda kolumnerna så
+          // rutnätet inte får ett hål i sista raden.
+          className={paths.length % 2 === 1 && i === 0 ? 'col-span-2' : undefined}
+        >
+          <MessageAttachmentImage path={p} square={!(paths.length % 2 === 1 && i === 0)} />
+        </div>
+      ))}
+    </div>
   )
 }
 
@@ -1024,6 +1065,14 @@ function MessageBubble({
   const { mutateAsync: deleteMessage, isPending: isDeletePending } = useDeleteMessage()
 
   const canModify = isOwn && msg.deleted_at === null && msg.read_at === null
+
+  // image_paths är källan; image_path är kvar för meddelanden som skickades
+  // innan flerbildsstödet fanns.
+  const attachments = msg.image_paths?.length
+    ? msg.image_paths
+    : msg.image_path
+      ? [msg.image_path]
+      : []
 
   const openMenu = useCallback(() => {
     if (!canModify) return
@@ -1222,10 +1271,10 @@ function MessageBubble({
           </div>
         ) : (
           <div>
-            {/* Bilaga ovanför texten. Raderade meddelanden döljer bilden. */}
-            {!isDeleted && msg.image_path && (
+            {/* Bilagor ovanför texten. Raderade meddelanden döljer bilderna. */}
+            {!isDeleted && attachments.length > 0 && (
               <div className={`mb-1 flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                <MessageAttachmentImage path={msg.image_path} />
+                <MessageAttachmentGrid paths={attachments} />
               </div>
             )}
             {/* Textbubblan hoppas över för bild utan bildtext — annars blir
@@ -1291,12 +1340,10 @@ function MessageThread({
   const { user } = useAuth()
   const [input, setInput] = useState('')
   const [confirmDeleteConv, setConfirmDeleteConv] = useState(false)
-  // Uppladdad bilaga som ännu inte skickats: { path, previewUrl }.
+  // Uppladdade bilagor som ännu inte skickats (max MAX_IMAGES_PER_MESSAGE).
   // previewUrl är en lokal object-URL så förhandsvisningen inte kräver en
   // signerad URL innan meddelandet finns.
-  const [pendingImage, setPendingImage] = useState<{ path: string; previewUrl: string } | null>(
-    null
-  )
+  const [pendingImages, setPendingImages] = useState<{ path: string; previewUrl: string }[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -1309,7 +1356,7 @@ function MessageThread({
 
   const { mutateAsync: sendMessage, isPending: isSending } = useSendMessage()
   const { mutateAsync: deleteConversation, isPending: isDeletingConv } = useDeleteConversation()
-  const { uploadImage, removeImage, isUploading } = useMessageImageUpload()
+  const { uploadImages, removeImage, isUploading } = useMessageImageUpload()
   useMarkMessagesRead(conversation.friendship_id)
 
   // Bygg platt meddelandelista: RPC ger nyaste-först, vi reverserar
@@ -1382,24 +1429,37 @@ function MessageThread({
   }, [input])
 
   const handlePickImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const picked = Array.from(e.target.files ?? [])
     // Nollställ direkt så samma fil kan väljas igen efter en borttagning
     e.target.value = ''
-    if (!file) return
+    if (picked.length === 0) return
 
-    const { path, error } = await uploadImage(file)
-    if (error || !path) {
-      toast.error(error ?? t('invitations.error.generic'))
+    const room = MAX_IMAGES_PER_MESSAGE - pendingImages.length
+    if (room <= 0) {
+      toast.error(t('social.messages.error.max_images', { max: MAX_IMAGES_PER_MESSAGE }))
       return
     }
-    setPendingImage({ path, previewUrl: URL.createObjectURL(file) })
+    // Ta emot så många som får plats i stället för att avvisa hela urvalet
+    if (picked.length > room) {
+      toast.info(t('social.messages.error.max_images', { max: MAX_IMAGES_PER_MESSAGE }))
+    }
+    const files = picked.slice(0, room)
+
+    const { uploaded, errors } = await uploadImages(files)
+    errors.forEach(err => toast.error(err))
+    if (uploaded.length === 0) return
+
+    setPendingImages(prev => [
+      ...prev,
+      ...uploaded.map(({ file, path }) => ({ path, previewUrl: URL.createObjectURL(file) })),
+    ])
   }
 
-  const handleRemovePendingImage = async () => {
-    if (!pendingImage) return
-    const { path, previewUrl } = pendingImage
-    setPendingImage(null)
-    URL.revokeObjectURL(previewUrl)
+  const handleRemovePendingImage = async (path: string) => {
+    const target = pendingImages.find(p => p.path === path)
+    if (!target) return
+    setPendingImages(prev => prev.filter(p => p.path !== path))
+    URL.revokeObjectURL(target.previewUrl)
     // Städa bort filen ur storage — den blev aldrig ett meddelande
     await removeImage(path)
   }
@@ -1407,17 +1467,17 @@ function MessageThread({
   const handleSend = async () => {
     const trimmed = input.trim()
     // Bild utan text är tillåtet, men något av dem måste finnas
-    if ((!trimmed && !pendingImage) || isSending || isUploading) return
+    if ((!trimmed && pendingImages.length === 0) || isSending || isUploading) return
 
-    const sentImage = pendingImage
+    const sentImages = pendingImages
     setInput('')
-    setPendingImage(null)
+    setPendingImages([])
 
     try {
       const result = await sendMessage({
         friendshipId: conversation.friendship_id,
         content: trimmed,
-        imagePath: sentImage?.path ?? null,
+        imagePaths: sentImages.map(i => i.path),
       })
       if (!result.success) {
         toast.error(
@@ -1425,19 +1485,21 @@ function MessageThread({
             ? t('social.messages.error.empty')
             : result.error === 'content_too_long'
               ? t('social.messages.error.too_long')
-              : t('invitations.error.generic')
+              : result.error === 'too_many_images'
+                ? t('social.messages.error.max_images', { max: MAX_IMAGES_PER_MESSAGE })
+                : t('invitations.error.generic')
         )
         // Återställ utkastet så inget går förlorat
         setInput(trimmed)
-        setPendingImage(sentImage)
+        setPendingImages(sentImages)
         return
       }
-      if (sentImage) URL.revokeObjectURL(sentImage.previewUrl)
+      sentImages.forEach(i => URL.revokeObjectURL(i.previewUrl))
       scrollToBottom()
     } catch {
       toast.error(t('invitations.error.generic'))
       setInput(trimmed)
-      setPendingImage(sentImage)
+      setPendingImages(sentImages)
     }
   }
 
@@ -1596,22 +1658,26 @@ function MessageThread({
             {charCount}/2000
           </p>
         )}
-        {/* Förhandsvisning av vald bild innan den skickas */}
-        {pendingImage && (
-          <div className="mb-2 relative inline-block">
-            <img
-              src={pendingImage.previewUrl}
-              alt={t('social.messages.attached_image_alt')}
-              className="max-h-24 rounded-xl border border-neutral-200 dark:border-neutral-700"
-            />
-            <button
-              type="button"
-              onClick={handleRemovePendingImage}
-              title={t('social.messages.remove_image')}
-              className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-neutral-800 text-white flex items-center justify-center hover:bg-neutral-900"
-            >
-              <X className="h-3 w-3" />
-            </button>
+        {/* Förhandsvisning av valda bilder innan de skickas */}
+        {pendingImages.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-2">
+            {pendingImages.map(img => (
+              <div key={img.path} className="relative">
+                <img
+                  src={img.previewUrl}
+                  alt={t('social.messages.attached_image_alt')}
+                  className="h-16 w-16 object-cover rounded-xl border border-neutral-200 dark:border-neutral-700"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemovePendingImage(img.path)}
+                  title={t('social.messages.remove_image')}
+                  className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-neutral-800 text-white flex items-center justify-center hover:bg-neutral-900"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
           </div>
         )}
         <div className="flex items-end gap-2">
@@ -1619,13 +1685,14 @@ function MessageThread({
             ref={fileInputRef}
             type="file"
             accept="image/*"
+            multiple
             onChange={handlePickImage}
             className="hidden"
           />
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            disabled={isUploading || !!pendingImage || isSending}
+            disabled={isUploading || pendingImages.length >= MAX_IMAGES_PER_MESSAGE || isSending}
             title={t('social.messages.attach_image')}
             aria-label={t('social.messages.attach_image')}
             className="shrink-0 h-9 w-9 rounded-xl border border-neutral-200 text-neutral-500 flex items-center justify-center hover:bg-neutral-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed dark:border-neutral-700 dark:hover:bg-neutral-800"
@@ -1649,7 +1716,12 @@ function MessageThread({
           <button
             type="button"
             onClick={handleSend}
-            disabled={(!input.trim() && !pendingImage) || isSending || isUploading || isOverLimit}
+            disabled={
+              (!input.trim() && pendingImages.length === 0) ||
+              isSending ||
+              isUploading ||
+              isOverLimit
+            }
             className="shrink-0 h-9 w-9 rounded-xl bg-primary-600 text-white flex items-center justify-center hover:bg-primary-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {isSending ? (

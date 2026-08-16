@@ -207,6 +207,7 @@
       "image_label": "Bild",
       "error": {
         "empty": "Meddelandet är tomt.",
+        "max_images": "Du kan bifoga högst {{max}} bilder per meddelande.",
         "too_long": "Meddelandet är för långt (max 2000 tecken)."
       }
     },

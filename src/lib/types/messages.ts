@@ -3,8 +3,10 @@ export interface Message {
   friendship_id: string
   sender_id: string
   content: string | null
-  /** Storage-path i message-attachments (privat bucket) — visas via signerad URL */
+  /** Första bilden — behålls för bakåtkompatibilitet, använd image_paths */
   image_path: string | null
+  /** Alla bilagor i vald ordning (max 5). null när meddelandet saknar bild. */
+  image_paths: string[] | null
   created_at: string
   read_at: string | null
   edited_at: string | null

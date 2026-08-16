@@ -207,6 +207,7 @@
       "image_label": "Image",
       "error": {
         "empty": "The message is empty.",
+        "max_images": "You can attach at most {{max}} images per message.",
         "too_long": "The message is too long (max 2000 characters)."
       }
     },
