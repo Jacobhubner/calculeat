@@ -243,6 +243,43 @@ export interface DataQualityResult {
 }
 
 /**
+ * Periodlängdens dämpning av datakvaliteten.
+ *
+ * VARFÖR (2026-08-16): DQI mätte bara TÄTHET, aldrig LÄNGD. En
+ * 14-dagarsperiod med full loggning och täta vägningar fick därför DQI 100
+ * — samma som 28 dagar — och därmed det STÖRSTA tillåtna justeringstaket
+ * (±200 kcal), trots att den är den minst tillförlitliga perioden.
+ * Verifierat i produktionsdata: 14-dagarskörningen fick DQI 99.
+ *
+ * Två oberoende skäl till att kort period är sämre:
+ *
+ * 1. FYSIOLOGI. Tidig viktnedgång är till övervägande del vatten och
+ *    glykogen, inte fett. Hall KD et al., Am J Clin Nutr 2016;104(2):324-333
+ *    (doi: 10.3945/ajcn.116.133561) — metabolisk avdelning, n=17: dag 1–15
+ *    gav 1,6 ± 0,2 kg viktnedgång men bara 0,2 ± 0,1 kg fett (p=0,09, ej
+ *    signifikant). Alltså ~87 % icke-fett. Studien är ketogen och därmed ett
+ *    övre gränsfall, men riktningen bekräftas av CALERIE (Thomas et al.,
+ *    J Acad Nutr Diet 2014, doi: 10.1016/j.jand.2014.02.003): energitätheten
+ *    i viktförändringen var 4858 ± 388 kcal/kg vid vecka 4 mot
+ *    6569 ± 272 vid vecka 24.
+ *
+ * 2. SIGNAL/BRUS. Vägbruset dämpas av periodens längd eftersom felet
+ *    divideras med antalet dagar. Med SD ≈ 0,5 % av kroppsvikten per mätning
+ *    (Schneditz et al. 2023, doi: 10.1080/0886022X.2023.2273421 — OBS n=1,
+ *    ska inte behandlas som populationsparameter) blir TDEE-osäkerheten från
+ *    enbart vägbrus ±177 kcal/dag vid 14 dagar mot ±62 vid 28.
+ *
+ * Dämpningen är multiplikativ i stället för en fjärde viktad komponent:
+ * längden ska SÄNKA ett annars gott betyg, inte kunna kompensera för gles
+ * loggning. 28 dagar är referens (1,0).
+ */
+const PERIOD_QUALITY_FACTOR: Record<number, number> = {
+  14: 0.75,
+  21: 0.9,
+  28: 1.0,
+}
+
+/**
  * Composite data quality score (0-100).
  * Drives adaptive max-adjustment (±75–200 kcal based on quality).
  *
@@ -268,7 +305,9 @@ export function calculateDataQualityIndex(
   // Using min(start, end) × 2 instead of sum prevents 5+1 from scoring the same as 3+3.
   const clusterScore = Math.min(100, ((Math.min(startClusterSize, endClusterSize) * 2) / 6) * 100)
 
-  const score = Math.round(logScore * 0.45 + freqScore * 0.35 + clusterScore * 0.2)
+  const rawScore = logScore * 0.45 + freqScore * 0.35 + clusterScore * 0.2
+  const periodFactor = PERIOD_QUALITY_FACTOR[periodDays] ?? 1.0
+  const score = Math.round(rawScore * periodFactor)
 
   // Continuous cap: 75 kcal at DQI=0, 200 kcal at DQI=100 — no cliff effects
   const maxAbsoluteAdjustment = Math.round(75 + (score / 100) * 125)

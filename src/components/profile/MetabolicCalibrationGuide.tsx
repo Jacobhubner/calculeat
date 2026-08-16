@@ -10,7 +10,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { HelpCircle, CheckCircle, XCircle, Scale, Info, AlertTriangle } from 'lucide-react'
+import {
+  HelpCircle,
+  CheckCircle,
+  XCircle,
+  Scale,
+  Info,
+  AlertTriangle,
+  BookOpen,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export default function MetabolicCalibrationGuide() {
@@ -152,8 +160,15 @@ export default function MetabolicCalibrationGuide() {
               viktutveckling — t.ex. en refeed-period mitt i perioden.
             </p>
             <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
-              Viktmätningar som avviker kraftigt från resten av datan filtreras automatiskt bort
+              Viktmätningar som avviker kraftigt från själva trendlinjen filtreras automatiskt bort
               innan trendberäkningen, för att minska påverkan från enstaka extrema mätningar.
+            </p>
+            <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
+              Att jämförelsen sker mot <em>trenden</em> och inte mot dina viktvärden i allmänhet är
+              avgörande när vikten faktiskt förändras. Går du ner ett par kilo under en månad ligger
+              dina vägningar naturligt utspridda över ett brett spann, och då skulle en enstaka
+              avvikande mätning inte sticka ut alls i jämförelse med resten. Mot trendlinjen syns
+              den däremot direkt.
             </p>
           </section>
 
@@ -182,6 +197,12 @@ export default function MetabolicCalibrationGuide() {
               </li>
             </ul>
             <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
+              Därutöver dämpas hela poängen av <strong>periodens längd</strong>: 28 dagar räknas
+              fullt, 21 dagar till 90 % och 14 dagar till 75 %. Skälet står under{' '}
+              <em>Val av tidsperiod</em> nedan. Dämpningen är avsiktligt multiplikativ — en längre
+              period kan alltså inte kompensera för att du loggat lite.
+            </p>
+            <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
               DQI styr direkt hur stor justering som tillåts: från ±75 kcal vid låg kvalitet till
               ±200 kcal vid hög. Det innebär att bättre data inte bara ger ett mer tillförlitligt
               resultat — det ger också möjlighet till snabbare konvergens mot ditt faktiska TDEE.
@@ -193,12 +214,29 @@ export default function MetabolicCalibrationGuide() {
               lika säkert ut som ett byggt på fullständig.
             </p>
             <div className="mt-3 p-3 bg-neutral-100 rounded text-neutral-600 text-xs dark:bg-neutral-800 dark:text-neutral-400">
-              <p className="font-medium mb-1">Val av tidsperiod</p>
+              <p className="font-medium mb-1">Val av tidsperiod — och varför längre är bättre</p>
               <p>
-                Du kan välja mellan 14, 21 och 28 dagar. Längre perioder ger mer data och tillåter
-                något större justeringar. Kortare perioder än 14 dagar används inte — signal/brus-
-                förhållandet blir då för svagt för att ge tillförlitliga estimat, eftersom dagliga
-                viktsvängningar kan vara lika stora som den faktiska vikttrendförändringen.
+                Du kan välja mellan 14, 21 och 28 dagar. <strong>28 dagar är referensen.</strong>{' '}
+                Kortare perioder sänker datakvaliteten och därmed hur mycket ditt TDEE får justeras
+                — 14 dagar får ungefär tre fjärdedelar av full poäng.
+              </p>
+              <p className="mt-1.5">Det finns två skäl, och de är oberoende av varandra:</p>
+              <p className="mt-1.5">
+                <strong>1. Tidig viktnedgång är mest vatten.</strong> När du drar ner på kalorierna
+                töms först kroppens glykogen, och varje gram glykogen binder 3–4 gram vatten. I en
+                kontrollerad avdelningsstudie tappade deltagarna 1,6 kg de första femton dagarna —
+                men bara 0,2 kg av det var fett, en skillnad som inte ens var statistiskt säker. En
+                kort period mäter alltså till stor del hur mycket vätska du gjort dig av med, inte
+                hur mycket energi du faktiskt gjort av med.
+              </p>
+              <p className="mt-1.5">
+                <strong>2. Mätbruset späds ut av tiden.</strong> Din vikt svänger från dag till dag
+                oavsett vad du äter. Det felet delas på antalet dagar i perioden — så samma
+                vägosäkerhet ger ungefär tre gånger större fel i TDEE på 14 dagar som på 28.
+              </p>
+              <p className="mt-1.5">
+                Kortare perioder än 14 dagar erbjuds inte alls: då blir de dagliga svängningarna
+                lika stora som den verkliga trenden.
               </p>
             </div>
           </section>
@@ -424,6 +462,85 @@ export default function MetabolicCalibrationGuide() {
               Ju mer konsekvent du loggar mat och vikt över tid, desto mer exakt kan systemet
               uppskatta ditt verkliga energibehov.
             </p>
+          </section>
+
+          {/* Section 10: Sources */}
+          <section>
+            <h3 className="font-semibold text-base mb-2 flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-primary-500" />
+              Källor
+            </h3>
+            <p className="text-neutral-600 text-xs leading-relaxed mb-3 dark:text-neutral-400">
+              Siffrorna i modellen är hämtade ur publicerad forskning. Där evidens saknas står det
+              uttryckligen — vi hittar hellre på en osäkerhet än en siffra.
+            </p>
+            <ul className="space-y-2.5 text-xs text-neutral-600 dark:text-neutral-400">
+              <li>
+                <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                  Energi per kilo kroppsvikt
+                </span>
+                <br />
+                Hall KD. <em>What is the required energy deficit per unit weight loss?</em> Int J
+                Obes 2008;32(3):573–576. doi:10.1038/sj.ijo.0803720 — visar att tumregeln 7 700
+                kcal/kg bygger på ett antagande om ren fettvävnad, och att energikostnaden i själva
+                verket beror på hur mycket kroppsfett man har från början.
+              </li>
+              <li>
+                <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                  Vad tidig viktnedgång består av
+                </span>
+                <br />
+                Hall KD et al. Am J Clin Nutr 2016;104(2):324–333. doi:10.3945/ajcn.116.133561 —
+                kontrollerad avdelningsstudie (n=17): 1,6 kg viktnedgång de första femton dagarna,
+                varav endast 0,2 kg fett.
+                <br />
+                Thomas DM et al. J Acad Nutr Diet 2014. doi:10.1016/j.jand.2014.02.003 — CALERIE:
+                energitätheten i viktförändringen var 4 858 kcal/kg vid vecka 4 mot 6 569 vid vecka
+                24.
+              </li>
+              <li>
+                <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                  Viktuppgångens sammansättning
+                </span>
+                <br />
+                Bray GA, Bouchard C. <em>
+                  The biology of human overfeeding: a systematic review.
+                </em>{' '}
+                Obes Rev 2020;21(9):e13040. doi:10.1111/obr.13040 — över 19 överutfodringsgrupper
+                bestod 61 % av viktuppgången av fett.
+              </li>
+              <li>
+                <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                  Underrapportering av kaloriintag
+                </span>
+                <br />
+                Trabulsi J, Schoeller DA. Am J Physiol Endocrinol Metab 2001;281(5):E891–899.
+                doi:10.1152/ajpendo.2001.281.5.E891 — jämförelse mot dubbelmärkt vatten.
+                <br />
+                Nature Food 2024. doi:10.1038/s43016-024-01089-5 — 6 497 mätningar med dubbelmärkt
+                vatten; underrapportering på 12–27 % beroende på metod och grupp.
+              </li>
+              <li>
+                <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                  Dag-till-dag-variation i kroppsvikt
+                </span>
+                <br />
+                Schneditz D et al. Ren Fail 2023. doi:10.1080/0886022X.2023.2273421 —
+                standardavvikelse omkring 0,5 % av kroppsvikten vid morgonvägning fastande.{' '}
+                <em>
+                  Observera: studien följer en enda person över lång tid, så siffran ska läsas som
+                  en storleksordning, inte ett exakt värde för alla.
+                </em>
+              </li>
+            </ul>
+            <div className="mt-3 p-3 bg-neutral-50 rounded border border-neutral-200 text-xs text-neutral-600 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
+              <p className="font-medium mb-1">Där evidensen inte räcker</p>
+              <p>
+                Vi har inte hittat någon publicerad studie som mäter hur energitätheten varierar med
+                nedgångens <em>hastighet</em>. Den justering modellen gör där är en rimlig
+                härledning, inte ett studieresultat, och den behandlas som osäker i beräkningen.
+              </p>
+            </div>
           </section>
         </div>
       </DialogContent>
