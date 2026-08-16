@@ -26,6 +26,10 @@ import { cn } from '@/lib/utils'
 import type { DietPhaseType, PhaseFocus } from '@/lib/types'
 import { suggestPhaseTargets } from '@/lib/calculations/dietPhases'
 import { useStartDietPhase } from '@/hooks/useDietPhases'
+import { useUpdateProfile, useActiveProfile } from '@/hooks'
+import { useAuth } from '@/contexts/AuthContext'
+import { macrosForMode } from '@/lib/utils/macroModes'
+import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
 import { useEntitlements } from '@/hooks/useEntitlements'
 import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 
@@ -102,6 +106,10 @@ export function PhasePickerDialog({
     return t(key as any) as string
   }
   const startPhase = useStartDietPhase()
+  const updateProfile = useUpdateProfile()
+  const { profile: activeProfile } = useActiveProfile()
+  const { isPreviewMode } = useAuth()
+  const profileId = activeProfile?.id
 
   // Styrkespåret bygger på Deff-/Bulk-lägen som räknar mot fettfri massa —
   // utan kroppsfettprocent går de inte att ge rätt siffror för.
@@ -169,12 +177,72 @@ export function PhasePickerDialog({
         weeklyCalorieStep: hasPlanning && selected === 'reverse' && step ? Number(step) : null,
       },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
+          await applyToProfile()
           toast.success(t('phase.toast.started'))
           onOpenChange(false)
         },
       }
     )
+  }
+
+  /**
+   * Skriver periodens mål till profilen: kaloriintervall och kostlägets
+   * makrofördelning.
+   *
+   * Varför i klienten och inte i triggern: makroprocenten beror på kroppsvikt
+   * och fettfri massa, som triggern inte har tillgång till. Den sätter därför
+   * bara calorie_goal, deficit_level och show_energy_density.
+   *
+   * Varför perioden får sätta makron trots att specen sa "perioden sätter
+   * aldrig makrofördelning": den regeln fanns för att skydda gränsen mot
+   * `all_diet_modes`. Kostlägen är gratis sedan 2026-08-15, så skälet
+   * försvann. Perioden pekar redan ut exakt ett kostläge — att applicera det
+   * är inte en ny sanning, bara att göra det som ändå är avsett.
+   *
+   * Kalorierna är dessutom redan identiska med profilens egen härledning
+   * (TDEE × 0,75–0,80 vid viktnedgång = deficit_level 20-25 %), så ingen
+   * konkurrerande beräkning införs.
+   *
+   * Preview-läget: profilen är en sandlådekopia och triggern hoppar över
+   * preview-rader, så skrivningen görs inte där heller — annars vore
+   * halva kopplingen aktiv och halva inte.
+   */
+  const applyToProfile = async () => {
+    if (!profileId || isPreviewMode) return
+
+    const macros = macrosForMode(suggestion.macroMode, {
+      weight: weightKg,
+      fatFreeMass: bodyFatPercentage ? calculateLeanMass(weightKg, bodyFatPercentage) : undefined,
+      caloriesMin: suggestion.targetCaloriesMin,
+      caloriesMax: suggestion.targetCaloriesMax,
+    })
+
+    try {
+      await updateProfile.mutateAsync({
+        profileId,
+        silent: true,
+        data: {
+          calories_min: suggestion.targetCaloriesMin,
+          calories_max: suggestion.targetCaloriesMax,
+          ...(macros
+            ? {
+                fat_min_percent: macros.fatMinPercent,
+                fat_max_percent: macros.fatMaxPercent,
+                carb_min_percent: macros.carbMinPercent,
+                carb_max_percent: macros.carbMaxPercent,
+                protein_min_percent: macros.proteinMinPercent,
+                protein_max_percent: macros.proteinMaxPercent,
+              }
+            : {}),
+        },
+      })
+    } catch {
+      // Perioden är redan startad och triggern har satt calorie_goal —
+      // en utebliven målskrivning får inte se ut som att starten misslyckades.
+      // Nästa kalibrering eller TDEE-omräkning härleder värdena ur
+      // calorie_goal ändå.
+    }
   }
 
   return (
@@ -184,6 +252,18 @@ export function PhasePickerDialog({
           <DialogTitle>{t('phase.modal.title')}</DialogTitle>
           <DialogDescription>{t('phase.modal.subtitle')}</DialogDescription>
         </DialogHeader>
+
+        {/*
+          Preview är en sandlåda: profilen är en kopia och databastriggern
+          hoppar över preview-rader. Perioden startas alltså, men kalorimål
+          och makrofördelning når aldrig den riktiga profilen. Utan den här
+          raden ser det ut som en bugg.
+        */}
+        {isPreviewMode && (
+          <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-900/25 dark:text-amber-200">
+            {t('phase.modal.previewNotice')}
+          </p>
+        )}
 
         {/*
           STEG 1 — egen vy, inte en ruta ovanför resten.

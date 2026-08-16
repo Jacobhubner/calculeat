@@ -245,7 +245,8 @@
       "needsTdee": "You need to calculate your TDEE before choosing a period.",
       "goToTdee": "Calculate TDEE",
       "close": "Close",
-      "next": "Continue"
+      "next": "Continue",
+      "previewNotice": "You are testing as a new user — the period is saved in the sandbox and does not affect your real profile."
     },
     "toast": {
       "started": "Period started",

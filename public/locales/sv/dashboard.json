@@ -245,7 +245,8 @@
       "needsTdee": "Du behöver räkna ut ditt TDEE innan du kan välja en period.",
       "goToTdee": "Räkna ut TDEE",
       "close": "Stäng",
-      "next": "Fortsätt"
+      "next": "Fortsätt",
+      "previewNotice": "Du testar som ny användare — perioden sparas i sandlådan och påverkar inte din riktiga profil."
     },
     "toast": {
       "started": "Perioden har startat",

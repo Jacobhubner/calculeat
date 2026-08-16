@@ -160,6 +160,29 @@ describe('suggestPhaseTargets', () => {
     expect(strength.macroMode).toBe('offseason')
   })
 
+  it('matchar profilens egen kaloriehärledning', () => {
+    // Perioden skriver nu calories_min/max till profilen. Det är bara
+    // ofarligt så länge talen är IDENTISKA med hur profilen annars räknar
+    // dem (MetabolicCalibration och TDEE-verktyget härleder ur calorie_goal
+    // + deficit_level). Glider de isär får användaren olika mål beroende på
+    // vad som senast rörde profilen.
+    const tdee = 2000
+    const cut = suggestPhaseTargets('cut', tdee, 80, 'health')
+    // deficit_level '20-25%' → TDEE × (1 − 0,225 ∓ 0,025)
+    expect(cut.targetCaloriesMin).toBe(Math.round(tdee * (1 - 0.225 - 0.025)))
+    expect(cut.targetCaloriesMax).toBe(Math.round(tdee * (1 - 0.225 + 0.025)))
+
+    // Viktuppgång: profilen använder TDEE × 1,1–1,2
+    const bulk = suggestPhaseTargets('bulk', tdee, 80, 'health')
+    expect(bulk.targetCaloriesMin).toBe(Math.round(tdee * 1.1))
+    expect(bulk.targetCaloriesMax).toBe(Math.round(tdee * 1.2))
+
+    // Underhåll: TDEE ±3 %
+    const maint = suggestPhaseTargets('maintenance', tdee, 80, 'health')
+    expect(maint.targetCaloriesMin).toBe(Math.round(tdee * 0.97))
+    expect(maint.targetCaloriesMax).toBe(Math.round(tdee * 1.03))
+  })
+
   it('lägger mittpunkten mitt i spannet', () => {
     const s = suggestPhaseTargets('cut', 2770, 80, 'health')
     expect(s.targetCalories).toBe(Math.round((s.targetCaloriesMin + s.targetCaloriesMax) / 2))

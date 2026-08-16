@@ -280,6 +280,30 @@ export function freeMacrosForGoal(
   return applyMacroMode(mode, params)
 }
 
+/**
+ * Som applyMacroMode, men returnerar null i stället för att kasta när ett
+ * läge saknar sina förutsättningar (onseason kräver fettfri massa).
+ *
+ * Används när makrofördelningen är en BIVERKNING av något annat — t.ex. när
+ * en period skriver sina mål till profilen. Där ska ett saknat kroppsfett
+ * betyda "sätt inga makron", inte avbryta hela operationen.
+ */
+export function macrosForMode(
+  mode: MacroModeId,
+  params: {
+    weight: number
+    fatFreeMass?: number
+    caloriesMin: number
+    caloriesMax: number
+  }
+): MacroMode | null {
+  try {
+    return applyMacroMode(mode, params)
+  } catch {
+    return null
+  }
+}
+
 export function applyMacroMode(
   mode: MacroModeId,
   params: {
