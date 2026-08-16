@@ -214,6 +214,13 @@ function ActivePhase({
   // Uppföljning mot uppmätt vikt. Returnerar null tills det finns underlag.
   const { data: weightHistory } = useWeightHistory()
   const tracking = phaseTracking(phase, weightHistory ?? [], tdee)
+
+  // Skilj på "har inte vägt sig alls" och "har vägt sig en gång": den som
+  // redan börjat behöver veta att det fattas EN till, inte höra en allmän
+  // uppmaning som låter som att inget registrerats.
+  const weighInsInPhase = (weightHistory ?? []).filter(
+    w => new Date(w.recorded_at) >= new Date(phase.started_at + 'T00:00:00')
+  ).length
   const TrackingIcon = tracking
     ? tracking.status === 'on_track'
       ? Check
@@ -283,7 +290,9 @@ function ActivePhase({
       {!tracking && (
         <p className="mt-3 flex items-start gap-2 rounded-lg bg-neutral-50 px-3 py-2 text-[11px] text-neutral-500 dark:bg-neutral-900 dark:text-neutral-400">
           <Scale className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-          {t('phase.tracking.needsWeights')}
+          {weighInsInPhase >= 1
+            ? t('phase.tracking.needsOneMore')
+            : t('phase.tracking.needsWeights')}
         </p>
       )}
 

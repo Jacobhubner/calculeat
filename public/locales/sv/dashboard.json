@@ -278,7 +278,8 @@
       "behind": "Det går långsammare än planerat",
       "too_early": "För tidigt att säga — vikten svänger av vätska de första veckorna",
       "detail": "{{actual}} på {{days}} dagar · förväntat {{expected}}",
-      "needsWeights": "Väg dig regelbundet så kan appen visa om perioden ger resultat."
+      "needsWeights": "Väg dig för att se om perioden ger resultat — annars vet appen bara vad du siktar på, inte vad som händer.",
+      "needsOneMore": "En vägning till så kan appen visa hur perioden går."
     }
   },
   "calibrationReadiness": {

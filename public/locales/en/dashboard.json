@@ -278,7 +278,8 @@
       "behind": "This is going slower than planned",
       "too_early": "Too early to tell — weight swings with fluid in the first weeks",
       "detail": "{{actual}} over {{days}} days · expected {{expected}}",
-      "needsWeights": "Weigh in regularly so the app can show whether the period is working."
+      "needsWeights": "Weigh in to see whether the period is working — otherwise the app only knows what you are aiming for, not what is happening.",
+      "needsOneMore": "One more weigh-in and the app can show how the period is going."
     }
   },
   "calibrationReadiness": {
