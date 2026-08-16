@@ -111,6 +111,51 @@ describe('runCalibration — loggningen måste täcka mätperioden', () => {
   })
 })
 
+describe('runCalibration — veckodagsbias begränsar justeringen', () => {
+  /** Loggade datum inom perioden, valfritt bara vardagar */
+  const datesIn = (count: number, weekdaysOnly: boolean) => {
+    const out: string[] = []
+    for (let i = 0; out.length < count && i < 60; i++) {
+      const d = new Date(NOW.getTime() - i * 86400000)
+      const day = d.getDay()
+      if (weekdaysOnly && (day === 0 || day === 6)) continue
+      out.push(d.toISOString().slice(0, 10))
+    }
+    return out
+  }
+
+  it('varnar när bara vardagar loggats', () => {
+    // 20 vardagar behövs för att klara täckningskravet (28-dagarsperiod) och
+    // därmed nå bias-kontrollen — 14 vardagar spänner bara 48 % av perioden.
+    const r = runCalibration(baseInput({ daysWithLogData: 20, loggedDates: datesIn(20, true) }))
+    expect(typeof r).toBe('object')
+    if (typeof r === 'object') {
+      expect(r.warnings.some(w => w.type === 'weekday_bias')).toBe(true)
+    }
+  })
+
+  it('varnar inte när urvalet är representativt', () => {
+    const r = runCalibration(baseInput({ daysWithLogData: 20, loggedDates: datesIn(20, false) }))
+    expect(typeof r).toBe('object')
+    if (typeof r === 'object') {
+      expect(r.warnings.some(w => w.type === 'weekday_bias')).toBe(false)
+    }
+  })
+
+  it('snedvridet urval flyttar TDEE mindre än representativt', () => {
+    // Samma antal loggdagar och samma intag — enda skillnaden är VILKA dagar
+    const biased = runCalibration(
+      baseInput({ daysWithLogData: 20, loggedDates: datesIn(20, true) })
+    )
+    const fair = runCalibration(baseInput({ daysWithLogData: 20, loggedDates: datesIn(20, false) }))
+    if (typeof biased === 'object' && typeof fair === 'object') {
+      const biasedMove = Math.abs(biased.clampedTDEE - 2500)
+      const fairMove = Math.abs(fair.clampedTDEE - 2500)
+      expect(biasedMove).toBeLessThanOrEqual(fairMove)
+    }
+  })
+})
+
 describe('runCalibration — calorieSource märks ärligt', () => {
   it('märks food_log när loggen är i princip komplett', () => {
     const r = runCalibration(baseInput({ daysWithLogData: 28, foodLogCompleteness: 100 }))

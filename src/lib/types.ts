@@ -557,6 +557,7 @@ export interface CalibrationWarning {
     | 'outlier_removed'
     | 'low_signal'
     | 'selective_logging'
+    | 'weekday_bias'
     | 'large_deficit'
   message: string
 }

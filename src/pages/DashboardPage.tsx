@@ -8,6 +8,7 @@ import { DashboardHeroSection } from '@/components/dashboard/DashboardHeroSectio
 import CalibrationPrompt from '@/components/profile/CalibrationPrompt'
 import CalibrationReadinessCard from '@/components/dashboard/CalibrationReadinessCard'
 import { useActualCalorieIntake } from '@/hooks/useActualCalorieIntake'
+import { MIN_DAILY_KCAL_FOR_LOG } from '@/lib/calculations/calibration'
 import { DietPhaseCard } from '@/components/dashboard/DietPhaseCard'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
@@ -63,6 +64,15 @@ export default function DashboardPage() {
   const { data: intakeWindow } = useActualCalorieIntake(
     calibrationWindow.start,
     calibrationWindow.end
+  )
+
+  // Datumen, inte bara antalet: kortet upptäcker om bara vardagar loggats.
+  const loggedDates = useMemo(
+    () =>
+      (intakeWindow?.dailyCalories ?? [])
+        .filter(d => d.calories > MIN_DAILY_KCAL_FOR_LOG)
+        .map(d => d.date),
+    [intakeWindow]
   )
 
   const calibrationAvailability = useCalibrationAvailability(
@@ -289,6 +299,7 @@ export default function DashboardPage() {
             <CalibrationReadinessCard
               availability={calibrationAvailability}
               hasCalibratedBefore={!!lastCalibration}
+              loggedDates={loggedDates}
             />
 
             {/* TDEE Scenarios */}

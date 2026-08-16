@@ -41,6 +41,82 @@ export interface SelectiveLoggingIndicator {
   loggedVsTargetRatio: number
 }
 
+export interface WeekdayBiasResult {
+  /** Andel av loggade dagar som är helg (lör/sön). Förväntat ≈ 2/7 = 0.286 */
+  weekendShare: number
+  /** Hur snedvridet urvalet är, 0 = representativt, 1 = bara ena sorten */
+  skew: number
+  isLikely: boolean
+  severity: 'none' | 'mild' | 'strong'
+  loggedWeekdays: number
+  loggedWeekends: number
+}
+
+/** Förväntad helgandel i ett representativt urval: 2 av 7 dagar. */
+export const EXPECTED_WEEKEND_SHARE = 2 / 7
+
+/**
+ * Upptäck veckodagsbias — att användaren systematiskt loggar vardagar och
+ * hoppar helgen (eller tvärtom).
+ *
+ * VARFÖR (2026-08-16): detectSelectiveLogging kräver ratio < 0.85, dvs. att
+ * det loggade intaget ligger UNDER målet. Den fångar den som loggar sina
+ * "duktiga" dagar, men INTE den som loggar vardagar och hoppar helgen — trots
+ * att det ger ett större fel. I den här appens egen data ligger helger
+ * +245 kcal över vardagar, och helgdagar är underrepresenterade i loggen
+ * (12 mot 38 loggade dagar, förväntat ≈ 14 mot 36).
+ *
+ * Räkneexempel: 10 vardagar à 2200 + 4 helgdagar à 2900 ger sant snitt
+ * 2400 kcal. Loggas bara vardagarna skattas 2200 — ett TDEE-fel på
+ * −230 kcal, ungefär fem gånger större än priorns bidrag.
+ *
+ * Detta går inte att korrigera bort i efterhand: vi vet inte vad de
+ * ologgade dagarna innehöll. Signalen används därför för att sänka
+ * förtroendet och varna, inte för att justera siffran.
+ */
+export function detectWeekdayBias(loggedDates: string[]): WeekdayBiasResult {
+  const none: WeekdayBiasResult = {
+    weekendShare: EXPECTED_WEEKEND_SHARE,
+    skew: 0,
+    isLikely: false,
+    severity: 'none',
+    loggedWeekdays: 0,
+    loggedWeekends: 0,
+  }
+
+  // Under en vecka är urvalet för litet för att skilja mönster från slump
+  if (loggedDates.length < 7) return none
+
+  let weekends = 0
+  for (const iso of loggedDates) {
+    // Middagstid undviker att tidszonen flyttar datumet en dag
+    const day = new Date(`${iso}T12:00:00`).getDay()
+    if (day === 0 || day === 6) weekends++
+  }
+  const weekdays = loggedDates.length - weekends
+  const weekendShare = weekends / loggedDates.length
+
+  // Avvikelse från förväntad andel, normaliserad så att 1 = extremfallet
+  // (bara vardagar eller bara helger).
+  const deviation = weekendShare - EXPECTED_WEEKEND_SHARE
+  const maxDeviation = deviation < 0 ? EXPECTED_WEEKEND_SHARE : 1 - EXPECTED_WEEKEND_SHARE
+  const skew = maxDeviation > 0 ? Math.abs(deviation) / maxDeviation : 0
+
+  // Trösklarna: 0.5 = halva vägen mot extremen. Vid 14 loggade dagar
+  // motsvarar mild ungefär "1 av 4 förväntade helgdagar loggade".
+  const severity: WeekdayBiasResult['severity'] =
+    skew >= 0.75 ? 'strong' : skew >= 0.5 ? 'mild' : 'none'
+
+  return {
+    weekendShare,
+    skew,
+    isLikely: severity !== 'none',
+    severity,
+    loggedWeekdays: weekdays,
+    loggedWeekends: weekends,
+  }
+}
+
 /**
  * Detect selective logging: users logging only "good" (low calorie) days.
  * If actual avg is significantly below target AND completeness is mediocre

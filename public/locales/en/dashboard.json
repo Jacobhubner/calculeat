@@ -279,9 +279,11 @@
     "countdown_other": "In {{count}} days the app can work out your real TDEE",
     "almostThere": "Soon the app can work out your real TDEE",
     "weighIns": "Weigh-ins",
-    "weighInsHint": "Weigh yourself in the morning before breakfast — same time each day gives the steadiest result.",
     "logDays": "Logged days",
-    "logDaysHint": "Log on the same days you weigh in — calibration compares intake and weight over the same period.",
+    "nextWeighIn": "Next step: weigh yourself tomorrow morning, before breakfast. The same time each day makes your weight comparable between days.",
+    "nextLogDay": "Next step: log everything you eat today — including what was not planned. That is the difference between your real burn rate and a guess.",
+    "nextWeekend": "Next step: log at weekends too. Weekend days often run higher than weekdays, and leaving them out makes your burn rate look too low.",
+    "nextAlmost": "Keep this up for a few more days — then the app can work out your TDEE from your own data.",
     "explainer": "Calibration compares what you ate with how your weight responded. That makes your TDEE your own — not a formula estimate."
   }
 }

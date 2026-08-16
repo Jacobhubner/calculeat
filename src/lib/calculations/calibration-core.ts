@@ -29,6 +29,8 @@ import { buildClusters } from './calibration-clustering'
 import {
   getCalorieEstimate,
   detectSelectiveLogging,
+  detectWeekdayBias,
+  EXPECTED_WEEKEND_SHARE,
   calculateDataQualityIndex,
   calculateConfidence,
   getMaxAdjustment,
@@ -296,6 +298,18 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     maxAdjPercent *= 0.8
   }
 
+  // Veckodagsbias: loggas bara vardagar (eller bara helger) är det skattade
+  // intaget systematiskt fel — helger ligger i den här appens data +245 kcal
+  // över vardagar. Felet går inte att korrigera bort i efterhand, eftersom vi
+  // inte vet vad de ologgade dagarna innehöll. Vi begränsar därför hur långt
+  // TDEE tillåts flytta sig, precis som vid låg signal.
+  const weekdayBias = detectWeekdayBias(input.loggedDates ?? [])
+  if (weekdayBias.severity === 'strong') {
+    maxAdjPercent *= 0.6
+  } else if (weekdayBias.severity === 'mild') {
+    maxAdjPercent *= 0.8
+  }
+
   // Two separate clamps applied in series — tighter of the two wins.
   //
   // DQI clamp: precision bound centred on rawTDEE.
@@ -376,6 +390,17 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
       type: 'selective_logging',
       message:
         'Systemet fungerar bäst när alla dagar loggas — även de där man äter mer än planerat.',
+    })
+  }
+
+  if (weekdayBias.isLikely) {
+    const missing = weekdayBias.weekendShare < EXPECTED_WEEKEND_SHARE ? 'helgdagar' : 'vardagar'
+    warnings.push({
+      type: 'weekday_bias',
+      message:
+        `Du har loggat ${weekdayBias.loggedWeekdays} vardagar och ` +
+        `${weekdayBias.loggedWeekends} helgdagar. Eftersom ${missing} saknas i loggen ` +
+        `kan intaget vara systematiskt fel — justeringen begränsas därför.`,
     })
   }
 
