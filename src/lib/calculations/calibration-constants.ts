@@ -21,6 +21,16 @@ export const MIN_CLUSTER_SIZE: Record<14 | 21 | 28, number> = {
   28: 2,
 }
 
+/**
+ * Absolut golv för hur mycket TDEE får justeras, som andel av nuvarande TDEE.
+ *
+ * Appliceras EFTER alla riskmultiplikatorer (låg signal, stort underskott,
+ * veckodagsbias, underrapportering). Slår flera till samtidigt blir produkten
+ * annars så liten att kalibreringen blir en no-op — och ett för litet
+ * konvergenstak är dessutom det som gör klämintervallen disjunkta.
+ */
+export const MIN_ADJUSTMENT_PERCENT = 0.02
+
 /** Base max adjustment per period */
 export const BASE_MAX_ADJUSTMENT: Record<14 | 21 | 28, number> = {
   14: 0.12,

@@ -156,6 +156,102 @@ describe('runCalibration — veckodagsbias begränsar justeringen', () => {
   })
 })
 
+describe('runCalibration — klämmorna håller åt båda håll', () => {
+  /**
+   * Tidigare beräknades finalMin = max(dqiMin, convMin) och
+   * finalMax = min(dqiMax, convMax). När intervallen inte överlappade blev
+   * finalMin > finalMax, och det yttre Math.max returnerade DQI-gränsen —
+   * vilket kringgick konvergenstaket helt. Felet var ensidigt: bara
+   * uppåtjusteringar läckte.
+   */
+
+  it('respekterar konvergenstaket vid stor uppjustering', () => {
+    // Vikten står still trots stort loggat underskott => rawTDEE skjuter upp
+    const r = runCalibration(
+      baseInput({
+        currentTDEE: 2000,
+        weightHistory: weightSeries(28, 85, 0),
+        actualCaloriesAvg: 3000,
+        targetCalories: 3000,
+        daysWithLogData: 28,
+        foodLogCompleteness: 100,
+      })
+    )
+    if (typeof r === 'object') {
+      // Får aldrig hamna över currentTDEE + maxAllowedAdjustmentPercent
+      const tak = 2000 * (1 + r.maxAllowedAdjustmentPercent)
+      expect(r.clampedTDEE).toBeLessThanOrEqual(Math.round(tak) + 1)
+    }
+  })
+
+  it('respekterar konvergenstaket vid stor nedjustering', () => {
+    const r = runCalibration(
+      baseInput({
+        currentTDEE: 3500,
+        weightHistory: weightSeries(28, 85, -0.06),
+        actualCaloriesAvg: 1600,
+        targetCalories: 1600,
+        daysWithLogData: 28,
+        foodLogCompleteness: 100,
+      })
+    )
+    if (typeof r === 'object') {
+      const golv = 3500 * (1 - r.maxAllowedAdjustmentPercent)
+      expect(r.clampedTDEE).toBeGreaterThanOrEqual(Math.round(golv) - 1)
+    }
+  })
+
+  it('klämmer symmetriskt — samma avstånd upp som ned', () => {
+    // Spegelvända fall ska begränsas lika hårt
+    const upp = runCalibration(
+      baseInput({
+        currentTDEE: 2500,
+        weightHistory: weightSeries(28, 85, 0),
+        actualCaloriesAvg: 3400,
+        targetCalories: 3400,
+        daysWithLogData: 28,
+      })
+    )
+    const ned = runCalibration(
+      baseInput({
+        currentTDEE: 2500,
+        weightHistory: weightSeries(28, 85, -0.07),
+        actualCaloriesAvg: 1500,
+        targetCalories: 1500,
+        daysWithLogData: 28,
+      })
+    )
+    if (typeof upp === 'object' && typeof ned === 'object') {
+      const avstUpp = upp.clampedTDEE - 2500
+      const avstNed = 2500 - ned.clampedTDEE
+      // Båda ska vara begränsade, ingen ska sticka iväg flera hundra kcal mer
+      expect(Math.abs(avstUpp - avstNed)).toBeLessThan(250)
+    }
+  })
+
+  it('justeringstaket faller aldrig under golvet', () => {
+    // Alla riskmultiplikatorer aktiva samtidigt gav tidigare 0,6 % (14 kcal)
+    const r = runCalibration(
+      baseInput({
+        currentTDEE: 2400,
+        weightHistory: weightSeries(28, 85, -0.001), // låg signal
+        deficitPercent: 30, // stort underskott
+        daysWithLogData: 20,
+        loggedDates: Array.from({ length: 20 }, (_, i) => {
+          // bara vardagar => weekday_bias
+          const d = new Date(NOW.getTime() - i * 86400000)
+          return d.getDay() === 0 || d.getDay() === 6
+            ? new Date(NOW.getTime() - (i + 2) * 86400000).toISOString().slice(0, 10)
+            : d.toISOString().slice(0, 10)
+        }),
+      })
+    )
+    if (typeof r === 'object') {
+      expect(r.maxAllowedAdjustmentPercent).toBeGreaterThanOrEqual(0.02)
+    }
+  })
+})
+
 describe('runCalibration — konfidensintervallet', () => {
   it('omsluter punktskattningen', () => {
     const r = runCalibration(baseInput())

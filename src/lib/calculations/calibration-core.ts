@@ -10,6 +10,7 @@ import {
   MIN_DATA_POINTS,
   MIN_LOG_DAYS_FOR_CALIBRATION,
   MIN_LOG_COVERAGE_OF_PERIOD,
+  MIN_ADJUSTMENT_PERCENT,
   TDEE_FLOOR,
   TDEE_CEILING,
   MAX_WEEKLY_CHANGE_PERCENT,
@@ -327,6 +328,19 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
     maxAdjPercent *= 0.75
   }
 
+  // Golvet måste appliceras EFTER alla multiplikatorer.
+  //
+  // getMaxAdjustment returnerar Math.max(0.05, ...), men de fyra skydden
+  // ovan multiplicerar efteråt. Slår alla till samtidigt blir produkten
+  // 0,5 × 0,8 × 0,6 × 0,5 = 0,12, alltså 0,05 × 0,12 = 0,006 — ett tak på
+  // 14 kcal vid TDEE 2400. Kalibreringen blir då en no-op som ändå
+  // presenteras som ett resultat med konfidensintervall.
+  //
+  // Värre: ett litet konvergenstak är precis vad som gör klämintervallen
+  // disjunkta (se nedan), vilket i sin tur öppnar läckaget uppåt. Utan det
+  // här golvet orsakar skydden alltså det fel de finns till för att stoppa.
+  maxAdjPercent = Math.max(MIN_ADJUSTMENT_PERCENT, maxAdjPercent)
+
   // Two separate clamps applied in series — tighter of the two wins.
   //
   // DQI clamp: precision bound centred on rawTDEE.
@@ -345,9 +359,29 @@ export function runCalibration(input: CalibrationInput): CalibrationResult | str
   const convMin = Math.max(TDEE_FLOOR, input.currentTDEE - maxFromPercent)
   const convMax = Math.min(TDEE_CEILING, input.currentTDEE + maxFromPercent)
 
-  const finalMin = Math.max(dqiMin, convMin, TDEE_FLOOR)
-  const finalMax = Math.min(dqiMax, convMax, TDEE_CEILING)
-  const clampedTDEE = Math.round(Math.max(finalMin, Math.min(finalMax, rawTDEE)))
+  // Klämmorna tillämpas SEKVENTIELLT, inte som korsande min/max-gränser.
+  //
+  // Tidigare beräknades finalMin = max(dqiMin, convMin) och
+  // finalMax = min(dqiMax, convMax), följt av
+  // max(finalMin, min(finalMax, rawTDEE)). Det ger rätt svar bara när
+  // intervallen ÖVERLAPPAR. Ligger rawTDEE längre från currentTDEE än
+  // dqiCap + convCap blir finalMin > finalMax, och det yttre Math.max
+  // returnerar då finalMin — alltså DQI-gränsen — vilket kringgår
+  // konvergenstaket helt.
+  //
+  // Konkret: currentTDEE 2400, rawTDEE 3100, DQI-tak 200, konvergenstak 120
+  // gav 2900 i stället för 2520 — 380 kcal över taket.
+  //
+  // Felet var dessutom ENSIDIGT: nedåt returnerade uttrycket convMin och
+  // klämman höll. Bara uppåtjusteringar läckte, alltså exakt den riktning
+  // en underrapporterande användare drar åt.
+  //
+  // Sekventiell tillämpning ger alltid det snävaste resultatet: först
+  // begränsa till vad datan visar (DQI), sedan till hur snabbt TDEE får
+  // röra sig (konvergens).
+  const afterDqi = Math.max(dqiMin, Math.min(dqiMax, rawTDEE))
+  const afterConv = Math.max(convMin, Math.min(convMax, afterDqi))
+  const clampedTDEE = Math.round(Math.max(TDEE_FLOOR, Math.min(TDEE_CEILING, afterConv)))
   const wasLimited = Math.abs(clampedTDEE - rawTDEE) > 0.5
 
   // Step 7: TDEE floor/ceiling absolute check
