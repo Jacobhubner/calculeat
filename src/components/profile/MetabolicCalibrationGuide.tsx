@@ -103,6 +103,27 @@ export default function MetabolicCalibrationGuide() {
                   skyddar mot att kalibreringen föreslår ett för lågt TDEE baserat på biased data.
                 </p>
               </div>
+              <div>
+                <p className="font-medium">Varför loggningen är det känsligaste steget</p>
+                <p className="mt-1">
+                  Ett fel i det loggade intaget slår igenom <strong>rakt av</strong> i resultatet:
+                  loggar du 200 kcal för lite blir ditt TDEE 200 kcal för lågt. Ett fel i vikten
+                  däremot fördelas över hela perioden — ett halvkilos mätfel över fyra veckor
+                  motsvarar bara ungefär 140 kcal.
+                </p>
+                <p className="mt-1">
+                  Det är därför loggningen väger tyngst av allt i systemet. Forskning som jämför
+                  självrapporterat intag mot mätningar med dubbelmärkt vatten visar att de flesta
+                  underskattar sitt intag med 12–27 %, oftast utan att märka det — glömda tillbehör
+                  som olja och dressing, drycker, eller portioner som är större än de ser ut.
+                </p>
+                <p className="mt-1">
+                  Systemet jämför därför din logg med vad vågen säger. Om vikten tyder på ett
+                  betydligt högre intag än du loggat begränsas justeringen, och du får veta hur stor
+                  skillnaden är. Värdet räknas medvetet <em>inte</em> upp automatiskt — vi vet inte
+                  vad som saknas, och en gissning skulle bara dölja osäkerheten.
+                </p>
+              </div>
             </div>
           </section>
 
@@ -164,6 +185,12 @@ export default function MetabolicCalibrationGuide() {
               DQI styr direkt hur stor justering som tillåts: från ±75 kcal vid låg kvalitet till
               ±200 kcal vid hög. Det innebär att bättre data inte bara ger ett mer tillförlitligt
               resultat — det ger också möjlighet till snabbare konvergens mot ditt faktiska TDEE.
+            </p>
+            <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
+              Matloggen påverkar dessutom den <strong>tillförlitlighetsnivå</strong> som visas med
+              resultatet. Är färre än 60 % av dagarna loggade sänks nivån ett steg, även om
+              vikthistoriken i sig är perfekt — annars skulle ett resultat byggt på tunn loggdata se
+              lika säkert ut som ett byggt på fullständig.
             </p>
             <div className="mt-3 p-3 bg-neutral-100 rounded text-neutral-600 text-xs dark:bg-neutral-800 dark:text-neutral-400">
               <p className="font-medium mb-1">Val av tidsperiod</p>
@@ -274,8 +301,32 @@ export default function MetabolicCalibrationGuide() {
             <p className="text-neutral-700 mb-2 dark:text-neutral-200">
               Kalibreringen fungerar bäst när du har samlat in tillräckligt med konsekvent data.
             </p>
+            <div className="mb-3 rounded-lg border border-neutral-200 bg-neutral-50 p-3 dark:border-neutral-700 dark:bg-neutral-900">
+              <p className="font-medium text-neutral-800 dark:text-neutral-100">
+                Detta krävs för att kalibrering ska gå att göra
+              </p>
+              <ul className="mt-1.5 list-disc space-y-1 pl-4 text-neutral-700 dark:text-neutral-200">
+                <li>
+                  Minst <strong>4 vägningar</strong> spridda över perioden (fler för längre
+                  perioder)
+                </li>
+                <li>
+                  Minst <strong>7 loggade dagar</strong> — utan loggat intag kan TDEE bara gissas
+                  utifrån ditt mål, inte mätas
+                </li>
+                <li>
+                  Loggningen måste täcka <strong>minst halva mätperioden</strong>. Sju loggdagar i
+                  början av en månad säger inget om den vikt som mätts i slutet — de två måste
+                  beskriva samma tid
+                </li>
+              </ul>
+              <p className="mt-2 text-neutral-600 text-xs dark:text-neutral-400">
+                Saknas något av detta visas i stället hur långt du har kvar. Kraven finns för att
+                ett resultat byggt på för tunn data är sämre än inget resultat alls.
+              </p>
+            </div>
             <p className="text-neutral-700 font-medium mb-1 dark:text-neutral-200">
-              Bra förutsättningar:
+              Det här gör resultatet ännu bättre:
             </p>
             <ul className="space-y-2">
               <li className="flex items-start gap-2">
@@ -294,6 +345,14 @@ export default function MetabolicCalibrationGuide() {
                 <span className="text-success-600 mt-0.5 dark:text-success-300">✓</span>
                 <span className="text-neutral-700 dark:text-neutral-200">
                   Du har loggat <strong>majoriteten av dagarna</strong>
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-success-600 mt-0.5 dark:text-success-300">✓</span>
+                <span className="text-neutral-700 dark:text-neutral-200">
+                  Du loggar <strong>även helger</strong> — helgdagar ligger ofta högre än vardagar,
+                  och saknas de skattas din förbrukning för lågt. Systemet upptäcker sådan
+                  snedvridning och begränsar då justeringen
                 </span>
               </li>
               <li className="flex items-start gap-2">
