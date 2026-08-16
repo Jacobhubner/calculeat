@@ -559,9 +559,12 @@ export default function MetabolicCalibration({
                     <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section3p3')}
                     </p>
-                    <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
-                      {t('metabolicCalibration.infoModal.section3p4')}
-                    </p>
+                    <p
+                      className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200"
+                      dangerouslySetInnerHTML={{
+                        __html: t('metabolicCalibration.infoModal.section3p4'),
+                      }}
+                    />
                   </section>
 
                   {/* Section 4 */}
@@ -587,11 +590,24 @@ export default function MetabolicCalibration({
                     <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section4p2')}
                     </p>
+                    {/* Periodlängden dämpar hela DQI-poängen — se
+                        PERIOD_QUALITY_FACTOR i calibration-quality.ts */}
+                    <p
+                      className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200"
+                      dangerouslySetInnerHTML={{
+                        __html: t('metabolicCalibration.infoModal.section4p3'),
+                      }}
+                    />
                     <div className="mt-3 p-3 bg-neutral-100 rounded text-neutral-600 text-xs dark:bg-neutral-800 dark:text-neutral-400">
                       <p className="font-medium mb-1">
                         {t('metabolicCalibration.infoModal.section4tipTitle')}
                       </p>
-                      <p>{t('metabolicCalibration.infoModal.section4tip')}</p>
+                      <p
+                        className="leading-relaxed"
+                        dangerouslySetInnerHTML={{
+                          __html: t('metabolicCalibration.infoModal.section4tip'),
+                        }}
+                      />
                     </div>
                   </section>
 
@@ -740,6 +756,43 @@ export default function MetabolicCalibration({
                     <p className="text-neutral-700 leading-relaxed mt-2 dark:text-neutral-200">
                       {t('metabolicCalibration.infoModal.section9p4')}
                     </p>
+                  </section>
+
+                  {/* Section 10: källor — varje konstant i modellen ska gå att
+                      spåra till en publicerad studie, och där evidens saknas
+                      ska det stå uttryckligen. */}
+                  <section>
+                    <h3 className="font-semibold text-base mb-2">
+                      {t('metabolicCalibration.infoModal.sourcesTitle')}
+                    </h3>
+                    <p className="text-neutral-600 text-xs leading-relaxed mb-3 dark:text-neutral-400">
+                      {t('metabolicCalibration.infoModal.sourcesIntro')}
+                    </p>
+                    <ul className="space-y-2.5 text-xs text-neutral-600 dark:text-neutral-400">
+                      {(
+                        t('metabolicCalibration.infoModal.sources', {
+                          returnObjects: true,
+                        }) as Array<{ label: string; text: string }>
+                      ).map((s, i) => (
+                        <li key={i}>
+                          <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                            {s.label}
+                          </span>
+                          <br />
+                          <span dangerouslySetInnerHTML={{ __html: s.text }} />
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="mt-3 p-3 bg-neutral-50 rounded border border-neutral-200 text-xs text-neutral-600 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
+                      <p className="font-medium mb-1">
+                        {t('metabolicCalibration.infoModal.evidenceGapTitle')}
+                      </p>
+                      <p
+                        dangerouslySetInnerHTML={{
+                          __html: t('metabolicCalibration.infoModal.evidenceGapText'),
+                        }}
+                      />
+                    </div>
                   </section>
                 </div>
               }

@@ -1507,7 +1507,7 @@
       "section3p1": "Instead of comparing two individual weigh-ins, the system calculates a trendline (linear regression) through all weight measurements in the period. This gives a more stable estimate of the actual weight change and also measures how strong and consistent the trend is.",
       "section3p2": "As a robustness check, an alternative trend is also calculated using the <strong>Theil–Sen estimator</strong>, which takes the median of all possible pairwise slopes between measurement points. It is more robust against individual outliers than linear regression. If the two methods show clearly different results, the system may warn that weight development was irregular during the period.",
       "section3p3": "As an additional diagnostic, an exponentially smoothed trend (EMA) is calculated. It is not used as the primary calculation method but only to detect strongly non-linear weight development — e.g. a refeed period in the middle of the period.",
-      "section3p4": "Weight measurements that deviate greatly from the rest of the data are automatically filtered out before the trend calculation, to reduce the impact of individual extreme measurements.",
+      "section3p4": "Weight measurements that deviate sharply from the trend line itself are filtered out automatically before the trend is calculated. Comparing against the <strong>trend</strong> rather than your weight values in general matters when your weight is actually changing: if you lose a couple of kilos over a month your weigh-ins are naturally spread out, and a single odd reading would not stand out at all against the rest. Against the trend line it shows up immediately.",
       "section4Title": "How data quality affects the result",
       "section4p1": "All calibrations receive a <strong>Data Quality Index (DQI)</strong> that assesses how reliable the data is. It is calculated from three factors:",
       "section4bullets": [
@@ -1516,8 +1516,8 @@
         "<strong>Cluster size (20%)</strong> — how many measurements are in the start and end clusters of the period"
       ],
       "section4p2": "DQI controls the size of the data quality cap: from ±75 kcal at low quality to ±200 kcal at high quality. Better data not only gives a more reliable result — it also allows faster movement towards your actual TDEE if data and current TDEE diverge.",
-      "section4tip": "You can choose between 14, 21, and 28 days. Longer periods provide more data and allow slightly larger adjustments. Periods shorter than 14 days are not used — the signal-to-noise ratio becomes too weak to give reliable estimates, as daily weight fluctuations can be as large as the actual weight trend change.",
-      "section4tipTitle": "Choice of time period",
+      "section4tip": "You can choose 14, 21 or 28 days, where <strong>28 days is the reference</strong>. Shorter periods lower the data quality and therefore how much your TDEE may be adjusted. There are two independent reasons. <strong>First, early weight loss is mostly water:</strong> when you cut calories your glycogen stores empty first, and every gram of glycogen binds 3–4 grams of water. In a controlled ward study participants lost 1.6 kg over the first fifteen days — but only 0.2 kg of that was fat, a difference that was not even statistically reliable. A short period therefore largely measures how much fluid you have shed, not how much energy. <strong>Second, measurement noise is diluted by time:</strong> your weight swings from day to day regardless of what you eat, and that error is divided by the number of days — the same weighing uncertainty produces roughly three times the TDEE error over 14 days as over 28. Periods shorter than 14 days are not offered at all: the daily swings would then be as large as the real trend.",
+      "section4tipTitle": "Choosing a period — and why longer is better",
       "section5Title": "Limiting extreme adjustments",
       "section5clampTitle": "Adjustment limits (clamp)",
       "section5p1": "The calibration limits how much TDEE can change in a single update via two separate bounds that must both be satisfied — the tighter of the two determines the result:",
@@ -1563,7 +1563,38 @@
         "<strong>Two-stage adjustment limit</strong> — a data quality cap (DQI, centred on calculated TDEE) and a convergence cap (period-dependent, centred on current TDEE) are applied independently; the tighter of the two limits the result"
       ],
       "section9p3": "It is precisely this combination that makes the model more stable than systems that only compare start and end weight or use simple rolling averages.",
-      "section9p4": "The more consistently you log food and weight over time, the more accurately the system can estimate your true energy requirements."
+      "section9p4": "The more consistently you log food and weight over time, the more accurately the system can estimate your true energy requirements.",
+      "sourcesTitle": "Sources",
+      "sourcesIntro": "The figures in the model come from published research. Where evidence is missing we say so — we would rather state an uncertainty than invent a number.",
+      "sources": [
+        {
+          "label": "Energy per kilogram of body weight",
+          "text": "Hall KD. <em>What is the required energy deficit per unit weight loss?</em> Int J Obes 2008;32(3):573–576. doi:10.1038/sj.ijo.0803720 — shows that the 7,700 kcal/kg rule assumes pure fat tissue, and that the real energy cost depends on how much body fat you start with."
+        },
+        {
+          "label": "What early weight loss consists of",
+          "text": "Hall KD et al. Am J Clin Nutr 2016;104(2):324–333. doi:10.3945/ajcn.116.133561 — metabolic ward study (n=17): 1.6 kg lost over the first fifteen days, of which only 0.2 kg was fat.<br />Thomas DM et al. J Acad Nutr Diet 2014. doi:10.1016/j.jand.2014.02.003 — CALERIE: energy density of weight change was 4,858 kcal/kg at week 4 versus 6,569 at week 24."
+        },
+        {
+          "label": "Composition of weight gain",
+          "text": "Bray GA, Bouchard C. <em>The biology of human overfeeding: a systematic review.</em> Obes Rev 2020;21(9):e13040. doi:10.1111/obr.13040 — across 19 overfeeding groups, 61 % of the weight gained was fat."
+        },
+        {
+          "label": "Under-reporting of calorie intake",
+          "text": "Trabulsi J, Schoeller DA. Am J Physiol Endocrinol Metab 2001;281(5):E891–899. doi:10.1152/ajpendo.2001.281.5.E891 — validated against doubly labelled water.<br />Nature Food 2024. doi:10.1038/s43016-024-01089-5 — 6,497 doubly labelled water measurements; under-reporting of 12–27 % depending on method and population."
+        },
+        {
+          "label": "Day-to-day variation in body weight",
+          "text": "Schneditz D et al. Ren Fail 2023. doi:10.1080/0886022X.2023.2273421 — standard deviation around 0.5 % of body weight when weighing in the morning, fasted. <em>Note: the study follows a single person over many years, so treat the figure as an order of magnitude rather than an exact value for everyone.</em>"
+        },
+        {
+          "label": "Preserving muscle during weight loss",
+          "text": "Garthe I et al. Int J Sport Nutr Exerc Metab 2011;21(2):97–104. doi:10.1123/ijsnem.21.2.97 — RCT (n=24): losing 0.7 % of body weight per week increased fat-free mass, while 1.4 % per week did not."
+        }
+      ],
+      "evidenceGapTitle": "Where the evidence runs out",
+      "evidenceGapText": "We have not found any published study measuring how energy density varies with the <em>rate</em> of weight loss. The adjustment the model makes there is a reasonable derivation, not a study result, and it is treated as uncertain in the calculation.",
+      "section4p3": "Beyond the three factors, the whole score is scaled by the <strong>length of the period</strong>: 28 days counts fully, 21 days at 90 % and 14 days at 75 %. The scaling is deliberately multiplicative — a longer period cannot compensate for logging little."
     }
   },
   "pal": {
