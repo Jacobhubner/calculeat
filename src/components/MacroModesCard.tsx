@@ -6,7 +6,7 @@
  * Uses pending changes - macros only saved when diskette clicked
  */
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -22,12 +22,17 @@ import {
   Info,
   Lock,
 } from 'lucide-react'
-import { applyMacroMode, FREE_MACRO_MODES, type MacroModeId } from '@/lib/utils/macroModes'
+import {
+  applyMacroMode,
+  FREE_MACRO_MODES,
+  MODE_CALORIE_MULTIPLIERS,
+  type MacroModeId,
+} from '@/lib/utils/macroModes'
 import { useEntitlements } from '@/hooks/useEntitlements'
 import { PremiumBadge } from '@/components/premium/PremiumBadge'
 import { useUpgradeModalStore } from '@/stores/upgradeModalStore'
 import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
-import { WEEKLY_RATE_PERCENT } from '@/lib/calculations/weeklyRate'
+import { weeklyRateForCalories } from '@/lib/calculations/weeklyRate'
 import type { Profile } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { useTranslation } from 'react-i18next'
@@ -56,8 +61,13 @@ interface ModeConfig {
   /** i18n-suffix: {id}Badge, {id}Desc, {id}Fat, {id}Protein, {id}Carbs */
   energyLabelKey: string
   requiresBodyFat?: boolean
-  /** Veckoförändring visas endast där faktorer är belagda (bulk/cut) */
-  weekly?: { labelKey: string; valueKey: string; minFactor: number; maxFactor: number }
+  /**
+   * Veckotakt visas för lägen som avviker från underhåll. Själva talet
+   * HÄRLEDS ur lägets kalorimultiplikatorer — inga egna faktorer här, det
+   * var så "Viktminskning" och "Deff" kunde visa olika takt trots identiskt
+   * underskott.
+   */
+  weekly?: { labelKey: string; valueKey: string }
   hasRef?: boolean
 }
 
@@ -71,12 +81,7 @@ const MODES: ModeConfig[] = [
     energyLabelKey: 'weightLossModerate',
     // Läget HETER viktminskning men saknade veckotakt — det enda av lägena
     // som inte berättade hur snabbt man går ner.
-    weekly: {
-      labelKey: 'weeklyLoss',
-      valueKey: 'weeklyLossValue',
-      minFactor: WEEKLY_RATE_PERCENT.loss.cautious / 100,
-      maxFactor: WEEKLY_RATE_PERCENT.loss.moderate / 100,
-    },
+    weekly: { labelKey: 'weeklyLoss', valueKey: 'weeklyLossValue' },
     hasRef: true,
   },
   {
@@ -93,12 +98,7 @@ const MODES: ModeConfig[] = [
     badgeClass:
       'bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/25 dark:text-orange-300 dark:border-orange-800',
     energyLabelKey: 'weightGain',
-    weekly: {
-      labelKey: 'weeklyGain',
-      valueKey: 'weeklyGainValue',
-      minFactor: WEEKLY_RATE_PERCENT.gain.min / 100,
-      maxFactor: WEEKLY_RATE_PERCENT.gain.max / 100,
-    },
+    weekly: { labelKey: 'weeklyGain', valueKey: 'weeklyGainValue' },
     hasRef: true,
   },
   {
@@ -108,16 +108,7 @@ const MODES: ModeConfig[] = [
       'bg-success-50 text-success-700 border-success-200 dark:bg-success-900/25 dark:text-success-300 dark:border-success-800',
     energyLabelKey: 'weightLoss',
     requiresBodyFat: true,
-    // Taket sänkt från 1,0 % till 0,75 %: 1,0 %/v motsvarade ~35 % underskott
-    // av TDEE, alltså mer aggressivt än Målsättnings mest aggressiva val
-    // (30 %). Garthe 2011 visar dessutom att 1,4 %/v inte bevarar fettfri
-    // massa medan 0,7 %/v gör det.
-    weekly: {
-      labelKey: 'weeklyLoss',
-      valueKey: 'weeklyLossValue',
-      minFactor: WEEKLY_RATE_PERCENT.loss.moderate / 100,
-      maxFactor: WEEKLY_RATE_PERCENT.loss.aggressive / 100,
-    },
+    weekly: { labelKey: 'weeklyLoss', valueKey: 'weeklyLossValue' },
     hasRef: true,
   },
 ]
@@ -140,6 +131,37 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
   // Dynamiska nycklar per läge — samma konvention som övriga t-anrop i filen
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tm = (key: string, opts?: Record<string, unknown>) => t(`macroModes.${key}` as any, opts)
+
+  /**
+   * Veckotakt per läge, HÄRLEDD ur lägets kaloriunderskott.
+   *
+   * Tidigare räknades den ur egna konstanter i % av kroppsvikt, oberoende av
+   * underskottet. Då visade "Viktminskning" 0,23–0,46 kg/v och "Deff"
+   * 0,46–0,68 kg/v trots att båda är 20–25 % underskott, och båda motsade
+   * Energimål-kortet. Nu kan talen inte glida isär.
+   */
+  const weeklyRates = useMemo(() => {
+    const out: Partial<Record<MacroModeId, { min: number; max: number }>> = {}
+    const tdee = profile?.tdee
+    if (!tdee) return out
+    for (const mode of MODES) {
+      if (!mode.weekly) continue
+      const mult = MODE_CALORIE_MULTIPLIERS[mode.id]
+      const rate = weeklyRateForCalories({
+        tdee,
+        caloriesMin: tdee * mult.min,
+        caloriesMax: tdee * mult.max,
+        weightKg: profile?.weight_kg ?? 0,
+      })
+      // Viktuppgång ger negativ "förlust" — visa som positivt belopp eftersom
+      // etiketten (Viktuppgång/Viktminskning) bär riktningen. Math.abs kastar
+      // om ordningen vid uppgång, så sortera om efter beloppen.
+      const a = Math.abs(rate.kgMin)
+      const b = Math.abs(rate.kgMax)
+      out[mode.id] = { min: Math.min(a, b), max: Math.max(a, b) }
+    }
+    return out
+  }, [profile?.tdee, profile?.weight_kg])
 
   // Function to calculate preview based on current profile (including pending changes)
   const calculatePreviewForProfile = (mode: MacroModeId) => {
@@ -373,19 +395,14 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
                         </span>{' '}
                         {tm(mode.energyLabelKey)}
                       </div>
-                      {mode.weekly && (
+                      {mode.weekly && weeklyRates[mode.id] && (
                         <div className="text-neutral-700 dark:text-neutral-200">
                           <span className="text-neutral-600 dark:text-neutral-400">
                             {tm(mode.weekly.labelKey)}
                           </span>{' '}
                           {tm(mode.weekly.valueKey, {
-                            min: (weightKg * mode.weekly.minFactor).toFixed(2),
-                            max: (weightKg * mode.weekly.maxFactor).toFixed(2),
-                            // Procenten visas också: den är den gemensamma
-                            // enheten, kg-talet beror på kroppsvikten.
-                            // parseFloat trimmar efterföljande nollor (0.50 -> 0.5).
-                            pctMin: parseFloat((mode.weekly.minFactor * 100).toFixed(2)),
-                            pctMax: parseFloat((mode.weekly.maxFactor * 100).toFixed(2)),
+                            min: weeklyRates[mode.id]!.min.toFixed(2),
+                            max: weeklyRates[mode.id]!.max.toFixed(2),
                           })}
                         </div>
                       )}

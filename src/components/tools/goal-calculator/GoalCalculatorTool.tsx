@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { useProfileData, useMissingProfileData } from '@/hooks/useProfileData'
-import { kgPerWeekToPercent } from '@/lib/calculations/weeklyRate'
 import MissingDataCard from '../common/MissingDataCard'
 import { useUpdateProfile, useActiveProfile } from '@/hooks'
 import EmptyState from '@/components/EmptyState'
@@ -1023,26 +1022,13 @@ export default function GoalCalculatorTool() {
                                   {preset.desc}
                                 </span>
                               )}
+                              {/* Två decimaler, samma precision som Energimål-
+                                  kortet — annars ser 0,50–0,63 och 0,5–0,6 ut
+                                  som olika tal fast de är samma. */}
                               <span className="text-[10px] opacity-70 mt-1">
-                                {preset.kgPerWeek.min.toFixed(1)}-{preset.kgPerWeek.max.toFixed(1)}{' '}
+                                {preset.kgPerWeek.min.toFixed(2)}-{preset.kgPerWeek.max.toFixed(2)}{' '}
                                 kg/v
                               </span>
-                              {/* Procent av kroppsvikt är den gemensamma enheten
-                                  mot kostlägena — kg-talet beror på vikten. */}
-                              {profileData?.weight_kg ? (
-                                <span className="text-[10px] opacity-60">
-                                  {kgPerWeekToPercent(
-                                    preset.kgPerWeek.min,
-                                    profileData.weight_kg
-                                  ).toFixed(2)}
-                                  -
-                                  {kgPerWeekToPercent(
-                                    preset.kgPerWeek.max,
-                                    profileData.weight_kg
-                                  ).toFixed(2)}{' '}
-                                  %/v
-                                </span>
-                              ) : null}
                             </Button>
                           )
                         })}

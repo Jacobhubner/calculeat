@@ -254,6 +254,27 @@ export const FREE_MACRO_MODES: MacroModeId[] = [
   'onseason',
 ]
 
+/**
+ * Kalorimultiplikatorer per läge, för UI som behöver visa vad ett läge
+ * innebär INNAN det appliceras (t.ex. veckotakten på kostlägeskorten).
+ *
+ * BAKGRUND: korten räknade tidigare veckotakt ur en egen konstant i % av
+ * kroppsvikt, oberoende av lägets faktiska underskott. Resultatet blev att
+ * "Viktminskning" och "Deff" visade olika takt trots IDENTISKA multiplikatorer
+ * (0,75–0,80), och att båda motsade Energimål-kortet. Takten härleds nu ur
+ * de här talen, så siffrorna inte kan glida isär igen.
+ *
+ * Måste spegla värdena i lägesfunktionerna ovan — låst av test i
+ * macroModes.test.ts.
+ */
+export const MODE_CALORIE_MULTIPLIERS: Record<MacroModeId, { min: number; max: number }> = {
+  nnr: { min: 0.97, max: 1.03 },
+  weightloss: { min: 0.75, max: 0.8 },
+  active: { min: 0.97, max: 1.03 },
+  offseason: { min: 1.1, max: 1.2 },
+  onseason: { min: 0.75, max: 0.8 },
+}
+
 // Standardläge för ett kalorimål — används vid onboarding/TDEE-beräkning för
 // att sätta en makrofördelning som matchar målet direkt (annars matchar inget
 // kostläge och makrofördelningen blir odefinierad).

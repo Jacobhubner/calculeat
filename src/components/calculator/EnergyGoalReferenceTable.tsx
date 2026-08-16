@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { dailyCalorieDeltaToKgPerWeek } from '@/lib/calculations/weeklyRate'
 
 interface EnergyGoalReferenceTableProps {
   tdee: number
@@ -58,14 +59,18 @@ export default function EnergyGoalReferenceTable({
   const loss25DiffMin = tdee - loss25Max
   const loss25DiffMax = tdee - loss25Min
 
-  const gain10KgMin = ((gain10DiffMin * 7) / 7700).toFixed(2)
-  const gain10KgMax = ((gain10DiffMax * 7) / 7700).toFixed(2)
-  const loss10KgMin = ((loss10DiffMin * 7) / 7700).toFixed(2)
-  const loss10KgMax = ((loss10DiffMax * 7) / 7700).toFixed(2)
-  const loss20KgMin = ((loss20DiffMin * 7) / 7700).toFixed(2)
-  const loss20KgMax = ((loss20DiffMax * 7) / 7700).toFixed(2)
-  const loss25KgMin = ((loss25DiffMin * 7) / 7700).toFixed(2)
-  const loss25KgMax = ((loss25DiffMax * 7) / 7700).toFixed(2)
+  // Delad omräkning i stället för inlinead 7700-matte — samma funktion som
+  // kostlägeskorten och Målsättning använder, så talen inte kan glida isär.
+  const kg = (dailyDelta: number) => dailyCalorieDeltaToKgPerWeek(dailyDelta).toFixed(2)
+
+  const gain10KgMin = kg(gain10DiffMin)
+  const gain10KgMax = kg(gain10DiffMax)
+  const loss10KgMin = kg(loss10DiffMin)
+  const loss10KgMax = kg(loss10DiffMax)
+  const loss20KgMin = kg(loss20DiffMin)
+  const loss20KgMax = kg(loss20DiffMax)
+  const loss25KgMin = kg(loss25DiffMin)
+  const loss25KgMax = kg(loss25DiffMax)
 
   const goals: GoalRow[] = [
     {

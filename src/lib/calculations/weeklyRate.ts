@@ -17,18 +17,14 @@
 import { KCAL_PER_KG } from './calibration-constants'
 
 /**
- * Rekommenderade veckotakter i % av kroppsvikt.
+ * kg/vecka -> % av kroppsvikt/vecka.
  *
- * Viktnedgång: Garthe 2011 (RCT, n=24) — 0,7 %/vecka gav ÖKAD fettfri massa,
- * 1,4 %/vecka gjorde inte det. Taket sätts därför under 1,4 %.
- * Viktuppgång: lean bulk, 0,25–0,5 %/vecka; mer ger mestadels fett.
+ * Visas INTE i gränssnittet (beslut 2026-08-16: överflödig information —
+ * ingen tänker i "% av min kroppsvikt"). Behålls för säkerhetskontroller,
+ * där litteraturens gränser är uttryckta i just den enheten: Garthe 2011
+ * (RCT, n=24) visade att 0,7 %/vecka gav ÖKAD fettfri massa medan 1,4 %/vecka
+ * inte gjorde det.
  */
-export const WEEKLY_RATE_PERCENT = {
-  loss: { cautious: 0.25, moderate: 0.5, aggressive: 0.75, max: 1.0 },
-  gain: { min: 0.25, max: 0.5 },
-} as const
-
-/** kg/vecka -> % av kroppsvikt/vecka */
 export function kgPerWeekToPercent(kgPerWeek: number, weightKg: number): number {
   if (weightKg <= 0) return 0
   return (kgPerWeek / weightKg) * 100
