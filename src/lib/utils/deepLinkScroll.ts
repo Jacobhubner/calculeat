@@ -61,3 +61,22 @@ export function shouldTriggerDeepLinkScroll(params: {
 }): boolean {
   return params.paramPresent || params.intentRegistered
 }
+
+/**
+ * Får scrollen köras nu, eller ska den vänta?
+ *
+ * VARFÖR: vid mount kör React alla effekter direkt efter varandra, innan
+ * omrenderingen från setIsOpen(true) hunnit ske. Utan det här villkoret
+ * scrollade vi mot en fortfarande KOLLAPSAD sektion, nollställde
+ * avsiktsflaggan, och hoppade därmed över den riktiga körningen efter
+ * expansionen. Sektionen öppnades men sidan stod kvar — vilket var precis
+ * symptomet.
+ */
+export function canScrollToSection(params: {
+  /** Är avsikten registrerad? */
+  intentRegistered: boolean
+  /** Har sektionen faktiskt expanderat? */
+  sectionExpanded: boolean
+}): boolean {
+  return params.intentRegistered && params.sectionExpanded
+}

@@ -5,6 +5,7 @@ import {
   DEEP_LINK_PARAMS,
   MAX_SCROLL_FRAMES,
   shouldTriggerDeepLinkScroll,
+  canScrollToSection,
 } from './deepLinkScroll'
 
 /**
@@ -83,6 +84,31 @@ describe('shouldTriggerDeepLinkScroll', () => {
     expect(shouldTriggerDeepLinkScroll({ paramPresent: false, intentRegistered: false })).toBe(
       false
     )
+  })
+})
+
+describe('canScrollToSection', () => {
+  /**
+   * Buggen: vid mount kör React båda effekterna innan omrenderingen från
+   * setIsOpen(true). Scrollen sköt då mot en kollapsad sektion, nollställde
+   * flaggan, och hoppade över den riktiga körningen efter expansionen.
+   */
+
+  it('väntar tills sektionen faktiskt expanderat', () => {
+    expect(canScrollToSection({ intentRegistered: true, sectionExpanded: false })).toBe(false)
+  })
+
+  it('scrollar när både avsikt och expansion finns', () => {
+    expect(canScrollToSection({ intentRegistered: true, sectionExpanded: true })).toBe(true)
+  })
+
+  it('scrollar inte utan avsikt, även om sektionen är öppen', () => {
+    // Användaren kan ha öppnat sektionen manuellt — då ska vi inte flytta sidan
+    expect(canScrollToSection({ intentRegistered: false, sectionExpanded: true })).toBe(false)
+  })
+
+  it('scrollar inte när ingenting stämmer', () => {
+    expect(canScrollToSection({ intentRegistered: false, sectionExpanded: false })).toBe(false)
   })
 })
 

@@ -35,7 +35,7 @@ import { startOfDay, endOfDay, subDays, addDays, isBefore, format } from 'date-f
 import { sv } from 'date-fns/locale'
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { hasScrollSettled, MAX_SCROLL_FRAMES } from '@/lib/utils/deepLinkScroll'
+import { hasScrollSettled, canScrollToSection, MAX_SCROLL_FRAMES } from '@/lib/utils/deepLinkScroll'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -193,7 +193,21 @@ export default function MetabolicCalibration({
   }, [searchParams, setSearchParams])
 
   useEffect(() => {
-    if (!shouldScrollToSection.current) return
+    // Vänta tills sektionen FAKTISKT är öppen.
+    //
+    // Vid mount kör React båda effekterna direkt efter varandra, innan
+    // omrenderingen från setIsOpen(true) hunnit ske. Utan det här villkoret
+    // scrollade vi mot en fortfarande kollapsad sektion, nollställde flaggan,
+    // och hoppade sedan över den riktiga körningen efter expansionen.
+    if (
+      !canScrollToSection({
+        intentRegistered: shouldScrollToSection.current,
+        sectionExpanded: isOpen,
+      })
+    ) {
+      return
+    }
+
     shouldScrollToSection.current = false
 
     // Scrollen måste upprepas, inte köras en gång.
