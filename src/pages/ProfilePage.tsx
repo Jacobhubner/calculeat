@@ -594,9 +594,22 @@ export default function ProfilePage() {
       // Only overwrite body_fat_percentage if the user explicitly provided a value.
       // Omitting the field preserves the existing profile value.
       ...(data.bodyFat !== undefined && { body_fat_percentage: data.bodyFat }),
-      // Manual TDEE has no associated formula — clear bmr_formula for consistency.
-      // tdee_calculator_tool sets its own formula; calibration doesn't touch it.
-      ...(data.tdee_source === 'manual' && { bmr_formula: null }),
+      // Manuellt TDEE har ingen bakomliggande beräkning — nollställ ALLA
+      // fält som hör till formelvägen, inte bara bmr_formula.
+      //
+      // Varför: ett kvarlämnat activity_level + pal_system får
+      // useCalculations att räkna om TDEE ur formeln trots att användaren
+      // angett värdet själv. I ett verkligt fall låg "Sedentary" kvar på en
+      // profil med manuellt TDEE 3190, vilket motsvarar BMR × 1,2 = 2315 —
+      // 875 kcal fel. Resultatet skrivs inte till profilen i dag, men fälten
+      // ska ändå spegla att ingen formel används.
+      ...(data.tdee_source === 'manual' && {
+        bmr_formula: null,
+        activity_level: null,
+        pal_system: null,
+        intensity_level: null,
+        custom_pal: null,
+      }),
       // Uppskattad Mifflin-BMR från ManualTDEEEntry (märkt i snapshot)
       ...(data.bmr !== undefined && { bmr: data.bmr }),
       baseline_bmr: data.baseline_bmr,
