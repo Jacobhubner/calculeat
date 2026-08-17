@@ -10,12 +10,15 @@
     "supportAttachments": "Se bilder som användare bifogar i supportchatten",
     "directMessage": "Skicka direktmeddelande till en enskild användare",
     "copyFood": "Kopiera ett livsmedel till den globala Calculeat-listan, så att alla användare kan söka fram det",
-    "deleteFood": "Ta bort ett livsmedel ur den globala Calculeat-listan permanent",
+    "editFood": "Redigera och ta bort livsmedel i den globala Calculeat-listan",
+    "recipeRequests": "Se och hantera användarnas receptönskemål",
+    "editOfficialRecipes": "Redigera officiella recept i receptbanken",
     "preview": "Testa appen som en ny användare i en sandlåda, utan att röra din egen data",
     "freeView": "Se appen som en gratisanvändare för att kontrollera vad som är låst",
     "superAdminNote": "Som superadmin kan du dessutom:",
     "manageAdmins": "Lägga till och ta bort andra admins",
-    "grantPremium": "Ge premium gratis till en användare och se hela deras prenumerationshistorik"
+    "grantPremium": "Ge premium gratis till en användare och se hela deras prenumerationshistorik",
+    "publishRecipes": "Publicera och avpublicera recept i receptbanken"
   },
   "support": {
     "title": "Support",

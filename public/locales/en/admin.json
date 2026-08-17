@@ -10,12 +10,15 @@
     "supportAttachments": "See images that users attach in the support chat",
     "directMessage": "Send a direct message to an individual user",
     "copyFood": "Copy a food item to the global Calculeat list, so every user can find it in search",
-    "deleteFood": "Permanently remove a food item from the global Calculeat list",
+    "editFood": "Edit and delete food items in the global Calculeat list",
+    "recipeRequests": "See and manage users' recipe requests",
+    "editOfficialRecipes": "Edit official recipes in the recipe bank",
     "preview": "Try the app as a new user in a sandbox, without touching your own data",
     "freeView": "See the app as a free user to check what is locked",
     "superAdminNote": "As a super admin you can also:",
     "manageAdmins": "Add and remove other admins",
-    "grantPremium": "Grant free premium to a user and see their full subscription history"
+    "grantPremium": "Grant free premium to a user and see their full subscription history",
+    "publishRecipes": "Publish and unpublish recipes in the recipe bank"
   },
   "support": {
     "title": "Support",
