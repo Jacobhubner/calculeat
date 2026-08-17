@@ -10,6 +10,7 @@ import {
   Globe,
   Undo2,
   Camera,
+  AlertTriangle,
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -64,6 +65,17 @@ export function RecipeCard({
   // Read saved nutrition values from the recipe's linked food_item — never recalculate live
   const savedAs100g = recipe.food_item?.default_unit === 'g'
   const fi = recipe.food_item
+
+  // Har något livsmedel ändrats sedan receptet sparades? Receptets näring
+  // räknas aldrig om automatiskt, så utan den här markeringen kan man titta
+  // på ett recept med inaktuella siffror utan att ana det. Samma jämförelse
+  // och tröskel som varningen i receptredigeraren.
+  const hasDrift = (recipe.ingredients ?? []).some(
+    ing =>
+      ing.food_item &&
+      ing.snapshot_calories != null &&
+      Math.abs(ing.food_item.calories - ing.snapshot_calories) > 0.5
+  )
 
   const displayCalories = fi
     ? Math.round(savedAs100g ? (fi.calories * 100) / 100 : (fi.kcal_per_unit ?? fi.calories))
@@ -128,6 +140,17 @@ export function RecipeCard({
                 >
                   {colorLabel[energyDensityColor]}
                 </Badge>
+              )}
+              {/* Diskret markering — inte en varning som skriker, men den ska
+                  inte gå att missa att siffrorna är beräknade på äldre värden. */}
+              {hasDrift && (
+                <span
+                  className="flex-shrink-0 text-amber-600 dark:text-amber-400"
+                  title={t('card.driftTitle')}
+                  aria-label={t('card.driftTitle')}
+                >
+                  <AlertTriangle className="h-3.5 w-3.5" />
+                </span>
               )}
             </div>
             <div className="flex items-center gap-2 text-xs text-neutral-500 mt-0.5 flex-wrap dark:text-neutral-400">

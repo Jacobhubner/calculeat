@@ -61,7 +61,8 @@
     "publish": "Publish to recipe bank",
     "unpublish": "Unpublish from bank",
     "uploadImage": "Upload image",
-    "saveToMineHint": "Saves your own editable copy to My recipes"
+    "saveToMineHint": "Saves your own editable copy to My recipes",
+    "driftTitle": "A food item in this recipe has changed since the nutrition was calculated. Open the recipe and save it again to update."
   },
   "tabs": {
     "mine": "My recipes",

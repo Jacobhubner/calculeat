@@ -61,7 +61,8 @@
     "publish": "Publicera till receptbanken",
     "unpublish": "Avpublicera från banken",
     "uploadImage": "Ladda upp bild",
-    "saveToMineHint": "Sparar en egen, redigerbar kopia i Mina recept"
+    "saveToMineHint": "Sparar en egen, redigerbar kopia i Mina recept",
+    "driftTitle": "Ett livsmedel i receptet har ändrats sedan näringsvärdena beräknades. Öppna receptet och spara om för att uppdatera."
   },
   "tabs": {
     "mine": "Mina recept",

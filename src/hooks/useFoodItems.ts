@@ -377,6 +377,20 @@ export function useUpdateFoodItem() {
             .select()
             .single()
           if (error) throw error
+
+          // Låt användarens egna recept följa med till kopian. Utan detta
+          // pekar de kvar på det globala originalet, och rättningen får aldrig
+          // genomslag i receptet — tyst, eftersom originalet inte ändrats och
+          // ingen driftvarning därför utlöses.
+          // Ett misslyckande här får inte fälla själva redigeringen; kopian är
+          // redan sparad och korrekt.
+          const { error: repointError } = await supabase.rpc('repoint_recipes_to_food_copy', {
+            p_copy_id: copyId,
+          })
+          if (repointError) {
+            console.error('Kunde inte peka om recept till kopian:', repointError)
+          }
+
           return data as FoodItem
         }
 
@@ -416,6 +430,9 @@ export function useUpdateFoodItem() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['foodItems'] })
+      // Recepten kan ha pekats om till kopian ovan — utan detta visar de
+      // gamla värden tills sidan laddas om.
+      queryClient.invalidateQueries({ queryKey: ['recipes'] })
     },
   })
 }
