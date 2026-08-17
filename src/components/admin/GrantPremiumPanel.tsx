@@ -121,6 +121,17 @@ export default function GrantPremiumPanel({ userId, userLabel }: Props) {
         </span>
       </div>
 
+      {/* Tidigare betalande kund. Visas så man vet att personen provat
+          premium och valt bort det — relevant när man överväger att ge
+          en gratisperiod. */}
+      {sub?.had_stripe && (
+        <p className="mt-1.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+          Hade Stripe-prenumeration
+          {sub.current_period_end && ` till ${formatDate(sub.current_period_end)}`}
+          {sub.status === 'canceled' && ' · uppsagd'}
+        </p>
+      )}
+
       {/* Nuvarande manuell plan — visas så man inte råkar ge dubbelt */}
       {hasManualPlan && (
         <p className="mt-1.5 flex items-center gap-1.5 text-[11px] text-green-700 dark:text-green-300">

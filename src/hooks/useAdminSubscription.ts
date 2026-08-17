@@ -20,8 +20,10 @@ export interface AdminSubscription {
   source: string | null
   current_period_end: string | null
   note: string | null
-  /** Ägs av Stripe — hantera den där, inte här */
+  /** AKTIV Stripe-prenumeration — hantera den i Stripe, inte här */
   is_stripe: boolean
+  /** Har haft Stripe men sagt upp sig eller låtit perioden gå ut */
+  had_stripe: boolean
   /** Vad användaren faktiskt har just nu, inklusive admin- och enforcement-regler */
   effective_plan: string
 }
