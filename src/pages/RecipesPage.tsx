@@ -36,7 +36,6 @@ import {
   useSetOfficialRecipeImage,
 } from '@/hooks/useOfficialRecipes'
 import { useIsAdmin } from '@/hooks/useIsAdmin'
-import { useIsSuperAdmin } from '@/hooks/useAdminManagement'
 import { useRecipeImageUpload } from '@/hooks/useRecipeImageUpload'
 import { useRef } from 'react'
 import { PreviewBlockedError } from '@/hooks/usePreviewMutation'
@@ -92,8 +91,7 @@ export default function RecipesPage() {
   const { data: recipeRequests = [] } = useRecipeRequests(isAdmin)
   const deleteRecipeRequest = useDeleteRecipeRequest()
 
-  // Superadmin: publicera/avpublicera + bilduppladdning på officiella recept
-  const { data: isSuperAdmin = false } = useIsSuperAdmin()
+  // Admin: publicera/avpublicera + bilduppladdning på officiella recept
   const publishRecipe = usePublishRecipe()
   const unpublishRecipe = useUnpublishRecipe()
   const setOfficialImage = useSetOfficialRecipeImage()
@@ -353,11 +351,9 @@ export default function RecipesPage() {
                   // avpublicera först (följeslagar-food_item är globalägd)
                   onEdit={isOfficial ? undefined : () => handleEditRecipe(recipe)}
                   onDelete={isOfficial ? undefined : () => handleDeleteRecipe(recipe)}
-                  onPublish={
-                    isSuperAdmin && !isOfficial ? () => handlePublishRecipe(recipe) : undefined
-                  }
+                  onPublish={isAdmin && !isOfficial ? () => handlePublishRecipe(recipe) : undefined}
                   onUnpublish={
-                    isSuperAdmin && isOfficial ? () => handleUnpublishRecipe(recipe) : undefined
+                    isAdmin && isOfficial ? () => handleUnpublishRecipe(recipe) : undefined
                   }
                 />
               )
@@ -467,7 +463,7 @@ export default function RecipesPage() {
                   onSave={() => handleSaveOfficialRecipe(recipe)}
                   isSaving={copyOfficialRecipe.isPending}
                   onEdit={isAdmin ? () => setEditChoiceRecipe(recipe) : undefined}
-                  onUploadImage={isSuperAdmin ? () => handlePickImage(recipe) : undefined}
+                  onUploadImage={isAdmin ? () => handlePickImage(recipe) : undefined}
                 />
               )
             )}

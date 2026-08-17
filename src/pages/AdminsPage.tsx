@@ -95,6 +95,7 @@ export default function AdminsPage() {
               <CapabilityItem>{t('capabilities.directMessage')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.manageFood')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.recipeRequests')}</CapabilityItem>
+              <CapabilityItem>{t('capabilities.publishRecipes')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.preview')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.freeView')}</CapabilityItem>
             </ul>
@@ -107,7 +108,6 @@ export default function AdminsPage() {
                 <ul className="space-y-2.5">
                   <CapabilityItem>{t('capabilities.manageAdmins')}</CapabilityItem>
                   <CapabilityItem>{t('capabilities.grantPremium')}</CapabilityItem>
-                  <CapabilityItem>{t('capabilities.publishRecipes')}</CapabilityItem>
                 </ul>
               </div>
             )}

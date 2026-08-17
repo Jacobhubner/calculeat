@@ -6,10 +6,11 @@
   "roleSuperAdmin": "Super admin",
   "capabilities": {
     "title": "What you can do",
-    "supportInbox": "Handle support requests: read and reply, see attached images, assign requests to yourself, and close or reopen threads",
+    "supportInbox": "Handle support requests: read and reply, assign requests to yourself, and close or reopen threads",
     "directMessage": "Send a direct message to an individual user",
     "manageFood": "Manage the global Calculeat list that every user searches: copy one of your own food items into it, edit it, and delete it",
     "recipeRequests": "Read and clear recipe requests users submit via Recipes → Discover",
+    "publishRecipes": "Publish one of your own recipes to the recipe bank, making it official and visible to everyone under Recipes → Discover (and unpublish it again)",
     "preview": "Try the app as a new user in a sandbox, without touching your own data",
     "freeView": "See the app as a free user to check what is locked",
     "superAdminNote": "As a super admin you can also:",

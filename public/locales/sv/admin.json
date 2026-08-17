@@ -6,10 +6,11 @@
   "roleSuperAdmin": "Superadmin",
   "capabilities": {
     "title": "Det här kan du göra",
-    "supportInbox": "Hantera supportärenden: läsa och besvara, se bifogade bilder, tilldela dig ärenden och stänga eller återöppna trådar",
+    "supportInbox": "Hantera supportärenden: läsa och besvara, tilldela dig ärenden och stänga eller återöppna trådar",
     "directMessage": "Skicka direktmeddelande till en enskild användare",
     "manageFood": "Hantera den globala Calculeat-listan som alla användare söker i: kopiera dit ett eget livsmedel, redigera det och ta bort det",
     "recipeRequests": "Läsa och rensa receptönskemål som användare skickat in via Recept → Upptäck",
+    "publishRecipes": "Publicera ett eget recept till receptbanken, så det blir officiellt och syns för alla under Recept → Upptäck (och avpublicera det igen)",
     "preview": "Testa appen som en ny användare i en sandlåda, utan att röra din egen data",
     "freeView": "Se appen som en gratisanvändare för att kontrollera vad som är låst",
     "superAdminNote": "Som superadmin kan du dessutom:",
