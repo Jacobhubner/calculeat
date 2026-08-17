@@ -9,12 +9,13 @@
     "supportInbox": "Read and reply to support requests, assign requests to yourself, and close or reopen threads",
     "supportAttachments": "See images that users attach in the support chat",
     "directMessage": "Send a direct message to an individual user",
+    "copyFood": "Copy a food item to the global Calculeat list, so every user can find it in search",
+    "deleteFood": "Permanently remove a food item from the global Calculeat list",
     "preview": "Try the app as a new user in a sandbox, without touching your own data",
     "freeView": "See the app as a free user to check what is locked",
     "superAdminNote": "As a super admin you can also:",
     "manageAdmins": "Add and remove other admins",
-    "grantPremium": "Grant free premium to a user and see their full subscription history",
-    "broadcast": "Send launch notices and messages to all users"
+    "grantPremium": "Grant free premium to a user and see their full subscription history"
   },
   "support": {
     "title": "Support",

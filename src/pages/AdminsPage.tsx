@@ -94,6 +94,8 @@ export default function AdminsPage() {
               <CapabilityItem>{t('capabilities.supportInbox')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.supportAttachments')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.directMessage')}</CapabilityItem>
+              <CapabilityItem>{t('capabilities.copyFood')}</CapabilityItem>
+              <CapabilityItem>{t('capabilities.deleteFood')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.preview')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.freeView')}</CapabilityItem>
             </ul>
@@ -106,7 +108,6 @@ export default function AdminsPage() {
                 <ul className="space-y-2.5">
                   <CapabilityItem>{t('capabilities.manageAdmins')}</CapabilityItem>
                   <CapabilityItem>{t('capabilities.grantPremium')}</CapabilityItem>
-                  <CapabilityItem>{t('capabilities.broadcast')}</CapabilityItem>
                 </ul>
               </div>
             )}
