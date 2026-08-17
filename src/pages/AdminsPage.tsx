@@ -92,12 +92,9 @@ export default function AdminsPage() {
           <CardContent>
             <ul className="space-y-2.5">
               <CapabilityItem>{t('capabilities.supportInbox')}</CapabilityItem>
-              <CapabilityItem>{t('capabilities.supportAttachments')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.directMessage')}</CapabilityItem>
-              <CapabilityItem>{t('capabilities.copyFood')}</CapabilityItem>
-              <CapabilityItem>{t('capabilities.editFood')}</CapabilityItem>
+              <CapabilityItem>{t('capabilities.manageFood')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.recipeRequests')}</CapabilityItem>
-              <CapabilityItem>{t('capabilities.editOfficialRecipes')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.preview')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.freeView')}</CapabilityItem>
             </ul>
