@@ -11,7 +11,17 @@
  */
 
 import { useState } from 'react'
-import { Crown, Search, Loader2, AlertTriangle, CreditCard, Gift, Clock, X } from 'lucide-react'
+import {
+  Crown,
+  Search,
+  Loader2,
+  AlertTriangle,
+  CreditCard,
+  Gift,
+  Clock,
+  X,
+  ShieldCheck,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -85,10 +95,25 @@ function HistoryBadges({ user }: { user: AdminUserRow }) {
     })
   }
 
+  // Admins är alltid founder via admins-tabellen (get_user_plan), utan att
+  // det skapar någon prenumerationshändelse. Märkena ovan bygger enbart på
+  // händelseloggen och kände därför inte till det.
+  if (user.is_admin) {
+    badges.push({
+      icon: <ShieldCheck className="h-3 w-3" />,
+      label: 'Premium via adminroll',
+      className:
+        'bg-primary-50 text-primary-700 border-primary-200 dark:bg-primary-900/25 dark:text-primary-300 dark:border-primary-800',
+    })
+  }
+
   if (badges.length === 0) {
+    // Säg aldrig "aldrig haft premium" om personen HAR premium just nu —
+    // då finns en väg vi inte känner till, och påståendet vore falskt.
+    const hasPremiumNow = user.effective_plan !== 'free'
     return (
       <span className="text-[11px] text-neutral-400 dark:text-neutral-500">
-        Aldrig haft premium
+        {hasPremiumNow ? 'Ingen registrerad historik' : 'Aldrig haft premium'}
       </span>
     )
   }
@@ -169,6 +194,18 @@ function UserDetail({ user, onClose }: { user: AdminUserRow; onClose: () => void
         </div>
       ) : (
         <>
+          {/* Adminrollen ger founder oavsett prenumeration. Att tilldela
+              premium här ändrar inget för användaren — säg det, i stället för
+              att bjuda in till en åtgärd utan effekt. */}
+          {user.is_admin && (
+            <div className="mb-2.5 flex items-start gap-2 rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-xs text-primary-800 dark:border-primary-800 dark:bg-primary-900/25 dark:text-primary-200">
+              <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              <p>
+                Användaren är admin och har därför alltid founder — oavsett prenumeration. Ta bort
+                adminrollen för att ändra det.
+              </p>
+            </div>
+          )}
           <p className="text-xs font-medium text-neutral-700 dark:text-neutral-200">
             Ge premium gratis
           </p>
