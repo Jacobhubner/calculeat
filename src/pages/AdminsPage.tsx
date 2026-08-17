@@ -108,6 +108,7 @@ export default function AdminsPage() {
               <CapabilityItem>{t('capabilities.manageFood')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.recipeRequests')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.publishRecipes')}</CapabilityItem>
+              <CapabilityItem>{t('capabilities.driftCheck')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.preview')}</CapabilityItem>
               <CapabilityItem>{t('capabilities.freeView')}</CapabilityItem>
             </ul>
