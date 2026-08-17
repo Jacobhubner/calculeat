@@ -338,7 +338,8 @@ export default function FoodItemsPage() {
     foodItemId: string
     foodItemName: string
     affectedRecipes: RecipeImpact[]
-    pendingAction: () => Promise<void>
+    // Radering är asynkron, medan "öppna redigeraren" bara byter tillstånd
+    pendingAction: () => Promise<void> | void
   } | null>(null)
   const [isImpactConfirming, setIsImpactConfirming] = useState(false)
 
@@ -602,9 +603,35 @@ export default function FoodItemsPage() {
     }
   }
 
-  const handleConfirmAdminEdit = () => {
+  const handleConfirmAdminEdit = async () => {
     if (!adminEditItem) return
-    setEditingItem(adminEditItem)
+    const item = adminEditItem
+
+    // Ett globalt livsmedel skrivs över direkt (ingen copy-on-write för
+    // admins), så ändringen slår mot varje recept som använder det —
+    // inklusive receptbankens. Visa vilka innan redigeraren öppnas.
+    try {
+      const affected = await getRecipesUsingFoodItem(item.id)
+      if (affected.length > 0) {
+        setAdminEditItem(null)
+        setImpactModal({
+          open: true,
+          mode: 'update',
+          foodItemId: item.id,
+          foodItemName: item.name,
+          affectedRecipes: affected,
+          pendingAction: () => {
+            setEditingItem(item)
+            setIsAddModalOpen(true)
+          },
+        })
+        return
+      }
+    } catch {
+      // Misslyckas kontrollen ska redigeringen ändå gå att göra
+    }
+
+    setEditingItem(item)
     setAdminEditItem(null)
     setIsAddModalOpen(true)
   }

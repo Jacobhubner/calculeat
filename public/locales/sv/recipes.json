@@ -231,13 +231,13 @@
     "titleUpdate_other": "Ändringen påverkar {{count}} recept",
     "deleteDescriptionSuffix": "används i nedanstående recept. Om du raderar livsmedlet kommer dessa recept att visa en saknad ingrediens.",
     "updateDescriptionPrefix": "Ändringen av",
-    "updateDescriptionSuffix": "påverkar beräkningarna i nedanstående recept. Recepten uppdateras automatiskt när du sparar.",
+    "updateDescriptionSuffix": "påverkar nedanstående recept. Recepten räknas INTE om automatiskt — öppna receptet och spara om för att uppdatera näringsvärdena.",
     "servings": "{{count}} port",
     "ingredients": "{{count}} ing.",
     "cancel": "Avbryt",
     "deleteAnyway": "Radera ändå",
-    "saveAnyway": "Spara ändå",
-    "official": "Officiellt"
+    "official": "Officiellt",
+    "continueToEdit": "Fortsätt till redigering"
   },
   "preview": {
     "prepTime": "Förberedelsetid: {{minutes}} min",

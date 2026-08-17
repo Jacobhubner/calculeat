@@ -69,16 +69,25 @@ export default function RecipeDriftPanel({ enabled }: Props) {
                     })}
                   </p>
                 </div>
-                {r.stored_per_100g != null && r.recalculated_per_100g != null && (
-                  <span
-                    className={
-                      marginal
-                        ? 'shrink-0 rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300'
-                        : 'shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
-                    }
-                  >
-                    {r.stored_per_100g} → {r.recalculated_per_100g} kcal
+                {/* Utan vikt går omräkningen inte att göra. Säg det rakt ut —
+                    en tom ruta skulle läsas som "ingen avvikelse". */}
+                {r.weights_missing ? (
+                  <span className="shrink-0 rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+                    {t('drift.cannotCalculate')}
                   </span>
+                ) : (
+                  r.stored_per_100g != null &&
+                  r.recalculated_per_100g != null && (
+                    <span
+                      className={
+                        marginal
+                          ? 'shrink-0 rounded-full bg-neutral-100 px-2 py-0.5 text-xs font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300'
+                          : 'shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-300'
+                      }
+                    >
+                      {r.stored_per_100g} → {r.recalculated_per_100g} kcal
+                    </span>
+                  )
                 )}
               </div>
 

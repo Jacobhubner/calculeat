@@ -38,6 +38,7 @@
     "summary_other": "{{count}} recipes need recalculating.",
     "ingredientCount": "{{drifted}} of {{total}} ingredients have changed",
     "howToFix": "Open the recipe under My recipes, make a change and save it again — the nutrition is then recalculated with current values.",
-    "openRecipes": "Go to recipes"
+    "openRecipes": "Go to recipes",
+    "cannotCalculate": "cannot be calculated"
   }
 }

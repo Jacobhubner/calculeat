@@ -38,6 +38,7 @@
     "summary_other": "{{count}} recept behöver räknas om.",
     "ingredientCount": "{{drifted}} av {{total}} ingredienser har ändrats",
     "howToFix": "Öppna receptet under Mina recept, gör en ändring och spara om — då räknas näringen om med dagens värden.",
-    "openRecipes": "Till recept"
+    "openRecipes": "Till recept",
+    "cannotCalculate": "kan ej beräknas"
   }
 }

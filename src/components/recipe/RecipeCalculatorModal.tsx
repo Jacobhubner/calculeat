@@ -53,9 +53,19 @@ import {
 } from '@/hooks/useSharedLists'
 import {
   calculateRecipeNutrition,
+  calculateIngredientNutrition,
   type RecipeIngredientInput,
   getDefaultRecipeUnit,
 } from '@/lib/calculations/recipeCalculator'
+
+/**
+ * Vikt som är säker att lagra. Volymmått på ett gram-baserat livsmedel utan
+ * densitet går inte att räkna om och ger NaN — då är NULL rätt svar, inte ett
+ * påhittat tal som senare läses som sanning.
+ */
+function toStoredWeight(weightGrams: number): number | undefined {
+  return Number.isFinite(weightGrams) && weightGrams > 0 ? weightGrams : undefined
+}
 
 interface RecipeCalculatorModalProps {
   open: boolean
@@ -536,6 +546,17 @@ export function RecipeCalculatorModal({
           food_item_id: ing.foodItem!.id,
           amount: ing.amount,
           unit: ing.unit,
+          // Gram-ekvivalenten måste sparas, inte bara mängd + enhet. Utan den
+          // går receptets vikt inte att läsa ur databasen, och allt som räknar
+          // på recept i SQL (t.ex. driftkontrollen) får NULL. Räknas här med
+          // samma funktion som näringen, så volym- och styckenheter hanteras.
+          //
+          // Ett volymmått på ett gram-baserat livsmedel utan densitet ger NaN
+          // (getVolumeToGrams). Då sparas NULL i stället — okänd vikt är
+          // ärligare än ett skräpvärde i databasen.
+          weight_grams: toStoredWeight(
+            calculateIngredientNutrition(ing.foodItem!, ing.amount, ing.unit).weightGrams
+          ),
           snapshot_calories: ing.foodItem!.calories,
           snapshot_fat_g: ing.foodItem!.fat_g,
           snapshot_carb_g: ing.foodItem!.carb_g,

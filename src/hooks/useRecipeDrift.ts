@@ -29,6 +29,11 @@ export interface DriftedRecipe {
   recalculated_per_100g: number | null
   /** Skillnad i kcal/100 g. Nära noll = bara varningen är inaktuell. */
   delta_per_100g: number | null
+  /**
+   * Någon ingrediens saknar vikt, så omräkningen kunde inte göras. Driften
+   * är ändå verklig — den upptäcks via ögonblicksbilderna.
+   */
+  weights_missing: boolean
   details: DriftedIngredient[] | null
 }
 

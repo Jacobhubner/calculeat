@@ -231,13 +231,13 @@
     "titleUpdate_other": "The change affects {{count}} recipes",
     "deleteDescriptionSuffix": "is used in the recipes below. If you delete the food item these recipes will show a missing ingredient.",
     "updateDescriptionPrefix": "The change to",
-    "updateDescriptionSuffix": "affects the calculations in the recipes below. The recipes will be updated automatically when you save.",
+    "updateDescriptionSuffix": "affects the recipes below. They are NOT recalculated automatically — open a recipe and save it again to update its nutrition.",
     "servings": "{{count}} srv",
     "ingredients": "{{count}} ing.",
     "cancel": "Cancel",
     "deleteAnyway": "Delete anyway",
-    "saveAnyway": "Save anyway",
-    "official": "Official"
+    "official": "Official",
+    "continueToEdit": "Continue to editing"
   },
   "preview": {
     "prepTime": "Prep time: {{minutes}} min",

@@ -91,7 +91,9 @@ export function RecipeImpactWarningModal({
               className="gap-2"
             >
               {isConfirming && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isDelete ? t('recipeImpact.deleteAnyway') : t('recipeImpact.saveAnyway')}
+              {/* I update-läget har inget sparats än — knappen tar användaren
+                  vidare till redigeraren, den bekräftar ingen ändring. */}
+              {isDelete ? t('recipeImpact.deleteAnyway') : t('recipeImpact.continueToEdit')}
             </Button>
           </div>
         </div>
