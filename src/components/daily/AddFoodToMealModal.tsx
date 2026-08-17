@@ -119,8 +119,6 @@ export function AddFoodToMealModal({
 
   // AddFoodItemModal (scan flow)
   const [addFoodItemModalOpen, setAddFoodItemModalOpen] = useState(false)
-  const pendingScannedFoodRef = useRef<FoodItem | null>(null)
-  const skipResetRef = useRef(false)
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('')
@@ -313,10 +311,7 @@ export function AddFoodToMealModal({
       initializeForm()
       // Focus search field after dialog animation completes
     } else if (!open && prevOpenRef.current) {
-      if (!skipResetRef.current) {
-        resetForm()
-      }
-      skipResetRef.current = false
+      resetForm()
     }
     prevOpenRef.current = open
   }, [open, initializeForm, resetForm])
@@ -685,9 +680,14 @@ export function AddFoodToMealModal({
                     className="h-8 w-8 p-0 shrink-0"
                     title={t('addToMealModal.scanBarcode')}
                     onClick={() => {
-                      skipResetRef.current = true
-                      onOpenChange(false)
-                      setTimeout(() => setAddFoodItemModalOpen(true), 100)
+                      // Stäng INTE den här modalen först. Flera anropare
+                      // renderar villkorligt (t.ex. `{dailyLogId && ...}` i
+                      // QuickLogButton), så onOpenChange(false) avmonterar hela
+                      // komponenten — och då hinner tillståndet nedan aldrig
+                      // användas. Knappen såg helt död ut.
+                      // AddFoodItemModal renderas utanför <Dialog> och lägger
+                      // sig ovanpå, så det räcker att öppna den.
+                      setAddFoodItemModalOpen(true)
                     }}
                   >
                     <Plus className="h-4 w-4" />
@@ -944,31 +944,19 @@ export function AddFoodToMealModal({
       <AddFoodItemModal
         open={addFoodItemModalOpen}
         onOpenChange={open => {
+          // Den här modalen ligger ovanpå och stängs för sig. Föräldern har
+          // aldrig stängts, så den behöver inte öppnas igen.
           setAddFoodItemModalOpen(open)
-          // When AddFoodItemModal closes without a saved food (user cancelled), reopen AddFoodToMealModal
-          if (!open && !pendingScannedFoodRef.current) {
-            setTimeout(() => onOpenChange(true), 50)
-          }
         }}
         onSuccess={newFood => {
           if (newFood) {
-            pendingScannedFoodRef.current = newFood
             // Admin skapade ett nytt personligt livsmedel härifrån (ej preview) →
             // fråga om en kopia även ska läggas i globala Calculeat-listan.
             if (isAdmin && !isPreviewMode && newFood.id && newFood.user_id !== null) {
               setCopyPrompt(newFood)
             }
-            // Reopen AddFoodToMealModal and select the new food after it fully opens
-            setTimeout(() => {
-              onOpenChange(true)
-              setTimeout(() => {
-                const food = pendingScannedFoodRef.current
-                if (food) {
-                  pendingScannedFoodRef.current = null
-                  handleSelectFood(food)
-                }
-              }, 150)
-            }, 50)
+            // Välj det nya livsmedlet direkt — listan är kvar under.
+            handleSelectFood(newFood)
           }
         }}
       />
