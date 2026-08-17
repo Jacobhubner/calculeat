@@ -11,11 +11,20 @@
 
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ShieldCheck, Crown, MessageCircle, ArrowRight, Loader2, Check } from 'lucide-react'
+import {
+  ShieldCheck,
+  Crown,
+  MessageCircle,
+  ArrowRight,
+  Loader2,
+  Check,
+  ChefHat,
+} from 'lucide-react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import PremiumAdminPanel from '@/components/admin/PremiumAdminPanel'
+import RecipeDriftPanel from '@/components/admin/RecipeDriftPanel'
 import { useIsAdmin, useIsSuperAdmin } from '@/hooks/useAdminManagement'
 import { usePreviewMode } from '@/hooks/usePreviewMode'
 import { useFreeViewMode } from '@/hooks/useFreeViewMode'
@@ -144,6 +153,23 @@ export default function AdminsPage() {
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Link>
             </Button>
+          </CardContent>
+        </Card>
+
+        {/* Receptbankens näringsvärden — alla admins, eftersom alla nu kan
+            både publicera recept och redigera globala livsmedel. */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <ChefHat className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+              {t('drift.title')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+              {t('drift.description')}
+            </p>
+            <RecipeDriftPanel enabled={isAdmin} />
           </CardContent>
         </Card>
 

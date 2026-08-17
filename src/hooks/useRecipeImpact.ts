@@ -6,6 +6,11 @@ export interface RecipeImpact {
   recipe_name: string
   servings: number
   ingredient_count: number
+  /**
+   * Officiellt recept i receptbanken. Följer bara med för admins — funktionen
+   * visar aldrig andra användares privata recept.
+   */
+  is_official: boolean
 }
 
 export function useRecipeImpact() {

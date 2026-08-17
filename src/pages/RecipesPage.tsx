@@ -464,6 +464,10 @@ export default function RecipesPage() {
                   isSaving={copyOfficialRecipe.isPending}
                   onEdit={isAdmin ? () => setEditChoiceRecipe(recipe) : undefined}
                   onUploadImage={isAdmin ? () => handlePickImage(recipe) : undefined}
+                  // Avpublicering hör hemma här: fliken "Mina recept" visar
+                  // bara egna recept, så en admin som inte äger bankrecepten
+                  // hade annars ingen väg att ta bort dem ur banken.
+                  onUnpublish={isAdmin ? () => handleUnpublishRecipe(recipe) : undefined}
                 />
               )
             )}

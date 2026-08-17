@@ -236,7 +236,8 @@
     "ingredients": "{{count}} ing.",
     "cancel": "Avbryt",
     "deleteAnyway": "Radera ändå",
-    "saveAnyway": "Spara ändå"
+    "saveAnyway": "Spara ändå",
+    "official": "Officiellt"
   },
   "preview": {
     "prepTime": "Förberedelsetid: {{minutes}} min",

@@ -15,8 +15,7 @@
     "freeView": "See the app as a free user to check what is locked",
     "superAdminNote": "As a super admin you can also:",
     "manageAdmins": "Add and remove other admins",
-    "grantPremium": "Grant free premium to a user and see their full subscription history",
-    "publishRecipes": "Publish one of your own recipes to the recipe bank, making it official and visible to everyone under Recipes → Discover (and unpublish it again)"
+    "grantPremium": "Grant free premium to a user and see their full subscription history"
   },
   "support": {
     "title": "Support",
@@ -29,5 +28,16 @@
     "title": "Premium",
     "description": "Search for a user to see their subscription history and grant free premium. The reason you enter is saved to the history.",
     "superAdminOnly": "Super admin only"
+  },
+  "drift": {
+    "title": "Recipe bank nutrition",
+    "description": "A recipe is only recalculated when it is saved again. If a global food item changes, official recipes keep their old values until someone updates them.",
+    "loading": "Checking…",
+    "none": "All official recipes match their ingredients.",
+    "summary_one": "{{count}} recipe needs recalculating.",
+    "summary_other": "{{count}} recipes need recalculating.",
+    "ingredientCount": "{{drifted}} of {{total}} ingredients have changed",
+    "howToFix": "Open the recipe under My recipes, make a change and save it again — the nutrition is then recalculated with current values.",
+    "openRecipes": "Go to recipes"
   }
 }

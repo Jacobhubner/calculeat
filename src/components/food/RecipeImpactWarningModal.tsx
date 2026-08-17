@@ -65,6 +65,13 @@ export function RecipeImpactWarningModal({
                 <span className="text-sm text-neutral-800 flex-1 truncate dark:text-neutral-200">
                   {recipe.recipe_name}
                 </span>
+                {/* Officiella recept syns bara för admins — märk dem, en ändring
+                    där slår mot receptbanken och alla användare. */}
+                {recipe.is_official && (
+                  <span className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-300">
+                    {t('recipeImpact.official')}
+                  </span>
+                )}
                 <span className="text-xs text-neutral-400 shrink-0 dark:text-neutral-500">
                   {t('recipeImpact.servings', { count: recipe.servings })} ·{' '}
                   {t('recipeImpact.ingredients', { count: recipe.ingredient_count })}

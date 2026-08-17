@@ -15,8 +15,7 @@
     "freeView": "Se appen som en gratisanvändare för att kontrollera vad som är låst",
     "superAdminNote": "Som superadmin kan du dessutom:",
     "manageAdmins": "Lägga till och ta bort andra admins",
-    "grantPremium": "Ge premium gratis till en användare och se hela deras prenumerationshistorik",
-    "publishRecipes": "Publicera ett eget recept till receptbanken, så det blir officiellt och syns för alla under Recept → Upptäck (och avpublicera det igen)"
+    "grantPremium": "Ge premium gratis till en användare och se hela deras prenumerationshistorik"
   },
   "support": {
     "title": "Support",
@@ -29,5 +28,16 @@
     "title": "Premium",
     "description": "Sök upp en användare för att se prenumerationshistoriken och ge premium gratis. Orsaken du anger sparas i historiken.",
     "superAdminOnly": "Endast superadmin"
+  },
+  "drift": {
+    "title": "Receptbankens näringsvärden",
+    "description": "Ett recept räknas om först när det sparas om. Ändras ett globalt livsmedel står de officiella recepten kvar med gamla värden tills någon åtgärdar dem.",
+    "loading": "Kontrollerar…",
+    "none": "Alla officiella recept stämmer med sina ingredienser.",
+    "summary_one": "{{count}} recept behöver räknas om.",
+    "summary_other": "{{count}} recept behöver räknas om.",
+    "ingredientCount": "{{drifted}} av {{total}} ingredienser har ändrats",
+    "howToFix": "Öppna receptet under Mina recept, gör en ändring och spara om — då räknas näringen om med dagens värden.",
+    "openRecipes": "Till recept"
   }
 }
