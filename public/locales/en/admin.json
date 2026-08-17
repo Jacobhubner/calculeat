@@ -1,5 +1,5 @@
 {
-  "pageTitle": "Admins",
+  "pageTitle": "Admin view",
   "pageDescription": "Your admin tools, gathered in one place.",
   "noAccess": "You do not have access to this page.",
   "roleAdmin": "Admin",
@@ -40,5 +40,11 @@
     "howToFix": "Open the recipe under My recipes, make a change and save it again — the nutrition is then recalculated with current values.",
     "openRecipes": "Go to recipes",
     "cannotCalculate": "cannot be calculated"
+  },
+  "message": {
+    "title": "Send a message to a user"
+  },
+  "management": {
+    "title": "Admin management"
   }
 }

@@ -20,9 +20,6 @@ import {
   Pencil,
   X,
   Check,
-  ShieldCheck,
-  Megaphone,
-  Trash2,
   Monitor,
   Sun,
   MoonStar,
@@ -38,14 +35,6 @@ import { useActiveProfile } from '@/hooks/useActiveProfile'
 import { useUpdateProfile } from '@/hooks/useUpdateProfile'
 import { useUserProfile, useUpdateUsername } from '@/hooks/useUserProfile'
 import type { Gender } from '@/lib/types'
-import {
-  useIsSuperAdmin,
-  useIsAdmin,
-  useListAdmins,
-  useAddAdmin,
-  useRemoveAdmin,
-  useSendAdminMessage,
-} from '@/hooks/useAdminManagement'
 import { useDataExport } from '@/hooks/useDataExport'
 import { Download } from 'lucide-react'
 
@@ -82,44 +71,9 @@ export default function SettingsPage() {
   const { data: userProfile } = useUserProfile()
   const updateUsername = useUpdateUsername()
 
-  // Admin management
-  const { data: isSuperAdmin = false } = useIsSuperAdmin()
-  const { data: isAdmin = false } = useIsAdmin()
-  const { data: adminList = [] } = useListAdmins()
-  const addAdmin = useAddAdmin()
-  const sendAdminMessage = useSendAdminMessage()
-  const [adminMsgTo, setAdminMsgTo] = useState('')
-  const [adminMsgText, setAdminMsgText] = useState('')
-
   // Data export
   const { exportData, isExporting } = useDataExport()
   const [exportFormat, setExportFormat] = useState<'json' | 'csv'>('json')
-
-  const handleSendAdminMessage = async () => {
-    const to = adminMsgTo.trim()
-    const text = adminMsgText.trim()
-    if (!to || !text) return
-    try {
-      const result = await sendAdminMessage.mutateAsync({ identifier: to, text })
-      if (!result.success) {
-        if (result.error === 'user_not_found') {
-          toast.error(t('settings.adminMsgNotFound'))
-        } else if (result.error === 'rate_limit') {
-          toast.error(t('settings.adminMsgRateLimit'))
-        } else {
-          toast.error(t('settings.adminMsgError'))
-        }
-        return
-      }
-      toast.success(t('settings.adminMsgSent', { user: to }))
-      setAdminMsgTo('')
-      setAdminMsgText('')
-    } catch {
-      toast.error(t('settings.adminMsgError'))
-    }
-  }
-  const removeAdmin = useRemoveAdmin()
-  const [newAdminIdentifier, setNewAdminIdentifier] = useState('')
 
   // Delete account state
   const [deleteStep, setDeleteStep] = useState<0 | 1 | 2>(0)
@@ -957,133 +911,8 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
-        {/* Admin management — only visible to super admin */}
-        {isSuperAdmin && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-primary-600 dark:text-primary-300" />
-                {t('settings.adminManagement')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Current admins list */}
-              <div className="space-y-2">
-                {adminList.map(admin => (
-                  <div
-                    key={admin.user_id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-neutral-50 border border-neutral-200 dark:bg-neutral-900 dark:border-neutral-700"
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                        {admin.email}
-                      </p>
-                      {admin.is_super_admin && (
-                        <p className="text-xs text-primary-600 font-medium dark:text-primary-300">
-                          Super admin
-                        </p>
-                      )}
-                    </div>
-                    {!admin.is_super_admin && (
-                      <button
-                        onClick={async () => {
-                          const result = await removeAdmin.mutateAsync(admin.user_id)
-                          if (result?.success) {
-                            toast.success(t('settings.adminRemoved'))
-                          } else {
-                            toast.error(t('settings.adminRemoveError'))
-                          }
-                        }}
-                        disabled={removeAdmin.isPending}
-                        className="p-1.5 rounded-lg text-neutral-400 hover:text-error-600 hover:bg-error-50 transition-colors dark:text-neutral-500 dark:hover:text-error-400 dark:hover:bg-error-900/25"
-                        title={t('settings.adminRemoveTitle')}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Add new admin */}
-              <div className="flex gap-2">
-                <input
-                  type="email"
-                  value={newAdminIdentifier}
-                  onChange={e => setNewAdminIdentifier(e.target.value)}
-                  placeholder={t('settings.adminPlaceholder')}
-                  className="flex-1 px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
-                />
-                <button
-                  onClick={async () => {
-                    if (!newAdminIdentifier.trim()) return
-                    const result = await addAdmin.mutateAsync(newAdminIdentifier.trim())
-                    if (result?.success) {
-                      toast.success(t('settings.adminAdded'))
-                      setNewAdminIdentifier('')
-                    } else if (result?.error === 'user_not_found') {
-                      toast.error(t('settings.adminNotFound'))
-                    } else if (result?.error === 'already_admin') {
-                      toast.info(t('settings.adminAlreadyAdmin'))
-                    } else if (result?.error === 'invitation_pending') {
-                      toast.info(t('settings.adminInvitationPending'))
-                    } else {
-                      toast.error(t('settings.adminAddError'))
-                    }
-                  }}
-                  disabled={addAdmin.isPending || !newAdminIdentifier.trim()}
-                  className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 rounded-lg transition-colors"
-                >
-                  {addAdmin.isPending ? t('settings.addingAdmin') : t('settings.addAdmin')}
-                </button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Admin: skicka direktmeddelande till en användare — alla admins */}
-        {isAdmin && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Megaphone className="h-5 w-5 text-primary-600 dark:text-primary-300" />
-                {t('settings.adminMsgTitle')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3">
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                {t('settings.adminMsgDesc')}
-              </p>
-              <input
-                type="text"
-                value={adminMsgTo}
-                onChange={e => setAdminMsgTo(e.target.value)}
-                placeholder={t('settings.adminMsgToPlaceholder')}
-                className="px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
-              />
-              <textarea
-                value={adminMsgText}
-                onChange={e => setAdminMsgText(e.target.value)}
-                placeholder={t('settings.adminMsgTextPlaceholder')}
-                maxLength={1000}
-                rows={3}
-                className="px-3 py-2 text-base md:text-sm border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100"
-              />
-              <button
-                onClick={handleSendAdminMessage}
-                disabled={sendAdminMessage.isPending || !adminMsgTo.trim() || !adminMsgText.trim()}
-                className="self-start inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50"
-              >
-                {sendAdminMessage.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Megaphone className="h-4 w-4" />
-                )}
-                {t('settings.adminMsgSend')}
-              </button>
-            </CardContent>
-          </Card>
-        )}
+        {/* Adminhantering och direktmeddelande flyttade till /app/admin —
+            adminverktygen hör ihop och låg utspridda här. */}
 
         {/* "Testa som ny användare" och premiumtilldelningen flyttade till
             /app/admin — adminverktygen hör ihop och låg utspridda här. */}

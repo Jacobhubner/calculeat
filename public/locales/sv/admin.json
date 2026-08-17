@@ -1,5 +1,5 @@
 {
-  "pageTitle": "Admins",
+  "pageTitle": "Adminvy",
   "pageDescription": "Verktygen du har som admin, samlade på ett ställe.",
   "noAccess": "Du har inte behörighet till den här sidan.",
   "roleAdmin": "Admin",
@@ -40,5 +40,11 @@
     "howToFix": "Öppna receptet under Mina recept, gör en ändring och spara om — då räknas näringen om med dagens värden.",
     "openRecipes": "Till recept",
     "cannotCalculate": "kan ej beräknas"
+  },
+  "message": {
+    "title": "Skicka meddelande till användare"
+  },
+  "management": {
+    "title": "Adminhantering"
   }
 }

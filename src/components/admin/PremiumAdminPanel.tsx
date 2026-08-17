@@ -293,7 +293,9 @@ export default function PremiumAdminPanel() {
           Inga användare matchade sökningen.
         </p>
       ) : (
-        <div className="mt-3 divide-y divide-neutral-200 overflow-hidden rounded-lg border border-neutral-200 dark:divide-neutral-700 dark:border-neutral-700">
+        // Listan växer med användarantalet, därför max-h-96 + skroll: annars
+        // trycks resten av sidan ur vägen vid många träffar.
+        <div className="mt-3 max-h-96 divide-y divide-neutral-200 overflow-y-auto rounded-lg border border-neutral-200 dark:divide-neutral-700 dark:border-neutral-700">
           {users.map(user => {
             const isOpen = openUserId === user.user_id
             const hasPremium = user.effective_plan !== 'free'

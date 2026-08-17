@@ -269,7 +269,8 @@
     "language": "Language",
     "foodDatabase": "Food database",
     "foodDatabaseAuto": "Automatic",
-    "foodDatabaseDesc": "Which database appears first when you search for foods. Automatic uses your language and time zone — English in the UK gives CoFID, in the US it gives USDA. All databases remain searchable regardless of your choice."
+    "foodDatabaseDesc": "Which database appears first when you search for foods. Automatic uses your language and time zone — English in the UK gives CoFID, in the US it gives USDA. All databases remain searchable regardless of your choice.",
+    "superAdminLabel": "Super admin"
   },
   "tdeeOptions": {
     "calculateTitle": "Find out how much you can eat",

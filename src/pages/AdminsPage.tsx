@@ -19,12 +19,15 @@ import {
   Loader2,
   Check,
   ChefHat,
+  Megaphone,
 } from 'lucide-react'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import PremiumAdminPanel from '@/components/admin/PremiumAdminPanel'
 import RecipeDriftPanel from '@/components/admin/RecipeDriftPanel'
+import AdminManagementPanel from '@/components/admin/AdminManagementPanel'
+import AdminMessagePanel from '@/components/admin/AdminMessagePanel'
 import { useIsAdmin, useIsSuperAdmin } from '@/hooks/useAdminManagement'
 import { usePreviewMode } from '@/hooks/usePreviewMode'
 import { useFreeViewMode } from '@/hooks/useFreeViewMode'
@@ -227,6 +230,34 @@ export default function AdminsPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Skicka meddelande till en användare — alla admins */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Megaphone className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+              {t('message.title')}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AdminMessagePanel />
+          </CardContent>
+        </Card>
+
+        {/* Adminhantering — endast superadmin */}
+        {isSuperAdmin && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                {t('management.title')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AdminManagementPanel />
+            </CardContent>
+          </Card>
+        )}
 
         {/* Premium — endast superadmin */}
         {isSuperAdmin && (
