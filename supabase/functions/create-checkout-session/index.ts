@@ -61,32 +61,48 @@ Deno.serve(async (req: Request) => {
     return jsonResponse({ error: 'invalid_plan', message: 'Ogiltig plan.' }, 400)
   }
 
-  // Blockera dubbelprenumeration — en aktiv Stripe-prenumeration per användare
+  // Beslutsunderlaget kommer från get_checkout_eligibility, som väger samman
+  // user_subscriptions (nuläget) och subscription_events (historiken).
+  //
+  // VARFÖR INTE BARA RADEN: user_subscriptions har en rad per användare som
+  // skrivs över — och kan raderas. Låg missbruksskyddet bara där skulle en
+  // förlorad rad dela ut en ny gratisperiod och skapa en dubbel Stripe-kund.
+  // Det inträffade 2026-08-17. Loggen är append-only och kan inte tappas
+  // på samma sätt.
   const supabaseAdmin = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   )
-  const { data: existing } = await supabaseAdmin
-    .from('user_subscriptions')
-    .select('status, source, stripe_customer_id')
-    .eq('user_id', user.id)
-    .maybeSingle()
+  const { data: eligibility, error: eligibilityError } = await supabaseAdmin
+    .rpc('get_checkout_eligibility', { p_user_id: user.id })
+    .maybeSingle<{
+      has_used_trial: boolean
+      has_active_sub: boolean
+      stripe_customer_id: string | null
+    }>()
 
-  if (
-    existing &&
-    existing.source === 'stripe' &&
-    ['active', 'trialing'].includes(existing.status as string)
-  ) {
+  // Utan underlag vet vi inte om provperioden är förbrukad. Att gissa "nej"
+  // delar ut gratismånader; att gissa "ja" nekar en ny kund sin provperiod.
+  // Ingetdera är acceptabelt tyst, så vi avbryter i stället.
+  if (eligibilityError || !eligibility) {
+    console.error('Kunde inte läsa checkout-underlag:', eligibilityError)
+    return jsonResponse(
+      { error: 'server_error', message: 'Kunde inte starta betalningen. Försök igen.' },
+      500
+    )
+  }
+
+  // Blockera dubbelprenumeration — en aktiv Stripe-prenumeration per användare
+  if (eligibility.has_active_sub) {
     return jsonResponse(
       { error: 'already_subscribed', message: 'Du har redan en aktiv prenumeration.' },
       400
     )
   }
 
-  // Missbruksskydd: trial ges bara FÖRSTA gången. Raden raderas aldrig vid
-  // uppsägning (status='canceled'), så en tidigare Stripe-prenumeration =
-  // trialen är förbrukad — omtecknande debiteras direkt.
-  const hasUsedTrial = existing?.source === 'stripe'
+  // Missbruksskydd: trial ges bara FÖRSTA gången. Har användaren någon gång
+  // haft provperiod eller betalning hos Stripe debiteras omtecknande direkt.
+  const hasUsedTrial = eligibility.has_used_trial
 
   const stripe = new Stripe(STRIPE_SECRET_KEY)
 
@@ -101,13 +117,14 @@ Deno.serve(async (req: Request) => {
   const origin = req.headers.get('origin') ?? FALLBACK_ORIGIN
 
   // Återanvänd Stripe-kunden vid omtecknande — samma användare ska vara
-  // samma kund (historik, sparade betalmetoder i portalen)
+  // samma kund (historik, sparade betalmetoder i portalen). Kunden hämtas
+  // ur underlaget ovan, som faller tillbaka på loggen om raden saknas.
   const session = await stripe.checkout.sessions.create({
     mode: 'subscription',
     line_items: [{ price: price.id, quantity: 1 }],
     client_reference_id: user.id,
-    ...(existing?.stripe_customer_id
-      ? { customer: existing.stripe_customer_id }
+    ...(eligibility.stripe_customer_id
+      ? { customer: eligibility.stripe_customer_id }
       : { customer_email: user.email ?? undefined }),
     subscription_data: {
       ...(hasUsedTrial ? {} : { trial_period_days: TRIAL_DAYS }),

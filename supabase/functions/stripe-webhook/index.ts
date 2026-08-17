@@ -106,6 +106,9 @@ Deno.serve(async (req: Request) => {
           plan: 'premium',
           source: 'stripe',
           period_end: periodEnd(sub),
+          // Kunden loggas så trial-spärren och återanvändningen håller även
+          // om user_subscriptions-raden senare går förlorad.
+          stripe_customer_id: customerId ?? null,
         })
         if (logError) console.error('Kunde inte logga prenumerationshändelse:', logError)
         break
@@ -168,6 +171,8 @@ Deno.serve(async (req: Request) => {
             plan: 'premium',
             source: 'stripe',
             period_end: periodEnd(sub),
+            stripe_customer_id:
+              typeof sub.customer === 'string' ? sub.customer : (sub.customer?.id ?? null),
           })
           if (logError) console.error('Kunde inte logga prenumerationshändelse:', logError)
         }
