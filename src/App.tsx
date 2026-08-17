@@ -134,6 +134,7 @@ const GoalCalculatorTool = lazyWithRetry(
 const SettingsPage = lazyWithRetry(() => import('./pages/SettingsPage'))
 const SocialPage = lazyWithRetry(() => import('./pages/SocialPage'))
 const AdminSupportPage = lazyWithRetry(() => import('./pages/AdminSupportPage'))
+const AdminsPage = lazyWithRetry(() => import('./pages/AdminsPage'))
 
 // Loading fallback component
 function PageLoader() {
@@ -468,6 +469,14 @@ function App() {
                     <Route
                       path="/app/invitations"
                       element={<Navigate to="/app/social" replace />}
+                    />
+                    <Route
+                      path="/app/admin"
+                      element={
+                        <ProtectedRoute>
+                          <AdminsPage />
+                        </ProtectedRoute>
+                      }
                     />
                     <Route
                       path="/app/admin/support"

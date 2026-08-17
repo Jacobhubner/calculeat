@@ -21,6 +21,7 @@ import {
   Crosshair,
   Gauge,
   MessageCircle,
+  ShieldCheck,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
@@ -30,6 +31,7 @@ import { Avatar, AvatarFallback } from '../ui/avatar'
 import { PlanBadge } from '@/components/premium/PlanBadge'
 import { Separator } from '../ui/separator'
 import { useSocialBadgeCount } from '@/hooks/useShareInvitations'
+import { useIsAdmin } from '@/hooks/useAdminManagement'
 import type { LucideProps } from 'lucide-react'
 import type { ForwardRefExoticComponent, RefAttributes } from 'react'
 
@@ -51,6 +53,7 @@ export default function DashboardNav() {
   const location = useLocation()
   const navigate = useNavigate()
   const socialBadgeCount = useSocialBadgeCount()
+  const { data: isAdmin = false } = useIsAdmin()
 
   const isActive = (path: string) => location.pathname === path
 
@@ -294,6 +297,27 @@ export default function DashboardNav() {
 
         {/* Bottom Actions */}
         <div className={cn('p-4 space-y-1', sidebarCollapsed && 'px-2')}>
+          {/* Adminverktygen samlade — ligger ovanför Inställningar eftersom
+              det är dit en admin går oftare. Döljs helt för vanliga användare. */}
+          {isAdmin && (
+            <Link
+              to="/app/admin"
+              className={cn(
+                'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 transition-colors relative group dark:text-neutral-100',
+                'dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-neutral-100',
+                sidebarCollapsed && 'justify-center px-2'
+              )}
+            >
+              <ShieldCheck className="h-5 w-5 shrink-0" />
+              {!sidebarCollapsed && <span>{t('nav.admins')}</span>}
+              {sidebarCollapsed && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none dark:bg-neutral-100 dark:text-neutral-900">
+                  {t('nav.admins')}
+                </div>
+              )}
+            </Link>
+          )}
+
           <Link
             to="/app/settings"
             className={cn(

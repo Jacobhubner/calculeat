@@ -46,11 +46,8 @@ import {
   useRemoveAdmin,
   useSendAdminMessage,
 } from '@/hooks/useAdminManagement'
-import { usePreviewMode } from '@/hooks/usePreviewMode'
-import { useFreeViewMode } from '@/hooks/useFreeViewMode'
 import { useDataExport } from '@/hooks/useDataExport'
-import { Download, Crown } from 'lucide-react'
-import PremiumAdminPanel from '@/components/admin/PremiumAdminPanel'
+import { Download } from 'lucide-react'
 
 type CompletionMode = 'manual' | 'auto'
 type OpenEditor = 'username' | 'email' | 'password' | null
@@ -88,8 +85,6 @@ export default function SettingsPage() {
   // Admin management
   const { data: isSuperAdmin = false } = useIsSuperAdmin()
   const { data: isAdmin = false } = useIsAdmin()
-  const { isPreviewActive, enterPreview, exitPreview } = usePreviewMode()
-  const { isFreeViewActive } = useFreeViewMode()
   const { data: adminList = [] } = useListAdmins()
   const addAdmin = useAddAdmin()
   const sendAdminMessage = useSendAdminMessage()
@@ -1046,25 +1041,6 @@ export default function SettingsPage() {
           </Card>
         )}
 
-        {/* Premium — endast superadmin. Låg tidigare i supportvyn, men nådde
-            då bara personer som hört av sig. */}
-        {isSuperAdmin && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Crown className="h-5 w-5 text-amber-500" />
-                {t('settings.premiumAdminTitle')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-3 text-sm text-neutral-600 dark:text-neutral-400">
-                {t('settings.premiumAdminDescription')}
-              </p>
-              <PremiumAdminPanel />
-            </CardContent>
-          </Card>
-        )}
-
         {/* Admin: skicka direktmeddelande till en användare — alla admins */}
         {isAdmin && (
           <Card>
@@ -1109,65 +1085,8 @@ export default function SettingsPage() {
           </Card>
         )}
 
-        {/* Preview as new user — visible to all admins */}
-        {isAdmin && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-amber-600 dark:text-amber-300" />
-                {tSettings('preview.title')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3">
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                {tSettings('preview.description')}
-              </p>
-              {!isPreviewActive ? (
-                <>
-                  {/*
-                    Lägena går att kombinera — och kombinationen är den mest
-                    realistiska: en ny användare har nästan alltid gratisnivån.
-                    De överlappar inte heller tekniskt: preview byter PROFIL
-                    (tom sandlådedata), gratis-vyn byter ENTITLEMENTS
-                    (klientspegel i useEntitlements). Spärren fanns tidigare
-                    här utan grund.
-                  */}
-                  {isFreeViewActive && (
-                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                      {tSettings('preview.withFreeView')}
-                    </p>
-                  )}
-                  <Button
-                    variant="outline"
-                    onClick={() => enterPreview.mutate()}
-                    disabled={enterPreview.isPending}
-                    className="self-start"
-                  >
-                    {enterPreview.isPending
-                      ? tSettings('preview.activating')
-                      : tSettings('preview.activate')}
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 dark:bg-amber-900/25 dark:text-amber-300 dark:border-amber-800">
-                    {tSettings('preview.activeInfo')}
-                  </div>
-                  <Button
-                    variant="destructive"
-                    onClick={() => exitPreview.mutate()}
-                    disabled={exitPreview.isPending}
-                    className="self-start"
-                  >
-                    {exitPreview.isPending
-                      ? tSettings('preview.exiting')
-                      : tSettings('preview.exit')}
-                  </Button>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        )}
+        {/* "Testa som ny användare" och premiumtilldelningen flyttade till
+            /app/admin — adminverktygen hör ihop och låg utspridda här. */}
 
         {/* Data Export Card */}
         <Card>

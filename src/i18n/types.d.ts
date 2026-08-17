@@ -33,6 +33,7 @@ import type svPagesHubs from '../../public/locales/sv/pages-hubs.json'
 import type svArticleLayout from '../../public/locales/sv/article-layout.json'
 import type svPagesOther from '../../public/locales/sv/pages-other.json'
 import type svPremium from '../../public/locales/sv/premium.json'
+import type svAdmin from '../../public/locales/sv/admin.json'
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -65,6 +66,7 @@ declare module 'i18next' {
       'article-layout': typeof svArticleLayout
       'pages-other': typeof svPagesOther
       premium: typeof svPremium
+      admin: typeof svAdmin
     }
   }
 }

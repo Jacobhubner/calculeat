@@ -225,8 +225,6 @@
     "usernameUpdateError": "Kunde inte uppdatera användarnamn",
     "usernameUpdated": "Användarnamn uppdaterat",
     "adminManagement": "Adminhantering",
-    "premiumAdminTitle": "Premium",
-    "premiumAdminDescription": "Sök upp en användare för att se prenumerationshistoriken och ge premium gratis. Orsaken du anger sparas i historiken.",
     "adminPlaceholder": "E-postadress eller användarnamn",
     "addAdmin": "Lägg till",
     "addingAdmin": "Lägger till...",

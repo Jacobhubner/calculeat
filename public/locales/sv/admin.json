@@ -1,0 +1,31 @@
+{
+  "pageTitle": "Admins",
+  "pageDescription": "Verktygen du har som admin, samlade på ett ställe.",
+  "noAccess": "Du har inte behörighet till den här sidan.",
+  "roleAdmin": "Admin",
+  "roleSuperAdmin": "Superadmin",
+  "capabilities": {
+    "title": "Det här kan du göra",
+    "supportInbox": "Läsa och besvara supportärenden, tilldela dig ärenden och stänga eller återöppna trådar",
+    "supportAttachments": "Se bilder som användare bifogar i supportchatten",
+    "directMessage": "Skicka direktmeddelande till en enskild användare",
+    "preview": "Testa appen som en ny användare i en sandlåda, utan att röra din egen data",
+    "freeView": "Se appen som en gratisanvändare för att kontrollera vad som är låst",
+    "superAdminNote": "Som superadmin kan du dessutom:",
+    "manageAdmins": "Lägga till och ta bort andra admins",
+    "grantPremium": "Ge premium gratis till en användare och se hela deras prenumerationshistorik",
+    "broadcast": "Skicka lanseringsnotiser och meddelanden till alla användare"
+  },
+  "support": {
+    "title": "Support",
+    "description": "Inkorgen med användarnas ärenden. Öppnas i en egen vy eftersom trådarna behöver hela skärmen.",
+    "open": "Öppna supportinkorgen",
+    "unreadOne": "{{count}} oläst ärende",
+    "unreadOther": "{{count}} olästa ärenden"
+  },
+  "premium": {
+    "title": "Premium",
+    "description": "Sök upp en användare för att se prenumerationshistoriken och ge premium gratis. Orsaken du anger sparas i historiken.",
+    "superAdminOnly": "Endast superadmin"
+  }
+}
