@@ -100,17 +100,23 @@ Deno.serve(async (req: Request) => {
         // över, så utan loggen går det inte att se om någon haft provperiod
         // eller betalat tidigare. Ett misslyckat logg-skriv får inte fälla
         // själva prenumerationen — den är redan sparad ovan.
-        const { error: logError } = await supabaseAdmin.from('subscription_events').insert({
-          user_id: userId,
-          event_type: sub.status === 'trialing' ? 'trial_started' : 'payment_started',
-          plan: 'premium',
-          source: 'stripe',
-          period_end: periodEnd(sub),
-          // Kunden loggas så trial-spärren och återanvändningen håller även
-          // om user_subscriptions-raden senare går förlorad.
-          stripe_customer_id: customerId ?? null,
-        })
-        if (logError) console.error('Kunde inte logga prenumerationshändelse:', logError)
+        // Vid checkout loggas BARA provperioden. Tecknar någon utan provperiod
+        // kommer betalningen i stället från invoice.paid, som är beviset på
+        // att pengar dragits — att gissa 'payment_started' här skulle märka
+        // användaren som betalande innan dragningen gått igenom.
+        if (sub.status === 'trialing') {
+          const { error: logError } = await supabaseAdmin.from('subscription_events').insert({
+            user_id: userId,
+            event_type: 'trial_started',
+            plan: 'premium',
+            source: 'stripe',
+            period_end: periodEnd(sub),
+            // Kunden loggas så trial-spärren och återanvändningen håller även
+            // om user_subscriptions-raden senare går förlorad.
+            stripe_customer_id: customerId ?? null,
+          })
+          if (logError) console.error('Kunde inte logga prenumerationshändelse:', logError)
+        }
         break
       }
 
@@ -155,14 +161,15 @@ Deno.serve(async (req: Request) => {
         // Logga bara verkliga övergångar. 'updated' skickas även för små
         // ändringar (t.ex. metadata) och skulle annars fylla historiken med
         // brus utan informationsvärde.
+        //
+        // VIKTIGT: status 'active' loggas INTE som betalning. Stripe sätter
+        // active redan vid övergången provperiod → aktiv, alltså innan första
+        // dragningen gått igenom. Att härleda betalning ur status märkte
+        // användare som betalande i förtid — och 'has_paid_before' styr vad
+        // som visas i premiumpanelen. Betalning loggas i stället från
+        // invoice.paid nedan, som ÄR beviset på att pengar dragits.
         const loggedType =
-          status === 'canceled'
-            ? 'canceled'
-            : status === 'trialing'
-              ? 'trial_started'
-              : status === 'active'
-                ? 'payment_renewed'
-                : null
+          status === 'canceled' ? 'canceled' : status === 'trialing' ? 'trial_started' : null
 
         if (loggedType) {
           const { error: logError } = await supabaseAdmin.from('subscription_events').insert({
@@ -176,6 +183,55 @@ Deno.serve(async (req: Request) => {
           })
           if (logError) console.error('Kunde inte logga prenumerationshändelse:', logError)
         }
+        break
+      }
+
+      // Betalning bekräftad. Det här — inte prenumerationens status — är
+      // beviset på att pengar faktiskt dragits.
+      case 'invoice.paid': {
+        const invoice = event.data.object as Stripe.Invoice
+        const subscriptionId =
+          typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id
+        if (!subscriptionId) break
+
+        // En provperiod ger en faktura på 0 kr som markeras betald. Den är
+        // ingen betalning och får inte märka användaren som betalande.
+        if (!invoice.amount_paid || invoice.amount_paid <= 0) break
+
+        const { data: row } = await supabaseAdmin
+          .from('user_subscriptions')
+          .select('user_id, stripe_customer_id')
+          .eq('stripe_subscription_id', subscriptionId)
+          .maybeSingle()
+
+        const userId = row?.user_id
+        if (!userId) {
+          console.error('invoice.paid: ingen användare för subscription:', subscriptionId)
+          break
+        }
+
+        // Första dragningen vs förnyelse: har användaren redan en betalning
+        // loggad är detta en förnyelse.
+        const { data: earlier } = await supabaseAdmin
+          .from('subscription_events')
+          .select('id')
+          .eq('user_id', userId)
+          .in('event_type', ['payment_started', 'payment_renewed'])
+          .limit(1)
+
+        const { error: logError } = await supabaseAdmin.from('subscription_events').insert({
+          user_id: userId,
+          event_type: earlier && earlier.length > 0 ? 'payment_renewed' : 'payment_started',
+          plan: 'premium',
+          source: 'stripe',
+          period_end: invoice.period_end ? new Date(invoice.period_end * 1000).toISOString() : null,
+          stripe_customer_id:
+            row?.stripe_customer_id ??
+            (typeof invoice.customer === 'string'
+              ? invoice.customer
+              : (invoice.customer?.id ?? null)),
+        })
+        if (logError) console.error('Kunde inte logga betalning:', logError)
         break
       }
 
