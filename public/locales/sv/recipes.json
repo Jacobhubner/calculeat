@@ -259,5 +259,16 @@
     "heat": "Värmenivå",
     "watt": "Effekt",
     "heatPlaceholder": "Medelhög värme"
+  },
+  "nutritionInfo": {
+    "title": "När uppdateras receptets näringsvärden?",
+    "intro": "Ett recept räknar om sin näring när receptet sparas — inte när en ingrediens ändras. Siffrorna du ser är alltså beräknade vid den senaste sparningen.",
+    "ownTitle": "Ändrar du själv ett livsmedel",
+    "ownBody": "Dina recept följer med automatiskt. Rättar du t.ex. din köttfärs från 250 till 220 kcal använder dina recept det nya värdet direkt — du har ju bett om ändringen.",
+    "otherTitle": "Ändrar någon annan ett livsmedel",
+    "otherBody": "Då visas en gul triangel vid receptets namn. Den betyder att siffrorna bygger på äldre värden. Öppna receptet och spara om för att uppdatera — eller låt det vara. Du bestämmer.",
+    "loggedTitle": "Mat du redan loggat ändras aldrig",
+    "loggedBody": "Åt du 600 kcal i tisdags står det 600 kcal i tisdags, för alltid. Historiken skrivs aldrig om i efterhand.",
+    "why": "Varför inte automatiskt? Då skulle dina siffror kunna ändras för att någon annan rört ett livsmedel i den gemensamma databasen — utan att du lagat något nytt. Din historik och dina beräkningar ska ligga still tills du själv väljer att uppdatera."
   }
 }

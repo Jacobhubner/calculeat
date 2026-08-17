@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Edit2,
@@ -18,6 +19,7 @@ import { Badge } from '@/components/ui/badge'
 import type { Recipe, RecipeIngredient } from '@/hooks/useRecipes'
 import type { FoodItem } from '@/hooks/useFoodItems'
 import { useShowEnergyDensity } from '@/hooks/useShowEnergyDensity'
+import { RecipeNutritionInfoModal } from './RecipeNutritionInfoModal'
 import { MACRO_COLORS } from '@/lib/constants/macroColors'
 
 interface RecipeWithIngredients extends Recipe {
@@ -58,6 +60,7 @@ export function RecipeCard({
   onUploadImage,
 }: RecipeCardProps) {
   const { t } = useTranslation('recipes')
+  const [showNutritionInfo, setShowNutritionInfo] = useState(false)
 
   const servings = recipe.servings || 1
   const totalTime = (recipe.prep_time_min ?? 0) + (recipe.cook_time_min ?? 0)
@@ -108,144 +111,161 @@ export function RecipeCard({
   }
 
   return (
-    <Card
-      variant="gradient"
-      className="hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
-      onClick={onPreview}
-    >
-      <CardContent className="p-3">
-        <div className="flex items-center gap-3">
-          {/* Tumnagel eller ikon */}
-          {recipe.image_url ? (
-            <img
-              src={recipe.image_url}
-              alt={recipe.name}
-              className="h-10 w-10 rounded-lg object-cover flex-shrink-0"
-              loading="lazy"
-            />
-          ) : (
-            <ScrollText className="h-4 w-4 text-primary-600 flex-shrink-0 dark:text-primary-300" />
-          )}
+    <>
+      <Card
+        variant="gradient"
+        className="hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+        onClick={onPreview}
+      >
+        <CardContent className="p-3">
+          <div className="flex items-center gap-3">
+            {/* Tumnagel eller ikon */}
+            {recipe.image_url ? (
+              <img
+                src={recipe.image_url}
+                alt={recipe.name}
+                className="h-10 w-10 rounded-lg object-cover flex-shrink-0"
+                loading="lazy"
+              />
+            ) : (
+              <ScrollText className="h-4 w-4 text-primary-600 flex-shrink-0 dark:text-primary-300" />
+            )}
 
-          {/* Name + meta */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 min-w-0">
-              <h3 className="font-semibold text-neutral-900 truncate text-sm dark:text-neutral-100">
-                {recipe.name}
-              </h3>
-              {energyDensityColor && (
-                <Badge
-                  variant="outline"
-                  className={`${colorBadgeClass[energyDensityColor]} flex-shrink-0 text-xs`}
-                >
-                  {colorLabel[energyDensityColor]}
-                </Badge>
-              )}
-              {/* Diskret markering — inte en varning som skriker, men den ska
-                  inte gå att missa att siffrorna är beräknade på äldre värden. */}
-              {hasDrift && (
-                <span
-                  className="flex-shrink-0 text-amber-600 dark:text-amber-400"
-                  title={t('card.driftTitle')}
-                  aria-label={t('card.driftTitle')}
-                >
-                  <AlertTriangle className="h-3.5 w-3.5" />
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-2 text-xs text-neutral-500 mt-0.5 flex-wrap dark:text-neutral-400">
-              <span className="flex items-center gap-1">
-                <Users className="h-3 w-3" />
-                {savedAs100g
-                  ? t('card.per100g')
-                  : `${servings} ${servings === 1 ? t('card.portion') : t('card.portionPlural')}`}
-              </span>
-              {totalTime > 0 && (
-                <span className="flex items-center gap-1">
-                  <Clock className="h-3 w-3" />
-                  {totalTime} min
-                </span>
-              )}
-              <span className="text-neutral-400 dark:text-neutral-500">·</span>
-              <span className="font-semibold text-primary-600 dark:text-primary-300">
-                {displayCalories} kcal
-              </span>
-              <span style={{ color: MACRO_COLORS.fat }}>F:{displayFat}g</span>
-              <span style={{ color: MACRO_COLORS.carbs }}>K:{displayCarbs}g</span>
-              <span style={{ color: MACRO_COLORS.protein }}>P:{displayProtein}g</span>
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
-            {onSave && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onSave}
-                disabled={isSaving}
-                title={t('card.saveToMineHint')}
-                className="h-8 gap-1.5 text-primary-700 dark:text-primary-300"
-              >
-                {isSaving ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <BookmarkPlus className="h-4 w-4" />
+            {/* Name + meta */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <h3 className="font-semibold text-neutral-900 truncate text-sm dark:text-neutral-100">
+                  {recipe.name}
+                </h3>
+                {energyDensityColor && (
+                  <Badge
+                    variant="outline"
+                    className={`${colorBadgeClass[energyDensityColor]} flex-shrink-0 text-xs`}
+                  >
+                    {colorLabel[energyDensityColor]}
+                  </Badge>
                 )}
-                <span className="hidden sm:inline">{t('card.saveToMine')}</span>
-              </Button>
-            )}
-            {onUploadImage && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onUploadImage}
-                className="h-8 w-8 p-0 text-amber-600 hover:text-amber-800 hover:bg-amber-50 dark:text-amber-300"
-                aria-label={t('card.uploadImage')}
-              >
-                <Camera className="h-4 w-4" />
-              </Button>
-            )}
-            {onPublish && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onPublish}
-                className="h-8 w-8 p-0 text-primary-600 hover:text-primary-800 hover:bg-primary-50 dark:text-primary-300"
-                aria-label={t('card.publish')}
-              >
-                <Globe className="h-4 w-4" />
-              </Button>
-            )}
-            {onUnpublish && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onUnpublish}
-                className="h-8 w-8 p-0 text-amber-600 hover:text-amber-800 hover:bg-amber-50 dark:text-amber-300"
-                aria-label={t('card.unpublish')}
-              >
-                <Undo2 className="h-4 w-4" />
-              </Button>
-            )}
-            {onEdit && (
-              <Button variant="ghost" size="sm" onClick={onEdit} className="h-8 w-8 p-0">
-                <Edit2 className="h-4 w-4" />
-              </Button>
-            )}
-            {onDelete && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onDelete}
-                className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
+                {/* Diskret markering — inte en varning som skriker, men den ska
+                  inte gå att missa att siffrorna är beräknade på äldre värden.
+                  Klick öppnar förklaringen; stoppar bubbling så kortet inte
+                  samtidigt öppnar förhandsvisningen. */}
+                {hasDrift && (
+                  <button
+                    type="button"
+                    onClick={e => {
+                      e.stopPropagation()
+                      setShowNutritionInfo(true)
+                    }}
+                    className="flex-shrink-0 rounded text-amber-600 hover:text-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-400 dark:text-amber-400 dark:hover:text-amber-300"
+                    title={t('card.driftTitle')}
+                    aria-label={t('card.driftTitle')}
+                  >
+                    <AlertTriangle className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+              <div className="flex items-center gap-2 text-xs text-neutral-500 mt-0.5 flex-wrap dark:text-neutral-400">
+                <span className="flex items-center gap-1">
+                  <Users className="h-3 w-3" />
+                  {savedAs100g
+                    ? t('card.per100g')
+                    : `${servings} ${servings === 1 ? t('card.portion') : t('card.portionPlural')}`}
+                </span>
+                {totalTime > 0 && (
+                  <span className="flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    {totalTime} min
+                  </span>
+                )}
+                <span className="text-neutral-400 dark:text-neutral-500">·</span>
+                <span className="font-semibold text-primary-600 dark:text-primary-300">
+                  {displayCalories} kcal
+                </span>
+                <span style={{ color: MACRO_COLORS.fat }}>F:{displayFat}g</span>
+                <span style={{ color: MACRO_COLORS.carbs }}>K:{displayCarbs}g</span>
+                <span style={{ color: MACRO_COLORS.protein }}>P:{displayProtein}g</span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div
+              className="flex items-center gap-1 flex-shrink-0"
+              onClick={e => e.stopPropagation()}
+            >
+              {onSave && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onSave}
+                  disabled={isSaving}
+                  title={t('card.saveToMineHint')}
+                  className="h-8 gap-1.5 text-primary-700 dark:text-primary-300"
+                >
+                  {isSaving ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <BookmarkPlus className="h-4 w-4" />
+                  )}
+                  <span className="hidden sm:inline">{t('card.saveToMine')}</span>
+                </Button>
+              )}
+              {onUploadImage && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onUploadImage}
+                  className="h-8 w-8 p-0 text-amber-600 hover:text-amber-800 hover:bg-amber-50 dark:text-amber-300"
+                  aria-label={t('card.uploadImage')}
+                >
+                  <Camera className="h-4 w-4" />
+                </Button>
+              )}
+              {onPublish && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onPublish}
+                  className="h-8 w-8 p-0 text-primary-600 hover:text-primary-800 hover:bg-primary-50 dark:text-primary-300"
+                  aria-label={t('card.publish')}
+                >
+                  <Globe className="h-4 w-4" />
+                </Button>
+              )}
+              {onUnpublish && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onUnpublish}
+                  className="h-8 w-8 p-0 text-amber-600 hover:text-amber-800 hover:bg-amber-50 dark:text-amber-300"
+                  aria-label={t('card.unpublish')}
+                >
+                  <Undo2 className="h-4 w-4" />
+                </Button>
+              )}
+              {onEdit && (
+                <Button variant="ghost" size="sm" onClick={onEdit} className="h-8 w-8 p-0">
+                  <Edit2 className="h-4 w-4" />
+                </Button>
+              )}
+              {onDelete && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onDelete}
+                  className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      <RecipeNutritionInfoModal
+        open={showNutritionInfo}
+        onClose={() => setShowNutritionInfo(false)}
+      />
+    </>
   )
 }

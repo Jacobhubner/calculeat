@@ -259,5 +259,16 @@
     "heat": "Heat level",
     "watt": "Power",
     "heatPlaceholder": "Medium heat"
+  },
+  "nutritionInfo": {
+    "title": "When is a recipe’s nutrition updated?",
+    "intro": "A recipe recalculates its nutrition when the recipe is saved — not when an ingredient changes. The numbers you see were calculated at the last save.",
+    "ownTitle": "When you edit a food item yourself",
+    "ownBody": "Your recipes follow along automatically. Correct your mince from 250 to 220 kcal and your recipes use the new value right away — you asked for the change.",
+    "otherTitle": "When someone else edits a food item",
+    "otherBody": "A yellow triangle appears next to the recipe name. It means the numbers are based on older values. Open the recipe and save it again to update — or leave it. Your call.",
+    "loggedTitle": "Food you already logged never changes",
+    "loggedBody": "If you ate 600 kcal on Tuesday, it stays 600 kcal on Tuesday, forever. History is never rewritten.",
+    "why": "Why not automatic? Your numbers could otherwise change because someone else touched a food item in the shared database — without you cooking anything new. Your history and calculations stay put until you choose to update."
   }
 }
