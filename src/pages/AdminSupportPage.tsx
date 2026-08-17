@@ -27,8 +27,6 @@ import {
   useAssignSupportThread,
 } from '@/hooks/useSupportChat'
 import { useSupportMessages, useAdminDeleteSupportMessage } from '@/hooks/useSupportChat'
-import { useIsSuperAdmin } from '@/hooks/useAdminManagement'
-import GrantPremiumPanel from '@/components/admin/GrantPremiumPanel'
 import { useSupportImageUpload } from '@/hooks/useSupportImageUpload'
 import { useAuth } from '@/contexts/AuthContext'
 import type { SupportInboxEntry, SupportMessage, SupportRpcResult } from '@/lib/types/support'
@@ -116,7 +114,6 @@ function AdminSupportThread({
   const { mutate: assignThread, isPending: isAssigning } = useAssignSupportThread()
   const { mutate: deleteMessage } = useAdminDeleteSupportMessage(entry.thread_id)
   const { uploadImage, removeImage, isUploading } = useSupportImageUpload()
-  const { data: isSuperAdmin = false } = useIsSuperAdmin()
   useMarkSupportMessagesRead(entry.thread_id)
 
   const isAssignedToMe = entry.assigned_admin_id === user?.id
@@ -258,16 +255,6 @@ function AdminSupportThread({
               </span>
             )}
           </div>
-          {/* Superadmin kan ge premium här — man tittar redan på användaren.
-              Gäster har inget konto att koppla en plan till. */}
-          {isSuperAdmin && !entry.is_guest && entry.user_id && (
-            <div className="-mx-4 mt-2">
-              <GrantPremiumPanel
-                userId={entry.user_id}
-                userLabel={entry.username || entry.email || 'användaren'}
-              />
-            </div>
-          )}
         </div>
         <div className="flex items-center gap-1 shrink-0">
           {/* Ta / Lämna ärendet */}

@@ -95,6 +95,19 @@ Deno.serve(async (req: Request) => {
           { onConflict: 'user_id' }
         )
         if (error) throw error
+
+        // Historiken: user_subscriptions har en rad per användare som skrivs
+        // över, så utan loggen går det inte att se om någon haft provperiod
+        // eller betalat tidigare. Ett misslyckat logg-skriv får inte fälla
+        // själva prenumerationen — den är redan sparad ovan.
+        const { error: logError } = await supabaseAdmin.from('subscription_events').insert({
+          user_id: userId,
+          event_type: sub.status === 'trialing' ? 'trial_started' : 'payment_started',
+          plan: 'premium',
+          source: 'stripe',
+          period_end: periodEnd(sub),
+        })
+        if (logError) console.error('Kunde inte logga prenumerationshändelse:', logError)
         break
       }
 
@@ -135,6 +148,29 @@ Deno.serve(async (req: Request) => {
           { onConflict: 'user_id' }
         )
         if (error) throw error
+
+        // Logga bara verkliga övergångar. 'updated' skickas även för små
+        // ändringar (t.ex. metadata) och skulle annars fylla historiken med
+        // brus utan informationsvärde.
+        const loggedType =
+          status === 'canceled'
+            ? 'canceled'
+            : status === 'trialing'
+              ? 'trial_started'
+              : status === 'active'
+                ? 'payment_renewed'
+                : null
+
+        if (loggedType) {
+          const { error: logError } = await supabaseAdmin.from('subscription_events').insert({
+            user_id: userId,
+            event_type: loggedType,
+            plan: 'premium',
+            source: 'stripe',
+            period_end: periodEnd(sub),
+          })
+          if (logError) console.error('Kunde inte logga prenumerationshändelse:', logError)
+        }
         break
       }
 

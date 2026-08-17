@@ -225,6 +225,8 @@
     "usernameUpdateError": "Could not update username",
     "usernameUpdated": "Username updated",
     "adminManagement": "Admin management",
+    "premiumAdminTitle": "Premium",
+    "premiumAdminDescription": "Search for a user to see their subscription history and grant free premium. The reason you enter is saved to the history.",
     "adminPlaceholder": "Email address or username",
     "addAdmin": "Add",
     "addingAdmin": "Adding...",

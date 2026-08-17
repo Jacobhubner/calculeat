@@ -49,7 +49,8 @@ import {
 import { usePreviewMode } from '@/hooks/usePreviewMode'
 import { useFreeViewMode } from '@/hooks/useFreeViewMode'
 import { useDataExport } from '@/hooks/useDataExport'
-import { Download } from 'lucide-react'
+import { Download, Crown } from 'lucide-react'
+import PremiumAdminPanel from '@/components/admin/PremiumAdminPanel'
 
 type CompletionMode = 'manual' | 'auto'
 type OpenEditor = 'username' | 'email' | 'password' | null
@@ -1041,6 +1042,25 @@ export default function SettingsPage() {
                   {addAdmin.isPending ? t('settings.addingAdmin') : t('settings.addAdmin')}
                 </button>
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Premium — endast superadmin. Låg tidigare i supportvyn, men nådde
+            då bara personer som hört av sig. */}
+        {isSuperAdmin && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Crown className="h-5 w-5 text-amber-500" />
+                {t('settings.premiumAdminTitle')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-3 text-sm text-neutral-600 dark:text-neutral-400">
+                {t('settings.premiumAdminDescription')}
+              </p>
+              <PremiumAdminPanel />
             </CardContent>
           </Card>
         )}
