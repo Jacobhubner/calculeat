@@ -60,17 +60,36 @@ function formatDate(iso: string): string {
 }
 
 /**
- * Senaste aktivitet i relativ form. Ett datum kräver att man räknar själv;
- * "3 dagar sedan" går att läsa i förbifarten.
+ * Senaste aktivitet, med precision efter hur långt bort i tiden det är.
+ *
+ * Inom ett dygn: minuter och timmar — då vill man veta om personen är inne
+ * just nu eller var det i morse. Efter fyra månader: datum, eftersom
+ * "fem månader sedan" varken går att jämföra eller kontrollera.
+ * Däremellan är relativ tid lättast att läsa i förbifarten.
  */
 function formatLastSeen(iso: string | null): string {
   if (!iso) return 'Ingen aktivitet'
-  const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000)
-  if (days <= 0) return 'Idag'
+
+  const then = new Date(iso)
+  const minutes = Math.floor((Date.now() - then.getTime()) / 60000)
+
+  if (minutes < 1) return 'Just nu'
+  if (minutes < 60) return minutes + ' min sedan'
+
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return hours === 1 ? '1 timme sedan' : hours + ' timmar sedan'
+
+  const days = Math.floor(hours / 24)
   if (days === 1) return 'Igår'
   if (days < 30) return days + ' dagar sedan'
-  if (days < 60) return 'Över en månad sedan'
-  return Math.floor(days / 30) + ' månader sedan'
+
+  // Fyra månader ≈ 120 dagar. Därefter säger datumet mer än antalet månader.
+  if (days < 120) {
+    const months = Math.floor(days / 30)
+    return months === 1 ? 'Över en månad sedan' : months + ' månader sedan'
+  }
+
+  return formatDate(iso)
 }
 
 function previewExpiry(months: GrantDuration): string | null {
