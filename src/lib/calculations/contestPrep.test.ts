@@ -17,6 +17,7 @@ import {
   MINOR_ADJUSTMENT_WEIGHT_FRACTION,
   MIN_TARGET_BODY_FAT,
   REALISTIC_LEAN_LOSS_FRACTION,
+  ratePercentForDeficitLevel,
 } from './contestPrep'
 
 describe('estimatePrepDuration — mot källans eget exempel', () => {
@@ -473,5 +474,48 @@ describe('RÄTTNINGAR efter granskning 2026-08-18', () => {
       })!
       expect(liten.isMinorAdjustment).toBe(stor.isMinorAdjustment)
     })
+  })
+})
+
+describe('underskottsnivåerna matchar Energimål', () => {
+  /**
+   * Räknaren hade tidigare ett fritt taktfält med schablonen 0,5 %/vecka,
+   * medan kostläget −20/−25 % innebar 0,64–0,80 %/vecka. Två svar på samma
+   * fråga i samma dialog. Nivåerna delar nu omräkning med Energimål.
+   */
+  it('ger samma kg/vecka som referenstabellen visar', () => {
+    // TDEE 3190, 90,8 kg — samma som i referenstabellen
+    const params = { tdee: 3190, weightKg: 90.8 }
+    const vantat = {
+      cautious: [0.29, 0.44],
+      normal: [0.58, 0.73],
+      aggressive: [0.73, 0.87],
+    } as const
+
+    for (const id of ['cautious', 'normal', 'aggressive'] as const) {
+      const r = ratePercentForDeficitLevel({ level: id, ...params })!
+      expect(r.kgMin).toBeCloseTo(vantat[id][0], 1)
+      expect(r.kgMax).toBeCloseTo(vantat[id][1], 1)
+    }
+  })
+
+  it('snabbare nivå ger kortare tid', () => {
+    const params = { tdee: 3190, weightKg: 90.8 }
+    const bas = { currentWeightKg: 90.8, currentBodyFatPct: 12, targetBodyFatPct: 7 }
+    const langsam = estimatePrepDuration({
+      ...bas,
+      weeklyRatePercent: ratePercentForDeficitLevel({ level: 'cautious', ...params })!.percentMid,
+    })!
+    const snabb = estimatePrepDuration({
+      ...bas,
+      weeklyRatePercent: ratePercentForDeficitLevel({ level: 'aggressive', ...params })!.percentMid,
+    })!
+    expect(snabb.weeks).toBeLessThan(langsam.weeks)
+  })
+
+  it('ogiltig TDEE eller vikt ger null i stället för en gissning', () => {
+    expect(ratePercentForDeficitLevel({ level: 'normal', tdee: 0, weightKg: 80 })).toBeNull()
+    expect(ratePercentForDeficitLevel({ level: 'normal', tdee: 2500, weightKg: 0 })).toBeNull()
+    expect(ratePercentForDeficitLevel({ level: 'normal', tdee: NaN, weightKg: 80 })).toBeNull()
   })
 })

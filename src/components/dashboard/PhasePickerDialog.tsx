@@ -521,6 +521,7 @@ export function PhasePickerDialog({
                       {selected === 'cut' && focus === 'strength' && (
                         <PrepDurationHelper
                           weightKg={weightKg}
+                          tdee={tdee}
                           bodyFatPercentage={bodyFatPercentage}
                           gender={
                             activeProfile?.gender === 'male' || activeProfile?.gender === 'female'

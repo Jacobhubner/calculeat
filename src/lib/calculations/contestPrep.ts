@@ -66,6 +66,8 @@
  * takt du valt", ALDRIG som "så länge bör du förbereda dig".
  */
 
+import { weeklyRateForCalories } from './weeklyRate'
+
 /**
  * Rekommenderade veckotakter i % kroppsvikt/vecka.
  *
@@ -116,6 +118,69 @@ export const OBSERVED_PREP_WEEKS = { min: 14, max: 32 } as const
  * vid en aggressiv närmare eller över 0,15.
  */
 export const REALISTIC_LEAN_LOSS_FRACTION = 0.15
+
+/**
+ * De tre underskottsnivåerna, identiska med Energimål och kostlägena.
+ *
+ * VARFÖR DE LIGGER HÄR: räknaren hade tidigare ett fritt taktfält med
+ * schablonen 0,5 %/vecka. Det gav två olika svar i samma dialog — kostläget
+ * −20/−25 % motsvarar 0,64–0,80 %/vecka, alltså snabbare än räknaren antog.
+ * Nu väljer användaren samma nivå som styr kalorimålet, och takten härleds
+ * ur TDEE i stället för att gissas.
+ *
+ * Procentsatserna är andelar av TDEE och matchar EnergyGoalReferenceTable
+ * exakt (0,85–0,90 / 0,75–0,80 / 0,70–0,75). Omräkningen till kg och
+ * kroppsviktsprocent görs med weeklyRateForCalories, samma funktion som
+ * tabellen använder — talen kan därför inte glida isär.
+ */
+export const DEFICIT_LEVELS = [
+  { id: 'cautious', factorMin: 0.85, factorMax: 0.9, label: '10-15%' },
+  { id: 'normal', factorMin: 0.75, factorMax: 0.8, label: '20-25%' },
+  { id: 'aggressive', factorMin: 0.7, factorMax: 0.75, label: '25-30%' },
+] as const
+
+export type DeficitLevelId = (typeof DEFICIT_LEVELS)[number]['id']
+
+/**
+ * Veckotakt i % kroppsvikt för en underskottsnivå.
+ *
+ * Returnerar ett SPANN, eftersom varje nivå är ett spann. Räknaren behöver
+ * ett tal och använder mittvärdet — men UI:t visar hela spannet, så
+ * användaren ser att det är en uppskattning och inte ett exakt löfte.
+ */
+export function ratePercentForDeficitLevel(params: {
+  level: DeficitLevelId
+  tdee: number
+  weightKg: number
+}): {
+  percentMin: number
+  percentMax: number
+  percentMid: number
+  kgMin: number
+  kgMax: number
+} | null {
+  const { level, tdee, weightKg } = params
+  if (!Number.isFinite(tdee) || tdee <= 0) return null
+  if (!Number.isFinite(weightKg) || weightKg <= 0) return null
+
+  const def = DEFICIT_LEVELS.find(d => d.id === level)
+  if (!def) return null
+
+  const rate = weeklyRateForCalories({
+    tdee,
+    caloriesMin: tdee * def.factorMin,
+    caloriesMax: tdee * def.factorMax,
+    weightKg,
+  })
+
+  return {
+    percentMin: round2(rate.percentMin),
+    percentMax: round2(rate.percentMax),
+    percentMid: round2((rate.percentMin + rate.percentMax) / 2),
+    kgMin: round2(rate.kgMin),
+    kgMax: round2(rate.kgMax),
+  }
+}
 
 /**
  * Nedre gräns för mål-kroppsfett, per kön.

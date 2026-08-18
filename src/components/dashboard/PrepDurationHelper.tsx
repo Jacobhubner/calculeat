@@ -29,11 +29,16 @@ import {
   PREP_RATE_PERCENT,
   OBSERVED_PREP_WEEKS,
   SUGGESTED_TARGET_BODY_FAT,
+  DEFICIT_LEVELS,
+  ratePercentForDeficitLevel,
+  type DeficitLevelId,
 } from '@/lib/calculations/contestPrep'
 import { cn } from '@/lib/utils'
 
 interface Props {
   weightKg: number
+  /** Behövs för att härleda veckotakten ur den valda underskottsnivån. */
+  tdee: number
   /** Uppmätt kroppsfettprocent. Utan den går räknaren inte att använda. */
   bodyFatPercentage?: number
   /**
@@ -45,11 +50,20 @@ interface Props {
   onUseWeeks: (weeks: number) => void
 }
 
-export function PrepDurationHelper({ weightKg, bodyFatPercentage, gender, onUseWeeks }: Props) {
+export function PrepDurationHelper({
+  weightKg,
+  tdee,
+  bodyFatPercentage,
+  gender,
+  onUseWeeks,
+}: Props) {
   const { t } = useTranslation('dashboard')
   const [expanded, setExpanded] = useState(false)
   const [targetBf, setTargetBf] = useState('')
-  const [rate, setRate] = useState(String(PREP_RATE_PERCENT.recommended))
+  // Underskottsnivå i stället för ett fritt taktfält. Tidigare kunde man
+  // skriva 0,5 %/v samtidigt som kostläget innebar 0,72 %/v — två svar på
+  // samma fråga i samma dialog. Nivåerna är desamma som i Energimål.
+  const [level, setLevel] = useState<DeficitLevelId>('normal')
 
   // Utan uppmätt kroppsfett finns ingen startpunkt att räkna från. I praktiken
   // når man aldrig hit — PhasePickerDialog ersätter hela vyn innan dess (se
@@ -58,7 +72,11 @@ export function PrepDurationHelper({ weightKg, bodyFatPercentage, gender, onUseW
   if (!bodyFatPercentage) return null
 
   const targetNum = parseFloat(targetBf.replace(',', '.'))
-  const rateNum = parseFloat(rate.replace(',', '.'))
+
+  // Takten härleds ur nivån och TDEE — inte ur en schablon. Mittvärdet
+  // används för uträkningen; spannet visas för användaren.
+  const levelRate = ratePercentForDeficitLevel({ level, tdee, weightKg })
+  const rateNum = levelRate?.percentMid ?? PREP_RATE_PERCENT.recommended
 
   const estimate = estimatePrepDuration({
     currentWeightKg: weightKg,
@@ -72,9 +90,6 @@ export function PrepDurationHelper({ weightKg, bodyFatPercentage, gender, onUseW
   // användaren 8 klampar modulen till 5 — då vore det vilseledande att varna
   // för ett tal som inte ligger bakom veckosiffran.
   const rateClass = estimate ? classifyPrepRate(estimate.ratePercentUsed) : null
-  const rateWasClamped =
-    estimate != null && Number.isFinite(rateNum) && rateNum !== estimate.ratePercentUsed
-
   const suggestedTarget =
     gender === 'male' ? SUGGESTED_TARGET_BODY_FAT.male : SUGGESTED_TARGET_BODY_FAT.female
 
@@ -103,35 +118,57 @@ export function PrepDurationHelper({ weightKg, bodyFatPercentage, gender, onUseW
             {t('phase.prep.intro', { current: bodyFatPercentage })}
           </p>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <Label htmlFor="prep-target" className="text-xs">
+              {t('phase.prep.targetLabel')}
+            </Label>
+            <Input
+              id="prep-target"
+              type="number"
+              inputMode="decimal"
+              step="0.5"
+              value={targetBf}
+              onChange={e => setTargetBf(e.target.value)}
+              placeholder={String(suggestedTarget)}
+              className="h-8 text-sm"
+            />
+          </div>
+
+          {/* Samma tre nivåer som styr kalorimålet. Takten härleds ur TDEE
+              med samma funktion som Energimål använder, så talen inte kan
+              säga emot varandra. */}
+          <div className="space-y-1.5">
+            <Label className="text-xs">{t('phase.prep.levelLabel')}</Label>
             <div className="space-y-1">
-              <Label htmlFor="prep-target" className="text-xs">
-                {t('phase.prep.targetLabel')}
-              </Label>
-              <Input
-                id="prep-target"
-                type="number"
-                inputMode="decimal"
-                step="0.5"
-                value={targetBf}
-                onChange={e => setTargetBf(e.target.value)}
-                placeholder={String(suggestedTarget)}
-                className="h-8 text-sm"
-              />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="prep-rate" className="text-xs">
-                {t('phase.prep.rateLabel')}
-              </Label>
-              <Input
-                id="prep-rate"
-                type="number"
-                inputMode="decimal"
-                step="0.05"
-                value={rate}
-                onChange={e => setRate(e.target.value)}
-                className="h-8 text-sm"
-              />
+              {DEFICIT_LEVELS.map(d => {
+                const r = ratePercentForDeficitLevel({ level: d.id, tdee, weightKg })
+                const isSelected = level === d.id
+                return (
+                  <button
+                    key={d.id}
+                    type="button"
+                    onClick={() => setLevel(d.id)}
+                    className={cn(
+                      'flex w-full items-baseline justify-between gap-2 rounded-lg border px-2.5 py-1.5 text-left transition-colors',
+                      isSelected
+                        ? 'border-primary-400 bg-primary-50 dark:border-primary-600 dark:bg-primary-900/25'
+                        : 'border-neutral-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800'
+                    )}
+                  >
+                    <span className="text-xs font-medium text-neutral-800 dark:text-neutral-100">
+                      {t(`phase.prep.level.${d.id}`)}
+                      <span className="ml-1 font-normal text-neutral-500 dark:text-neutral-400">
+                        {d.label}
+                      </span>
+                    </span>
+                    {r && (
+                      <span className="shrink-0 text-[11px] text-neutral-500 dark:text-neutral-400">
+                        {r.kgMin}–{r.kgMax} kg/v
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
             </div>
           </div>
 
@@ -143,11 +180,6 @@ export function PrepDurationHelper({ weightKg, bodyFatPercentage, gender, onUseW
           {estimate?.belowEssentialFat && (
             <p className="text-xs text-error-600 dark:text-error-400">
               {t('phase.prep.belowEssential', { limit: estimate.essentialFatLimit })}
-            </p>
-          )}
-          {rateWasClamped && (
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">
-              {t('phase.prep.rateClamped', { rate: estimate!.ratePercentUsed })}
             </p>
           )}
           {!estimate?.isMinorAdjustment && rateClass === 'acceptable' && (

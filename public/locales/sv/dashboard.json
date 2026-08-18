@@ -285,10 +285,8 @@
       "title": "Hur lång tid tar nedgången?",
       "intro": "Du ligger på {{current}} % kroppsfett. Ange målnivå och veckotakt, så räknas tiden ut.",
       "targetLabel": "Mål kroppsfett (%)",
-      "rateLabel": "Viktnedgång per vecka (%)",
       "rateAcceptable": "Snabbare än rekommenderat. Risken att tappa muskler tillsammans med fettet ökar — tävlande som placerade sig låg på 0,46 %/vecka (Chappell 2018).",
       "rateAggressive": "Betydligt snabbare än vad någon källa stöder. I Garthe 2011 gav 1,4 %/vecka ingen ökning av fettfri massa alls.",
-      "rateClamped": "Takten har justerats till {{rate}} %/vecka för beräkningen.",
       "belowEssential": "Under {{limit}} % är kroppsfettet essentiellt — det sitter i organ och nervsystem, inte som lagrad energi. Målet går inte att nå.",
       "result": "{{weeks}} veckor",
       "resultRange": "{{from}}–{{to}} veckor",
@@ -301,7 +299,13 @@
       "sourcesTitle": "Underlag",
       "source1": "Helms m.fl. 2014 — takt 0,5–1 %/vecka, längden följer startnivån",
       "source2": "Roberts m.fl. 2020 — ≤0,5 %/vecka; dokumenterade perioder 14–32 veckor",
-      "caveat": "Båda är narrativa översikter från tävlingslitteratur, inte kontrollerade studier. Ingen studie har jämfört olika längder mot varandra — siffrorna beskriver vad tävlande har gjort, inte vad som är optimalt."
+      "caveat": "Båda är narrativa översikter från tävlingslitteratur, inte kontrollerade studier. Ingen studie har jämfört olika längder mot varandra — siffrorna beskriver vad tävlande har gjort, inte vad som är optimalt.",
+      "levelLabel": "Hur snabbt vill du gå ner?",
+      "level": {
+        "cautious": "Försiktigt",
+        "normal": "Normalt",
+        "aggressive": "Aggressivt"
+      }
     }
   },
   "calibrationReadiness": {

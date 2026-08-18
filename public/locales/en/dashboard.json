@@ -285,10 +285,8 @@
       "title": "How long will the cut take?",
       "intro": "You are at {{current}}% body fat. Enter a target level and weekly rate to get the time.",
       "targetLabel": "Target body fat (%)",
-      "rateLabel": "Weight loss per week (%)",
       "rateAcceptable": "Faster than recommended. The risk of losing muscle along with the fat increases — competitors who placed averaged 0.46%/week (Chappell 2018).",
       "rateAggressive": "Considerably faster than any source supports. In Garthe 2011, 1.4%/week produced no gain in fat-free mass at all.",
-      "rateClamped": "The rate was adjusted to {{rate}}%/week for the calculation.",
       "belowEssential": "Below {{limit}}%, body fat is essential — it sits in organs and the nervous system, not as stored energy. This target cannot be reached.",
       "result": "{{weeks}} weeks",
       "resultRange": "{{from}}–{{to}} weeks",
@@ -301,7 +299,13 @@
       "sourcesTitle": "Sources",
       "source1": "Helms et al. 2014 — rate 0.5–1%/week, length follows your starting level",
       "source2": "Roberts et al. 2020 — ≤0.5%/week; documented periods 14–32 weeks",
-      "caveat": "Both are narrative reviews from competition literature, not controlled studies. No study has compared different lengths against each other — these figures describe what competitors have done, not what is optimal."
+      "caveat": "Both are narrative reviews from competition literature, not controlled studies. No study has compared different lengths against each other — these figures describe what competitors have done, not what is optimal.",
+      "levelLabel": "How fast do you want to lose?",
+      "level": {
+        "cautious": "Cautious",
+        "normal": "Normal",
+        "aggressive": "Aggressive"
+      }
     }
   },
   "calibrationReadiness": {
