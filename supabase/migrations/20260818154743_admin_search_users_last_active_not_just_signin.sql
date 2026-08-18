@@ -1,21 +1,26 @@
--- Lägger till senaste inloggning i användarsökningen.
+-- Senaste aktivitet i användarsökningen — och varför inloggning inte duger.
 --
--- VARFÖR: när listan växer behöver man kunna se vem som faktiskt använder
--- appen. Registreringsdatum säger inget om det — ett konto från i somras kan
--- vara aktivt dagligen eller övergivet efter första dagen.
+-- last_sign_in_at uppdateras bara vid en NY inloggning. En session som hålls
+-- vid liv genom token-förnyelse rör den aldrig, och appen loggar inte ut
+-- folk. Någon som använder appen dagligen kan därför ha ett värde som är
+-- flera månader gammalt.
 --
--- SORTERING: tidigare låg de med prenumerationsrad först, sedan nyast
--- registrerade. Nu sorteras allt på senaste inloggning, senast först. Den som
--- nyss varit inne är den man rimligen letar efter; ett konto som inte loggat
--- in på månader hamnar längst ned. Aldrig inloggade sist (NULLS LAST).
+-- BEVIS: sarge hade last_sign_in_at = 2026-04-21 men loggade mat 2026-08-03.
+-- Panelen visade "3 månader sedan" om någon som varit aktiv i förra veckan.
+-- Fyra av 28 användare hade föråldrat värde, störst avvikelse 104 dagar.
 --
--- last_sign_in_at ligger i auth.users. Funktionen är SECURITY DEFINER och
--- superadmin-spärrad, så uppslaget är säkert — men kolumnen får aldrig
--- exponeras via någon RPC som vanliga användare når.
+-- Löser det genom att ta det SENASTE av inloggning och faktisk aktivitet i
+-- appen (loggad mat, registrerad vikt). Det svarar på frågan man faktiskt
+-- ställer: "när använde den här personen appen sist?"
 --
--- DROP krävs eftersom returtypen får en kolumn till. DROP tar bort GRANTs,
--- så de sätts om nedan — PostgREST ansluter som 'authenticator' och behöver
--- PUBLIC-granten.
+-- Båda uppslagen går på user_id-index (idx_daily_logs_user_id,
+-- idx_weight_history_user).
+--
+-- SORTERING: senast aktiv först. Den man letar efter har oftast nyss varit
+-- inne; konton utan aktivitet hamnar sist (NULLS LAST).
+--
+-- DROP krävs eftersom returtypen ändras. DROP tar bort GRANTs, så de sätts om
+-- nedan — PostgREST ansluter som 'authenticator' och behöver PUBLIC-granten.
 DROP FUNCTION IF EXISTS public.admin_search_users(text, integer);
 
 CREATE FUNCTION public.admin_search_users(
@@ -27,8 +32,12 @@ RETURNS TABLE (
   username           text,
   email              text,
   created_at         timestamptz,
-  /** Senaste inloggning — NULL om användaren aldrig loggat in */
-  last_sign_in_at    timestamptz,
+  /**
+   * Senaste kända aktivitet: inloggning ELLER faktisk användning av appen,
+   * vilket som är senast. Se kommentaren ovan om varför inloggning ensam
+   * inte duger. NULL = ingen aktivitet alls registrerad.
+   */
+  last_active_at     timestamptz,
   effective_plan     text,
   plan               text,
   status             text,
@@ -59,7 +68,13 @@ BEGIN
     up.username,
     up.email,
     up.created_at,
-    au.last_sign_in_at,
+    GREATEST(
+      au.last_sign_in_at,
+      (SELECT max(dl.log_date)::timestamptz
+         FROM public.daily_logs dl WHERE dl.user_id = up.id),
+      (SELECT max(wh.recorded_at)
+         FROM public.weight_history wh WHERE wh.user_id = up.id)
+    ),
     public.get_user_plan(up.id),
     s.plan,
     s.status,
@@ -87,8 +102,13 @@ BEGIN
     p_query = ''
     OR up.username ILIKE '%' || p_query || '%'
     OR up.email    ILIKE '%' || p_query || '%'
-  -- Senast aktiv först — den man letar efter har oftast nyss varit inne.
-  ORDER BY au.last_sign_in_at DESC NULLS LAST
+  ORDER BY GREATEST(
+      au.last_sign_in_at,
+      (SELECT max(dl.log_date)::timestamptz
+         FROM public.daily_logs dl WHERE dl.user_id = up.id),
+      (SELECT max(wh.recorded_at)
+         FROM public.weight_history wh WHERE wh.user_id = up.id)
+    ) DESC NULLS LAST
   LIMIT greatest(1, least(p_limit, 100));
 END;
 $$;

@@ -13,8 +13,13 @@ export interface AdminUserRow {
   username: string | null
   email: string | null
   created_at: string
-  /** Senaste inloggning. NULL = har aldrig loggat in. */
-  last_sign_in_at: string | null
+  /**
+   * Senaste kända aktivitet: inloggning ELLER faktisk användning (loggad
+   * mat, vägning) — vilket som är senast. Inloggningen ensam duger inte:
+   * den uppdateras bara vid NY inloggning, och sessioner hålls vid liv genom
+   * token-förnyelse. NULL = ingen aktivitet registrerad.
+   */
+  last_active_at: string | null
   /** Effektiv plan just nu, inklusive admin- och enforcement-regler */
   effective_plan: string
   plan: string | null
