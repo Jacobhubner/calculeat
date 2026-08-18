@@ -118,13 +118,17 @@ export function PrepDurationHelper({ weightKg, bodyFatPercentage, onUseWeeks }: 
             </div>
           </div>
 
-          {/* Takten bedöms mot källornas gränser, inte mot en godtycklig skala */}
-          {rateClass === 'acceptable' && (
+          {/* Takten bedöms mot källornas gränser, inte mot en godtycklig skala.
+              Men varningarna handlar om risker som byggs upp över tid i ett
+              underskott — muskelförlust och metabol anpassning. Vid en
+              finjustering på ett par kilo finns ingen sådan risk, och en
+              varning där vore falskt larm som urholkar de riktiga. */}
+          {!estimate?.isMinorAdjustment && rateClass === 'acceptable' && (
             <p className="text-xs text-amber-700 dark:text-amber-300">
               {t('phase.prep.rateAcceptable')}
             </p>
           )}
-          {rateClass === 'aggressive' && (
+          {!estimate?.isMinorAdjustment && rateClass === 'aggressive' && (
             <p className="text-xs text-error-600 dark:text-error-400">
               {t('phase.prep.rateAggressive')}
             </p>
@@ -148,6 +152,14 @@ export function PrepDurationHelper({ weightKg, bodyFatPercentage, onUseWeeks }: 
                     min: OBSERVED_PREP_WEEKS.min,
                     max: OBSERVED_PREP_WEEKS.max,
                   })}
+                </p>
+              )}
+              {/* Vid små avstånd är mätosäkerheten i kroppsfettmätningen i
+                  samma storleksordning som avståndet. Svaret blir då mer
+                  precist än ingångsvärdet — det ska användaren veta. */}
+              {estimate.isMinorAdjustment && (
+                <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
+                  {t('phase.prep.minorAdjustment')}
                 </p>
               )}
               {/* Faslängden lagras i hela veckor, så knappen rundar upp —

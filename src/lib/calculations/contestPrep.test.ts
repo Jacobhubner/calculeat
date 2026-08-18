@@ -14,6 +14,7 @@ import {
   PREP_RATE_PERCENT,
   OBSERVED_PREP_WEEKS,
   POST_CONTEST_WEEKS,
+  MINOR_ADJUSTMENT_FAT_KG,
 } from './contestPrep'
 
 describe('estimatePrepDuration — mot källans eget exempel', () => {
@@ -96,12 +97,16 @@ describe('estimatePrepDuration — takt och tid', () => {
     expect(naivt).toBeGreaterThan(r!.fatToLoseKg)
   })
 
-  it('markerar när resultatet ligger utanför observerade 14–32 veckor', () => {
+  it('markerar när en RIKTIG förberedelse ligger utanför 14–32 veckor', () => {
+    // Kort MEN med tillräckligt mycket fett för att räknas som förberedelse:
+    // en hög takt på ett rejält avstånd.
     const kort = estimatePrepDuration({
-      currentWeightKg: 80,
-      currentBodyFatPct: 9,
-      targetBodyFatPct: 8,
+      currentWeightKg: 90,
+      currentBodyFatPct: 18,
+      targetBodyFatPct: 12,
+      weeklyRatePercent: 1.0,
     })
+    expect(kort!.isMinorAdjustment).toBe(false)
     expect(kort!.weeks).toBeLessThan(OBSERVED_PREP_WEEKS.min)
     expect(kort!.outsideObservedRange).toBe(true)
 
@@ -111,6 +116,18 @@ describe('estimatePrepDuration — takt och tid', () => {
       targetBodyFatPct: 8,
     })
     expect(lagom!.outsideObservedRange).toBe(false)
+  })
+
+  it('ETT KORT AVSTÅND markeras INTE som utanför spannet — det är en finjustering', () => {
+    // 80 kg vid 9 % mot 8 % är under ett kilo. Att jämföra det med
+    // fallstudier som startade på 15–20 % säger ingenting.
+    const r = estimatePrepDuration({
+      currentWeightKg: 80,
+      currentBodyFatPct: 9,
+      targetBodyFatPct: 8,
+    })
+    expect(r!.isMinorAdjustment).toBe(true)
+    expect(r!.outsideObservedRange).toBe(false)
   })
 })
 
@@ -216,5 +233,85 @@ describe('konstanter speglar källorna', () => {
   it('förvalstakten är 0,5 %/v — Roberts 2020, inte Helms övre 1,0 %', () => {
     expect(PREP_RATE_PERCENT.recommended).toBe(0.5)
     expect(PREP_RATE_PERCENT.max).toBe(1.0)
+  })
+})
+
+describe('finjustering kontra riktig förberedelse', () => {
+  /**
+   * Verkligt fall från testning 2026-08-18: 90,8 kg vid 10,2 % mot 9 %.
+   * Räknaren visade då både "utanför 14–32 veckor" och en taktvarning —
+   * båda meningslösa när det handlar om drygt ett kilo. Varningarna gäller
+   * risker som byggs upp över tid i ett underskott.
+   */
+  it('markerar 1,2 kg som finjustering och tystar spannvarningen', () => {
+    const r = estimatePrepDuration({
+      currentWeightKg: 90.8,
+      currentBodyFatPct: 10.2,
+      targetBodyFatPct: 9,
+      weeklyRatePercent: 1,
+    })
+    expect(r!.fatToLoseKg).toBeLessThan(MINOR_ADJUSTMENT_FAT_KG)
+    expect(r!.isMinorAdjustment).toBe(true)
+    // Det avgörande: ingen jämförelse med fallstudier som startade på 15–20 %
+    expect(r!.outsideObservedRange).toBe(false)
+  })
+
+  it('en riktig förberedelse markeras INTE som finjustering', () => {
+    const r = estimatePrepDuration({
+      currentWeightKg: 80,
+      currentBodyFatPct: 20,
+      targetBodyFatPct: 6,
+    })
+    expect(r!.fatToLoseKg).toBeGreaterThan(MINOR_ADJUSTMENT_FAT_KG)
+    expect(r!.isMinorAdjustment).toBe(false)
+  })
+
+  it('spannvarningen fungerar fortfarande för riktiga förberedelser', () => {
+    // 20 % -> 6 % vid 0,5 %/v tar över 32 veckor
+    const langsam = estimatePrepDuration({
+      currentWeightKg: 80,
+      currentBodyFatPct: 20,
+      targetBodyFatPct: 6,
+      weeklyRatePercent: 0.5,
+    })
+    expect(langsam!.isMinorAdjustment).toBe(false)
+    expect(langsam!.weeks).toBeGreaterThan(OBSERVED_PREP_WEEKS.max)
+    expect(langsam!.outsideObservedRange).toBe(true)
+  })
+
+  it('gränsen går på fett att tappa, inte på antal veckor', () => {
+    // Kort tid MEN mycket fett: hög takt på ett stort avstånd.
+    // Ska INTE räknas som finjustering trots få veckor.
+    const r = estimatePrepDuration({
+      currentWeightKg: 110,
+      currentBodyFatPct: 30,
+      targetBodyFatPct: 20,
+      weeklyRatePercent: 5,
+    })
+    expect(r!.fatToLoseKg).toBeGreaterThan(MINOR_ADJUSTMENT_FAT_KG)
+    expect(r!.isMinorAdjustment).toBe(false)
+  })
+})
+
+describe('veckor visas med decimal, aldrig avrundat uppåt', () => {
+  it('kort insats ger decimaltal, inte uppåtavrundning', () => {
+    const r = estimatePrepDuration({
+      currentWeightKg: 90.8,
+      currentBodyFatPct: 10.2,
+      targetBodyFatPct: 9,
+      weeklyRatePercent: 1,
+    })
+    // Exakt värde är ~1,32. Tidigare visades 2, vilket tog användaren UNDER målet.
+    expect(r!.weeks).toBeGreaterThan(1)
+    expect(r!.weeks).toBeLessThan(2)
+  })
+
+  it('en decimal, inte fler', () => {
+    const r = estimatePrepDuration({
+      currentWeightKg: 83.7,
+      currentBodyFatPct: 17.3,
+      targetBodyFatPct: 8.5,
+    })
+    expect(r!.weeks).toBe(Math.round(r!.weeks * 10) / 10)
   })
 })

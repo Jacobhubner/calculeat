@@ -297,7 +297,8 @@
       "sourcesTitle": "Sources",
       "source1": "Helms, Aragon & Fitschen 2014, J Int Soc Sports Nutr (PMC4033492) — narrative review. Rate 0.5–1%/wk; length should follow starting body fat.",
       "source2": "Roberts, Helms, Trexler & Fitschen 2020, J Hum Kinet (PMC7052702) — narrative review. Recommends ≤0.5%/wk. Documented preparations: 14–32 weeks, from seven case studies.",
-      "caveat": "No study has compared different preparation lengths against each other. These figures describe what competitors have done, not what is optimal. The calculation assumes all weight lost is fat."
+      "caveat": "No study has compared different preparation lengths against each other. These figures describe what competitors have done, not what is optimal. The calculation assumes all weight lost is fat.",
+      "minorAdjustment": "Small distance to the target. Body fat measurement carries an uncertainty of a similar magnitude, so treat this figure as a direction rather than an exact answer."
     }
   },
   "calibrationReadiness": {

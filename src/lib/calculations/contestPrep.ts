@@ -90,6 +90,24 @@ export const PREP_RATE_PERCENT = {
 export const OBSERVED_PREP_WEEKS = { min: 14, max: 32 } as const
 
 /**
+ * Under så här många kg fett att tappa räknas insatsen som en FINJUSTERING,
+ * inte en tävlingsförberedelse.
+ *
+ * VARFÖR GRÄNSEN GÅR PÅ FETT OCH INTE VECKOR: varningarna nedan handlar om
+ * risker som byggs upp över tid i ett underskott — muskelförlust och metabol
+ * anpassning. De riskerna beror på hur mycket som ska tappas, inte på hur
+ * många veckor kalkylatorn råkar landa på. Vid 1 kg finns ingen sådan risk
+ * även om takten är hög, och jämförelsen med fallstudier som startade på
+ * 15–20 % kroppsfett blir meningslös.
+ *
+ * 3 kg är ett pragmatiskt val, inte ett studieresultat. Det motsvarar
+ * ungefär 3–4 procentenheter kroppsfett för en person på 80–90 kg — under
+ * det är avståndet i samma storleksordning som mätosäkerheten i kaliper och
+ * bioimpedans.
+ */
+export const MINOR_ADJUSTMENT_FAT_KG = 3
+
+/**
  * Post-contest-faser i veckor [2]. Fallstudiedata, inte kontrollerade försök.
  */
 export const POST_CONTEST_WEEKS = {
@@ -135,8 +153,21 @@ export interface PrepEstimate {
    * true om resultatet ligger utanför det observerade spannet 14–32 v [2].
    * Inte ett fel — men värt att visa, eftersom det betyder att planen
    * skiljer sig från vad dokumenterade prep:ar faktiskt gjort.
+   *
+   * Sätts ALDRIG för finjusteringar (se isMinorAdjustment): en jämförelse
+   * med fallstudier som startade på 15–20 % kroppsfett säger ingenting om
+   * den som ska tappa ett kilo.
    */
   outsideObservedRange: boolean
+  /**
+   * true när det är mindre än MINOR_ADJUSTMENT_FAT_KG kg fett att tappa.
+   *
+   * Då gäller inte varningarna om takt och observerat spann — de handlar om
+   * risker som byggs upp över tid i ett underskott. Vid små avstånd är
+   * dessutom mätosäkerheten i kroppsfettmätningen i samma storleksordning
+   * som avståndet självt, vilket är värt att säga till användaren.
+   */
+  isMinorAdjustment: boolean
 }
 
 /**
@@ -181,13 +212,19 @@ export function estimatePrepDuration(input: PrepEstimateInput): PrepEstimate | n
 
   if (!Number.isFinite(weeks) || weeks <= 0) return null
 
+  const isMinorAdjustment = fatToLoseKg < MINOR_ADJUSTMENT_FAT_KG
+
   return {
     weeks,
     fatToLoseKg: round1(fatToLoseKg),
     projectedWeightKg: round1(projectedWeightKg),
     weeklyLossKg: round1(currentWeightKg * r),
     ratePercentUsed,
-    outsideObservedRange: weeks < OBSERVED_PREP_WEEKS.min || weeks > OBSERVED_PREP_WEEKS.max,
+    // Jämförelsen med fallstudiernas 14–32 veckor gäller bara riktiga
+    // förberedelser, inte finjusteringar.
+    outsideObservedRange:
+      !isMinorAdjustment && (weeks < OBSERVED_PREP_WEEKS.min || weeks > OBSERVED_PREP_WEEKS.max),
+    isMinorAdjustment,
   }
 }
 
