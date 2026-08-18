@@ -11,6 +11,8 @@
  */
 
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 import {
   Crown,
   Search,
@@ -34,25 +36,14 @@ import {
 import { useAdminSetPlan, type GrantDuration } from '@/hooks/useAdminSubscription'
 import { cn } from '@/lib/utils'
 
-const DURATIONS: Array<{ months: GrantDuration; label: string }> = [
-  { months: 1, label: '1 mån' },
-  { months: 3, label: '3 mån' },
-  { months: 6, label: '6 mån' },
-  { months: 12, label: '12 mån' },
-  { months: null, label: 'Tills vidare' },
-]
+const DURATION_MONTHS: GrantDuration[] = [1, 3, 6, 12, null]
 
-const EVENT_LABEL: Record<string, string> = {
-  trial_started: 'Provperiod startade',
-  payment_started: 'Började betala',
-  payment_renewed: 'Betalning förnyad',
-  canceled: 'Avslutad',
-  granted: 'Tilldelad premium',
-  revoked: 'Tilldelning borttagen',
-}
+/** t-funktionen för 'admin'-namespacet, vidarebefordrad till hjälpfunktioner. */
+type TFn = TFunction<'admin'>
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('sv-SE', {
+/** Datum i användarens språk — 'sv' ger "25 juli 2026", 'en' ger "Jul 25, 2026". */
+function formatDate(iso: string, lang: string): string {
+  return new Date(iso).toLocaleDateString(lang === 'en' ? 'en-GB' : 'sv-SE', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -67,46 +58,52 @@ function formatDate(iso: string): string {
  * "fem månader sedan" varken går att jämföra eller kontrollera.
  * Däremellan är relativ tid lättast att läsa i förbifarten.
  */
-function formatLastSeen(iso: string | null): string {
-  if (!iso) return 'Ingen aktivitet'
+function formatLastSeen(iso: string | null, t: TFn, lang: string): string {
+  if (!iso) return t('premiumPanel.lastSeen.none')
 
   const then = new Date(iso)
   const minutes = Math.floor((Date.now() - then.getTime()) / 60000)
 
-  if (minutes < 1) return 'Just nu'
-  if (minutes < 60) return minutes + ' min sedan'
+  if (minutes < 1) return t('premiumPanel.lastSeen.now')
+  if (minutes < 60) return t('premiumPanel.lastSeen.minutes', { count: minutes })
 
   const hours = Math.floor(minutes / 60)
-  if (hours < 24) return hours === 1 ? '1 timme sedan' : hours + ' timmar sedan'
+  if (hours < 24) {
+    return hours === 1
+      ? t('premiumPanel.lastSeen.hourOne')
+      : t('premiumPanel.lastSeen.hours', { count: hours })
+  }
 
   const days = Math.floor(hours / 24)
-  if (days === 1) return 'Igår'
-  if (days < 30) return days + ' dagar sedan'
+  if (days === 1) return t('premiumPanel.lastSeen.yesterday')
+  if (days < 30) return t('premiumPanel.lastSeen.days', { count: days })
 
   // Fyra månader ≈ 120 dagar. Därefter säger datumet mer än antalet månader.
   if (days < 120) {
     const months = Math.floor(days / 30)
-    return months === 1 ? 'Över en månad sedan' : months + ' månader sedan'
+    return months === 1
+      ? t('premiumPanel.lastSeen.monthOne')
+      : t('premiumPanel.lastSeen.months', { count: months })
   }
 
-  return formatDate(iso)
+  return formatDate(iso, lang)
 }
 
-function previewExpiry(months: GrantDuration): string | null {
+function previewExpiry(months: GrantDuration, lang: string): string | null {
   if (months == null) return null
   const d = new Date()
   d.setMonth(d.getMonth() + months)
-  return formatDate(d.toISOString())
+  return formatDate(d.toISOString(), lang)
 }
 
 /** Historikmärken — vad användaren varit med om tidigare */
-function HistoryBadges({ user }: { user: AdminUserRow }) {
+function HistoryBadges({ user, t }: { user: AdminUserRow; t: TFn }) {
   const badges: Array<{ icon: React.ReactNode; label: string; className: string }> = []
 
   if (user.has_paid_before) {
     badges.push({
       icon: <CreditCard className="h-3 w-3" />,
-      label: 'Har betalat',
+      label: t('premiumPanel.badge.paid'),
       className:
         'bg-green-50 text-green-700 border-green-200 dark:bg-green-900/25 dark:text-green-300 dark:border-green-800',
     })
@@ -114,7 +111,7 @@ function HistoryBadges({ user }: { user: AdminUserRow }) {
   if (user.had_trial) {
     badges.push({
       icon: <Clock className="h-3 w-3" />,
-      label: 'Haft provperiod',
+      label: t('premiumPanel.badge.trial'),
       className:
         'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/25 dark:text-blue-300 dark:border-blue-800',
     })
@@ -122,7 +119,7 @@ function HistoryBadges({ user }: { user: AdminUserRow }) {
   if (user.was_granted) {
     badges.push({
       icon: <Gift className="h-3 w-3" />,
-      label: 'Tilldelad tidigare',
+      label: t('premiumPanel.badge.granted'),
       className:
         'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/25 dark:text-amber-300 dark:border-amber-800',
     })
@@ -134,7 +131,7 @@ function HistoryBadges({ user }: { user: AdminUserRow }) {
   if (user.is_admin) {
     badges.push({
       icon: <ShieldCheck className="h-3 w-3" />,
-      label: 'Premium via adminroll',
+      label: t('premiumPanel.badge.viaAdmin'),
       className:
         'bg-primary-50 text-primary-700 border-primary-200 dark:bg-primary-900/25 dark:text-primary-300 dark:border-primary-800',
     })
@@ -146,7 +143,7 @@ function HistoryBadges({ user }: { user: AdminUserRow }) {
     const hasPremiumNow = user.effective_plan !== 'free'
     return (
       <span className="text-[11px] text-neutral-400 dark:text-neutral-500">
-        {hasPremiumNow ? 'Ingen registrerad historik' : 'Aldrig haft premium'}
+        {hasPremiumNow ? t('premiumPanel.badge.noHistory') : t('premiumPanel.badge.never')}
       </span>
     )
   }
@@ -171,31 +168,36 @@ function HistoryBadges({ user }: { user: AdminUserRow }) {
 
 /** Utfälld panel: full historik + tilldelning */
 function UserDetail({ user, onClose }: { user: AdminUserRow; onClose: () => void }) {
+  const { t, i18n } = useTranslation('admin')
+  const lang = i18n.language?.startsWith('en') ? 'en' : 'sv'
   const { data: events = [], isLoading } = useSubscriptionEvents(user.user_id)
   const { mutateAsync: setPlan, isPending } = useAdminSetPlan()
   const [reason, setReason] = useState('')
 
-  const label = user.username || user.email || 'användaren'
+  const label = user.username || user.email || t('premiumPanel.grant.fallbackUser')
 
   const handleGrant = async (months: GrantDuration) => {
     if (!reason.trim()) {
-      toast.error('Ange en orsak — den sparas i historiken')
+      toast.error(t('premiumPanel.grant.reasonRequired'))
       return
     }
-    const until = months == null ? 'tills vidare' : `till ${previewExpiry(months)}`
-    if (!window.confirm(`Ge premium ${until} till ${label}?`)) return
+    const until =
+      months == null
+        ? t('premiumPanel.grant.untilIndefinite')
+        : t('premiumPanel.grant.untilDate', { date: previewExpiry(months, lang) })
+    if (!window.confirm(t('premiumPanel.grant.confirm', { until, user: label }))) return
 
     try {
       await setPlan({ userId: user.user_id, plan: 'premium', months, note: reason.trim() })
-      toast.success(`Premium ${until}`)
+      toast.success(t('premiumPanel.grant.success', { until }))
       setReason('')
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Kunde inte sätta planen')
+      toast.error(err instanceof Error ? err.message : t('premiumPanel.grant.error'))
     }
   }
 
   const handleRevoke = async () => {
-    if (!window.confirm(`Ta bort tilldelad premium för ${label}?`)) return
+    if (!window.confirm(t('premiumPanel.revoke.confirm', { user: label }))) return
     try {
       await setPlan({
         userId: user.user_id,
@@ -203,10 +205,10 @@ function UserDetail({ user, onClose }: { user: AdminUserRow; onClose: () => void
         months: null,
         note: reason.trim() || undefined,
       })
-      toast.success('Tilldelning borttagen')
+      toast.success(t('premiumPanel.revoke.success'))
       setReason('')
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Kunde inte ta bort planen')
+      toast.error(err instanceof Error ? err.message : t('premiumPanel.revoke.error'))
     }
   }
 
@@ -217,11 +219,15 @@ function UserDetail({ user, onClose }: { user: AdminUserRow; onClose: () => void
         <div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs text-amber-800 dark:border-amber-800 dark:bg-amber-900/25 dark:text-amber-200">
           <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           <div>
-            <p className="font-medium">Betalande kund</p>
+            <p className="font-medium">{t('premiumPanel.stripe.title')}</p>
             <p className="mt-0.5">
-              Prenumerationen gäller
-              {user.current_period_end && ` till ${formatDate(user.current_period_end)}`}. Ändra den
-              i Stripe — ändringar här skrivs över av nästa webhook-händelse.
+              {t('premiumPanel.stripe.body', {
+                until: user.current_period_end
+                  ? t('premiumPanel.stripe.untilDate', {
+                      date: formatDate(user.current_period_end, lang),
+                    })
+                  : '',
+              })}
             </p>
           </div>
         </div>
@@ -233,30 +239,33 @@ function UserDetail({ user, onClose }: { user: AdminUserRow; onClose: () => void
           {user.is_admin && (
             <div className="mb-2.5 flex items-start gap-2 rounded-lg border border-primary-200 bg-primary-50 px-3 py-2 text-xs text-primary-800 dark:border-primary-800 dark:bg-primary-900/25 dark:text-primary-200">
               <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              <p>
-                Användaren är admin och har därför alltid founder — oavsett prenumeration. Ta bort
-                adminrollen för att ändra det.
-              </p>
+              <p>{t('premiumPanel.adminNote')}</p>
             </div>
           )}
           <p className="text-xs font-medium text-neutral-700 dark:text-neutral-200">
-            Ge premium gratis
+            {t('premiumPanel.grant.title')}
           </p>
           <Input
             value={reason}
             onChange={e => setReason(e.target.value)}
-            placeholder="Orsak (obligatorisk) — sparas i historiken"
+            placeholder={t('premiumPanel.grant.reasonPlaceholder')}
             className="mt-1.5 h-8 text-xs"
             disabled={isPending}
           />
           <div className="mt-2 flex flex-wrap gap-1.5">
-            {DURATIONS.map(({ months, label: durLabel }) => (
+            {DURATION_MONTHS.map(months => (
               <button
-                key={durLabel}
+                key={String(months)}
                 type="button"
                 disabled={isPending}
                 onClick={() => handleGrant(months)}
-                title={months == null ? 'Ingen utgång' : `Gäller till ${previewExpiry(months)}`}
+                title={
+                  months == null
+                    ? t('premiumPanel.duration.noExpiry')
+                    : t('premiumPanel.duration.validUntil', {
+                        date: previewExpiry(months, lang),
+                      })
+                }
                 className={cn(
                   'rounded-md border px-2.5 py-1 text-xs font-medium transition-colors',
                   'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-100',
@@ -264,7 +273,9 @@ function UserDetail({ user, onClose }: { user: AdminUserRow; onClose: () => void
                   'dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700'
                 )}
               >
-                {durLabel}
+                {months == null
+                  ? t('premiumPanel.duration.indefinite')
+                  : t('premiumPanel.duration.months', { count: months })}
               </button>
             ))}
           </div>
@@ -276,7 +287,7 @@ function UserDetail({ user, onClose }: { user: AdminUserRow; onClose: () => void
               disabled={isPending}
               className="mt-2 h-7 text-xs text-neutral-600 hover:text-red-600 dark:text-neutral-400"
             >
-              Ta bort tilldelad premium
+              {t('premiumPanel.revoke.button')}
             </Button>
           )}
         </>
@@ -284,27 +295,30 @@ function UserDetail({ user, onClose }: { user: AdminUserRow; onClose: () => void
 
       {/* Historik */}
       <div className="mt-3 border-t border-neutral-200 pt-2.5 dark:border-neutral-700">
-        <p className="text-xs font-medium text-neutral-700 dark:text-neutral-200">Historik</p>
+        <p className="text-xs font-medium text-neutral-700 dark:text-neutral-200">
+          {t('premiumPanel.history.title')}
+        </p>
         {isLoading ? (
           <p className="mt-1 flex items-center gap-1.5 text-[11px] text-neutral-500">
             <Loader2 className="h-3 w-3 animate-spin" />
-            Hämtar…
+            {t('premiumPanel.history.loading')}
           </p>
         ) : events.length === 0 ? (
           <p className="mt-1 text-[11px] text-neutral-500 dark:text-neutral-400">
-            Inga händelser registrerade
+            {t('premiumPanel.history.empty')}
           </p>
         ) : (
           <ul className="mt-1.5 space-y-1.5">
             {events.map((e, i) => (
               <li key={i} className="text-[11px] leading-snug">
                 <span className="text-neutral-700 dark:text-neutral-200">
-                  {EVENT_LABEL[e.event_type] ?? e.event_type}
+                  {t('premiumPanel.event.' + e.event_type, { defaultValue: e.event_type })}
                 </span>
                 <span className="text-neutral-400 dark:text-neutral-500">
                   {' · '}
-                  {formatDate(e.created_at)}
-                  {e.actor_username && ` · av @${e.actor_username}`}
+                  {formatDate(e.created_at, lang)}
+                  {e.actor_username &&
+                    ' · ' + t('premiumPanel.history.byActor', { actor: '@' + e.actor_username })}
                 </span>
                 {e.reason && <p className="text-neutral-500 dark:text-neutral-400">{e.reason}</p>}
               </li>
@@ -326,6 +340,8 @@ function UserDetail({ user, onClose }: { user: AdminUserRow; onClose: () => void
 }
 
 export default function PremiumAdminPanel() {
+  const { t, i18n } = useTranslation('admin')
+  const lang = i18n.language?.startsWith('en') ? 'en' : 'sv'
   const [query, setQuery] = useState('')
   const debounced = useDebounce(query, 300)
   const { data: users = [], isLoading } = useAdminUserSearch(debounced)
@@ -338,7 +354,7 @@ export default function PremiumAdminPanel() {
         <Input
           value={query}
           onChange={e => setQuery(e.target.value)}
-          placeholder="Sök på namn eller e-post…"
+          placeholder={t('premiumPanel.searchPlaceholder')}
           className="h-9 pl-8 text-sm"
         />
         {query && (
@@ -356,11 +372,11 @@ export default function PremiumAdminPanel() {
       {isLoading ? (
         <p className="mt-3 flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
           <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          Söker…
+          {t('premiumPanel.searching')}
         </p>
       ) : users.length === 0 ? (
         <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
-          Inga användare matchade sökningen.
+          {t('premiumPanel.noMatch')}
         </p>
       ) : (
         // Listan växer med användarantalet, därför max-h-96 + skroll: annars
@@ -379,10 +395,10 @@ export default function PremiumAdminPanel() {
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                      {user.username || '(inget namn)'}
+                      {user.username || t('premiumPanel.noName')}
                       {user.is_admin && (
                         <span className="ml-1.5 text-[10px] font-normal text-primary-600 dark:text-primary-300">
-                          admin
+                          {t('premiumPanel.adminTag')}
                         </span>
                       )}
                     </p>
@@ -392,12 +408,14 @@ export default function PremiumAdminPanel() {
                     {/* Aktivitet och ålder på kontot — registreringsdatum säger
                         inget om någon faktiskt använder appen. */}
                     <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">
-                      {formatLastSeen(user.last_active_at)}
+                      {formatLastSeen(user.last_active_at, t, lang)}
                       <span className="mx-1">·</span>
-                      Konto skapat {formatDate(user.created_at)}
+                      {t('premiumPanel.accountCreated', {
+                        date: formatDate(user.created_at, lang),
+                      })}
                     </p>
                     <div className="mt-1">
-                      <HistoryBadges user={user} />
+                      <HistoryBadges user={user} t={t} />
                     </div>
                   </div>
                   <div className="shrink-0 text-right">
@@ -414,7 +432,9 @@ export default function PremiumAdminPanel() {
                     </span>
                     {user.current_period_end && (
                       <p className="mt-0.5 text-[10px] text-neutral-400 dark:text-neutral-500">
-                        till {formatDate(user.current_period_end)}
+                        {t('premiumPanel.validUntilShort', {
+                          date: formatDate(user.current_period_end, lang),
+                        })}
                       </p>
                     )}
                   </div>

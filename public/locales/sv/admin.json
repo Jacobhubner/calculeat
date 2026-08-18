@@ -47,5 +47,77 @@
   },
   "management": {
     "title": "Adminhantering"
+  },
+  "premiumPanel": {
+    "searchPlaceholder": "Sök på namn eller e-post...",
+    "searching": "Söker…",
+    "noMatch": "Inga användare matchade sökningen.",
+    "noName": "(inget namn)",
+    "adminTag": "admin",
+    "accountCreated": "Konto skapat {{date}}",
+    "close": "Stäng",
+    "duration": {
+      "months": "{{count}} mån",
+      "indefinite": "Tillsvidare",
+      "noExpiry": "Ingen utgång",
+      "validUntil": "Gäller till {{date}}"
+    },
+    "lastSeen": {
+      "none": "Ingen aktivitet",
+      "now": "Just nu",
+      "minutes": "{{count}} min sedan",
+      "hourOne": "1 timme sedan",
+      "hours": "{{count}} timmar sedan",
+      "yesterday": "Igår",
+      "days": "{{count}} dagar sedan",
+      "monthOne": "Över en månad sedan",
+      "months": "{{count}} månader sedan"
+    },
+    "badge": {
+      "paid": "Har betalat",
+      "trial": "Haft provperiod",
+      "granted": "Tilldelad tidigare",
+      "viaAdmin": "Premium via adminroll",
+      "noHistory": "Ingen registrerad historik",
+      "never": "Aldrig haft premium"
+    },
+    "stripe": {
+      "title": "Betalande kund",
+      "body": "Prenumerationen gäller{{until}}. Ändra den i Stripe — ändringar här skrivs över av nästa webhook-händelse.",
+      "untilDate": " till {{date}}"
+    },
+    "adminNote": "Användaren är admin och har därför alltid founder — oavsett prenumeration. Ta bort adminrollen för att ändra det.",
+    "grant": {
+      "title": "Ge premium gratis",
+      "reasonPlaceholder": "Orsak (obligatorisk) — sparas i historiken",
+      "reasonRequired": "Ange en orsak — den sparas i historiken",
+      "confirm": "Ge premium {{until}} till {{user}}?",
+      "success": "Premium {{until}}",
+      "error": "Kunde inte sätta planen",
+      "untilIndefinite": "tillsvidare",
+      "untilDate": "till {{date}}",
+      "fallbackUser": "användaren"
+    },
+    "revoke": {
+      "button": "Ta bort tilldelad premium",
+      "confirm": "Ta bort tilldelad premium för {{user}}?",
+      "success": "Tilldelning borttagen",
+      "error": "Kunde inte ta bort planen"
+    },
+    "history": {
+      "title": "Historik",
+      "loading": "Hämtar…",
+      "empty": "Inga händelser registrerade",
+      "byActor": "av {{actor}}"
+    },
+    "event": {
+      "trial_started": "Provperiod startade",
+      "payment_started": "Började betala",
+      "payment_renewed": "Betalning förnyad",
+      "canceled": "Avslutad",
+      "granted": "Tilldelad premium",
+      "revoked": "Tilldelning borttagen"
+    },
+    "validUntilShort": "till {{date}}"
   }
 }

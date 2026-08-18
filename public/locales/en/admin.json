@@ -47,5 +47,77 @@
   },
   "management": {
     "title": "Admin management"
+  },
+  "premiumPanel": {
+    "searchPlaceholder": "Search by name or email...",
+    "searching": "Searching…",
+    "noMatch": "No users matched your search.",
+    "noName": "(no name)",
+    "adminTag": "admin",
+    "accountCreated": "Account created {{date}}",
+    "close": "Close",
+    "duration": {
+      "months": "{{count}} mo",
+      "indefinite": "Indefinitely",
+      "noExpiry": "No expiry",
+      "validUntil": "Valid until {{date}}"
+    },
+    "lastSeen": {
+      "none": "No activity",
+      "now": "Just now",
+      "minutes": "{{count}} min ago",
+      "hourOne": "1 hour ago",
+      "hours": "{{count}} hours ago",
+      "yesterday": "Yesterday",
+      "days": "{{count}} days ago",
+      "monthOne": "Over a month ago",
+      "months": "{{count}} months ago"
+    },
+    "badge": {
+      "paid": "Has paid",
+      "trial": "Had a trial",
+      "granted": "Granted before",
+      "viaAdmin": "Premium via admin role",
+      "noHistory": "No recorded history",
+      "never": "Never had premium"
+    },
+    "stripe": {
+      "title": "Paying customer",
+      "body": "The subscription is active{{until}}. Change it in Stripe — changes here are overwritten by the next webhook event.",
+      "untilDate": " until {{date}}"
+    },
+    "adminNote": "This user is an admin and therefore always has founder — regardless of subscription. Remove the admin role to change that.",
+    "grant": {
+      "title": "Grant free premium",
+      "reasonPlaceholder": "Reason (required) — saved to the history",
+      "reasonRequired": "Enter a reason — it is saved to the history",
+      "confirm": "Grant premium {{until}} to {{user}}?",
+      "success": "Premium {{until}}",
+      "error": "Could not set the plan",
+      "untilIndefinite": "indefinitely",
+      "untilDate": "until {{date}}",
+      "fallbackUser": "the user"
+    },
+    "revoke": {
+      "button": "Remove granted premium",
+      "confirm": "Remove granted premium for {{user}}?",
+      "success": "Grant removed",
+      "error": "Could not remove the plan"
+    },
+    "history": {
+      "title": "History",
+      "loading": "Loading…",
+      "empty": "No events recorded",
+      "byActor": "by {{actor}}"
+    },
+    "event": {
+      "trial_started": "Trial started",
+      "payment_started": "Started paying",
+      "payment_renewed": "Payment renewed",
+      "canceled": "Ended",
+      "granted": "Premium granted",
+      "revoked": "Grant removed"
+    },
+    "validUntilShort": "until {{date}}"
   }
 }
