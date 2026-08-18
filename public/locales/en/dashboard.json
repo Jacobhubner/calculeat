@@ -280,6 +280,24 @@
       "detail": "{{actual}} over {{days}} days · expected {{expected}}",
       "needsWeights": "Weigh in to see whether the period is working — otherwise the app only knows what you are aiming for, not what is happening.",
       "needsOneMore": "One more weigh-in and the app can show how the period is going."
+    },
+    "prep": {
+      "title": "Calculate the length from your starting point",
+      "needsBodyFat": "Measure your body fat percentage to calculate how long the preparation will take. The length depends on where you start.",
+      "intro": "You are at {{current}}% body fat. Enter a target level and weekly rate to get the number of weeks.",
+      "targetLabel": "Target body fat (%)",
+      "rateLabel": "Rate (% body weight/wk)",
+      "rateAcceptable": "Above 0.5%/week. Helms 2014 allows up to 1%, but Roberts 2020 advises against it for anyone already contest-lean.",
+      "rateAggressive": "Above 1%/week is not supported by any source. In Garthe 2011, 1.4%/week produced no gain in fat-free mass.",
+      "result": "{{weeks}} weeks",
+      "resultDetail": "{{fat}} kg of fat to lose · projected end weight {{weight}} kg · about {{perWeek}} kg in the first week",
+      "outsideRange": "Outside the {{min}}–{{max}} weeks that documented preparations have actually taken. Not wrong — but worth knowing.",
+      "useWeeks": "Use {{weeks}} weeks",
+      "noResult": "Cannot be calculated. The target must be lower than your current body fat percentage.",
+      "sourcesTitle": "Sources",
+      "source1": "Helms, Aragon & Fitschen 2014, J Int Soc Sports Nutr (PMC4033492) — narrative review. Rate 0.5–1%/wk; length should follow starting body fat.",
+      "source2": "Roberts, Helms, Trexler & Fitschen 2020, J Hum Kinet (PMC7052702) — narrative review. Recommends ≤0.5%/wk. Documented preparations: 14–32 weeks, from seven case studies.",
+      "caveat": "No study has compared different preparation lengths against each other. These figures describe what competitors have done, not what is optimal. The calculation assumes all weight lost is fat."
     }
   },
   "calibrationReadiness": {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { PrepDurationHelper } from './PrepDurationHelper'
 import { useNavigate } from 'react-router-dom'
 import {
   Dialog,
@@ -514,6 +515,16 @@ export function PhasePickerDialog({
                       <p className="text-xs text-neutral-500 dark:text-neutral-400">
                         {t('phase.weeksNotice')}
                       </p>
+                      {/* Tävlingsräknaren visas bara för cut i styrkespåret —
+                          det är där tävlingsförberedelse hör hemma. För den
+                          som vill gå ner 8 kg vore den bara brus. */}
+                      {selected === 'cut' && focus === 'strength' && (
+                        <PrepDurationHelper
+                          weightKg={weightKg}
+                          bodyFatPercentage={bodyFatPercentage}
+                          onUseWeeks={w => setWeeks(String(w))}
+                        />
+                      )}
                     </div>
 
                     {selected === 'reverse' && (

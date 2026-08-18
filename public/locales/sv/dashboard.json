@@ -280,6 +280,24 @@
       "detail": "{{actual}} på {{days}} dagar · förväntat {{expected}}",
       "needsWeights": "Väg dig för att se om perioden ger resultat — annars vet appen bara vad du siktar på, inte vad som händer.",
       "needsOneMore": "En vägning till så kan appen visa hur perioden går."
+    },
+    "prep": {
+      "title": "Räkna ut längden från din startpunkt",
+      "needsBodyFat": "Mät kroppsfettprocent för att kunna räkna ut hur lång förberedelsen blir. Längden beror på var du börjar.",
+      "intro": "Du ligger på {{current}} % kroppsfett. Ange målnivå och veckotakt, så räknas antalet veckor ut.",
+      "targetLabel": "Mål kroppsfett (%)",
+      "rateLabel": "Takt (% kroppsvikt/v)",
+      "rateAcceptable": "Över 0,5 %/vecka. Helms 2014 tillåter upp till 1 %, men Roberts 2020 avråder för den som redan är tävlingsmager.",
+      "rateAggressive": "Över 1 %/vecka stöds inte av någon källa. I Garthe 2011 gav 1,4 %/vecka ingen ökning av fettfri massa.",
+      "result": "{{weeks}} veckor",
+      "resultDetail": "{{fat}} kg fett att tappa · beräknad slutvikt {{weight}} kg · cirka {{perWeek}} kg första veckan",
+      "outsideRange": "Ligger utanför de {{min}}–{{max}} veckor som dokumenterade förberedelser faktiskt tagit. Inte fel — men värt att veta.",
+      "useWeeks": "Använd {{weeks}} veckor",
+      "noResult": "Går inte att räkna på. Målnivån måste vara lägre än din nuvarande kroppsfettprocent.",
+      "sourcesTitle": "Underlag",
+      "source1": "Helms, Aragon & Fitschen 2014, J Int Soc Sports Nutr (PMC4033492) — narrativ översikt. Takt 0,5–1 %/v; längden ska följa startfettnivån.",
+      "source2": "Roberts, Helms, Trexler & Fitschen 2020, J Hum Kinet (PMC7052702) — narrativ översikt. Rekommenderar ≤0,5 %/v. Dokumenterade förberedelser: 14–32 veckor, ur sju fallstudier.",
+      "caveat": "Ingen studie har jämfört olika förberedelselängder mot varandra. Siffrorna beskriver vad tävlande har gjort, inte vad som är optimalt. Uträkningen antar att all viktnedgång är fett."
     }
   },
   "calibrationReadiness": {

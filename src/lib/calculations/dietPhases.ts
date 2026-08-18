@@ -55,10 +55,22 @@ const PHASE_PROTEIN_G_PER_KG: Record<DietPhaseType, { min: number; recommended: 
  *   8,5 ± 2,2 v (långsam) och 5,3 ± 0,9 v (snabb). Detta är det närmaste ett
  *   empiriskt veckospann som existerar — men det är interventionernas längd,
  *   inte en testad rekommendation.
- * - Helms ER et al., J Int Soc Sports Nutr 2014;11:20
- *   (doi: 10.1186/1550-2783-11-20) — enda källan som uttalar sig om längd,
- *   och gör det försiktigt: dieter längre än 2–4 månader "may be superior
- *   for LBM retention". Notera "may".
+ * - Helms ER et al., J Int Soc Sports Nutr 2014;11:20 (PMC4033492)
+ *   — RÄTTAD 2026-08-18 efter fulltextläsning. Den tidigare formuleringen
+ *   här ("dieter längre än 2–4 månader may be superior") slog samman två
+ *   skilda påståenden i artikeln:
+ *     a) "Competitive bodybuilders traditionally follow two to four month
+ *        diets" — en BESKRIVNING AV PRAXIS, inte en rekommendation.
+ *     b) att GRADVIS viktnedgång (0,5–1 %/v) kan vara överlägsen för att
+ *        bevara fettfri massa — en rekommendation om TAKT, inte om längd.
+ *   Artikeln rekommenderar alltså ingen faslängd. Den säger tvärtom att
+ *   längden ska följa startfettnivån: "those leaner dieting for shorter
+ *   periods than those with higher body fat percentages".
+ *   Se src/lib/calculations/contestPrep.ts för full källgenomgång.
+ * - Roberts BM et al., J Hum Kinet 2020;71:79-108 (PMC7052702) — nyare
+ *   översikt. Dokumenterade prep-längder: 14–32 veckor, ur sju fallstudier.
+ *   OBSERVERAT SPANN, inte en rekommendation. Rekommenderar ≤0,5 %/vecka,
+ *   strängare än Helms.
  * - Diet breaks: EJ etablerat för denna målgrupp. MATADOR (Byrne 2018,
  *   doi: 10.1038/ijo.2017.206) fann stor fördel hos OBESA män, men ICECAP
  *   (Peos 2021, doi: 10.1249/MSS.0000000000002636, n=61 TRÄNADE) fann INGEN
@@ -73,9 +85,24 @@ const PHASE_PROTEIN_G_PER_KG: Record<DietPhaseType, { min: number; recommended: 
  *   utgångsfettmassa ger sämre partitionering (Hall 2007,
  *   doi: 10.1017/S0007114507691946).
  *
- * reverse = 4 veckor. BRANSCHPRAXIS, EJ EVIDENSSTÖDD — se docblocket vid
- * REVERSE_WEEKLY_STEP_KCAL. Chica-Latorre 2022: "The length of the
- * recommended post-contest recovery phase is currently unclear."
+ * reverse = 4 veckor. UPPDATERAD BEDÖMNING 2026-08-18: fyra veckor är i
+ * underkant, men behålls tills vidare. Skälen:
+ * - Chica-Latorre 2022 sa "The length of the recommended post-contest
+ *   recovery phase is currently unclear." Det stämmer inte längre helt.
+ * - Roberts BM et al. 2020 (PMC7052702) anger ett förlopp: 1–2 månader till
+ *   en hållbar vikt, därefter 1–2 månader tillbaka till off-season-fettnivå.
+ *   Alltså 8–16 veckor totalt, inte 4. Hormonell återhämtning tar längre:
+ *   3–4 månader för ghrelin, T3/T4, insulin och kortisol; leptin och
+ *   testosteron kan behöva 5–6 månader.
+ * - MEN: det bygger på fallstudier (Pardue 2017, Rossow 2013), inte
+ *   kontrollerade försök, och beskriver ÅTERHÄMTNING i stort — inte hur
+ *   länge en strukturerad kaloriupptrappning bör pågå. Vår reverse-fas är
+ *   det senare, ett snävare begrepp.
+ * - Att höja till 8–16 veckor skulle innebära att appen rekommenderar en
+ *   fyra gånger längre fas på fallstudiedata. Fasen är dessutom valfri och
+ *   justerbar, så användaren kan förlänga den själv.
+ * Konsekvens för UI: nämn Roberts-förloppet som sammanhang när användaren
+ * planerar en reverse efter tävling. Se POST_CONTEST_WEEKS i contestPrep.ts.
  *
  * maintenance = null. Ingen evidens existerar för en rekommenderad längd;
  * fasen är per definition öppen (Aragon 2017, doi: 10.1186/s12970-017-0174-y
