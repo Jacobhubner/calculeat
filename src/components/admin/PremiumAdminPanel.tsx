@@ -59,6 +59,20 @@ function formatDate(iso: string): string {
   })
 }
 
+/**
+ * Senaste inloggning i relativ form. Ett datum kräver att man räknar själv;
+ * "3 dagar sedan" går att läsa i förbifarten.
+ */
+function formatLastSeen(iso: string | null): string {
+  if (!iso) return 'Aldrig inloggad'
+  const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000)
+  if (days <= 0) return 'Idag'
+  if (days === 1) return 'Igår'
+  if (days < 30) return days + ' dagar sedan'
+  if (days < 60) return 'Över en månad sedan'
+  return Math.floor(days / 30) + ' månader sedan'
+}
+
 function previewExpiry(months: GrantDuration): string | null {
   if (months == null) return null
   const d = new Date()
@@ -355,6 +369,13 @@ export default function PremiumAdminPanel() {
                     </p>
                     <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
                       {user.email}
+                    </p>
+                    {/* Aktivitet och ålder på kontot — registreringsdatum säger
+                        inget om någon faktiskt använder appen. */}
+                    <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">
+                      {formatLastSeen(user.last_sign_in_at)}
+                      <span className="mx-1">·</span>
+                      Konto skapat {formatDate(user.created_at)}
                     </p>
                     <div className="mt-1">
                       <HistoryBadges user={user} />

@@ -13,6 +13,8 @@ export interface AdminUserRow {
   username: string | null
   email: string | null
   created_at: string
+  /** Senaste inloggning. NULL = har aldrig loggat in. */
+  last_sign_in_at: string | null
   /** Effektiv plan just nu, inklusive admin- och enforcement-regler */
   effective_plan: string
   plan: string | null
