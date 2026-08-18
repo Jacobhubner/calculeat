@@ -14,7 +14,9 @@ import {
   PREP_RATE_PERCENT,
   OBSERVED_PREP_WEEKS,
   POST_CONTEST_WEEKS,
-  MINOR_ADJUSTMENT_FAT_KG,
+  MINOR_ADJUSTMENT_WEIGHT_FRACTION,
+  MIN_TARGET_BODY_FAT,
+  REALISTIC_LEAN_LOSS_FRACTION,
 } from './contestPrep'
 
 describe('estimatePrepDuration — mot källans eget exempel', () => {
@@ -250,7 +252,7 @@ describe('finjustering kontra riktig förberedelse', () => {
       targetBodyFatPct: 9,
       weeklyRatePercent: 1,
     })
-    expect(r!.fatToLoseKg).toBeLessThan(MINOR_ADJUSTMENT_FAT_KG)
+    expect(r!.fatToLoseKg).toBeLessThan(90.8 * MINOR_ADJUSTMENT_WEIGHT_FRACTION)
     expect(r!.isMinorAdjustment).toBe(true)
     // Det avgörande: ingen jämförelse med fallstudier som startade på 15–20 %
     expect(r!.outsideObservedRange).toBe(false)
@@ -262,7 +264,7 @@ describe('finjustering kontra riktig förberedelse', () => {
       currentBodyFatPct: 20,
       targetBodyFatPct: 6,
     })
-    expect(r!.fatToLoseKg).toBeGreaterThan(MINOR_ADJUSTMENT_FAT_KG)
+    expect(r!.fatToLoseKg).toBeGreaterThan(80 * MINOR_ADJUSTMENT_WEIGHT_FRACTION)
     expect(r!.isMinorAdjustment).toBe(false)
   })
 
@@ -288,7 +290,7 @@ describe('finjustering kontra riktig förberedelse', () => {
       targetBodyFatPct: 20,
       weeklyRatePercent: 5,
     })
-    expect(r!.fatToLoseKg).toBeGreaterThan(MINOR_ADJUSTMENT_FAT_KG)
+    expect(r!.fatToLoseKg).toBeGreaterThan(110 * MINOR_ADJUSTMENT_WEIGHT_FRACTION)
     expect(r!.isMinorAdjustment).toBe(false)
   })
 })
@@ -313,5 +315,163 @@ describe('veckor visas med decimal, aldrig avrundat uppåt', () => {
       targetBodyFatPct: 8.5,
     })
     expect(r!.weeks).toBe(Math.round(r!.weeks * 10) / 10)
+  })
+})
+
+describe('RÄTTNINGAR efter granskning 2026-08-18', () => {
+  describe('FFM-spannet pekar åt rätt håll', () => {
+    /**
+     * Docblocket påstod tidigare att muskelförlust gör tiden KORTARE. Fel:
+     * förloras fettfri massa måste MER vikt tappas för samma fettprocent.
+     * weeks är därför ett golv, weeksRealistic den övre gränsen.
+     */
+    it('weeksRealistic är alltid minst weeks', () => {
+      const fall = [
+        [80, 18, 10],
+        [80, 15, 10],
+        [90, 25, 15],
+        [65, 28, 20],
+        [70, 13, 5],
+      ] as const
+      for (const [w, bf, mal] of fall) {
+        const r = estimatePrepDuration({
+          currentWeightKg: w,
+          currentBodyFatPct: bf,
+          targetBodyFatPct: mal,
+        })!
+        expect(r.weeksRealistic).toBeGreaterThanOrEqual(r.weeks)
+      }
+    })
+
+    it('skillnaden är av storleksordningen 10–35 %, inte försumbar', () => {
+      const r = estimatePrepDuration({
+        currentWeightKg: 80,
+        currentBodyFatPct: 18,
+        targetBodyFatPct: 10,
+      })!
+      const okning = (r.weeksRealistic - r.weeks) / r.weeks
+      expect(okning).toBeGreaterThan(0.1)
+      expect(okning).toBeLessThan(0.35)
+    })
+
+    it('vid FFM-andel 0 skulle spannet kollapsa — konstanten är satt över noll', () => {
+      expect(REALISTIC_LEAN_LOSS_FRACTION).toBeGreaterThan(0)
+    })
+  })
+
+  describe('små men giltiga avstånd ger svar, inte null', () => {
+    /**
+     * BUGG: weeks avrundades till en decimal INNAN kontrollen weeks <= 0.
+     * 0,04 veckor blev 0 → null → användaren fick läsa att målet måste vara
+     * lägre än nuvarande nivå, trots att det var det.
+     */
+    it('80 kg, 10 % mot 9,98 % ger ett resultat', () => {
+      const r = estimatePrepDuration({
+        currentWeightKg: 80,
+        currentBodyFatPct: 10,
+        targetBodyFatPct: 9.98,
+      })
+      expect(r).not.toBeNull()
+      expect(r!.weeks).toBeGreaterThanOrEqual(0)
+    })
+
+    it('även vid hög takt där avrundningen slår tidigare', () => {
+      const r = estimatePrepDuration({
+        currentWeightKg: 80,
+        currentBodyFatPct: 10,
+        targetBodyFatPct: 9.8,
+        weeklyRatePercent: 5,
+      })
+      expect(r).not.toBeNull()
+    })
+  })
+
+  describe('mål under essentiellt kroppsfett flaggas', () => {
+    it('0 % flaggas för båda könen', () => {
+      const man = estimatePrepDuration({
+        currentWeightKg: 80,
+        currentBodyFatPct: 15,
+        targetBodyFatPct: 0,
+        gender: 'male',
+      })!
+      expect(man.belowEssentialFat).toBe(true)
+
+      const kvinna = estimatePrepDuration({
+        currentWeightKg: 65,
+        currentBodyFatPct: 25,
+        targetBodyFatPct: 0,
+        gender: 'female',
+      })!
+      expect(kvinna.belowEssentialFat).toBe(true)
+    })
+
+    it('6 % är rimligt för män men under essentiell nivå för kvinnor', () => {
+      const man = estimatePrepDuration({
+        currentWeightKg: 80,
+        currentBodyFatPct: 15,
+        targetBodyFatPct: 6,
+        gender: 'male',
+      })!
+      expect(man.belowEssentialFat).toBe(false)
+
+      const kvinna = estimatePrepDuration({
+        currentWeightKg: 65,
+        currentBodyFatPct: 25,
+        targetBodyFatPct: 6,
+        gender: 'female',
+      })!
+      expect(kvinna.belowEssentialFat).toBe(true)
+      expect(kvinna.essentialFatLimit).toBe(MIN_TARGET_BODY_FAT.female)
+    })
+
+    it('okänt kön använder den försiktigare gränsen', () => {
+      const r = estimatePrepDuration({
+        currentWeightKg: 70,
+        currentBodyFatPct: 20,
+        targetBodyFatPct: 8,
+      })!
+      expect(r.essentialFatLimit).toBe(MIN_TARGET_BODY_FAT.female)
+      expect(r.belowEssentialFat).toBe(true)
+    })
+  })
+
+  describe('finjusteringströskeln är relativ till kroppsvikten', () => {
+    /**
+     * Med fast 3 kg motsvarade tröskeln 6 procentenheter för en person på
+     * 50 kg — en verklig period avfärdades som finjustering och alla
+     * taktvarningar tystades, just där de behövdes mest.
+     */
+    it('50 kg: 16 % mot 10 % är en RIKTIG period, inte finjustering', () => {
+      const r = estimatePrepDuration({
+        currentWeightKg: 50,
+        currentBodyFatPct: 16,
+        targetBodyFatPct: 10,
+      })!
+      expect(r.isMinorAdjustment).toBe(false)
+    })
+
+    it('120 kg: ett par kilo är fortfarande en finjustering', () => {
+      const r = estimatePrepDuration({
+        currentWeightKg: 120,
+        currentBodyFatPct: 16,
+        targetBodyFatPct: 14.5,
+      })!
+      expect(r.fatToLoseKg).toBeLessThan(120 * MINOR_ADJUSTMENT_WEIGHT_FRACTION)
+      expect(r.isMinorAdjustment).toBe(true)
+    })
+
+    it('samma procentuella avstånd bedöms lika oavsett kroppsvikt', () => {
+      const liten = estimatePrepDuration({
+        currentWeightKg: 50,
+        currentBodyFatPct: 20,
+        targetBodyFatPct: 12,
+      })!
+      const stor = estimatePrepDuration({
+        currentWeightKg: 120,
+        currentBodyFatPct: 20,
+        targetBodyFatPct: 12,
+      })!
+      expect(liten.isMinorAdjustment).toBe(stor.isMinorAdjustment)
+    })
   })
 })

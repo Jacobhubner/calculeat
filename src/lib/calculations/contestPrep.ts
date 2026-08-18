@@ -105,7 +105,65 @@ export const OBSERVED_PREP_WEEKS = { min: 14, max: 32 } as const
  * det är avståndet i samma storleksordning som mätosäkerheten i kaliper och
  * bioimpedans.
  */
-export const MINOR_ADJUSTMENT_FAT_KG = 3
+/**
+ * Andel av viktnedgången som i praktiken är fettfri massa, för den övre
+ * gränsen i tidsspannet.
+ *
+ * 0,15 är ett PRAGMATISKT VAL, inte ett studieresultat. Fallstudierna spretar
+ * kraftigt och rapporterar sällan siffran på ett jämförbart sätt. Poängen är
+ * inte att träffa rätt värde utan att visa att modellen är ett golv — och att
+ * spannet pekar åt rätt håll. Vid en långsam takt hamnar man närmare 0,
+ * vid en aggressiv närmare eller över 0,15.
+ */
+export const REALISTIC_LEAN_LOSS_FRACTION = 0.15
+
+/**
+ * Nedre gräns för mål-kroppsfett, per kön.
+ *
+ * Under dessa nivåer är kroppsfettet essentiellt — det sitter i organ,
+ * benmärg och centrala nervsystemet, inte som lagrad energi. Att sätta ett
+ * mål där är inte "ambitiöst", det är fysiologiskt omöjligt.
+ *
+ * VARFÖR DET SPELAR ROLL HÄR: räknaren accepterade tidigare vilket målvärde
+ * som helst och gav ett prydligt svar på 0 % kroppsfett. Placeholdern var
+ * dessutom hårdkodad till 6, vilket för en kvinna ligger under essentiell
+ * nivå — appen föreslog alltså något omöjligt till halva användarbasen.
+ *
+ * Siffrorna är vedertagna riktvärden inom kroppssammansättning (ACSM m.fl.),
+ * inte hämtade ur de två prep-översikterna. Marginalen ovanför det rent
+ * essentiella är medveten: tävlingsform ligger nära, men inte på, gränsen.
+ */
+export const MIN_TARGET_BODY_FAT = {
+  male: 5,
+  female: 12,
+  /** Utan känt kön används den försiktigare gränsen. */
+  unknown: 12,
+} as const
+
+/**
+ * Föreslaget målvärde i inmatningsfältet, per kön. Motsvarar ungefärlig
+ * tävlingsform — inte ett rekommenderat mål för den som bara vill gå ner.
+ */
+export const SUGGESTED_TARGET_BODY_FAT = {
+  male: 7,
+  female: 14,
+  unknown: 12,
+} as const
+
+/**
+ * Under så här stor andel av kroppsvikten räknas insatsen som en
+ * FINJUSTERING i stället för en riktig nedgångsperiod.
+ *
+ * RELATIV, inte absolut. Tidigare låg gränsen på fasta 3 kg, vilket slog
+ * olika: för en person på 50 kg motsvarade det 6 procentenheter kroppsfett
+ * — en verklig period avfärdades då som finjustering och ALLA taktvarningar
+ * tystades, just där de behövdes mest. För någon på 120 kg motsvarade samma
+ * 3 kg bara 2,5 procentenheter.
+ *
+ * 3,5 % av kroppsvikten motsvarar ungefär de 3 kg som gällde för en person
+ * på 85 kg, alltså samma nivå i mitten av spannet men rättvist i kanterna.
+ */
+export const MINOR_ADJUSTMENT_WEIGHT_FRACTION = 0.035
 
 /**
  * Post-contest-faser i veckor [2]. Fallstudiedata, inte kontrollerade försök.
@@ -130,6 +188,12 @@ export interface PrepEstimateInput {
   targetBodyFatPct: number
   /** Veckotakt i % kroppsvikt. Utelämnas → PREP_RATE_PERCENT.recommended */
   weeklyRatePercent?: number
+  /**
+   * Kön, för att kunna avvisa mål under essentiell fettnivå. Utelämnas →
+   * den försiktigare (kvinnliga) gränsen används, så ett okänt kön aldrig
+   * släpper igenom ett omöjligt mål.
+   */
+  gender?: 'male' | 'female'
 }
 
 export interface PrepEstimate {
@@ -141,6 +205,12 @@ export interface PrepEstimate {
    * man då UNDER målet. En decimal säger sanningen i båda ändarna av skalan.
    */
   weeks: number
+  /**
+   * Övre gräns i tidsspannet: tiden om en del av viktnedgången är fettfri
+   * massa (REALISTIC_LEAN_LOSS_FRACTION). weeks är golvet, detta är det
+   * realistiska utfallet — se docblocket på estimatePrepDuration.
+   */
+  weeksRealistic: number
   /** Fettmassa som behöver tappas, kg */
   fatToLoseKg: number
   /** Beräknad tävlingsvikt om all viktnedgång är fett */
@@ -168,16 +238,36 @@ export interface PrepEstimate {
    * som avståndet självt, vilket är värt att säga till användaren.
    */
   isMinorAdjustment: boolean
+  /**
+   * Målnivån ligger under essentiellt kroppsfett för det angivna könet.
+   * Beräkningen görs ändå — men UI:t måste visa detta som en varning, inte
+   * som ett uppnåeligt mål.
+   */
+  belowEssentialFat: boolean
+  /** Gränsen som gällde, för att kunna visa den i varningen. */
+  essentialFatLimit: number
 }
 
 /**
  * Hur lång tid tar en prep från nuvarande till mål-kroppsfettprocent?
  *
- * ANTAGANDE som är värt att vara tydlig om: uträkningen förutsätter att all
- * viktnedgång är fett och att den fettfria massan bevaras. Det är själva
- * POÄNGEN med en långsam takt [1][2], men det är ett bästa-fall-antagande —
- * i praktiken förloras vanligen något fettfri massa, vilket gör att den
- * verkliga tiden blir något kortare och slutfettprocenten något högre.
+ * ANTAGANDE: uträkningen förutsätter att all viktnedgång är fett och att den
+ * fettfria massan bevaras. Det är själva POÄNGEN med en långsam takt [1][2],
+ * men det är ett bästa fall.
+ *
+ * ⚠️ RÄTTAT 2026-08-18: här stod tidigare att FFM-förlust gör "den verkliga
+ * tiden något KORTARE". Det är fel åt fel håll. Förloras fettfri massa måste
+ * MER total vikt tappas för att nå samma fettprocent — alltså tar det LÄNGRE
+ * tid. Modellen är därför en GOLVSKATTNING, inte en punktskattning.
+ *
+ * Algebran: med FFM-andel f av viktnedgången L gäller
+ *   L = (t·w − fett₀) / (t − 1 + f)   där t = målfett/100
+ * Vid f = 0 faller den tillbaka på grundfallet exakt.
+ *
+ * Konsekvens: weeks är undre gränsen, weeksRealistic den övre. Skillnaden är
+ * storleksordningen 12–30 % — tillräckligt för att någon som planerar 27
+ * veckor i själva verket behöver 31, och tvingas höja takten i slutet där
+ * risken för muskelförlust är störst [2].
  *
  * Returnerar null när indata inte går att räkna på, i stället för att gissa.
  */
@@ -207,24 +297,44 @@ export function estimatePrepDuration(input: PrepEstimateInput): PrepEstimate | n
   // analytiskt: målvikt = startvikt × (1 − r)^v  ⇒  v = ln(kvot) / ln(1 − r).
   const r = ratePercentUsed / 100
   const weeksExact = Math.log(projectedWeightKg / currentWeightKg) / Math.log(1 - r)
-  // En decimal, ingen avrundning uppåt — se doc på weeks ovan.
-  const weeks = round1(weeksExact)
 
-  if (!Number.isFinite(weeks) || weeks <= 0) return null
+  // Kontrollen görs på det EXAKTA värdet, inte det avrundade. Tidigare
+  // rundades 0,04 veckor till 0 och funktionen returnerade null — användaren
+  // fick då läsa att målet måste vara lägre än nuvarande nivå, trots att det
+  // var det. Ett litet men giltigt avstånd ska ge ett litet svar.
+  if (!Number.isFinite(weeksExact) || weeksExact <= 0) return null
 
-  const isMinorAdjustment = fatToLoseKg < MINOR_ADJUSTMENT_FAT_KG
+  // Realistiskt utfall: en del av viktnedgången är fettfri massa, vilket
+  // kräver MER total nedgång och därmed längre tid. Se docblocket ovan.
+  const t = targetBodyFatPct / 100
+  const f = REALISTIC_LEAN_LOSS_FRACTION
+  const currentFatKg = currentWeightKg * (currentBodyFatPct / 100)
+  const realisticLossKg = (t * currentWeightKg - currentFatKg) / (t - 1 + f)
+  const realisticEndWeight = currentWeightKg - realisticLossKg
+  const weeksRealisticExact =
+    realisticEndWeight > 0
+      ? Math.log(realisticEndWeight / currentWeightKg) / Math.log(1 - r)
+      : weeksExact
+
+  const isMinorAdjustment = fatToLoseKg < currentWeightKg * MINOR_ADJUSTMENT_WEIGHT_FRACTION
+
+  const limit = input.gender === 'male' ? MIN_TARGET_BODY_FAT.male : MIN_TARGET_BODY_FAT.female
 
   return {
-    weeks,
+    weeks: round1(weeksExact),
+    weeksRealistic: round1(Math.max(weeksRealisticExact, weeksExact)),
     fatToLoseKg: round1(fatToLoseKg),
     projectedWeightKg: round1(projectedWeightKg),
     weeklyLossKg: round1(currentWeightKg * r),
     ratePercentUsed,
     // Jämförelsen med fallstudiernas 14–32 veckor gäller bara riktiga
-    // förberedelser, inte finjusteringar.
+    // nedgångsperioder, inte finjusteringar.
     outsideObservedRange:
-      !isMinorAdjustment && (weeks < OBSERVED_PREP_WEEKS.min || weeks > OBSERVED_PREP_WEEKS.max),
+      !isMinorAdjustment &&
+      (weeksExact < OBSERVED_PREP_WEEKS.min || weeksExact > OBSERVED_PREP_WEEKS.max),
     isMinorAdjustment,
+    belowEssentialFat: targetBodyFatPct < limit,
+    essentialFatLimit: limit,
   }
 }
 

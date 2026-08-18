@@ -1,14 +1,20 @@
 /**
- * Räknar ut hur lång en tävlingsförberedelse blir utifrån användarens
- * startpunkt, och erbjuder resultatet som faslängd.
+ * Räknar ut hur lång en nedgångsperiod blir utifrån användarens startpunkt.
  *
- * VARFÖR: litteraturen anger ingen optimal prep-längd. Den styr på takt och
- * startfettnivå (Helms 2014, Roberts 2020). Ett fast riktvärde ger samma svar
- * till den som är 12 % och den som är 22 % — fel för båda. Här härleds tiden
- * ur faktiska mätvärden i stället.
+ * FÖR ALLA SOM VILL GÅ NER, inte bara tävlande. Källorna kommer visserligen
+ * från tävlingslitteratur, men det de handlar om — hur man bevarar muskler i
+ * ett underskott — gäller lika mycket den som vill gå ner åtta kilo.
  *
- * Källorna visas i gränssnittet, inte bara i koden: siffrorna kommer från
- * narrativa översikter och fallstudier, och det ska användaren kunna se.
+ * VARFÖR EN RÄKNARE: litteraturen anger ingen optimal längd. Den styr på takt
+ * och startfettnivå (Helms 2014, Roberts 2020). Ett fast riktvärde ger samma
+ * svar till den som är 12 % och den som är 22 % — fel för båda.
+ *
+ * RESULTATET VISAS SOM SPANN. Modellen antar att all viktnedgång är fett,
+ * vilket är ett bästa fall: förloras muskler måste mer vikt tappas för samma
+ * fettprocent, alltså tar det längre tid. Ett enda tal hade sett exakt ut och
+ * systematiskt underskattat.
+ *
+ * Källorna visas i gränssnittet, inte bara i koden.
  */
 
 import { useState } from 'react'
@@ -22,6 +28,7 @@ import {
   classifyPrepRate,
   PREP_RATE_PERCENT,
   OBSERVED_PREP_WEEKS,
+  SUGGESTED_TARGET_BODY_FAT,
 } from '@/lib/calculations/contestPrep'
 import { cn } from '@/lib/utils'
 
@@ -29,25 +36,26 @@ interface Props {
   weightKg: number
   /** Uppmätt kroppsfettprocent. Utan den går räknaren inte att använda. */
   bodyFatPercentage?: number
+  /**
+   * Kön från profilen. Styr nedre gräns för målfett och föreslaget värde —
+   * 6 % är rimligt för män men under essentiell nivå för kvinnor.
+   */
+  gender?: 'male' | 'female'
   /** Anropas när användaren vill använda resultatet som faslängd. */
   onUseWeeks: (weeks: number) => void
 }
 
-export function PrepDurationHelper({ weightKg, bodyFatPercentage, onUseWeeks }: Props) {
+export function PrepDurationHelper({ weightKg, bodyFatPercentage, gender, onUseWeeks }: Props) {
   const { t } = useTranslation('dashboard')
   const [expanded, setExpanded] = useState(false)
   const [targetBf, setTargetBf] = useState('')
   const [rate, setRate] = useState(String(PREP_RATE_PERCENT.recommended))
 
-  // Utan uppmätt kroppsfett finns ingen startpunkt att räkna från. Att gissa
-  // vore att bygga ett svar på ett antagande användaren inte gjort.
-  if (!bodyFatPercentage) {
-    return (
-      <p className="text-xs text-neutral-500 dark:text-neutral-400">
-        {t('phase.prep.needsBodyFat')}
-      </p>
-    )
-  }
+  // Utan uppmätt kroppsfett finns ingen startpunkt att räkna från. I praktiken
+  // når man aldrig hit — PhasePickerDialog ersätter hela vyn innan dess (se
+  // needsBodyFatFirst) och hänvisar till kroppssammansättning. Vakten står
+  // kvar för att komponenten ska vara säker om den monteras någon annanstans.
+  if (!bodyFatPercentage) return null
 
   const targetNum = parseFloat(targetBf.replace(',', '.'))
   const rateNum = parseFloat(rate.replace(',', '.'))
@@ -57,9 +65,18 @@ export function PrepDurationHelper({ weightKg, bodyFatPercentage, onUseWeeks }: 
     currentBodyFatPct: bodyFatPercentage,
     targetBodyFatPct: targetNum,
     weeklyRatePercent: rateNum,
+    gender,
   })
 
-  const rateClass = Number.isFinite(rateNum) ? classifyPrepRate(rateNum) : null
+  // Klassificera den takt som FAKTISKT användes, inte råinmatningen. Skriver
+  // användaren 8 klampar modulen till 5 — då vore det vilseledande att varna
+  // för ett tal som inte ligger bakom veckosiffran.
+  const rateClass = estimate ? classifyPrepRate(estimate.ratePercentUsed) : null
+  const rateWasClamped =
+    estimate != null && Number.isFinite(rateNum) && rateNum !== estimate.ratePercentUsed
+
+  const suggestedTarget =
+    gender === 'male' ? SUGGESTED_TARGET_BODY_FAT.male : SUGGESTED_TARGET_BODY_FAT.female
 
   return (
     <div className="rounded-lg border border-neutral-200 dark:border-neutral-700">
@@ -98,7 +115,7 @@ export function PrepDurationHelper({ weightKg, bodyFatPercentage, onUseWeeks }: 
                 step="0.5"
                 value={targetBf}
                 onChange={e => setTargetBf(e.target.value)}
-                placeholder="6"
+                placeholder={String(suggestedTarget)}
                 className="h-8 text-sm"
               />
             </div>
@@ -123,6 +140,16 @@ export function PrepDurationHelper({ weightKg, bodyFatPercentage, onUseWeeks }: 
               underskott — muskelförlust och metabol anpassning. Vid en
               finjustering på ett par kilo finns ingen sådan risk, och en
               varning där vore falskt larm som urholkar de riktiga. */}
+          {estimate?.belowEssentialFat && (
+            <p className="text-xs text-error-600 dark:text-error-400">
+              {t('phase.prep.belowEssential', { limit: estimate.essentialFatLimit })}
+            </p>
+          )}
+          {rateWasClamped && (
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+              {t('phase.prep.rateClamped', { rate: estimate!.ratePercentUsed })}
+            </p>
+          )}
           {!estimate?.isMinorAdjustment && rateClass === 'acceptable' && (
             <p className="text-xs text-amber-700 dark:text-amber-300">
               {t('phase.prep.rateAcceptable')}
@@ -137,7 +164,12 @@ export function PrepDurationHelper({ weightKg, bodyFatPercentage, onUseWeeks }: 
           {estimate ? (
             <div className="rounded-lg bg-neutral-50 px-3 py-2.5 dark:bg-neutral-900">
               <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                {t('phase.prep.result', { weeks: estimate.weeks })}
+                {estimate.weeksRealistic > estimate.weeks
+                  ? t('phase.prep.resultRange', {
+                      from: estimate.weeks,
+                      to: estimate.weeksRealistic,
+                    })
+                  : t('phase.prep.result', { weeks: estimate.weeks })}
               </p>
               <p className="mt-0.5 text-xs text-neutral-600 dark:text-neutral-400">
                 {t('phase.prep.resultDetail', {
@@ -146,6 +178,11 @@ export function PrepDurationHelper({ weightKg, bodyFatPercentage, onUseWeeks }: 
                   perWeek: estimate.weeklyLossKg,
                 })}
               </p>
+              {estimate.weeksRealistic > estimate.weeks && (
+                <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
+                  {t('phase.prep.rangeExplanation')}
+                </p>
+              )}
               {estimate.outsideObservedRange && (
                 <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
                   {t('phase.prep.outsideRange', {
@@ -162,17 +199,19 @@ export function PrepDurationHelper({ weightKg, bodyFatPercentage, onUseWeeks }: 
                   {t('phase.prep.minorAdjustment')}
                 </p>
               )}
-              {/* Faslängden lagras i hela veckor, så knappen rundar upp —
-                  men SIFFRAN ovan visas exakt. Rundar man ned hamnar man
-                  under målet, vilket är fel håll att fela på. */}
+              {/* Faslängden lagras i hela veckor, så knappen rundar upp, och
+                  den använder spannets ÖVRE gräns. Att planera för golvet vore
+                  att planera för ett bästa fall som sällan inträffar — och för
+                  kort tid tvingar fram en högre takt i slutet, där risken för
+                  muskelförlust är störst. */}
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => onUseWeeks(Math.ceil(estimate.weeks))}
+                onClick={() => onUseWeeks(Math.ceil(estimate.weeksRealistic))}
                 className="mt-2 h-7 text-xs"
               >
-                {t('phase.prep.useWeeks', { weeks: Math.ceil(estimate.weeks) })}
+                {t('phase.prep.useWeeks', { weeks: Math.ceil(estimate.weeksRealistic) })}
               </Button>
             </div>
           ) : (

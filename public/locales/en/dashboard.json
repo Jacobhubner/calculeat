@@ -223,7 +223,7 @@
       "hint": "The same numbers as the diet mode in your profile. The diet mode splits them across fat, carbs and protein.",
       "apply": "Apply diet mode"
     },
-    "strengthNeedsBodyFat": "Maximising muscle growth needs your body fat percentage — the diet modes calculate protein against your fat-free mass.",
+    "strengthNeedsBodyFat": "Maximising muscle growth needs your body fat percentage — the diet modes calculate protein against your fat-free mass. It is also needed to calculate how long a cut will take.",
     "bodyFatNeeded": {
       "title": "Measure your body fat first",
       "body": "Cutting mode calculates protein against your fat-free mass, so it needs your body fat percentage to give the right numbers.",
@@ -282,23 +282,26 @@
       "needsOneMore": "One more weigh-in and the app can show how the period is going."
     },
     "prep": {
-      "title": "Calculate the length from your starting point",
-      "needsBodyFat": "Measure your body fat percentage to calculate how long the preparation will take. The length depends on where you start.",
-      "intro": "You are at {{current}}% body fat. Enter a target level and weekly rate to get the number of weeks.",
+      "title": "How long will the cut take?",
+      "intro": "You are at {{current}}% body fat. Enter a target level and weekly rate to get the time.",
       "targetLabel": "Target body fat (%)",
-      "rateLabel": "Rate (% body weight/wk)",
-      "rateAcceptable": "Above 0.5%/week. Helms 2014 allows up to 1%, but Roberts 2020 advises against it for anyone already contest-lean.",
-      "rateAggressive": "Above 1%/week is not supported by any source. In Garthe 2011, 1.4%/week produced no gain in fat-free mass.",
+      "rateLabel": "Weight loss per week (%)",
+      "rateAcceptable": "Faster than recommended. The risk of losing muscle along with the fat increases — competitors who placed averaged 0.46%/week (Chappell 2018).",
+      "rateAggressive": "Considerably faster than any source supports. In Garthe 2011, 1.4%/week produced no gain in fat-free mass at all.",
+      "rateClamped": "The rate was adjusted to {{rate}}%/week for the calculation.",
+      "belowEssential": "Below {{limit}}%, body fat is essential — it sits in organs and the nervous system, not as stored energy. This target cannot be reached.",
       "result": "{{weeks}} weeks",
+      "resultRange": "{{from}}–{{to}} weeks",
+      "rangeExplanation": "The lower figure assumes you keep all your muscle mass. In practice most people lose some, and then it takes longer.",
       "resultDetail": "{{fat}} kg of fat to lose · projected end weight {{weight}} kg · about {{perWeek}} kg in the first week",
-      "outsideRange": "Outside the {{min}}–{{max}} weeks that documented preparations have actually taken. Not wrong — but worth knowing.",
+      "outsideRange": "Longer than the {{min}}–{{max}} weeks documented cuts have taken. Consider a higher target level, or split it into stages with a maintenance period in between.",
       "useWeeks": "Use {{weeks}} weeks",
       "noResult": "Cannot be calculated. The target must be lower than your current body fat percentage.",
+      "minorAdjustment": "Small distance to the target. Body fat measurement carries an uncertainty of a similar magnitude, so treat this figure as a direction rather than an exact answer.",
       "sourcesTitle": "Sources",
-      "source1": "Helms, Aragon & Fitschen 2014, J Int Soc Sports Nutr (PMC4033492) — narrative review. Rate 0.5–1%/wk; length should follow starting body fat.",
-      "source2": "Roberts, Helms, Trexler & Fitschen 2020, J Hum Kinet (PMC7052702) — narrative review. Recommends ≤0.5%/wk. Documented preparations: 14–32 weeks, from seven case studies.",
-      "caveat": "No study has compared different preparation lengths against each other. These figures describe what competitors have done, not what is optimal. The calculation assumes all weight lost is fat.",
-      "minorAdjustment": "Small distance to the target. Body fat measurement carries an uncertainty of a similar magnitude, so treat this figure as a direction rather than an exact answer."
+      "source1": "Helms et al. 2014 — rate 0.5–1%/week, length follows your starting level",
+      "source2": "Roberts et al. 2020 — ≤0.5%/week; documented periods 14–32 weeks",
+      "caveat": "Both are narrative reviews from competition literature, not controlled studies. No study has compared different lengths against each other — these figures describe what competitors have done, not what is optimal."
     }
   },
   "calibrationReadiness": {

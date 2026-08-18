@@ -522,6 +522,11 @@ export function PhasePickerDialog({
                         <PrepDurationHelper
                           weightKg={weightKg}
                           bodyFatPercentage={bodyFatPercentage}
+                          gender={
+                            activeProfile?.gender === 'male' || activeProfile?.gender === 'female'
+                              ? activeProfile.gender
+                              : undefined
+                          }
                           onUseWeeks={w => setWeeks(String(w))}
                         />
                       )}
