@@ -115,7 +115,13 @@ export interface PrepEstimateInput {
 }
 
 export interface PrepEstimate {
-  /** Antal veckor vid valda takten */
+  /**
+   * Antal veckor vid valda takten, med en decimal.
+   *
+   * INTE avrundat uppåt. Vid korta insatser blev heltalsavrundning direkt
+   * missvisande: 1,3 veckor visades som "2 veckor", och med den takten hamnar
+   * man då UNDER målet. En decimal säger sanningen i båda ändarna av skalan.
+   */
   weeks: number
   /** Fettmassa som behöver tappas, kg */
   fatToLoseKg: number
@@ -170,7 +176,8 @@ export function estimatePrepDuration(input: PrepEstimateInput): PrepEstimate | n
   // analytiskt: målvikt = startvikt × (1 − r)^v  ⇒  v = ln(kvot) / ln(1 − r).
   const r = ratePercentUsed / 100
   const weeksExact = Math.log(projectedWeightKg / currentWeightKg) / Math.log(1 - r)
-  const weeks = Math.ceil(weeksExact)
+  // En decimal, ingen avrundning uppåt — se doc på weeks ovan.
+  const weeks = round1(weeksExact)
 
   if (!Number.isFinite(weeks) || weeks <= 0) return null
 

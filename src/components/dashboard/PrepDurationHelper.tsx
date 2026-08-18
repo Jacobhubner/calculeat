@@ -150,14 +150,17 @@ export function PrepDurationHelper({ weightKg, bodyFatPercentage, onUseWeeks }: 
                   })}
                 </p>
               )}
+              {/* Faslängden lagras i hela veckor, så knappen rundar upp —
+                  men SIFFRAN ovan visas exakt. Rundar man ned hamnar man
+                  under målet, vilket är fel håll att fela på. */}
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => onUseWeeks(estimate.weeks)}
+                onClick={() => onUseWeeks(Math.ceil(estimate.weeks))}
                 className="mt-2 h-7 text-xs"
               >
-                {t('phase.prep.useWeeks', { weeks: estimate.weeks })}
+                {t('phase.prep.useWeeks', { weeks: Math.ceil(estimate.weeks) })}
               </Button>
             </div>
           ) : (
