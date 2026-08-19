@@ -450,6 +450,10 @@ export function estimateDurationToWeight(input: {
   ratePercentUsed: number
   outsideObservedRange: boolean
   isMinorAdjustment: boolean
+  /** Målvikten ligger under fettfri massa — omöjlig. false när kroppsfett saknas. */
+  belowLeanMass: boolean
+  /** Fettfri massa i kg, när den går att räkna fram. */
+  leanMassKg: number | null
 } | null {
   const { currentWeightKg, targetWeightKg } = input
 
@@ -467,33 +471,43 @@ export function estimateDurationToWeight(input: {
   if (!Number.isFinite(weeksExact) || weeksExact <= 0) return null
 
   const weightToLoseKg = currentWeightKg - targetWeightKg
+
+  /**
+   * Målvikt under fettfri massa är fysiologiskt omöjlig — den förutsätter
+   * att muskler, skelett och organ försvinner. Motsvarar belowEssentialFat
+   * i fettprocentläget, som viktläget saknade helt: 95 → 20 kg gav tidigare
+   * "311 veckor" utan invändning.
+   *
+   * Kräver ett mätvärde. Utan det finns ingen fettfri massa att jämföra mot,
+   * och då lämnas fältet false — bättre än att gissa fram en gräns.
+   */
+  const bf = input.currentBodyFatPct
+  const leanMassKg =
+    bf != null && Number.isFinite(bf) && bf > 0 && bf < 100
+      ? currentWeightKg * (1 - bf / 100)
+      : null
+  const belowLeanMass = leanMassKg != null && targetWeightKg < leanMassKg
   const isMinorAdjustment = weightToLoseKg < currentWeightKg * MINOR_ADJUSTMENT_WEIGHT_FRACTION
 
   /**
-   * Spannets övre gräns, när kroppsfettet råkar vara uppmätt.
+   * INGET SPANN HÄR — och det är inte en begränsning, utan rätt svar.
    *
-   * Förloras fettfri massa måste MER totalvikt bort för att nå samma
-   * fettnivå — men här är målet en VIKT, inte en fettnivå, så vikten nås
-   * lika snabbt. Det som tar längre tid är att nå samma KROPPS-
-   * SAMMANSÄTTNING vid den vikten. Övre gränsen svarar därför på frågan:
-   * hur lång tid tar det att tappa lika mycket FETT som målvikten
-   * motsvarar, om 15 % av nedgången är fettfri massa?
+   * I fettprocentläget finns ett spann därför att muskelförlust gör att MER
+   * totalvikt måste bort för att nå samma FETTNIVÅ. Här är målet en VIKT,
+   * och vikten nås lika snabbt oavsett vad som försvinner. Att räkna fram
+   * ett längre "realistiskt" utfall vore att svara på en fråga användaren
+   * inte ställt — hur lång tid det tar att bli lika mager VID den vikten.
+   *
+   * ⚠️ FEL SOM FANNS 2026-08-19: ett spann räknades här när kroppsfett
+   * skickades in, med formeln viktToLose/(1 − 0,15). Det gav 25–29,8 v där
+   * fettprocentläget gav 25–30,8 v för identisk kropp och identiskt mål —
+   * två olika svar, och UI:t förklarade båda med samma mening om
+   * muskelförlust, vilket bara var sant för det ena.
    */
-  const bf = input.currentBodyFatPct
-  let weeksRealisticExact = weeksExact
-  if (bf != null && Number.isFinite(bf) && bf > 0 && bf < 100) {
-    const fatShare = 1 - REALISTIC_LEAN_LOSS_FRACTION
-    // Samma fettmängd bort, men bara fatShare av varje tappat kilo är fett.
-    const totalLossNeeded = weightToLoseKg / fatShare
-    const adjustedEnd = currentWeightKg - totalLossNeeded
-    if (adjustedEnd > 0) {
-      weeksRealisticExact = Math.log(adjustedEnd / currentWeightKg) / Math.log(1 - r)
-    }
-  }
 
   return {
     weeks: round1(weeksExact),
-    weeksRealistic: round1(Math.max(weeksRealisticExact, weeksExact)),
+    weeksRealistic: round1(weeksExact),
     weightToLoseKg: round1(weightToLoseKg),
     weeklyLossKg: round1(currentWeightKg * r),
     ratePercentUsed,
@@ -501,6 +515,8 @@ export function estimateDurationToWeight(input: {
       !isMinorAdjustment &&
       (weeksExact < OBSERVED_PREP_WEEKS.min || weeksExact > OBSERVED_PREP_WEEKS.max),
     isMinorAdjustment,
+    belowLeanMass,
+    leanMassKg: leanMassKg != null ? round1(leanMassKg) : null,
   }
 }
 

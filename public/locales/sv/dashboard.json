@@ -291,7 +291,6 @@
       "result": "{{weeks}} veckor",
       "resultRange": "{{from}}–{{to}} veckor",
       "rangeExplanation": "Den lägre siffran förutsätter att du behåller all muskelmassa. I praktiken tappar de flesta något, och då tar det längre tid.",
-      "resultDetail": "{{fat}} kg fett att tappa · beräknad slutvikt {{weight}} kg · cirka {{perWeek}} kg första veckan",
       "outsideRange": "Längre än de {{min}}–{{max}} veckor som dokumenterade nedgångsperioder tagit. Överväg en högre målnivå, eller dela upp i etapper med en period på underhåll emellan.",
       "useWeeks": "Använd {{weeks}} veckor",
       "noResult": "Går inte att räkna på. Målnivån måste vara lägre än din nuvarande kroppsfettprocent.",
@@ -300,7 +299,6 @@
       "source1": "Helms m.fl. 2014 — takt 0,5–1 %/vecka, längden följer startnivån",
       "source2": "Roberts m.fl. 2020 — ≤0,5 %/vecka; dokumenterade perioder 14–32 veckor",
       "caveat": "Båda är narrativa översikter från tävlingslitteratur, inte kontrollerade studier. Ingen studie har jämfört olika längder mot varandra — siffrorna beskriver vad tävlande har gjort, inte vad som är optimalt.",
-      "levelSummary": "Med {{level}} takt: cirka {{kgMin}}–{{kgMax}} kg per vecka.",
       "statFat": "Fett att tappa",
       "statWeight": "Beräknad slutvikt",
       "statFirstWeek": "Första veckan",
@@ -308,7 +306,10 @@
       "targetWeightLabel": "Målvikt (kg)",
       "introWeight": "Du väger {{current}} kg. Ange målvikt, så räknas tiden ut.",
       "statWeightToLose": "Att tappa",
-      "bodyFatHint": "Har du mätt kroppsfett kan du sätta målet i fettprocent i stället — och få ett spann som tar hänsyn till muskelförlust."
+      "belowLeanMass": "Målvikten ligger under din fettfria massa ({{lean}} kg) — muskler, skelett och organ. Den går inte att nå.",
+      "noResultWeight": "Går inte att räkna på. Målvikten måste vara lägre än din nuvarande vikt.",
+      "outsideRangeShort": "Kortare än de {{min}}–{{max}} veckor som dokumenterade nedgångsperioder tagit.",
+      "statTargetWeight": "Målvikt"
     },
     "deficitLevel": {
       "label": "Hur snabbt vill du gå ner?",

@@ -151,6 +151,8 @@ export function PrepDurationHelper({
         lossKg: bfEstimate.fatToLoseKg,
         endWeightKg: bfEstimate.projectedWeightKg,
         belowEssentialFat: bfEstimate.belowEssentialFat,
+        belowLeanMass: false,
+        leanMassKg: null as number | null,
         essentialFatLimit: bfEstimate.essentialFatLimit,
       }
     : weightEstimate
@@ -164,8 +166,12 @@ export function PrepDurationHelper({
           outsideObservedRange: weightEstimate.outsideObservedRange,
           isMinorAdjustment: weightEstimate.isMinorAdjustment,
           lossKg: weightEstimate.weightToLoseKg,
-          endWeightKg: targetNum,
+          // Avrundas som fettprocentlägets projectedWeightKg, annars visas
+          // "87.456 kg" när användaren skrivit så.
+          endWeightKg: Math.round(targetNum * 10) / 10,
           belowEssentialFat: false,
+          belowLeanMass: weightEstimate.belowLeanMass,
+          leanMassKg: weightEstimate.leanMassKg,
           essentialFatLimit: 0,
         }
       : null
@@ -231,7 +237,7 @@ export function PrepDurationHelper({
                   {t(`phase.deficitLevel.${level}`)}
                 </p>
                 <p className="text-sm font-medium tabular-nums text-neutral-800 dark:text-neutral-100">
-                  {levelRate.kgMin}–{levelRate.kgMax}{' '}
+                  {levelRate.kgMin.toFixed(2)}–{levelRate.kgMax.toFixed(2)}{' '}
                   <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">
                     kg/v
                   </span>
@@ -245,6 +251,14 @@ export function PrepDurationHelper({
               underskott — muskelförlust och metabol anpassning. Vid en
               finjustering på ett par kilo finns ingen sådan risk, och en
               varning där vore falskt larm som urholkar de riktiga. */}
+          {/* Motsvarigheten till belowEssentialFat i viktläget: en målvikt
+              under fettfri massa förutsätter att muskler och organ
+              försvinner. Utan den varnade räknaren inte alls för 95 → 20 kg. */}
+          {estimate?.belowLeanMass && estimate.leanMassKg != null && (
+            <p className="text-xs text-error-600 dark:text-error-400">
+              {t('phase.prep.belowLeanMass', { lean: estimate.leanMassKg })}
+            </p>
+          )}
           {estimate?.belowEssentialFat && (
             <p className="text-xs text-error-600 dark:text-error-400">
               {t('phase.prep.belowEssential', { limit: estimate.essentialFatLimit })}
@@ -285,7 +299,10 @@ export function PrepDurationHelper({
                 {(
                   [
                     [useWeightMode ? 'statWeightToLose' : 'statFat', `${estimate.lossKg} kg`],
-                    ['statWeight', `${estimate.endWeightKg} kg`],
+                    [
+                      useWeightMode ? 'statTargetWeight' : 'statWeight',
+                      `${estimate.endWeightKg} kg`,
+                    ],
                     ['statFirstWeek', `${estimate.weeklyLossKg} kg`],
                   ] as const
                 ).map(([key, value]) => (
@@ -308,10 +325,19 @@ export function PrepDurationHelper({
                 )}
                 {estimate.outsideObservedRange && (
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                    {t('phase.prep.outsideRange', {
-                      min: OBSERVED_PREP_WEEKS.min,
-                      max: OBSERVED_PREP_WEEKS.max,
-                    })}
+                    {/* Villkoret triggar åt BÅDA håll (kortare än min ELLER
+                        längre än max), men texten beskrev bara det längre
+                        fallet — ett svar på 10 veckor fick läsa "Längre än
+                        14–32 veckor". */}
+                    {estimate.weeks < OBSERVED_PREP_WEEKS.min
+                      ? t('phase.prep.outsideRangeShort', {
+                          min: OBSERVED_PREP_WEEKS.min,
+                          max: OBSERVED_PREP_WEEKS.max,
+                        })
+                      : t('phase.prep.outsideRange', {
+                          min: OBSERVED_PREP_WEEKS.min,
+                          max: OBSERVED_PREP_WEEKS.max,
+                        })}
                   </p>
                 )}
                 {/* Vid små avstånd är mätosäkerheten i kroppsfettmätningen i
@@ -320,18 +346,6 @@ export function PrepDurationHelper({
                 {estimate.isMinorAdjustment && (
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">
                     {t('phase.prep.minorAdjustment')}
-                  </p>
-                )}
-                {/* Uppmuntran att mäta kroppsfett, formulerad som vinst: med
-                    ett mätvärde blir svaret ett spann som tar hänsyn till
-                    muskelförlust, i stället för ett enda tal.
-
-                    Villkoras på att mätvärdet SAKNAS, inte på läget. I
-                    hälsospåret körs viktläget även för den som mätt sig, och
-                    att då uppmana till en mätning som redan finns vore brus. */}
-                {!bodyFatPercentage && (
-                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                    {t('phase.prep.bodyFatHint')}
                   </p>
                 )}
                 {/* Faslängden lagras i hela veckor, så knappen rundar upp, och
@@ -355,7 +369,7 @@ export function PrepDurationHelper({
           ) : (
             targetBf !== '' && (
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                {t('phase.prep.noResult')}
+                {useWeightMode ? t('phase.prep.noResultWeight') : t('phase.prep.noResult')}
               </p>
             )
           )}

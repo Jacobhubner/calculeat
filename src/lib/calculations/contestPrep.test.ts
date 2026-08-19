@@ -562,4 +562,49 @@ describe('målviktsläget', () => {
     // ...men helt olika svar. Räknaren måste välja modell efter LÄGET.
     expect(Math.abs(somFettprocent!.weeks - somVikt!.weeks)).toBeGreaterThan(100)
   })
+
+  it('varnar för målvikt under fettfri massa', () => {
+    // Motsvarigheten till belowEssentialFat. Utan den gav 95 → 20 kg
+    // "311 veckor" utan invändning, trots att fettfri massa är 68,4 kg.
+    const omojlig = estimateDurationToWeight({
+      currentWeightKg: 95,
+      targetWeightKg: 20,
+      weeklyRatePercent: 0.5,
+      currentBodyFatPct: 28,
+    })!
+    expect(omojlig.belowLeanMass).toBe(true)
+    expect(omojlig.leanMassKg).toBeCloseTo(68.4, 1)
+
+    const rimlig = estimateDurationToWeight({
+      currentWeightKg: 95,
+      targetWeightKg: 87,
+      weeklyRatePercent: 0.5,
+      currentBodyFatPct: 28,
+    })!
+    expect(rimlig.belowLeanMass).toBe(false)
+  })
+
+  it('ger inget spann i viktläget', () => {
+    // Målet är en VIKT och nås lika snabbt oavsett vad som försvinner. Ett
+    // spann här svarade på en annan fråga än användaren ställt, och gav
+    // dessutom andra tal än fettprocentläget för identisk kropp:
+    // 25–29,8 v mot 25–30,8 v.
+    const e = estimateDurationToWeight({
+      currentWeightKg: 90,
+      targetWeightKg: 79.4,
+      weeklyRatePercent: 0.5,
+      currentBodyFatPct: 25,
+    })!
+    expect(e.weeksRealistic).toBe(e.weeks)
+  })
+
+  it('utan kroppsfett går ingen fettfri massa att räkna fram', () => {
+    const e = estimateDurationToWeight({
+      currentWeightKg: 95,
+      targetWeightKg: 20,
+      weeklyRatePercent: 0.5,
+    })!
+    expect(e.belowLeanMass).toBe(false)
+    expect(e.leanMassKg).toBeNull()
+  })
 })
