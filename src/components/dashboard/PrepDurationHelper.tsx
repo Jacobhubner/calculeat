@@ -121,34 +121,41 @@ export function PrepDurationHelper({
             {t('phase.prep.intro', { current: bodyFatPercentage })}
           </p>
 
-          <div className="space-y-1">
-            <Label htmlFor="prep-target" className="text-xs">
-              {t('phase.prep.targetLabel')}
-            </Label>
-            <Input
-              id="prep-target"
-              type="number"
-              inputMode="decimal"
-              step="0.5"
-              value={targetBf}
-              onChange={e => setTargetBf(e.target.value)}
-              placeholder={String(suggestedTarget)}
-              className="h-8 text-sm"
-            />
+          {/* Målfält och takt sida vid sida: två korta uppgifter som hör
+              ihop och tillsammans bestämmer svaret. Staplade tog de dubbelt
+              så mycket höjd utan att bli tydligare. */}
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="min-w-[7rem] flex-1 space-y-1">
+              <Label htmlFor="prep-target" className="text-xs">
+                {t('phase.prep.targetLabel')}
+              </Label>
+              <Input
+                id="prep-target"
+                type="number"
+                inputMode="decimal"
+                step="0.5"
+                value={targetBf}
+                onChange={e => setTargetBf(e.target.value)}
+                placeholder={String(suggestedTarget)}
+                className="h-8 text-sm"
+              />
+            </div>
+            {/* Nivån väljs i periodvalet ovan — här visas bara vad den
+                innebär i takt, utan ett andra reglage för samma sak. */}
+            {levelRate && (
+              <div className="min-w-[8rem] flex-1 space-y-1">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                  {t(`phase.deficitLevel.${level}`)}
+                </p>
+                <p className="text-sm font-medium tabular-nums text-neutral-800 dark:text-neutral-100">
+                  {levelRate.kgMin}–{levelRate.kgMax}{' '}
+                  <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">
+                    kg/v
+                  </span>
+                </p>
+              </div>
+            )}
           </div>
-
-          {/* Nivån väljs i periodvalet ovan. Här visas bara vad den innebär i
-              takt, så att användaren ser kopplingen mellan djupet hen valt och
-              tiden det ger — utan ett andra reglage för samma sak. */}
-          {levelRate && (
-            <p className="text-xs text-neutral-600 dark:text-neutral-400">
-              {t('phase.prep.levelSummary', {
-                level: t(`phase.deficitLevel.${level}`),
-                kgMin: levelRate.kgMin,
-                kgMax: levelRate.kgMax,
-              })}
-            </p>
-          )}
 
           {/* Takten bedöms mot källornas gränser, inte mot en godtycklig skala.
               Men varningarna handlar om risker som byggs upp över tid i ett
@@ -172,57 +179,81 @@ export function PrepDurationHelper({
           )}
 
           {estimate ? (
-            <div className="rounded-lg bg-neutral-50 px-3 py-2.5 dark:bg-neutral-900">
-              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                {estimate.weeksRealistic > estimate.weeks
-                  ? t('phase.prep.resultRange', {
-                      from: estimate.weeks,
-                      to: estimate.weeksRealistic,
-                    })
-                  : t('phase.prep.result', { weeks: estimate.weeks })}
-              </p>
-              <p className="mt-0.5 text-xs text-neutral-600 dark:text-neutral-400">
-                {t('phase.prep.resultDetail', {
-                  fat: estimate.fatToLoseKg,
-                  weight: estimate.projectedWeightKg,
-                  perWeek: estimate.weeklyLossKg,
-                })}
-              </p>
-              {estimate.weeksRealistic > estimate.weeks && (
-                <p className="mt-1 text-xs text-neutral-600 dark:text-neutral-400">
-                  {t('phase.prep.rangeExplanation')}
+            <div className="overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-700">
+              {/* Veckotalet är svaret användaren kom hit för — det ska synas
+                  som en siffra, inte som en mening i löptext. */}
+              <div className="bg-neutral-50 px-3 py-2.5 dark:bg-neutral-900">
+                <p className="text-[11px] uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                  {t('phase.prep.resultLabel')}
                 </p>
-              )}
-              {estimate.outsideObservedRange && (
-                <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-                  {t('phase.prep.outsideRange', {
-                    min: OBSERVED_PREP_WEEKS.min,
-                    max: OBSERVED_PREP_WEEKS.max,
-                  })}
+                <p className="text-xl font-bold tabular-nums text-neutral-900 dark:text-neutral-100">
+                  {estimate.weeksRealistic > estimate.weeks
+                    ? t('phase.prep.resultRange', {
+                        from: estimate.weeks,
+                        to: estimate.weeksRealistic,
+                      })
+                    : t('phase.prep.result', { weeks: estimate.weeks })}
                 </p>
-              )}
-              {/* Vid små avstånd är mätosäkerheten i kroppsfettmätningen i
+              </div>
+
+              {/* Tre nyckeltal i rutnät i stället för en punktseparerad
+                  mening. Samma mönster som kalibreringens före/efter-ruta. */}
+              <dl className="grid grid-cols-3 divide-x divide-neutral-200 border-t border-neutral-200 dark:divide-neutral-700 dark:border-neutral-700">
+                {(
+                  [
+                    ['statFat', `${estimate.fatToLoseKg} kg`],
+                    ['statWeight', `${estimate.projectedWeightKg} kg`],
+                    ['statFirstWeek', `${estimate.weeklyLossKg} kg`],
+                  ] as const
+                ).map(([key, value]) => (
+                  <div key={key} className="px-2.5 py-2">
+                    <dt className="text-[10px] leading-tight text-neutral-500 dark:text-neutral-400">
+                      {t(`phase.prep.${key}`)}
+                    </dt>
+                    <dd className="mt-0.5 text-sm font-semibold tabular-nums text-neutral-800 dark:text-neutral-100">
+                      {value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+
+              <div className="space-y-1.5 px-3 py-2.5">
+                {estimate.weeksRealistic > estimate.weeks && (
+                  <p className="text-xs text-neutral-600 dark:text-neutral-400">
+                    {t('phase.prep.rangeExplanation')}
+                  </p>
+                )}
+                {estimate.outsideObservedRange && (
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                    {t('phase.prep.outsideRange', {
+                      min: OBSERVED_PREP_WEEKS.min,
+                      max: OBSERVED_PREP_WEEKS.max,
+                    })}
+                  </p>
+                )}
+                {/* Vid små avstånd är mätosäkerheten i kroppsfettmätningen i
                   samma storleksordning som avståndet. Svaret blir då mer
                   precist än ingångsvärdet — det ska användaren veta. */}
-              {estimate.isMinorAdjustment && (
-                <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-                  {t('phase.prep.minorAdjustment')}
-                </p>
-              )}
-              {/* Faslängden lagras i hela veckor, så knappen rundar upp, och
+                {estimate.isMinorAdjustment && (
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                    {t('phase.prep.minorAdjustment')}
+                  </p>
+                )}
+                {/* Faslängden lagras i hela veckor, så knappen rundar upp, och
                   den använder spannets ÖVRE gräns. Att planera för golvet vore
                   att planera för ett bästa fall som sällan inträffar — och för
                   kort tid tvingar fram en högre takt i slutet, där risken för
                   muskelförlust är störst. */}
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => onUseWeeks(Math.ceil(estimate.weeksRealistic))}
-                className="mt-2 h-7 text-xs"
-              >
-                {t('phase.prep.useWeeks', { weeks: Math.ceil(estimate.weeksRealistic) })}
-              </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onUseWeeks(Math.ceil(estimate.weeksRealistic))}
+                  className="mt-1 h-7 text-xs"
+                >
+                  {t('phase.prep.useWeeks', { weeks: Math.ceil(estimate.weeksRealistic) })}
+                </Button>
+              </div>
             </div>
           ) : (
             targetBf !== '' && (
@@ -232,14 +263,15 @@ export function PrepDurationHelper({
             )
           )}
 
-          {/* Källorna hör hemma i gränssnittet. Siffrorna kommer från
-              narrativa översikter och fallstudier — inte från RCT:er som
-              testat olika prep-längder mot varandra. Det ska framgå. */}
-          <div className="border-t border-neutral-200 pt-2 dark:border-neutral-700">
-            <p className="text-[11px] font-medium text-neutral-600 dark:text-neutral-300">
+          {/* Källorna hör hemma i gränssnittet, men de är fem rader småtext
+              som konkurrerade med svaret om uppmärksamheten. Hopfällda är de
+              fortfarande ett klick bort — inte gömda, bara nedprioriterade
+              mot det användaren kom hit för. */}
+          <details className="border-t border-neutral-200 pt-2 dark:border-neutral-700">
+            <summary className="cursor-pointer list-none text-[11px] font-medium text-neutral-600 marker:content-none hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100">
               {t('phase.prep.sourcesTitle')}
-            </p>
-            <ul className="mt-1 space-y-1">
+            </summary>
+            <ul className="mt-1.5 space-y-1">
               <li className="text-[11px] leading-snug text-neutral-500 dark:text-neutral-400">
                 {t('phase.prep.source1')}
               </li>
@@ -250,7 +282,7 @@ export function PrepDurationHelper({
             <p className="mt-1.5 text-[11px] leading-snug text-neutral-500 dark:text-neutral-400">
               {t('phase.prep.caveat')}
             </p>
-          </div>
+          </details>
         </div>
       )}
     </div>

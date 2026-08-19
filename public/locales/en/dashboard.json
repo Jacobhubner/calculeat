@@ -300,7 +300,11 @@
       "source1": "Helms et al. 2014 — rate 0.5–1%/week, length follows your starting level",
       "source2": "Roberts et al. 2020 — ≤0.5%/week; documented periods 14–32 weeks",
       "caveat": "Both are narrative reviews from competition literature, not controlled studies. No study has compared different lengths against each other — these figures describe what competitors have done, not what is optimal.",
-      "levelSummary": "At a {{level}} rate: roughly {{kgMin}}–{{kgMax}} kg per week."
+      "levelSummary": "At a {{level}} rate: roughly {{kgMin}}–{{kgMax}} kg per week.",
+      "statFat": "Fat to lose",
+      "statWeight": "Projected end weight",
+      "statFirstWeek": "First week",
+      "resultLabel": "Estimated time"
     },
     "deficitLevel": {
       "label": "How fast do you want to lose?",
