@@ -9,7 +9,6 @@
 import { describe, it, expect } from 'vitest'
 import {
   estimatePrepDuration,
-  requiredRateForWeeks,
   classifyPrepRate,
   PREP_RATE_PERCENT,
   OBSERVED_PREP_WEEKS,
@@ -167,38 +166,6 @@ describe('estimatePrepDuration — ogiltiga indata ger null, inte gissning', () 
     expect(extrem).not.toBeNull()
     expect(Number.isFinite(extrem!.weeks)).toBe(true)
     expect(extrem!.weeks).toBeGreaterThan(0)
-  })
-})
-
-describe('requiredRateForWeeks — omvänd fråga', () => {
-  it('är invers till estimatePrepDuration', () => {
-    const input = { currentWeightKg: 85, currentBodyFatPct: 18, targetBodyFatPct: 7 }
-    const est = estimatePrepDuration({ ...input, weeklyRatePercent: 0.5 })
-    const rate = requiredRateForWeeks(input, est!.weeks)
-    // Avrundning uppåt av veckor gör att takten blir marginellt lägre.
-    expect(rate).toBeGreaterThan(0.45)
-    expect(rate).toBeLessThanOrEqual(0.5)
-  })
-
-  it('kortare tid kräver högre takt', () => {
-    const input = { currentWeightKg: 85, currentBodyFatPct: 18, targetBodyFatPct: 7 }
-    const snabb = requiredRateForWeeks(input, 10)!
-    const langsam = requiredRateForWeeks(input, 30)!
-    expect(snabb).toBeGreaterThan(langsam)
-  })
-
-  it('klampar INTE — en orimlig plan ska synas som orimlig', () => {
-    const input = { currentWeightKg: 85, currentBodyFatPct: 25, targetBodyFatPct: 6 }
-    const rate = requiredRateForWeeks(input, 4)!
-    expect(rate).toBeGreaterThan(PREP_RATE_PERCENT.max)
-    expect(classifyPrepRate(rate)).toBe('aggressive')
-  })
-
-  it('ogiltiga indata ger null', () => {
-    const input = { currentWeightKg: 85, currentBodyFatPct: 18, targetBodyFatPct: 7 }
-    expect(requiredRateForWeeks(input, 0)).toBeNull()
-    expect(requiredRateForWeeks(input, -5)).toBeNull()
-    expect(requiredRateForWeeks({ ...input, targetBodyFatPct: 20 }, 12)).toBeNull()
   })
 })
 

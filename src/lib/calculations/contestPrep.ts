@@ -67,6 +67,9 @@
  */
 
 import { weeklyRateForCalories } from './weeklyRate'
+// Re-export nedan gör namnen tillgängliga för anropare, men inte i den här
+// filens egen scope — därför även en vanlig import.
+import { DEFICIT_LEVELS, type DeficitLevelId } from '@/lib/utils/deficitLevels'
 
 /**
  * Rekommenderade veckotakter i % kroppsvikt/vecka.
@@ -120,26 +123,13 @@ export const OBSERVED_PREP_WEEKS = { min: 14, max: 32 } as const
 export const REALISTIC_LEAN_LOSS_FRACTION = 0.15
 
 /**
- * De tre underskottsnivåerna, identiska med Energimål och kostlägena.
+ * Underskottsnivåerna bor i @/lib/utils/deficitLevels — de styr numera
+ * profilens och periodens kalorimål, inte bara den här tidsräknaren, och en
+ * tidsräknare är fel hemvist för något så centralt.
  *
- * VARFÖR DE LIGGER HÄR: räknaren hade tidigare ett fritt taktfält med
- * schablonen 0,5 %/vecka. Det gav två olika svar i samma dialog — kostläget
- * −20/−25 % motsvarar 0,64–0,80 %/vecka, alltså snabbare än räknaren antog.
- * Nu väljer användaren samma nivå som styr kalorimålet, och takten härleds
- * ur TDEE i stället för att gissas.
- *
- * Procentsatserna är andelar av TDEE och matchar EnergyGoalReferenceTable
- * exakt (0,85–0,90 / 0,75–0,80 / 0,70–0,75). Omräkningen till kg och
- * kroppsviktsprocent görs med weeklyRateForCalories, samma funktion som
- * tabellen använder — talen kan därför inte glida isär.
+ * Re-exporteras här för de anropare som redan importerar från contestPrep.
  */
-export const DEFICIT_LEVELS = [
-  { id: 'cautious', factorMin: 0.85, factorMax: 0.9, label: '10-15%' },
-  { id: 'normal', factorMin: 0.75, factorMax: 0.8, label: '20-25%' },
-  { id: 'aggressive', factorMin: 0.7, factorMax: 0.75, label: '25-30%' },
-] as const
-
-export type DeficitLevelId = (typeof DEFICIT_LEVELS)[number]['id']
+export { DEFICIT_LEVELS, type DeficitLevelId } from '@/lib/utils/deficitLevels'
 
 /**
  * Veckotakt i % kroppsvikt för en underskottsnivå.
@@ -401,35 +391,6 @@ export function estimatePrepDuration(input: PrepEstimateInput): PrepEstimate | n
     belowEssentialFat: targetBodyFatPct < limit,
     essentialFatLimit: limit,
   }
-}
-
-/**
- * Omvänd fråga: vilken takt krävs för att nå målet på ett givet antal veckor?
- *
- * Behövs för den som har ett tävlingsdatum och vill veta om planen är rimlig.
- * Returnerar takten i % kroppsvikt/vecka, eller null om indata inte håller.
- * Klampas INTE — poängen är att kunna visa att en takt är för aggressiv.
- */
-export function requiredRateForWeeks(
-  input: Omit<PrepEstimateInput, 'weeklyRatePercent'>,
-  weeks: number
-): number | null {
-  const { currentWeightKg, currentBodyFatPct, targetBodyFatPct } = input
-
-  if (!Number.isFinite(weeks) || weeks <= 0) return null
-  if (!Number.isFinite(currentWeightKg) || currentWeightKg <= 0) return null
-  if (currentBodyFatPct <= 0 || currentBodyFatPct >= 100) return null
-  if (targetBodyFatPct < 0 || targetBodyFatPct >= 100) return null
-  if (targetBodyFatPct >= currentBodyFatPct) return null
-
-  const leanKg = currentWeightKg * (1 - currentBodyFatPct / 100)
-  const targetWeightKg = leanKg / (1 - targetBodyFatPct / 100)
-
-  // targetWeight = currentWeight × (1 − r)^weeks  ⇒  r = 1 − kvot^(1/weeks)
-  const ratio = targetWeightKg / currentWeightKg
-  const rate = (1 - Math.pow(ratio, 1 / weeks)) * 100
-
-  return Number.isFinite(rate) && rate > 0 ? round2(rate) : null
 }
 
 /**

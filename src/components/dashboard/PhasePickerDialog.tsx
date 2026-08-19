@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PrepDurationHelper } from './PrepDurationHelper'
+import { DeficitLevelPicker } from './DeficitLevelPicker'
 import { useNavigate } from 'react-router-dom'
 import {
   Dialog,
@@ -26,6 +27,7 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import type { DietPhaseType, PhaseFocus } from '@/lib/types'
 import { suggestPhaseTargets } from '@/lib/calculations/dietPhases'
+import { deficitLevelIdToLabel, type DeficitLevelId } from '@/lib/utils/deficitLevels'
 import { useStartDietPhase } from '@/hooks/useDietPhases'
 import { useUpdateProfile, useActiveProfile } from '@/hooks'
 import { useAuth } from '@/contexts/AuthContext'
@@ -124,6 +126,15 @@ export function PhasePickerDialog({
   const [weeks, setWeeks] = useState('')
   const [step, setStep] = useState('')
   /**
+   * Underskottsdjup för cut. 'normal' ger exakt de tal perioden gav innan
+   * valet fanns (TDEE × 0,75–0,80), så förvalet ändrar ingenting för den
+   * som inte rör reglaget.
+   *
+   * INTE premiumspärrat: det här är ett kalorimål, inte tidsplanering.
+   * Gratisanvändare får redan välja kostläge fritt.
+   */
+  const [deficitLevel, setDeficitLevel] = useState<DeficitLevelId>('normal')
+  /**
    * Vilket steg som visas. Öppnas på 'focus' för den som inte valt spår
    * förut, annars direkt på 'type' — den som byter period har redan svarat
    * och ska inte behöva göra det igen.
@@ -143,6 +154,7 @@ export function PhasePickerDialog({
     // Har användaren redan ett spår (byter period) är frågan besvarad —
     // hoppa direkt till periodvalet. Annars en fråga i taget.
     setView(initialFocus ? 'type' : 'focus')
+    setDeficitLevel('normal')
   }, [open, initialPhase, initialFocus])
 
   const suggestion = suggestPhaseTargets(
@@ -151,7 +163,8 @@ export function PhasePickerDialog({
     weightKg,
     focus,
     currentCalories,
-    bodyFatPercentage
+    bodyFatPercentage,
+    deficitLevel
   )
 
   // Bara de fält användaren faktiskt kan ändra behöver state. Kalorimål och
@@ -162,7 +175,7 @@ export function PhasePickerDialog({
     setWeeks(suggestion.plannedWeeks ? String(suggestion.plannedWeeks) : '')
     setStep(suggestion.weeklyCalorieStep ? String(suggestion.weeklyCalorieStep) : '')
     // suggestion är härledd från dessa — undviker en ny referens varje render
-  }, [open, selected, focus, tdee, weightKg, currentCalories, bodyFatPercentage]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [open, selected, focus, tdee, weightKg, currentCalories, bodyFatPercentage, deficitLevel]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleStart = () => {
     startPhase.mutate(
@@ -184,6 +197,9 @@ export function PhasePickerDialog({
             ? Math.round((suggestion.proteinGramsMax / weightKg) * 100) / 100
             : suggestion.proteinMaxGPerKg,
         weeklyCalorieStep: hasPlanning && selected === 'reverse' && step ? Number(step) : null,
+        // Bara för cut — RPC:n nollar den ändå för andra fastyper, men att
+        // skicka null här gör avsikten tydlig på klientsidan.
+        deficitLevel: selected === 'cut' ? deficitLevelIdToLabel(deficitLevel) : null,
       },
       {
         onSuccess: async () => {
@@ -444,6 +460,24 @@ export function PhasePickerDialog({
                 </div>
 
                 {/*
+            Underskottsdjup — bara för viktnedgång. Ligger FÖRE sammanfattningen
+            nedan så att kalorisiffrorna syns ändra sig när nivån byts; låg den
+            efter skulle valet se ut att sakna effekt.
+
+            Ingen premiumspärr: detta är ett kalorimål, och kostlägen är gratis
+            sedan 2026-08-15. Att låsa djupet men inte fördelningen vore
+            godtyckligt.
+          */}
+                {selected === 'cut' && (
+                  <DeficitLevelPicker
+                    value={deficitLevel}
+                    onChange={setDeficitLevel}
+                    tdee={tdee}
+                    weightKg={weightKg}
+                  />
+                )}
+
+                {/*
             Kostläget fasen pekar mot — samma uppställning som kostlägeskortet
             i profilen (Energimål / Fett / Kolhydrater / Protein), så att
             användaren känner igen sig och ser att det är SAMMA siffror.
@@ -528,6 +562,7 @@ export function PhasePickerDialog({
                               ? activeProfile.gender
                               : undefined
                           }
+                          level={deficitLevel}
                           onUseWeeks={w => setWeeks(String(w))}
                         />
                       )}

@@ -29,7 +29,6 @@ import {
   PREP_RATE_PERCENT,
   OBSERVED_PREP_WEEKS,
   SUGGESTED_TARGET_BODY_FAT,
-  DEFICIT_LEVELS,
   ratePercentForDeficitLevel,
   type DeficitLevelId,
 } from '@/lib/calculations/contestPrep'
@@ -46,6 +45,13 @@ interface Props {
    * 6 % är rimligt för män men under essentiell nivå för kvinnor.
    */
   gender?: 'male' | 'female'
+  /**
+   * Underskottsnivån ÄGS AV DIALOGEN, inte av räknaren. Den styr både
+   * kalorimålet och veckotakten — hade räknaren haft ett eget val skulle
+   * användaren kunna sätta ett djup i periodvalet och ett annat här, och de
+   * två skulle säga emot varandra på samma skärm.
+   */
+  level: DeficitLevelId
   /** Anropas när användaren vill använda resultatet som faslängd. */
   onUseWeeks: (weeks: number) => void
 }
@@ -55,15 +61,12 @@ export function PrepDurationHelper({
   tdee,
   bodyFatPercentage,
   gender,
+  level,
   onUseWeeks,
 }: Props) {
   const { t } = useTranslation('dashboard')
   const [expanded, setExpanded] = useState(false)
   const [targetBf, setTargetBf] = useState('')
-  // Underskottsnivå i stället för ett fritt taktfält. Tidigare kunde man
-  // skriva 0,5 %/v samtidigt som kostläget innebar 0,72 %/v — två svar på
-  // samma fråga i samma dialog. Nivåerna är desamma som i Energimål.
-  const [level, setLevel] = useState<DeficitLevelId>('normal')
 
   // Utan uppmätt kroppsfett finns ingen startpunkt att räkna från. I praktiken
   // når man aldrig hit — PhasePickerDialog ersätter hela vyn innan dess (se
@@ -134,43 +137,18 @@ export function PrepDurationHelper({
             />
           </div>
 
-          {/* Samma tre nivåer som styr kalorimålet. Takten härleds ur TDEE
-              med samma funktion som Energimål använder, så talen inte kan
-              säga emot varandra. */}
-          <div className="space-y-1.5">
-            <Label className="text-xs">{t('phase.prep.levelLabel')}</Label>
-            <div className="space-y-1">
-              {DEFICIT_LEVELS.map(d => {
-                const r = ratePercentForDeficitLevel({ level: d.id, tdee, weightKg })
-                const isSelected = level === d.id
-                return (
-                  <button
-                    key={d.id}
-                    type="button"
-                    onClick={() => setLevel(d.id)}
-                    className={cn(
-                      'flex w-full items-baseline justify-between gap-2 rounded-lg border px-2.5 py-1.5 text-left transition-colors',
-                      isSelected
-                        ? 'border-primary-400 bg-primary-50 dark:border-primary-600 dark:bg-primary-900/25'
-                        : 'border-neutral-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800'
-                    )}
-                  >
-                    <span className="text-xs font-medium text-neutral-800 dark:text-neutral-100">
-                      {t(`phase.prep.level.${d.id}`)}
-                      <span className="ml-1 font-normal text-neutral-500 dark:text-neutral-400">
-                        {d.label}
-                      </span>
-                    </span>
-                    {r && (
-                      <span className="shrink-0 text-[11px] text-neutral-500 dark:text-neutral-400">
-                        {r.kgMin}–{r.kgMax} kg/v
-                      </span>
-                    )}
-                  </button>
-                )
+          {/* Nivån väljs i periodvalet ovan. Här visas bara vad den innebär i
+              takt, så att användaren ser kopplingen mellan djupet hen valt och
+              tiden det ger — utan ett andra reglage för samma sak. */}
+          {levelRate && (
+            <p className="text-xs text-neutral-600 dark:text-neutral-400">
+              {t('phase.prep.levelSummary', {
+                level: t(`phase.deficitLevel.${level}`),
+                kgMin: levelRate.kgMin,
+                kgMax: levelRate.kgMax,
               })}
-            </div>
-          </div>
+            </p>
+          )}
 
           {/* Takten bedöms mot källornas gränser, inte mot en godtycklig skala.
               Men varningarna handlar om risker som byggs upp över tid i ett

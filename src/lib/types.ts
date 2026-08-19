@@ -519,6 +519,19 @@ export interface DietPhase {
   start_weight_kg?: number | null
   /** Reverse diet: kalorihöjning per vecka */
   weekly_calorie_step?: number | null
+  /**
+   * Underskottsdjup, endast för cut. NULL för övriga fastyper — de har
+   * inget underskott att gradera. Speglas till profilernas deficit_level av
+   * triggern sync_calorie_goal_from_phase, som också reagerar på ändringar.
+   */
+  deficit_level?: DeficitLevel | null
+  /**
+   * Datum då nivån senast ändrades under pågående period. NULL = orörd.
+   * phaseTracking håller uppföljningen i 'too_early' tio dagar efter bytet,
+   * eftersom den förväntade takten annars räknas retroaktivt på hela
+   * perioden med den nya nivån.
+   */
+  deficit_level_changed_at?: string | null
   notes?: string | null
   is_preview: boolean
   created_at: string

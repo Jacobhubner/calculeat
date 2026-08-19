@@ -15,6 +15,7 @@
 
 import type { DietPhaseType, DietPhase, PhaseFocus } from '@/lib/types'
 import { applyMacroMode, type MacroModeId } from '@/lib/utils/macroModes'
+import { multipliersForDeficitLevel, type DeficitLevelId } from '@/lib/utils/deficitLevels'
 import { calculateLeanMass } from '@/lib/calculations/bodyComposition'
 import { KCAL_PER_KG } from '@/lib/calculations/calibration-constants'
 
@@ -288,6 +289,8 @@ export interface PhaseSuggestion {
  * @param currentCalories Nuvarande kalorimål; används av reverse för att
  *        trappa upp FRÅN där användaren faktiskt ligger, inte från en
  *        schablon. Utan detta blir upptrappningen ett hopp.
+ * @param deficitLevel Underskottsdjup, ENDAST för cut. Utelämnad ger exakt
+ *        samma tal som före att nivåvalet fanns.
  */
 export function suggestPhaseTargets(
   phaseType: DietPhaseType,
@@ -295,7 +298,8 @@ export function suggestPhaseTargets(
   weightKg: number,
   focus: PhaseFocus = 'strength',
   currentCalories?: number,
-  bodyFatPercentage?: number
+  bodyFatPercentage?: number,
+  deficitLevel?: DeficitLevelId
 ): PhaseSuggestion {
   const plannedWeeks = PHASE_DEFAULT_WEEKS[phaseType]
   const macroMode = macroModeForPhase(phaseType, focus)
@@ -350,14 +354,29 @@ export function suggestPhaseTargets(
     }
   }
 
+  // Underskottsnivån vinner för cut. Den är användarens uttryckliga val av
+  // DJUP, medan kostläget styr FÖRDELNINGEN — två oberoende axlar. Utan
+  // nivå gäller kostlägets multiplikatorer precis som förr.
+  //
+  // Gäller bara cut: 'normal' motsvarar 0,75–0,80, alltså exakt vad Deff-
+  // och NNR-lägets cut redan gav. Ingen befintlig användare får nya tal.
+  const levelMultipliers =
+    phaseType === 'cut' && deficitLevel ? multipliersForDeficitLevel(deficitLevel) : null
+
   // Kostlägets multiplikatorer om de finns, annars fasens egen faktor.
   // NNR är ett underhållsläge och måste överridas för viktuppgång — annars
   // föreslår "Viktuppgång" ±3 %, alltså inget överskott alls.
   const override = macroMode === 'nnr' ? NNR_CALORIE_OVERRIDE[phaseType] : undefined
   const minMult =
-    override?.min ?? mode?.calorieMinMultiplier ?? PHASE_CALORIE_FACTOR[phaseType] * 0.97
+    levelMultipliers?.min ??
+    override?.min ??
+    mode?.calorieMinMultiplier ??
+    PHASE_CALORIE_FACTOR[phaseType] * 0.97
   const maxMult =
-    override?.max ?? mode?.calorieMaxMultiplier ?? PHASE_CALORIE_FACTOR[phaseType] * 1.03
+    levelMultipliers?.max ??
+    override?.max ??
+    mode?.calorieMaxMultiplier ??
+    PHASE_CALORIE_FACTOR[phaseType] * 1.03
 
   return {
     ...calorieSpan(tdee * minMult, tdee * maxMult),
@@ -548,6 +567,19 @@ export interface PhaseTracking {
    * underlag att uttala sig om.
    */
   status: 'on_track' | 'ahead' | 'behind' | 'too_early'
+  /**
+   * true när nivån ändrades för mindre än tio dagar sedan. Då är statusen
+   * 'too_early' av ett annat skäl än vanligt, och UI:t säger det — annars
+   * ser en period som pågått i tolv veckor plötsligt ut att sakna underlag
+   * utan förklaring.
+   */
+  levelChangedRecently?: boolean
+  /**
+   * true när nivån ändrats någon gång under perioden, även för länge sedan.
+   * Statusen är då giltig igen, men jämförelsen väger två olika takter —
+   * det ska framgå i stället för att döljas.
+   */
+  levelChangedDuringPhase?: boolean
 }
 
 /**
@@ -591,7 +623,33 @@ export function phaseTracking(
   const expectedPerWeek = calories != null && tdee ? ((calories - tdee) * 7) / KCAL_PER_KG : 0
   const expectedChangeKg = (expectedPerWeek / 7) * daysElapsed
 
-  if (daysElapsed < 10) {
+  /**
+   * Dagar sedan underskottsdjupet ändrades, eller null om det aldrig ändrats.
+   *
+   * VARFÖR SAMMA TIODAGARSREGEL SOM VID PERIODSTART: efter ett nivåbyte
+   * gäller den nya takten bara framåt, men expectedChangeKg räknas som
+   * nuvarande takt gånger HELA den gångna tiden. Direkt efter bytet är
+   * jämförelsen därför som mest missvisande — och det är dessutom precis då
+   * vätske- och glykogensvängningar dominerar viktkurvan, samma skäl som
+   * motiverar väntetiden vid periodstart.
+   *
+   * MÄTT: ett byte till försiktigt flyttar kvoten till 1,80 för någon som
+   * följt sitt mål exakt, alltså förbi 1,4-gränsen för "ligger före". Utan
+   * den här spärren får en följsam användare ett felaktigt besked som ser ut
+   * att handla om hens beteende.
+   */
+  const daysSinceLevelChange = phase.deficit_level_changed_at
+    ? Math.round(
+        (new Date(last.recorded_at).getTime() -
+          new Date(phase.deficit_level_changed_at + 'T00:00:00').getTime()) /
+          86400000
+      )
+    : null
+
+  const levelChangedRecently = daysSinceLevelChange != null && daysSinceLevelChange < 10
+  const levelChangedDuringPhase = daysSinceLevelChange != null
+
+  if (daysElapsed < 10 || levelChangedRecently) {
     return {
       actualChangeKg,
       expectedChangeKg,
@@ -599,6 +657,8 @@ export function phaseTracking(
       expectedPerWeek,
       daysElapsed,
       status: 'too_early',
+      levelChangedRecently,
+      levelChangedDuringPhase,
     }
   }
 
@@ -613,6 +673,7 @@ export function phaseTracking(
       expectedPerWeek,
       daysElapsed,
       status: stable ? 'on_track' : actualPerWeek > 0 ? 'ahead' : 'behind',
+      levelChangedDuringPhase,
     }
   }
 
@@ -629,6 +690,7 @@ export function phaseTracking(
     expectedPerWeek,
     daysElapsed,
     status,
+    levelChangedDuringPhase,
   }
 }
 

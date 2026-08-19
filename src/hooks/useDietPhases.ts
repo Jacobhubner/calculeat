@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
-import type { DietPhase, DietPhaseType, PhaseFocus } from '@/lib/types'
+import type { DietPhase, DietPhaseType, PhaseFocus, DeficitLevel } from '@/lib/types'
 import { toast } from 'sonner'
 
 /**
@@ -68,6 +68,13 @@ export interface StartPhaseInput {
   proteinGPerKg?: number | null
   weeklyCalorieStep?: number | null
   notes?: string | null
+  /**
+   * Underskottsdjup — bara meningsfullt för cut. Skickas med till RPC:n så att
+   * triggern har nivån NÄR den kör. Skrevs den i stället av klienten efteråt
+   * skulle triggerns fallback hinna före och användarens val gå förlorat vid
+   * nästa metabola kalibrering.
+   */
+  deficitLevel?: DeficitLevel | null
 }
 
 /**
@@ -90,6 +97,7 @@ export function useStartDietPhase() {
         p_weekly_calorie_step: input.weeklyCalorieStep ?? null,
         p_notes: input.notes ?? null,
         p_is_preview: isPreviewMode,
+        p_deficit_level: input.deficitLevel ?? null,
       })
       if (error) throw error
       return data as string
@@ -174,7 +182,13 @@ export function useUpdateDietPhase() {
       updates: Partial<
         Pick<
           DietPhase,
-          'planned_weeks' | 'target_calories' | 'protein_g_per_kg' | 'weekly_calorie_step' | 'notes'
+          | 'planned_weeks'
+          | 'target_calories'
+          | 'protein_g_per_kg'
+          | 'weekly_calorie_step'
+          | 'notes'
+          | 'deficit_level'
+          | 'deficit_level_changed_at'
         >
       >
     }) => {
@@ -184,6 +198,12 @@ export function useUpdateDietPhase() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['diet-phases'] })
+      // Ändras deficit_level speglar triggern det till profilernas
+      // calorie_goal och deficit_level. Utan de här två invalideringarna
+      // visar UI:t gamla profilvärden tills nästa refetch — en latent bugg
+      // som fanns redan innan nivåfältet blev uppdaterbart.
+      queryClient.invalidateQueries({ queryKey: ['profiles'] })
+      queryClient.invalidateQueries({ queryKey: ['user-profile'] })
     },
     onError: () => {
       toast.error('Kunde inte uppdatera fasen')

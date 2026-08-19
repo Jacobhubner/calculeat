@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import {
   suggestPhaseTargets,
+  phaseTracking,
   currentPhaseCalories,
   weeksSince,
   phaseProgress,
@@ -417,5 +418,187 @@ describe('suggestedNextPhase', () => {
 
   it('lämnar maintenance öppet', () => {
     expect(suggestedNextPhase('maintenance')).toBeNull()
+  })
+})
+
+describe('suggestPhaseTargets — underskottsnivå', () => {
+  const TDEE = 2500
+  const KG = 80
+
+  it('ger oförändrade tal utan nivå och med normal', () => {
+    // Den viktigaste garantin i hela ändringen: 'normal' motsvarar 0,75–0,80,
+    // vilket är exakt vad kostläget gav innan valet fanns. Går det här testet
+    // sönder har någon flyttat en befintlig användares kalorimål.
+    const utan = suggestPhaseTargets('cut', TDEE, KG, 'health')
+    const normal = suggestPhaseTargets('cut', TDEE, KG, 'health', undefined, undefined, 'normal')
+
+    expect(normal.targetCaloriesMin).toBe(utan.targetCaloriesMin)
+    expect(normal.targetCaloriesMax).toBe(utan.targetCaloriesMax)
+  })
+
+  it('ger djupare underskott ju aggressivare nivå', () => {
+    const nivaer = (['cautious', 'normal', 'aggressive'] as const).map(
+      level =>
+        suggestPhaseTargets('cut', TDEE, KG, 'health', undefined, undefined, level).targetCalories
+    )
+
+    // Strikt fallande: varje steg ska faktiskt ge färre kalorier, annars är
+    // valet kosmetiskt.
+    expect(nivaer[0]).toBeGreaterThan(nivaer[1])
+    expect(nivaer[1]).toBeGreaterThan(nivaer[2])
+  })
+
+  it('räknar nivåerna som andelar av TDEE', () => {
+    const c = suggestPhaseTargets('cut', TDEE, KG, 'health', undefined, undefined, 'cautious')
+    const a = suggestPhaseTargets('cut', TDEE, KG, 'health', undefined, undefined, 'aggressive')
+
+    expect(c.targetCaloriesMin).toBe(Math.round(TDEE * 0.85))
+    expect(c.targetCaloriesMax).toBe(Math.round(TDEE * 0.9))
+    expect(a.targetCaloriesMin).toBe(Math.round(TDEE * 0.7))
+    expect(a.targetCaloriesMax).toBe(Math.round(TDEE * 0.75))
+  })
+
+  it('låter etiketten följa nivån', () => {
+    // Etiketten härleds ur multiplikatorerna, så den kan inte visa en annan
+    // procentsats än kalorierna faktiskt bygger på.
+    expect(
+      suggestPhaseTargets('cut', TDEE, KG, 'health', undefined, undefined, 'cautious')
+        .calorieDeviationLabel
+    ).toBe('−10–15 %')
+    expect(
+      suggestPhaseTargets('cut', TDEE, KG, 'health', undefined, undefined, 'aggressive')
+        .calorieDeviationLabel
+    ).toBe('−25–30 %')
+  })
+
+  it('ignorerar nivån för andra fastyper än cut', () => {
+    // Bulk och underhåll har inget underskott att gradera. Skickas en nivå
+    // ändå ska den inte kunna ändra målet.
+    for (const type of ['bulk', 'maintenance'] as const) {
+      const utan = suggestPhaseTargets(type, TDEE, KG, 'health')
+      const med = suggestPhaseTargets(type, TDEE, KG, 'health', undefined, undefined, 'aggressive')
+      expect(med.targetCalories).toBe(utan.targetCalories)
+    }
+  })
+
+  it('gäller i båda fokusspåren', () => {
+    // Nivån är en egenskap hos underskottet, inte hos kostläget — den ska
+    // fungera lika i hälsospåret (viktminskningsläget) som i styrkespåret
+    // (Deff-läget).
+    for (const focus of ['health', 'strength'] as const) {
+      const normal = suggestPhaseTargets('cut', TDEE, KG, focus, undefined, 15, 'normal')
+      const aggressiv = suggestPhaseTargets('cut', TDEE, KG, focus, undefined, 15, 'aggressive')
+      expect(aggressiv.targetCalories).toBeLessThan(normal.targetCalories)
+    }
+  })
+
+  it('behåller kostlägets protein oavsett nivå', () => {
+    // Nivån äger DJUPET, kostläget äger FÖRDELNINGEN. Byter man djup ska
+    // proteinmålet ligga kvar — annars är axlarna inte oberoende.
+    const normal = suggestPhaseTargets('cut', TDEE, KG, 'strength', undefined, 15, 'normal')
+    const aggressiv = suggestPhaseTargets('cut', TDEE, KG, 'strength', undefined, 15, 'aggressive')
+
+    expect(aggressiv.proteinMinGPerKg).toBe(normal.proteinMinGPerKg)
+    expect(aggressiv.proteinMaxGPerKg).toBe(normal.proteinMaxGPerKg)
+    expect(aggressiv.macroMode).toBe(normal.macroMode)
+  })
+})
+
+describe('phaseTracking — nivåbyte mitt i perioden', () => {
+  const TDEE = 2800
+
+  /** Vägningar med jämn nedgång i den takt normal-nivån innebär. */
+  const weighIns = (dagar: number, kgPerVecka: number) => {
+    const start = new Date('2026-06-01T00:00:00')
+    const rader = []
+    for (let d = 0; d <= dagar; d += 7) {
+      const dt = new Date(start.getTime() + d * 86400000)
+      rader.push({
+        weight_kg: 85 + (kgPerVecka * d) / 7,
+        recorded_at: dt.toISOString().slice(0, 10),
+      })
+    }
+    return rader
+  }
+
+  const basPhase = {
+    id: 'x',
+    user_id: 'u',
+    phase_type: 'cut' as const,
+    focus: 'health' as const,
+    started_at: '2026-06-01',
+    ended_at: null,
+    is_preview: false,
+    start_weight_kg: 85,
+    // normal: mitten av 0,75–0,80 × 2800
+    target_calories: 2170,
+    created_at: '2026-06-01T00:00:00Z',
+    updated_at: '2026-06-01T00:00:00Z',
+  }
+
+  it('pausar uppföljningen tio dagar efter ett nivåbyte', () => {
+    // 56 dagar in i perioden, nivån ändrad för tre dagar sedan.
+    const weights = weighIns(56, -0.57)
+    const sista = weights[weights.length - 1].recorded_at
+    const bytesdag = new Date(new Date(sista).getTime() - 3 * 86400000).toISOString().slice(0, 10)
+
+    const t = phaseTracking({ ...basPhase, deficit_level_changed_at: bytesdag }, weights, TDEE)
+
+    expect(t).not.toBeNull()
+    expect(t!.status).toBe('too_early')
+    expect(t!.levelChangedRecently).toBe(true)
+  })
+
+  it('släpper tillbaka statusen efter tio dagar, men behåller märkningen', () => {
+    const weights = weighIns(56, -0.57)
+    const sista = weights[weights.length - 1].recorded_at
+    const bytesdag = new Date(new Date(sista).getTime() - 20 * 86400000).toISOString().slice(0, 10)
+
+    const t = phaseTracking({ ...basPhase, deficit_level_changed_at: bytesdag }, weights, TDEE)
+
+    expect(t!.status).not.toBe('too_early')
+    expect(t!.levelChangedRecently).toBeFalsy()
+    // Jämförelsen väger fortfarande två takter — det ska framgå.
+    expect(t!.levelChangedDuringPhase).toBe(true)
+  })
+
+  it('lämnar perioder utan nivåbyte helt orörda', () => {
+    // Den viktigaste garantin: den som aldrig byter nivå ska inte märka
+    // att funktionen finns.
+    const weights = weighIns(56, -0.57)
+    const utan = phaseTracking(basPhase, weights, TDEE)
+    const medNull = phaseTracking({ ...basPhase, deficit_level_changed_at: null }, weights, TDEE)
+
+    expect(utan!.status).toBe(medNull!.status)
+    expect(utan!.levelChangedDuringPhase).toBeFalsy()
+    expect(utan!.levelChangedRecently).toBeFalsy()
+  })
+
+  it('fångar det fall som motiverade spärren', () => {
+    // Någon som följt normal-nivån exakt och byter till försiktigt: den
+    // förväntade takten halveras, kvoten blir ~1,8 och statusen skulle bli
+    // "ligger före" trots oförändrat beteende. Spärren ska hindra det.
+    const weights = weighIns(56, -0.57)
+    const sista = weights[weights.length - 1].recorded_at
+    const igar = new Date(new Date(sista).getTime() - 1 * 86400000).toISOString().slice(0, 10)
+
+    // cautious: mitten av 0,85–0,90 × 2800
+    const forsiktigt = {
+      ...basPhase,
+      target_calories: 2450,
+      deficit_level_changed_at: igar,
+    }
+
+    // Utan spärren hade detta blivit 'ahead'
+    const utanSparr = phaseTracking(
+      { ...forsiktigt, deficit_level_changed_at: null },
+      weights,
+      TDEE
+    )
+    expect(utanSparr!.status).toBe('ahead')
+
+    // Med spärren hålls den tillbaka
+    const medSparr = phaseTracking(forsiktigt, weights, TDEE)
+    expect(medSparr!.status).toBe('too_early')
   })
 })
