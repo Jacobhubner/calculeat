@@ -435,8 +435,16 @@ export function estimateDurationToWeight(input: {
   targetWeightKg: number
   /** % av kroppsvikt per vecka. Klampas mot litteraturens gränser. */
   weeklyRatePercent?: number
+  /**
+   * Uppmätt kroppsfettprocent, om den finns. Behövs INTE för tiden — bara
+   * för att kunna räkna fram spannets övre gräns, som antar att en del av
+   * nedgången är fettfri massa. Utan den blir weeksRealistic === weeks.
+   */
+  currentBodyFatPct?: number
 }): {
   weeks: number
+  /** Övre gräns när en del av nedgången är fettfri massa. === weeks utan kroppsfett. */
+  weeksRealistic: number
   weightToLoseKg: number
   weeklyLossKg: number
   ratePercentUsed: number
@@ -461,8 +469,31 @@ export function estimateDurationToWeight(input: {
   const weightToLoseKg = currentWeightKg - targetWeightKg
   const isMinorAdjustment = weightToLoseKg < currentWeightKg * MINOR_ADJUSTMENT_WEIGHT_FRACTION
 
+  /**
+   * Spannets övre gräns, när kroppsfettet råkar vara uppmätt.
+   *
+   * Förloras fettfri massa måste MER totalvikt bort för att nå samma
+   * fettnivå — men här är målet en VIKT, inte en fettnivå, så vikten nås
+   * lika snabbt. Det som tar längre tid är att nå samma KROPPS-
+   * SAMMANSÄTTNING vid den vikten. Övre gränsen svarar därför på frågan:
+   * hur lång tid tar det att tappa lika mycket FETT som målvikten
+   * motsvarar, om 15 % av nedgången är fettfri massa?
+   */
+  const bf = input.currentBodyFatPct
+  let weeksRealisticExact = weeksExact
+  if (bf != null && Number.isFinite(bf) && bf > 0 && bf < 100) {
+    const fatShare = 1 - REALISTIC_LEAN_LOSS_FRACTION
+    // Samma fettmängd bort, men bara fatShare av varje tappat kilo är fett.
+    const totalLossNeeded = weightToLoseKg / fatShare
+    const adjustedEnd = currentWeightKg - totalLossNeeded
+    if (adjustedEnd > 0) {
+      weeksRealisticExact = Math.log(adjustedEnd / currentWeightKg) / Math.log(1 - r)
+    }
+  }
+
   return {
     weeks: round1(weeksExact),
+    weeksRealistic: round1(Math.max(weeksRealisticExact, weeksExact)),
     weightToLoseKg: round1(weightToLoseKg),
     weeklyLossKg: round1(currentWeightKg * r),
     ratePercentUsed,

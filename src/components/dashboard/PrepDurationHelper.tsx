@@ -34,6 +34,7 @@ import {
   type DeficitLevelId,
 } from '@/lib/calculations/contestPrep'
 import { cn } from '@/lib/utils'
+import type { PhaseFocus } from '@/lib/types'
 
 interface Props {
   weightKg: number
@@ -54,6 +55,17 @@ interface Props {
    */
   level: DeficitLevelId
   /**
+   * Fokusspåret. Styr vilket MÅL räknaren frågar efter — inte om den
+   * fungerar alls.
+   *
+   * Hälsospårets användare tänker i kilo ("jag vill ner till 87"),
+   * styrkespårets i fettprocent ("jag vill till 8 %"). Att fråga efter fel
+   * enhet tvingar användaren att räkna om i huvudet — och en tredjedel av
+   * profilerna har mätt kroppsfett, så att bara gå på mätvärdet skulle
+   * kasta in hälsoanvändare i procentläget godtyckligt.
+   */
+  focus: PhaseFocus
+  /**
    * Anropas när användaren vill använda resultatet som faslängd.
    *
    * UTELÄMNAS FÖR GRATISANVÄNDARE: att räkna ut tiden är fritt, men att
@@ -69,6 +81,7 @@ export function PrepDurationHelper({
   bodyFatPercentage,
   gender,
   level,
+  focus,
   onUseWeeks,
 }: Props) {
   const { t } = useTranslation('dashboard')
@@ -89,7 +102,7 @@ export function PrepDurationHelper({
    * kilo — att kräva en kaliper för att få veta hur lång tid åtta kilo tar
    * vore ett hinder utan syfte.
    */
-  const useWeightMode = !bodyFatPercentage
+  const useWeightMode = focus === 'health' || !bodyFatPercentage
 
   const targetNum = parseFloat(targetBf.replace(',', '.'))
 
@@ -113,6 +126,7 @@ export function PrepDurationHelper({
         currentWeightKg: weightKg,
         targetWeightKg: targetNum,
         weeklyRatePercent: rateNum,
+        currentBodyFatPct: bodyFatPercentage,
       })
     : null
 
@@ -133,9 +147,9 @@ export function PrepDurationHelper({
     : weightEstimate
       ? {
           weeks: weightEstimate.weeks,
-          // Utan kroppsfett går inget spann att räkna fram — se docblocket
-          // på estimateDurationToWeight. Lika värden ⇒ UI:t visar ett tal.
-          weeksRealistic: weightEstimate.weeks,
+          // Spannet finns bara när kroppsfettet är uppmätt; annars är
+          // weeksRealistic === weeks och UI:t visar ett enda tal.
+          weeksRealistic: weightEstimate.weeksRealistic,
           weeklyLossKg: weightEstimate.weeklyLossKg,
           ratePercentUsed: weightEstimate.ratePercentUsed,
           outsideObservedRange: weightEstimate.outsideObservedRange,
@@ -301,8 +315,12 @@ export function PrepDurationHelper({
                 )}
                 {/* Uppmuntran att mäta kroppsfett, formulerad som vinst: med
                     ett mätvärde blir svaret ett spann som tar hänsyn till
-                    muskelförlust, i stället för ett enda tal. */}
-                {useWeightMode && (
+                    muskelförlust, i stället för ett enda tal.
+
+                    Villkoras på att mätvärdet SAKNAS, inte på läget. I
+                    hälsospåret körs viktläget även för den som mätt sig, och
+                    att då uppmana till en mätning som redan finns vore brus. */}
+                {!bodyFatPercentage && (
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">
                     {t('phase.prep.bodyFatHint')}
                   </p>

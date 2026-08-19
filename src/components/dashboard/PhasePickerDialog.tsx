@@ -567,6 +567,7 @@ export function PhasePickerDialog({
                         : undefined
                     }
                     level={deficitLevel}
+                    focus={focus}
                     onUseWeeks={hasPlanning ? w => setWeeks(String(w)) : undefined}
                   />
                 )}
