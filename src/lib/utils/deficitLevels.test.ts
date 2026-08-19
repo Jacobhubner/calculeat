@@ -13,7 +13,7 @@ describe('underskottsnivåer', () => {
     // Nivåväljaren i perioder och EnergyGoalReferenceTable beskriver samma
     // sak för användaren. Skulle de räkna olika skulle appen ge två svar på
     // samma fråga — det här testet gör att de inte kan glida isär.
-    for (const tdee of [2200, 2500, 2800, 3000, 3400]) {
+    for (const tdee of [2200, 2500, 2800, 3000, 3190, 3400]) {
       for (const level of DEFICIT_LEVELS) {
         const energiMin = dailyCalorieDeltaToKgPerWeek(tdee - tdee * level.factorMax).toFixed(2)
         const energiMax = dailyCalorieDeltaToKgPerWeek(tdee - tdee * level.factorMin).toFixed(2)

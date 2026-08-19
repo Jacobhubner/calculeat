@@ -163,12 +163,30 @@ export function ratePercentForDeficitLevel(params: {
     weightKg,
   })
 
+  /**
+   * ORÖRDA TAL UT — avrundningen hör till presentationen.
+   *
+   * VARFÖR (fynd 2026-08-19): kg-värdena rundades tidigare med round2, alltså
+   * Math.round(x*100)/100, medan Målsättning och Energimål formaterar med
+   * toFixed(2). De två skiljer sig vid exakta halvor: 0,435 blir 0,44 med
+   * round2 men 0,43 med toFixed, eftersom 0,435 lagras binärt som
+   * 0,43499999999999999778 och alltså ligger strax under halvvägspunkten.
+   *
+   * Det gav synligt olika tal för samma användare: perioder visade
+   * 0,29–0,44 där Målsättning visade 0,29–0,43 (TDEE 3190). Bara de nivåer
+   * som råkar landa exakt på en halva drabbades, vilket gjorde felet
+   * oregelbundet och svårt att se som ett mönster.
+   *
+   * Procenttalen behåller round2: de används för beräkning (percentMid går
+   * in i estimatePrepDuration), inte för att jämföras mot en annan ytas
+   * formatering.
+   */
   return {
     percentMin: round2(rate.percentMin),
     percentMax: round2(rate.percentMax),
     percentMid: round2((rate.percentMin + rate.percentMax) / 2),
-    kgMin: round2(rate.kgMin),
-    kgMax: round2(rate.kgMax),
+    kgMin: rate.kgMin,
+    kgMax: rate.kgMax,
   }
 }
 
