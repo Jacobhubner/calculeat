@@ -1111,7 +1111,7 @@ export default function GoalCalculatorTool() {
                   <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 leading-snug">
                     {(() => {
                       if (!goalResult || !profileData?.tdee) {
-                        return `${weeklyWeightChange.min.toFixed(1)}–${weeklyWeightChange.max.toFixed(1)} kg/vecka`
+                        return `${weeklyWeightChange.min.toFixed(2)}–${weeklyWeightChange.max.toFixed(2)} kg/vecka`
                       }
                       const tdee = profileData.tdee
                       const isWeightLoss = goalResult.weightToChange < 0
@@ -1151,7 +1151,7 @@ export default function GoalCalculatorTool() {
                           presetName = t('goalCalc.weeklyChange.presets.gainShort')
                         }
                       }
-                      const kgRange = `${weeklyWeightChange.min.toFixed(1)}–${weeklyWeightChange.max.toFixed(1)} kg/vecka`
+                      const kgRange = `${weeklyWeightChange.min.toFixed(2)}–${weeklyWeightChange.max.toFixed(2)} kg/vecka`
                       return presetName ? `${presetName} · ${kgRange}` : kgRange
                     })()}
                   </p>
