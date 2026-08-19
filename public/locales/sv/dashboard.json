@@ -306,7 +306,7 @@
       "label": "Hur snabbt vill du gå ner?",
       "cautious": "Försiktigt",
       "normal": "Normalt",
-      "aggressive": "Snabbt",
+      "aggressive": "Aggressivt",
       "adjustTitle": "Justera takten",
       "adjustBody": "Ändrar hur djupt underskottet är. Perioden fortsätter — veckoräkningen och din viktkurva behålls.",
       "newTarget": "Nytt kalorimål: {{min}}–{{max}} kcal per dag.",
@@ -316,7 +316,10 @@
       "current": "Nuvarande takt",
       "adjust": "Justera",
       "changedDuringPhase": "Takten ändrades under perioden, så jämförelsen väger in två olika takter.",
-      "changedRecently": "Takten ändrades nyss — uppföljningen väntar tills det finns underlag igen."
+      "changedRecently": "Takten ändrades nyss — uppföljningen väntar tills det finns underlag igen.",
+      "cautiousDesc": "Långsam viktnedgång, bäst för att bevara muskelmassa",
+      "normalDesc": "Balanserad viktnedgång med god energinivå",
+      "aggressiveDesc": "Snabb viktnedgång, rekommenderas endast för korta perioder"
     }
   },
   "calibrationReadiness": {

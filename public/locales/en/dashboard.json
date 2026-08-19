@@ -306,7 +306,7 @@
       "label": "How fast do you want to lose?",
       "cautious": "Cautious",
       "normal": "Normal",
-      "aggressive": "Fast",
+      "aggressive": "Aggressive",
       "adjustTitle": "Adjust the rate",
       "adjustBody": "Changes how deep the deficit is. The period continues — your week count and weight curve are kept.",
       "newTarget": "New calorie target: {{min}}–{{max}} kcal per day.",
@@ -316,7 +316,10 @@
       "current": "Current rate",
       "adjust": "Adjust",
       "changedDuringPhase": "The rate changed during this period, so the comparison weighs two different rates.",
-      "changedRecently": "The rate changed recently — tracking waits until there is data again."
+      "changedRecently": "The rate changed recently — tracking waits until there is data again.",
+      "cautiousDesc": "Slow weight loss, best for preserving muscle mass",
+      "normalDesc": "Balanced weight loss with good energy levels",
+      "aggressiveDesc": "Rapid weight loss, recommended only for short periods"
     }
   },
   "calibrationReadiness": {

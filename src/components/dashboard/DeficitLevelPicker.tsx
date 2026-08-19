@@ -45,23 +45,36 @@ export function DeficitLevelPicker({ value, onChange, tdee, weightKg, hideLabel 
               onClick={() => onChange(level.id)}
               aria-pressed={isSelected}
               className={cn(
-                'flex items-baseline justify-between gap-2 rounded-lg border px-2.5 py-2 text-left transition-colors',
+                'block w-full rounded-lg border px-2.5 py-2 text-left transition-colors',
                 isSelected
                   ? 'border-primary-400 bg-primary-50 dark:border-primary-600 dark:bg-primary-900/25'
                   : 'border-neutral-200 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-800'
               )}
             >
-              <span className="text-xs font-medium text-neutral-800 dark:text-neutral-100">
-                {t(`phase.deficitLevel.${level.id}`)}
-                <span className="ml-1.5 font-normal text-neutral-500 dark:text-neutral-400">
-                  −{level.label}
+              <span className="flex items-baseline justify-between gap-2">
+                <span className="text-xs font-medium text-neutral-800 dark:text-neutral-100">
+                  {t(`phase.deficitLevel.${level.id}`)}
+                  <span className="ml-1.5 font-normal text-neutral-500 dark:text-neutral-400">
+                    −{level.label}
+                  </span>
                 </span>
+                {rate && (
+                  /* toFixed(2), inte råa tal: round2 släpper efterföljande
+                     nolla och ger "0.4" där Energimål visar "0.40". Samma
+                     siffra i två skepnader ser ut som två olika svar. */
+                  <span className="shrink-0 text-[11px] tabular-nums text-neutral-500 dark:text-neutral-400">
+                    {rate.kgMin.toFixed(2)}–{rate.kgMax.toFixed(2)} kg/v
+                  </span>
+                )}
               </span>
-              {rate && (
-                <span className="shrink-0 text-[11px] tabular-nums text-neutral-500 dark:text-neutral-400">
-                  {rate.kgMin}–{rate.kgMax} kg/v
-                </span>
-              )}
+              {/* VARFÖR man väljer den ena eller andra. Utan detta är valet
+                  tre procentsatser utan innebörd — siffrorna säger vad som
+                  händer, inte vad det innebär. Ordagrant samma formuleringar
+                  som Energimål använder, så samma nivå aldrig beskrivs på två
+                  sätt i samma app. */}
+              <span className="mt-0.5 block text-[11px] leading-snug text-neutral-500 dark:text-neutral-400">
+                {t(`phase.deficitLevel.${level.id}Desc`)}
+              </span>
             </button>
           )
         })}
