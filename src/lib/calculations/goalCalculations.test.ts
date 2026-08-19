@@ -96,4 +96,18 @@ describe('calculateTimeline — exponentiell vid viktnedgång', () => {
     // Noll förändring
     expect(calculateTimeline(-10, 0, 100)).toBeNull()
   })
+
+  it('ger rimliga veckotal för viktuppgång', () => {
+    // Uppgång är spegelvänd: TDEE STIGER med vikten, så ett procentuellt
+    // överskott ger FLER kalorier och uppgången går marginellt fortare.
+    // Den linjära modellen är därför rätt val här — verifierat mot en
+    // simulering vecka för vecka (70 -> 85 kg vid 15 % överskott):
+    //   sanning 40 v, linjär 42 v (+2), exponentiell 38 v (-2)
+    // Att tvinga på exponentialmodellen skulle luta åt fel håll.
+    const kgPerVecka = (2648 * 0.15 * 7) / 7700
+    const t = calculateTimeline(15, calculateDailyCalorieAdjustment(kgPerVecka) * 7, 70)
+    expect(t).not.toBeNull()
+    // Linjärt: 15 kg / 0,36 kg per vecka
+    expect(Math.round(t!.weeksRequired)).toBe(42)
+  })
 })
