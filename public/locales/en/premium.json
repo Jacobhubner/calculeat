@@ -74,8 +74,8 @@
         },
         "phases": {
           "label": "Periods (cut/bulk/maintenance)",
-          "free": "Targets + week counter",
-          "premium": "Plan, progress & history"
+          "free": "Targets, week count & history",
+          "premium": "Planned length & progress"
         },
         "calibration": {
           "label": "Calibration",

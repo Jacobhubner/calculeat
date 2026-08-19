@@ -74,8 +74,8 @@
         },
         "phases": {
           "label": "Perioder (cut/bulk/underhåll)",
-          "free": "Mål + veckoräknare",
-          "premium": "Plan, framsteg & historik"
+          "free": "Mål, veckoräknare & historik",
+          "premium": "Planerad längd & framsteg"
         },
         "calibration": {
           "label": "Kalibrering",
