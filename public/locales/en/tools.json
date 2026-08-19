@@ -1618,7 +1618,7 @@
     "principlePoint2": "When gaining, the surplus grows with expenditure instead, so the gain holds its pace or goes marginally faster.",
     "principlePoint3": "The goal can be set as a target weight or as a body fat percentage. Both give the same time calculation — the only difference is how the target weight is determined.",
     "comparisonTitle": "What the difference means in practice",
-    "comparisonBody": "The table shows how many WEEKS the loss takes. The \"Actual\" column comes from a week-by-week simulation where energy expenditure is recalculated each week from the new weight. A method assuming a fixed weekly rate all the way gives fewer weeks than that.",
+    "comparisonBody": "The \"Actual\" column comes from a week-by-week simulation where energy expenditure is recalculated each week from the new weight. A method assuming a fixed weekly rate all the way gives fewer weeks than that.",
     "table": {
       "case": "Starting point",
       "actual": "Actual",

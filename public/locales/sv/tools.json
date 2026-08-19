@@ -1618,7 +1618,7 @@
     "principlePoint2": "Vid viktuppgång växer överskottet i stället med förbrukningen, så uppgången håller sin takt eller går marginellt fortare.",
     "principlePoint3": "Målet kan sättas som en målvikt eller som en kroppsfettprocent. Båda ger samma tidsberäkning — skillnaden är bara hur målvikten bestäms.",
     "comparisonTitle": "Vad skillnaden betyder i praktiken",
-    "comparisonBody": "Tabellen visar hur många VECKOR nedgången tar. Kolumnen \"Verkligt\" kommer från en simulering vecka för vecka, där energiförbrukningen räknas om varje vecka utifrån den nya vikten. En metod som antar fast veckotakt hela vägen ger färre veckor än så.",
+    "comparisonBody": "Kolumnen \"Verkligt\" kommer från en simulering vecka för vecka, där energiförbrukningen räknas om varje vecka utifrån den nya vikten. En metod som antar fast veckotakt hela vägen ger färre veckor än så.",
     "table": {
       "case": "Utgångsläge",
       "actual": "Verkligt",
