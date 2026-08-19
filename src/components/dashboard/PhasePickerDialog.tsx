@@ -546,9 +546,17 @@ export function PhasePickerDialog({
                     faslängd — knappen inuti räknaren är därför villkorad,
                     och fältet Planerad längd ligger kvar i gaten nedan.
 
-                    Visas bara för cut i styrkespåret; för den som vill gå
-                    ner åtta kilo vore den brus. */}
-                {selected === 'cut' && focus === 'strength' && (
+                    Visas i BÅDA fokusspåren (ändrat 2026-08-19). Den låg
+                    tidigare bara i styrkespåret, trots att komponentens egen
+                    beskrivning säger att den är för alla som vill gå ner —
+                    frågan "hur lång tid tar det" är minst lika relevant för
+                    den som vill gå ner åtta kilo som för den som tävlar.
+
+                    Hälsospåret kräver inte kroppsfettprocent, och räknaren
+                    behöver den. PrepDurationHelper returnerar null utan
+                    mätvärde, så den försvinner då av sig själv i stället för
+                    att visa en trasig ruta. */}
+                {selected === 'cut' && (
                   <PrepDurationHelper
                     weightKg={weightKg}
                     tdee={tdee}
