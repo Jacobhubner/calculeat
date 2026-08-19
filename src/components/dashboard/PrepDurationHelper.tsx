@@ -89,20 +89,24 @@ export function PrepDurationHelper({
   const [targetBf, setTargetBf] = useState('')
 
   /**
-   * TVÅ LÄGEN, beroende på vad profilen innehåller.
+   * VILKEN ENHET MÅLET ANGES I — styrs av spåret, inte av vilka mätvärden
+   * som råkar finnas.
    *
-   * Med uppmätt kroppsfett sätts målet i fettprocent, och svaret blir ett
-   * SPANN — den övre gränsen antar att en del av nedgången är fettfri massa,
-   * vilket kräver nuvarande fettmassa i kg för att räkna fram.
+   * Hälsospåret frågar efter MÅLVIKT. Det är så användaren tänker ("jag
+   * vill ner till 87"), och tidsmodellen behöver ändå bara vikt: en
+   * kroppsfettprocent används enbart för att översätta ett procentmål till
+   * en målvikt, vilket den som anger vikten direkt redan gjort.
    *
-   * Utan mätvärde sätts målet i kilo. Tidsmodellen är exakt densamma;
-   * kroppsfettprocenten behövs bara för att översätta ett fettprocentmål till
-   * en målvikt, och den som anger vikten direkt har besvarat den frågan.
-   * Hälsospårets användare har sällan mätt kroppsfett och tänker dessutom i
-   * kilo — att kräva en kaliper för att få veta hur lång tid åtta kilo tar
-   * vore ett hinder utan syfte.
+   * Styrkespåret frågar efter MÅLFETTPROCENT. Där är kroppsfett alltid
+   * uppmätt — PhasePickerDialog ersätter hela vyn med en uppmaning att mäta
+   * innan man kommer hit (needsBodyFatFirst), så spåret går inte att välja
+   * utan mätvärde. Ingen fallback behövs därför.
+   *
+   * Mätvärdet påverkar inte VAD som frågas, bara hur mycket som kan sägas om
+   * svaret: med kroppsfett går spannets övre gräns att räkna fram, utan det
+   * blir svaret ett enda tal.
    */
-  const useWeightMode = focus === 'health' || !bodyFatPercentage
+  const useWeightMode = focus === 'health'
 
   const targetNum = parseFloat(targetBf.replace(',', '.'))
 
@@ -111,15 +115,20 @@ export function PrepDurationHelper({
   const levelRate = ratePercentForDeficitLevel({ level, tdee, weightKg })
   const rateNum = levelRate?.percentMid ?? PREP_RATE_PERCENT.recommended
 
-  const bfEstimate = bodyFatPercentage
-    ? estimatePrepDuration({
-        currentWeightKg: weightKg,
-        currentBodyFatPct: bodyFatPercentage,
-        targetBodyFatPct: targetNum,
-        weeklyRatePercent: rateNum,
-        gender,
-      })
-    : null
+  // Villkoras på LÄGET, inte bara på mätvärdet. I hälsospåret är inmatningen
+  // kilo — skickades den som targetBodyFatPct skulle ett lågt tal (t.ex. 20)
+  // tolkas som en giltig fettprocent och ge svar på en fråga användaren inte
+  // ställt.
+  const bfEstimate =
+    !useWeightMode && bodyFatPercentage
+      ? estimatePrepDuration({
+          currentWeightKg: weightKg,
+          currentBodyFatPct: bodyFatPercentage,
+          targetBodyFatPct: targetNum,
+          weeklyRatePercent: rateNum,
+          gender,
+        })
+      : null
 
   const weightEstimate = useWeightMode
     ? estimateDurationToWeight({

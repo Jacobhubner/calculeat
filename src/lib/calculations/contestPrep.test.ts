@@ -539,4 +539,27 @@ describe('målviktsläget', () => {
     expect(estimateDurationToWeight({ currentWeightKg: 80, targetWeightKg: 80 })).toBeNull()
     expect(estimateDurationToWeight({ currentWeightKg: 0, targetWeightKg: 70 })).toBeNull()
   })
+
+  it('tolkar inte en målvikt som en fettprocent', () => {
+    // BUGG FÖRE 2026-08-19: hälsospåret matar in KILO, men bfEstimate
+    // villkorades bara på att kroppsfett fanns. En användare på 28 % som
+    // skrev målvikten 20 fick då svar från fettprocentmodellen — 20 är en
+    // giltig fettprocent under 28. Två helt olika frågor, ett svar.
+    const somFettprocent = estimatePrepDuration({
+      currentWeightKg: 95,
+      currentBodyFatPct: 28,
+      targetBodyFatPct: 20,
+      weeklyRatePercent: 0.6,
+    })
+    const somVikt = estimateDurationToWeight({
+      currentWeightKg: 95,
+      targetWeightKg: 20,
+      weeklyRatePercent: 0.6,
+    })
+    // Båda ger svar var för sig — det är just därför förväxlingen var farlig.
+    expect(somFettprocent).not.toBeNull()
+    expect(somVikt).not.toBeNull()
+    // ...men helt olika svar. Räknaren måste välja modell efter LÄGET.
+    expect(Math.abs(somFettprocent!.weeks - somVikt!.weeks)).toBeGreaterThan(100)
+  })
 })
