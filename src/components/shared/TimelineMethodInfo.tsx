@@ -111,16 +111,25 @@ export function TimelineMethodInfo({ open, onClose }: Props) {
                 <tr className="border-b-2 border-primary-300 bg-primary-100 dark:border-primary-800 dark:bg-primary-900/40">
                   <th className="p-3 text-left text-sm font-semibold text-primary-900 dark:text-primary-200">
                     {t('timelineMethod.table.case')}
+                    {/* "20 → 8 %" är kroppsfett, men det stod ingenstans. */}
+                    <span className="block text-xs font-normal text-primary-700/80 dark:text-primary-300/80">
+                      {t('timelineMethod.table.caseUnit')}
+                    </span>
                   </th>
-                  <th className="p-3 text-right text-sm font-semibold text-primary-900 dark:text-primary-200">
-                    {t('timelineMethod.table.actual')}
-                  </th>
-                  <th className="p-3 text-right text-sm font-semibold text-primary-900 dark:text-primary-200">
-                    {t('timelineMethod.table.fixed')}
-                  </th>
-                  <th className="p-3 text-right text-sm font-semibold text-primary-900 dark:text-primary-200">
-                    {t('timelineMethod.table.ours')}
-                  </th>
+                  {/* Enheten stod tidigare bara i fotnoten, alltså EFTER
+                      talen. Den som läser tabellen uppifrån mötte tre
+                      kolumner med siffror utan att veta vad de mätte. */}
+                  {(['actual', 'fixed', 'ours'] as const).map(col => (
+                    <th
+                      key={col}
+                      className="p-3 text-right text-sm font-semibold text-primary-900 dark:text-primary-200"
+                    >
+                      {t(`timelineMethod.table.${col}`)}
+                      <span className="block text-xs font-normal text-primary-700/80 dark:text-primary-300/80">
+                        {t('timelineMethod.table.weeksUnit')}
+                      </span>
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-neutral-850">

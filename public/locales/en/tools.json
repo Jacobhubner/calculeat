@@ -1618,14 +1618,16 @@
     "principlePoint2": "When gaining, the surplus grows with expenditure instead, so the gain holds its pace or goes marginally faster.",
     "principlePoint3": "The goal can be set as a target weight or as a body fat percentage. Both give the same time calculation — the only difference is how the target weight is determined.",
     "comparisonTitle": "What the difference means in practice",
-    "comparisonBody": "The \"Actual\" column comes from a week-by-week simulation where energy expenditure is recalculated each week from the new weight. For weight loss, a method assuming a fixed weekly rate all the way gives fewer weeks than that.",
+    "comparisonBody": "The table shows how many WEEKS the loss takes. The \"Actual\" column comes from a week-by-week simulation where energy expenditure is recalculated each week from the new weight. A method assuming a fixed weekly rate all the way gives fewer weeks than that.",
     "table": {
       "case": "Starting point",
       "actual": "Actual",
       "ours": "Calculeat",
-      "fixed": "Fixed rate"
+      "fixed": "Fixed rate",
+      "weeksUnit": "weeks",
+      "caseUnit": "weight and body fat"
     },
-    "tableNote": "Weight loss, number of weeks at a 20 percent deficit, for a man of 180 cm aged 35. The deviation for a fixed rate always points the same way and grows with how much there is to lose.",
+    "tableNote": "Weight loss at a 20 percent deficit, for a man of 180 cm aged 35. The deviation for a fixed rate always points the same way and grows with how much there is to lose.",
     "limitsTitle": "What the calculation cannot do",
     "limitsPoint1": "It assumes energy expenditure falls in step with weight. In reality it falls somewhat more slowly, since part of expenditure depends on height, age and sex.",
     "limitsPoint2": "It does not account for adaptive thermogenesis — the body conserving energy during a prolonged deficit, or raising expenditure somewhat during a prolonged surplus.",

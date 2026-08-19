@@ -1618,14 +1618,16 @@
     "principlePoint2": "Vid viktuppgång växer överskottet i stället med förbrukningen, så uppgången håller sin takt eller går marginellt fortare.",
     "principlePoint3": "Målet kan sättas som en målvikt eller som en kroppsfettprocent. Båda ger samma tidsberäkning — skillnaden är bara hur målvikten bestäms.",
     "comparisonTitle": "Vad skillnaden betyder i praktiken",
-    "comparisonBody": "Kolumnen \"Verkligt\" kommer från en simulering vecka för vecka, där energiförbrukningen räknas om varje vecka utifrån den nya vikten. Vid viktnedgång ger en metod som antar fast veckotakt hela vägen färre veckor än så.",
+    "comparisonBody": "Tabellen visar hur många VECKOR nedgången tar. Kolumnen \"Verkligt\" kommer från en simulering vecka för vecka, där energiförbrukningen räknas om varje vecka utifrån den nya vikten. En metod som antar fast veckotakt hela vägen ger färre veckor än så.",
     "table": {
       "case": "Utgångsläge",
       "actual": "Verkligt",
       "ours": "Calculeat",
-      "fixed": "Fast takt"
+      "fixed": "Fast takt",
+      "weeksUnit": "veckor",
+      "caseUnit": "vikt och kroppsfett"
     },
-    "tableNote": "Viktnedgång, antal veckor vid 20 procents underskott, för en man på 180 cm och 35 år. Avvikelsen för fast takt pekar alltid åt samma håll och växer med hur mycket som ska tappas.",
+    "tableNote": "Viktnedgång vid 20 procents underskott, för en man på 180 cm och 35 år. Avvikelsen för fast takt pekar alltid åt samma håll och växer med hur mycket som ska tappas.",
     "limitsTitle": "Vad beräkningen inte kan",
     "limitsPoint1": "Den antar att energiförbrukningen sjunker i takt med vikten. I verkligheten sjunker den något långsammare, eftersom en del av förbrukningen beror på längd, ålder och kön.",
     "limitsPoint2": "Den räknar inte med adaptiv termogenes — att kroppen sparar energi under ett långvarigt underskott, eller ökar förbrukningen något vid ett långvarigt överskott.",
