@@ -535,6 +535,34 @@ export function PhasePickerDialog({
             gratisanvändaren får kalori- och proteinmål och en veckoräknare,
             men ingen tidsplan och ingen automatisk upptrappning.
           */}
+                {/* Tidsräknaren ligger UTANFÖR premiumgränsen (flyttad
+                    2026-08-19). Gränsen heter diet_phase_planning och gäller
+                    planering över tid — att räkna ut hur lång tid något tar
+                    är inte planering, och exakt samma svar finns redan
+                    gratis i Målsättning. Att låsa det här hade varit en
+                    gräns som bara den oinvigde stötte på.
+
+                    Det som förblir premium är att ANVÄNDA resultatet som
+                    faslängd — knappen inuti räknaren är därför villkorad,
+                    och fältet Planerad längd ligger kvar i gaten nedan.
+
+                    Visas bara för cut i styrkespåret; för den som vill gå
+                    ner åtta kilo vore den brus. */}
+                {selected === 'cut' && focus === 'strength' && (
+                  <PrepDurationHelper
+                    weightKg={weightKg}
+                    tdee={tdee}
+                    bodyFatPercentage={bodyFatPercentage}
+                    gender={
+                      activeProfile?.gender === 'male' || activeProfile?.gender === 'female'
+                        ? activeProfile.gender
+                        : undefined
+                    }
+                    level={deficitLevel}
+                    onUseWeeks={hasPlanning ? w => setWeeks(String(w)) : undefined}
+                  />
+                )}
+
                 {hasPlanning ? (
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div className="space-y-1.5">
@@ -549,23 +577,6 @@ export function PhasePickerDialog({
                       <p className="text-xs text-neutral-500 dark:text-neutral-400">
                         {t('phase.weeksNotice')}
                       </p>
-                      {/* Tävlingsräknaren visas bara för cut i styrkespåret —
-                          det är där tävlingsförberedelse hör hemma. För den
-                          som vill gå ner 8 kg vore den bara brus. */}
-                      {selected === 'cut' && focus === 'strength' && (
-                        <PrepDurationHelper
-                          weightKg={weightKg}
-                          tdee={tdee}
-                          bodyFatPercentage={bodyFatPercentage}
-                          gender={
-                            activeProfile?.gender === 'male' || activeProfile?.gender === 'female'
-                              ? activeProfile.gender
-                              : undefined
-                          }
-                          level={deficitLevel}
-                          onUseWeeks={w => setWeeks(String(w))}
-                        />
-                      )}
                     </div>
 
                     {selected === 'reverse' && (

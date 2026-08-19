@@ -52,8 +52,14 @@ interface Props {
    * två skulle säga emot varandra på samma skärm.
    */
   level: DeficitLevelId
-  /** Anropas när användaren vill använda resultatet som faslängd. */
-  onUseWeeks: (weeks: number) => void
+  /**
+   * Anropas när användaren vill använda resultatet som faslängd.
+   *
+   * UTELÄMNAS FÖR GRATISANVÄNDARE: att räkna ut tiden är fritt, men att
+   * spara den som faslängd är planering över tid (diet_phase_planning).
+   * Knappen döljs då i stället för att visas trasig.
+   */
+  onUseWeeks?: (weeks: number) => void
 }
 
 export function PrepDurationHelper({
@@ -244,15 +250,17 @@ export function PrepDurationHelper({
                   att planera för ett bästa fall som sällan inträffar — och för
                   kort tid tvingar fram en högre takt i slutet, där risken för
                   muskelförlust är störst. */}
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onUseWeeks(Math.ceil(estimate.weeksRealistic))}
-                  className="mt-1 h-7 text-xs"
-                >
-                  {t('phase.prep.useWeeks', { weeks: Math.ceil(estimate.weeksRealistic) })}
-                </Button>
+                {onUseWeeks && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onUseWeeks(Math.ceil(estimate.weeksRealistic))}
+                    className="mt-1 h-7 text-xs"
+                  >
+                    {t('phase.prep.useWeeks', { weeks: Math.ceil(estimate.weeksRealistic) })}
+                  </Button>
+                )}
               </div>
             </div>
           ) : (
