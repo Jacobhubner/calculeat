@@ -1607,5 +1607,27 @@
       "calculate": "Beräkna din aktivitetsnivå",
       "custom": "Anpassat PAL-värde"
     }
+  },
+  "timelineMethod": {
+    "title": "Så räknas tiden ut",
+    "intro": "Calculeat ger oftast ett längre svar än andra kalkylatorer på nätet. Det är avsiktligt — de flesta använder en modell som är känd för att överskatta hur snabbt det går.",
+    "linearTitle": "Den vanliga metoden",
+    "linearBody": "Nästan alla kalkylatorer räknar linjärt: de tar hur mycket du vill tappa, delar med ett fast antal kilo per vecka, och får ut ett antal veckor. Det bygger på \"3500 kcal-regeln\" — att ett underskott på 7 700 kcal alltid ger ett kilo, hela vägen. Calculeat gjorde samma sak fram till 2026-08-19.",
+    "whyWrongTitle": "Varför den blir fel",
+    "whyWrongBody": "Den antar att takten aldrig avtar. Men energiförbrukningen sjunker när du blir lättare — en mindre kropp kostar mindre att bära och att hålla vid liv. Eftersom målet här är en ANDEL av din förbrukning (till exempel 20–25 % underskott) krymper underskottet i kalorier i takt med att förbrukningen gör det. Du tappar alltså färre kilo per vecka ju längre du kommer, och den linjära modellen missar det helt.",
+    "ourModelTitle": "Så gör vi i stället",
+    "ourModelBody": "Vi håller takten konstant som en andel av din kroppsvikt i stället för som ett fast antal kilo. Då avtar kilotappet automatiskt allteftersom du blir lättare. För att kontrollera vilken modell som stämmer simulerade vi nedgången vecka för vecka med förbrukningen omräknad varje vecka — alltså det som faktiskt händer — och jämförde:",
+    "table": {
+      "case": "Utgångsläge",
+      "actual": "Verkligt",
+      "linear": "Linjärt",
+      "ours": "Calculeat"
+    },
+    "tableNote": "Antal veckor vid 20 % underskott, för en man på 180 cm och 35 år. Den linjära modellen felar alltid åt samma håll: den lovar snabbare resultat än vad som är möjligt, och felet växer ju mer som ska tappas.",
+    "sourcesTitle": "Underlag",
+    "source1": "Visar att den linjära modellens allvarligaste fel är att den inte tar hänsyn till att energibalansen förändras under resans gång, och att den därför förutspår viktnedgång utan den avplanande kurva som faktiskt inträffar.",
+    "source2": "Den matematiska modell som ligger bakom kritiken mot 3500 kcal-regeln, publicerad i Lancet.",
+    "limitsTitle": "Vad beräkningen inte kan",
+    "limitsBody": "Det här är en uppskattning, inte ett löfte. Modellen förenklar genom att anta att förbrukningen sjunker i takt med vikten — i verkligheten sjunker den något långsammare. Den räknar inte heller med adaptiv termogenes, alltså att kroppen sparar extra energi under ett långvarigt underskott, vilket drar åt motsatt håll. De två förenklingarna tar delvis ut varandra. Den största osäkerheten är ändå din kroppsfettmätning: kaliper och bioimpedans har ett fel på flera procentenheter, vilket påverkar tiden mer än modellvalet gör."
   }
 }

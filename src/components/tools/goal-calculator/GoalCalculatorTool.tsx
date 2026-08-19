@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { Info, TrendingDown, TrendingUp, User } from 'lucide-react'
+import { TimelineMethodInfo } from '@/components/shared/TimelineMethodInfo'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -52,6 +53,7 @@ export default function GoalCalculatorTool() {
   const [targetBodyFat, setTargetBodyFat] = useState<number>(15)
   const [bodyFatInput, setBodyFatInput] = useState<string>('15')
   const [manualTargetWeight, setManualTargetWeight] = useState<number | null>(null)
+  const [showMethodInfo, setShowMethodInfo] = useState(false)
   const [inputMode, setInputMode] = useState<'bodyFat' | 'weight'>('bodyFat')
   const [manualWeightChange, setManualWeightChange] = useState<{
     min: number
@@ -1105,9 +1107,21 @@ export default function GoalCalculatorTool() {
               <CardContent className="p-0">
                 {/* Header */}
                 <div className="px-5 py-4 border-b border-neutral-100 dark:border-neutral-700">
-                  <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest mb-1">
-                    {t('goalCalc.timeline.title')}
-                  </p>
+                  <div className="mb-1 flex items-center gap-1.5">
+                    <p className="text-xs font-semibold text-neutral-400 uppercase tracking-widest">
+                      {t('goalCalc.timeline.title')}
+                    </p>
+                    {/* Appen ger ett längre svar än de flesta kalkylatorer på
+                        nätet. Utan förklaring ser det ut som ett fel. */}
+                    <button
+                      type="button"
+                      onClick={() => setShowMethodInfo(true)}
+                      aria-label={t('timelineMethod.title')}
+                      className="rounded-full p-0.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+                    >
+                      <Info className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                   <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 leading-snug">
                     {(() => {
                       if (!goalResult || !profileData?.tdee) {
@@ -1253,6 +1267,8 @@ export default function GoalCalculatorTool() {
           onConfirm={() => applyGoalToProfile(true)}
         />
       )}
+
+      <TimelineMethodInfo open={showMethodInfo} onClose={() => setShowMethodInfo(false)} />
     </div>
   )
 }

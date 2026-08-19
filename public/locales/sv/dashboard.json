@@ -300,7 +300,8 @@
       "source1": "Helms m.fl. 2014 — takt 0,5–1 %/vecka, längden följer startnivån",
       "source2": "Roberts m.fl. 2020 — ≤0,5 %/vecka; dokumenterade perioder 14–32 veckor",
       "caveat": "Båda är narrativa översikter från tävlingslitteratur, inte kontrollerade studier. Ingen studie har jämfört olika längder mot varandra — siffrorna beskriver vad tävlande har gjort, inte vad som är optimalt.",
-      "levelSummary": "Med {{level}} takt: cirka {{kgMin}}–{{kgMax}} kg per vecka."
+      "levelSummary": "Med {{level}} takt: cirka {{kgMin}}–{{kgMax}} kg per vecka.",
+      "methodLink": "Så räknas tiden ut"
     },
     "deficitLevel": {
       "label": "Hur snabbt vill du gå ner?",

@@ -1607,5 +1607,27 @@
       "calculate": "Calculate your activity level",
       "custom": "Custom PAL value"
     }
+  },
+  "timelineMethod": {
+    "title": "How the time is calculated",
+    "intro": "Calculeat usually gives a longer answer than other calculators online. That is deliberate — most of them use a model known to overestimate how fast it goes.",
+    "linearTitle": "The common method",
+    "linearBody": "Almost all calculators work linearly: they take how much you want to lose, divide by a fixed number of kilos per week, and get a number of weeks. It rests on the \"3500 kcal rule\" — that a deficit of 7,700 kcal always yields one kilo, all the way. Calculeat did the same until 19 August 2026.",
+    "whyWrongTitle": "Why it goes wrong",
+    "whyWrongBody": "It assumes the rate never slows. But energy expenditure falls as you get lighter — a smaller body costs less to carry and to keep alive. Since the target here is a SHARE of your expenditure (for example a 20–25% deficit), the deficit in calories shrinks as expenditure does. So you lose fewer kilos per week the further you get, and the linear model misses that entirely.",
+    "ourModelTitle": "What we do instead",
+    "ourModelBody": "We keep the rate constant as a share of your body weight rather than as a fixed number of kilos. The kilo loss then tapers automatically as you get lighter. To check which model holds, we simulated the loss week by week with expenditure recalculated each week — what actually happens — and compared:",
+    "table": {
+      "case": "Starting point",
+      "actual": "Actual",
+      "linear": "Linear",
+      "ours": "Calculeat"
+    },
+    "tableNote": "Number of weeks at a 20% deficit, for a man of 180 cm aged 35. The linear model always errs in the same direction: it promises faster results than are possible, and the error grows with how much there is to lose.",
+    "sourcesTitle": "Sources",
+    "source1": "Shows that the linear model’s most serious error is failing to account for energy balance changing during the intervention, and that it therefore predicts weight loss without the plateau that actually occurs.",
+    "source2": "The mathematical model underlying the critique of the 3500 kcal rule, published in The Lancet.",
+    "limitsTitle": "What the calculation cannot do",
+    "limitsBody": "This is an estimate, not a promise. The model simplifies by assuming expenditure falls in step with weight — in reality it falls somewhat more slowly. Nor does it account for adaptive thermogenesis, where the body conserves extra energy during a prolonged deficit, which pulls the other way. The two simplifications partly cancel out. The largest uncertainty is still your body fat measurement: calipers and bioimpedance carry an error of several percentage points, which affects the time more than the choice of model does."
   }
 }

@@ -19,6 +19,7 @@
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { TimelineMethodInfo } from '@/components/shared/TimelineMethodInfo'
 import { Calculator, ChevronDown } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -66,6 +67,7 @@ export function PrepDurationHelper({
 }: Props) {
   const { t } = useTranslation('dashboard')
   const [expanded, setExpanded] = useState(false)
+  const [showMethodInfo, setShowMethodInfo] = useState(false)
   const [targetBf, setTargetBf] = useState('')
 
   // Utan uppmätt kroppsfett finns ingen startpunkt att räkna från. I praktiken
@@ -250,9 +252,21 @@ export function PrepDurationHelper({
             <p className="mt-1.5 text-[11px] leading-snug text-neutral-500 dark:text-neutral-400">
               {t('phase.prep.caveat')}
             </p>
+            {/* Källorna ovan gäller TAKTEN. Hur takten översätts till tid är
+                en separat fråga med eget underlag — och det är där appen
+                skiljer sig från de flesta kalkylatorer på nätet. */}
+            <button
+              type="button"
+              onClick={() => setShowMethodInfo(true)}
+              className="mt-1.5 rounded text-[11px] font-medium text-primary-700 underline-offset-2 transition-colors hover:underline dark:text-primary-300"
+            >
+              {t('phase.prep.methodLink')}
+            </button>
           </div>
         </div>
       )}
+
+      <TimelineMethodInfo open={showMethodInfo} onClose={() => setShowMethodInfo(false)} />
     </div>
   )
 }
