@@ -304,7 +304,11 @@
       "statFat": "Fat to lose",
       "statWeight": "Projected end weight",
       "statFirstWeek": "First week",
-      "resultLabel": "Estimated time"
+      "resultLabel": "Estimated time",
+      "targetWeightLabel": "Target weight (kg)",
+      "introWeight": "You weigh {{current}} kg. Enter a target weight to get the time.",
+      "statWeightToLose": "To lose",
+      "bodyFatHint": "If you have measured your body fat, you can set the goal as a percentage instead — and get a range that accounts for muscle loss."
     },
     "deficitLevel": {
       "label": "How fast do you want to lose?",

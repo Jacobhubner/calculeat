@@ -412,6 +412,68 @@ export function estimatePrepDuration(input: PrepEstimateInput): PrepEstimate | n
 }
 
 /**
+ * Samma tidsberäkning, men med MÅLVIKT i stället för målfettprocent.
+ *
+ * VARFÖR: kroppsfettprocent behövs inte för att räkna ut tiden — den
+ * behövs bara för att översätta ett fettprocentmål till en målvikt. Den som
+ * redan vet vilken vikt hen siktar på har besvarat den frågan själv.
+ *
+ * Hälsospårets användare har sällan mätt kroppsfett, och för dem är vikten
+ * dessutom det mål de faktiskt tänker i. Att kräva en kaliper för att få
+ * veta hur lång tid åtta kilo tar vore ett hinder utan syfte.
+ *
+ * VAD SOM INTE GÅR ATT SÄGA UTAN KROPPSFETT:
+ *  - weeksRealistic (spannets övre gräns) bygger på nuvarande fettmassa i
+ *    kg för att uppskatta hur mycket fettfri massa som följer med.
+ *  - belowEssentialFat kräver en fettprocent att jämföra mot.
+ * Därför returneras ett ENDA tal här, inte ett spann. Det är ärligare än
+ * att räkna fram ett spann ur ett antagande om kroppssammansättning som
+ * användaren inte lämnat.
+ */
+export function estimateDurationToWeight(input: {
+  currentWeightKg: number
+  targetWeightKg: number
+  /** % av kroppsvikt per vecka. Klampas mot litteraturens gränser. */
+  weeklyRatePercent?: number
+}): {
+  weeks: number
+  weightToLoseKg: number
+  weeklyLossKg: number
+  ratePercentUsed: number
+  outsideObservedRange: boolean
+  isMinorAdjustment: boolean
+} | null {
+  const { currentWeightKg, targetWeightKg } = input
+
+  if (!Number.isFinite(currentWeightKg) || currentWeightKg <= 0) return null
+  if (!Number.isFinite(targetWeightKg) || targetWeightKg <= 0) return null
+  // Målet måste ligga under nuvarande vikt — annars är det ingen nedgång.
+  if (targetWeightKg >= currentWeightKg) return null
+
+  const ratePercentUsed = clampRate(input.weeklyRatePercent ?? PREP_RATE_PERCENT.recommended)
+  const r = ratePercentUsed / 100
+
+  // Samma exponentialmodell som estimatePrepDuration: takten är en andel av
+  // kroppsvikten, och vikten sjunker under resans gång.
+  const weeksExact = Math.log(targetWeightKg / currentWeightKg) / Math.log(1 - r)
+  if (!Number.isFinite(weeksExact) || weeksExact <= 0) return null
+
+  const weightToLoseKg = currentWeightKg - targetWeightKg
+  const isMinorAdjustment = weightToLoseKg < currentWeightKg * MINOR_ADJUSTMENT_WEIGHT_FRACTION
+
+  return {
+    weeks: round1(weeksExact),
+    weightToLoseKg: round1(weightToLoseKg),
+    weeklyLossKg: round1(currentWeightKg * r),
+    ratePercentUsed,
+    outsideObservedRange:
+      !isMinorAdjustment &&
+      (weeksExact < OBSERVED_PREP_WEEKS.min || weeksExact > OBSERVED_PREP_WEEKS.max),
+    isMinorAdjustment,
+  }
+}
+
+/**
  * Är takten inom vad litteraturen stöder?
  *
  * 'recommended' = ≤0,5 %/v, vilket [2] förordar för physique-atleter.

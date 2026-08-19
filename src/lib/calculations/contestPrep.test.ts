@@ -9,6 +9,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   estimatePrepDuration,
+  estimateDurationToWeight,
   classifyPrepRate,
   PREP_RATE_PERCENT,
   OBSERVED_PREP_WEEKS,
@@ -484,5 +485,58 @@ describe('underskottsnivåerna matchar Energimål', () => {
     expect(ratePercentForDeficitLevel({ level: 'normal', tdee: 0, weightKg: 80 })).toBeNull()
     expect(ratePercentForDeficitLevel({ level: 'normal', tdee: 2500, weightKg: 0 })).toBeNull()
     expect(ratePercentForDeficitLevel({ level: 'normal', tdee: NaN, weightKg: 80 })).toBeNull()
+  })
+})
+
+describe('målviktsläget', () => {
+  it('ger samma tal som fettprocentläget för samma målvikt', () => {
+    const w = 95,
+      bf = 28,
+      mal = 20,
+      rate = 0.6
+    const viaBf = estimatePrepDuration({
+      currentWeightKg: w,
+      currentBodyFatPct: bf,
+      targetBodyFatPct: mal,
+      weeklyRatePercent: rate,
+    })!
+    // Samma målvikt, men angiven direkt
+    const viaVikt = estimateDurationToWeight({
+      currentWeightKg: w,
+      targetWeightKg: viaBf.projectedWeightKg,
+      weeklyRatePercent: rate,
+    })!
+    console.log('via fettprocent:', viaBf.weeks, 'v  (målvikt', viaBf.projectedWeightKg, 'kg)')
+    console.log('via målvikt    :', viaVikt.weeks, 'v')
+    expect(Math.abs(viaBf.weeks - viaVikt.weeks)).toBeLessThan(0.15)
+  })
+
+  it('typiska hälsospårsmål', () => {
+    for (const [w, mal] of [
+      [95, 87],
+      [110, 95],
+      [80, 74],
+    ] as const) {
+      const e = estimateDurationToWeight({
+        currentWeightKg: w,
+        targetWeightKg: mal,
+        weeklyRatePercent: 0.6,
+      })!
+      console.log(
+        `${w} -> ${mal} kg:`,
+        e.weeks,
+        'v,',
+        e.weightToLoseKg,
+        'kg,',
+        e.weeklyLossKg,
+        'kg/v'
+      )
+    }
+  })
+
+  it('avvisar orimliga indata', () => {
+    expect(estimateDurationToWeight({ currentWeightKg: 80, targetWeightKg: 85 })).toBeNull()
+    expect(estimateDurationToWeight({ currentWeightKg: 80, targetWeightKg: 80 })).toBeNull()
+    expect(estimateDurationToWeight({ currentWeightKg: 0, targetWeightKg: 70 })).toBeNull()
   })
 })

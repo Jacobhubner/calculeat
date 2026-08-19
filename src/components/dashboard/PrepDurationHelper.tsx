@@ -25,6 +25,7 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import {
   estimatePrepDuration,
+  estimateDurationToWeight,
   classifyPrepRate,
   PREP_RATE_PERCENT,
   OBSERVED_PREP_WEEKS,
@@ -74,11 +75,21 @@ export function PrepDurationHelper({
   const [expanded, setExpanded] = useState(false)
   const [targetBf, setTargetBf] = useState('')
 
-  // Utan uppmätt kroppsfett finns ingen startpunkt att räkna från. I praktiken
-  // når man aldrig hit — PhasePickerDialog ersätter hela vyn innan dess (se
-  // needsBodyFatFirst) och hänvisar till kroppssammansättning. Vakten står
-  // kvar för att komponenten ska vara säker om den monteras någon annanstans.
-  if (!bodyFatPercentage) return null
+  /**
+   * TVÅ LÄGEN, beroende på vad profilen innehåller.
+   *
+   * Med uppmätt kroppsfett sätts målet i fettprocent, och svaret blir ett
+   * SPANN — den övre gränsen antar att en del av nedgången är fettfri massa,
+   * vilket kräver nuvarande fettmassa i kg för att räkna fram.
+   *
+   * Utan mätvärde sätts målet i kilo. Tidsmodellen är exakt densamma;
+   * kroppsfettprocenten behövs bara för att översätta ett fettprocentmål till
+   * en målvikt, och den som anger vikten direkt har besvarat den frågan.
+   * Hälsospårets användare har sällan mätt kroppsfett och tänker dessutom i
+   * kilo — att kräva en kaliper för att få veta hur lång tid åtta kilo tar
+   * vore ett hinder utan syfte.
+   */
+  const useWeightMode = !bodyFatPercentage
 
   const targetNum = parseFloat(targetBf.replace(',', '.'))
 
@@ -87,13 +98,54 @@ export function PrepDurationHelper({
   const levelRate = ratePercentForDeficitLevel({ level, tdee, weightKg })
   const rateNum = levelRate?.percentMid ?? PREP_RATE_PERCENT.recommended
 
-  const estimate = estimatePrepDuration({
-    currentWeightKg: weightKg,
-    currentBodyFatPct: bodyFatPercentage,
-    targetBodyFatPct: targetNum,
-    weeklyRatePercent: rateNum,
-    gender,
-  })
+  const bfEstimate = bodyFatPercentage
+    ? estimatePrepDuration({
+        currentWeightKg: weightKg,
+        currentBodyFatPct: bodyFatPercentage,
+        targetBodyFatPct: targetNum,
+        weeklyRatePercent: rateNum,
+        gender,
+      })
+    : null
+
+  const weightEstimate = useWeightMode
+    ? estimateDurationToWeight({
+        currentWeightKg: weightKg,
+        targetWeightKg: targetNum,
+        weeklyRatePercent: rateNum,
+      })
+    : null
+
+  /** Det som är gemensamt för båda lägena, så resten av vyn bara har ETT objekt. */
+  const estimate = bfEstimate
+    ? {
+        weeks: bfEstimate.weeks,
+        weeksRealistic: bfEstimate.weeksRealistic,
+        weeklyLossKg: bfEstimate.weeklyLossKg,
+        ratePercentUsed: bfEstimate.ratePercentUsed,
+        outsideObservedRange: bfEstimate.outsideObservedRange,
+        isMinorAdjustment: bfEstimate.isMinorAdjustment,
+        lossKg: bfEstimate.fatToLoseKg,
+        endWeightKg: bfEstimate.projectedWeightKg,
+        belowEssentialFat: bfEstimate.belowEssentialFat,
+        essentialFatLimit: bfEstimate.essentialFatLimit,
+      }
+    : weightEstimate
+      ? {
+          weeks: weightEstimate.weeks,
+          // Utan kroppsfett går inget spann att räkna fram — se docblocket
+          // på estimateDurationToWeight. Lika värden ⇒ UI:t visar ett tal.
+          weeksRealistic: weightEstimate.weeks,
+          weeklyLossKg: weightEstimate.weeklyLossKg,
+          ratePercentUsed: weightEstimate.ratePercentUsed,
+          outsideObservedRange: weightEstimate.outsideObservedRange,
+          isMinorAdjustment: weightEstimate.isMinorAdjustment,
+          lossKg: weightEstimate.weightToLoseKg,
+          endWeightKg: targetNum,
+          belowEssentialFat: false,
+          essentialFatLimit: 0,
+        }
+      : null
 
   // Klassificera den takt som FAKTISKT användes, inte råinmatningen. Skriver
   // användaren 8 klampar modulen till 5 — då vore det vilseledande att varna
@@ -124,7 +176,9 @@ export function PrepDurationHelper({
       {expanded && (
         <div className="space-y-3 border-t border-neutral-200 px-3 py-3 dark:border-neutral-700">
           <p className="text-xs text-neutral-600 dark:text-neutral-400">
-            {t('phase.prep.intro', { current: bodyFatPercentage })}
+            {useWeightMode
+              ? t('phase.prep.introWeight', { current: weightKg })
+              : t('phase.prep.intro', { current: bodyFatPercentage })}
           </p>
 
           {/* Målfält och takt sida vid sida: två korta uppgifter som hör
@@ -133,7 +187,7 @@ export function PrepDurationHelper({
           <div className="flex flex-wrap items-end gap-3">
             <div className="min-w-[7rem] flex-1 space-y-1">
               <Label htmlFor="prep-target" className="text-xs">
-                {t('phase.prep.targetLabel')}
+                {useWeightMode ? t('phase.prep.targetWeightLabel') : t('phase.prep.targetLabel')}
               </Label>
               <Input
                 id="prep-target"
@@ -142,7 +196,7 @@ export function PrepDurationHelper({
                 step="0.5"
                 value={targetBf}
                 onChange={e => setTargetBf(e.target.value)}
-                placeholder={String(suggestedTarget)}
+                placeholder={String(useWeightMode ? Math.round(weightKg * 0.92) : suggestedTarget)}
                 className="h-8 text-sm"
               />
             </div>
@@ -207,8 +261,8 @@ export function PrepDurationHelper({
               <dl className="grid grid-cols-3 divide-x divide-neutral-200 border-t border-neutral-200 dark:divide-neutral-700 dark:border-neutral-700">
                 {(
                   [
-                    ['statFat', `${estimate.fatToLoseKg} kg`],
-                    ['statWeight', `${estimate.projectedWeightKg} kg`],
+                    [useWeightMode ? 'statWeightToLose' : 'statFat', `${estimate.lossKg} kg`],
+                    ['statWeight', `${estimate.endWeightKg} kg`],
                     ['statFirstWeek', `${estimate.weeklyLossKg} kg`],
                   ] as const
                 ).map(([key, value]) => (
@@ -243,6 +297,14 @@ export function PrepDurationHelper({
                 {estimate.isMinorAdjustment && (
                   <p className="text-xs text-neutral-500 dark:text-neutral-400">
                     {t('phase.prep.minorAdjustment')}
+                  </p>
+                )}
+                {/* Uppmuntran att mäta kroppsfett, formulerad som vinst: med
+                    ett mätvärde blir svaret ett spann som tar hänsyn till
+                    muskelförlust, i stället för ett enda tal. */}
+                {useWeightMode && (
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                    {t('phase.prep.bodyFatHint')}
                   </p>
                 )}
                 {/* Faslängden lagras i hela veckor, så knappen rundar upp, och
