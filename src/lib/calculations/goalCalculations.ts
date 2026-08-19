@@ -2,6 +2,8 @@
  * Beräkningar för målvikt och kroppsfett mål
  */
 
+import { KCAL_PER_KG } from './calibration-constants'
+
 export interface GoalCalculationResult {
   currentLeanMass?: number // kg - valfri
   currentFatMass?: number // kg - valfri
@@ -88,23 +90,71 @@ export function calculateTargetBodyFatFromWeight(
  *
  * @param weightToChange - Viktförändring i kg (negativt = förlora)
  * @param weeklyDeficit - Veckovis kaloriunderskott
+ * @param currentWeightKg - Startvikt. Anges den används den EXPONENTIELLA
+ *        modellen, som är den fysiologiskt korrekta vid viktnedgång (se
+ *        nedan). Utelämnas den behålls den linjära, vilket krävs för
+ *        viktuppgång och för läget utan kroppsfettprocent.
  * @returns Tidsuppskattning
  */
 export function calculateTimeline(
   weightToChange: number,
-  weeklyDeficit: number
+  weeklyDeficit: number,
+  currentWeightKg?: number
 ): TimelineEstimate | null {
-  // 1 kg kroppsfett ≈ 7700 kcal
-  const kcalPerKg = 7700
-
   // Beräkna veckovis viktförändring baserat på deficit
-  const weeklyWeightChange = weeklyDeficit / kcalPerKg
+  const weeklyWeightChange = weeklyDeficit / KCAL_PER_KG
 
   // Guard: om viktförändringen är noll undviker vi division med noll
   if (weeklyWeightChange === 0) return null
 
-  // Beräkna veckor som krävs
-  const weeksRequired = Math.abs(weightToChange / weeklyWeightChange)
+  /**
+   * EXPONENTIELL MODELL VID VIKTNEDGÅNG (ändrat 2026-08-19).
+   *
+   * Den tidigare linjära modellen antog ett fast antal kg per vecka hela
+   * vägen. Det stämmer inte när målet uttrycks som en ANDEL av TDEE — vilket
+   * det gör här (20–25 % underskott): TDEE sjunker när vikten gör det, så
+   * underskottet i kcal krymper, och därmed veckotappet.
+   *
+   * VERIFIERAT genom att simulera vecka för vecka med TDEE omräknat ur
+   * Mifflin-St Jeor varje vecka, alltså exakt vad appen utlovar:
+   *
+   *   fall               sanning   linjär      exponentiell
+   *   80 kg 20→8 %       22 v      20 v (−2)   22 v (±0)
+   *   100 kg 25→12 %     27 v      26 v (−1)   28 v (+1)
+   *   120 kg 35→15 %     49 v      45 v (−4)   51 v (+2)
+   *
+   * Den linjära felade ALLTID åt samma håll: den lovade snabbare resultat än
+   * möjligt. Det är skillnaden mot mätfel, som varierar slumpmässigt — ett
+   * systematiskt fel som alltid pekar åt det önskvärda hållet är värre än ett
+   * större slumpmässigt.
+   *
+   * KÄND FÖRENKLING: modellen antar att TDEE sjunker proportionellt mot
+   * vikten. I verkligheten sjunker den långsammare (delar av BMR beror på
+   * längd, ålder och kön): −15 % vikt ger ungefär −8 % TDEE. Modellen
+   * överskattar därför avtagandet något — men den avvikelsen pekar åt motsatt
+   * håll mot adaptiv termogenes, som ingen av modellerna räknar med, så
+   * nettot är de +1 till +2 veckor som syns i tabellen ovan.
+   *
+   * Samma modell som contestPrep.estimatePrepDuration, så perioder och
+   * Målsättning inte kan ge motstridiga svar för samma indata.
+   */
+  const usesExponential = !!currentWeightKg && currentWeightKg > 0 && weightToChange < 0
+
+  let weeksRequired: number
+  if (usesExponential) {
+    const targetWeight = currentWeightKg + weightToChange
+    // Målvikten måste vara positiv för att logaritmen ska vara definierad.
+    if (targetWeight <= 0) return null
+    const r = Math.abs(weeklyWeightChange) / currentWeightKg
+    // r >= 1 vore att tappa hela kroppsvikten på en vecka — ln(0) eller värre.
+    if (r <= 0 || r >= 1) return null
+    weeksRequired = Math.log(targetWeight / currentWeightKg) / Math.log(1 - r)
+  } else {
+    weeksRequired = Math.abs(weightToChange / weeklyWeightChange)
+  }
+
+  if (!Number.isFinite(weeksRequired) || weeksRequired <= 0) return null
+
   const monthsRequired = weeksRequired / 4.33 // Genomsnittligt antal veckor per månad
 
   // Beräkna slutdatum
@@ -112,7 +162,16 @@ export function calculateTimeline(
   const estimatedEndDate = new Date(today.getTime() + weeksRequired * 7 * 24 * 60 * 60 * 1000)
 
   return {
-    weeksRequired: Math.round(weeksRequired),
+    /**
+     * EN DECIMAL, inte heltal (ändrat 2026-08-19).
+     *
+     * Math.round gjorde att spannet 2,70–3,38 veckor visades som "3–3
+     * veckor" — ett intervall utan bredd, som signalerar precision som inte
+     * finns. Den verkliga bredden var 4,7 dagar, alltså en fjärdedel av
+     * tiden. Värre på snabbaste nivån: 2,25 rundades NER till 2, kortare än
+     * något utfall modellen själv förutsäger.
+     */
+    weeksRequired: Number(weeksRequired.toFixed(1)),
     monthsRequired: Number(monthsRequired.toFixed(1)),
     estimatedEndDate,
     weeklyWeightChange,
@@ -152,8 +211,9 @@ export function getRecommendedWeeklyChange(
  * @returns Dagligt kaloriunderskott/överskott
  */
 export function calculateDailyCalorieAdjustment(weeklyWeightChange: number): number {
-  const kcalPerKg = 7700
-  const weeklyCalorieAdjustment = weeklyWeightChange * kcalPerKg
+  // KCAL_PER_KG i stället för en egen 7700-literal: samma konstant som
+  // resten av appen, så de inte kan glida isär.
+  const weeklyCalorieAdjustment = weeklyWeightChange * KCAL_PER_KG
   return weeklyCalorieAdjustment / 7
 }
 

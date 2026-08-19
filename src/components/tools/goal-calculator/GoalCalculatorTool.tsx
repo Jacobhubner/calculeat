@@ -212,14 +212,25 @@ export default function GoalCalculatorTool() {
       goalResult.weightToChange > 0 ? weeklyWeightChange.min : -weeklyWeightChange.min
     )
     const weeklyCalorieAdjustmentMin = dailyCalorieAdjustmentMin * 7
-    const timelineMin = calculateTimeline(goalResult.weightToChange, weeklyCalorieAdjustmentMin)
+    // Startvikten in: aktiverar den exponentiella modellen vid viktnedgång,
+    // samma som perioder använder. Saknas vikten faller den tillbaka på den
+    // linjära, vilket är rätt för viktuppgång.
+    const timelineMin = calculateTimeline(
+      goalResult.weightToChange,
+      weeklyCalorieAdjustmentMin,
+      profileData?.weight_kg
+    )
 
     // Beräkna tidslinje för max-värdet (snabbast)
     const dailyCalorieAdjustmentMax = calculateDailyCalorieAdjustment(
       goalResult.weightToChange > 0 ? weeklyWeightChange.max : -weeklyWeightChange.max
     )
     const weeklyCalorieAdjustmentMax = dailyCalorieAdjustmentMax * 7
-    const timelineMax = calculateTimeline(goalResult.weightToChange, weeklyCalorieAdjustmentMax)
+    const timelineMax = calculateTimeline(
+      goalResult.weightToChange,
+      weeklyCalorieAdjustmentMax,
+      profileData?.weight_kg
+    )
 
     if (!timelineMin || !timelineMax) return null
 
@@ -227,7 +238,7 @@ export default function GoalCalculatorTool() {
       min: timelineMax, // Max hastighet ger kortaste tiden
       max: timelineMin, // Min hastighet ger längsta tiden
     }
-  }, [goalResult, weeklyWeightChange])
+  }, [goalResult, weeklyWeightChange, profileData?.weight_kg])
 
   // Kroppsfett kategorier
 
