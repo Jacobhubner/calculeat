@@ -81,7 +81,9 @@ export function TimelineMethodInfo({ open, onClose }: Props) {
             {t('timelineMethod.principleBody')}
           </p>
           <ul className="mt-3 space-y-2">
-            {(['principlePoint1', 'principlePoint2', 'principlePoint3'] as const).map(key => (
+            {(
+              ['principlePoint1', 'principlePoint2', 'principlePoint3', 'principlePoint4'] as const
+            ).map(key => (
               <li key={key} className="flex gap-3">
                 <span className="mt-1 font-bold text-primary-600 dark:text-primary-300">•</span>
                 <span className="flex-1 text-neutral-700 dark:text-neutral-200">
