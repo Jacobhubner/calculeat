@@ -1611,12 +1611,12 @@
   "timelineMethod": {
     "title": "Så räknas tiden ut",
     "subtitle": "Metod och vetenskapligt underlag",
-    "intro": "Tiden till målet räknas ut från din kroppssammansättning och den takt du valt. Beräkningen tar hänsyn till att viktnedgång går långsammare ju längre den pågår — därför blir svaret ofta något längre än hos enklare kalkylatorer.",
+    "intro": "Tiden till målet räknas ut från din nuvarande vikt, hur mycket som ska förändras och den takt du valt. Beräkningen tar hänsyn till att viktnedgång går långsammare ju längre den pågår — därför blir svaret ofta något längre än hos enklare kalkylatorer.",
     "principleTitle": "Takten avtar med tiden",
     "principleBody": "Ditt kaloriunderskott är satt som en andel av din energiförbrukning, till exempel 20–25 procent. Förbrukningen sjunker i takt med att du blir lättare — en mindre kropp kostar mindre att röra och att hålla vid liv. Underskottet i kalorier krymper alltså med den, och därmed också hur många kilo du tappar per vecka.",
     "principlePoint1": "Takten hålls konstant som en andel av din kroppsvikt, inte som ett fast antal kilo.",
     "principlePoint2": "Kilotappet avtar därför automatiskt allteftersom vikten sjunker.",
-    "principlePoint3": "Målvikten räknas ut från din fettfria massa, som antas bevaras — det är fettet som ska bort.",
+    "principlePoint3": "Du kan ange målet antingen som en kroppsfettprocent eller som en målvikt. Anger du en fettprocent räknas målvikten ut från din fettfria massa, som antas bevaras — det är fettet som ska bort. Anger du en vikt används den direkt, och då behövs ingen kroppsfettmätning.",
     "comparisonTitle": "Vad skillnaden betyder i praktiken",
     "comparisonBody": "Kolumnen \"Verkligt\" kommer från en simulering vecka för vecka, där energiförbrukningen räknas om varje vecka utifrån den nya vikten. En metod som antar fast veckotakt hela vägen ger färre veckor än så.",
     "table": {
@@ -1629,7 +1629,7 @@
     "limitsTitle": "Vad beräkningen inte kan",
     "limitsPoint1": "Den antar att energiförbrukningen sjunker i takt med vikten. I verkligheten sjunker den något långsammare, eftersom en del av förbrukningen beror på längd, ålder och kön.",
     "limitsPoint2": "Den räknar inte med adaptiv termogenes — att kroppen sparar extra energi under ett långvarigt underskott. Den effekten drar åt motsatt håll och tar delvis ut den första förenklingen.",
-    "limitsPoint3": "Den största osäkerheten är din kroppsfettmätning. Kaliper och bioimpedans har ett fel på flera procentenheter, vilket påverkar tiden mer än valet av beräkningsmetod gör.",
+    "limitsPoint3": "Har du satt målet som en kroppsfettprocent är mätningen ofta den största osäkerheten: kaliper och bioimpedans har ett fel på flera procentenheter, vilket påverkar tiden mer än valet av beräkningsmetod gör. Utgår du från en målvikt gäller det inte.",
     "sourcesTitle": "Vetenskapligt underlag",
     "source1": "Visar att en beräkning med fast veckotakt inte tar hänsyn till att energibalansen förändras under resans gång, och att den därför förutspår viktnedgång utan den avplanande kurva som faktiskt inträffar.",
     "source2": "Den matematiska modellen bakom kritiken mot antagandet att 7 700 kcal alltid motsvarar ett kilo."

@@ -1611,12 +1611,12 @@
   "timelineMethod": {
     "title": "How the time is calculated",
     "subtitle": "Method and scientific basis",
-    "intro": "The time to your goal is derived from your body composition and the rate you have chosen. The calculation accounts for weight loss slowing down the longer it continues — which is why the answer is often somewhat longer than with simpler calculators.",
+    "intro": "The time to your goal is derived from your current weight, how much is to change and the rate you have chosen. The calculation accounts for weight loss slowing down the longer it continues — which is why the answer is often somewhat longer than with simpler calculators.",
     "principleTitle": "The rate tapers over time",
     "principleBody": "Your calorie deficit is set as a share of your energy expenditure, for example 20–25 percent. Expenditure falls as you get lighter — a smaller body costs less to move and to keep alive. The deficit in calories shrinks with it, and so does how many kilos you lose per week.",
     "principlePoint1": "The rate is held constant as a share of your body weight, not as a fixed number of kilos.",
     "principlePoint2": "The kilo loss therefore tapers automatically as your weight comes down.",
-    "principlePoint3": "Target weight is derived from your fat-free mass, which is assumed to be preserved — it is the fat that should go.",
+    "principlePoint3": "You can set the goal either as a body fat percentage or as a target weight. With a percentage, the target weight is derived from your fat-free mass, which is assumed to be preserved — it is the fat that should go. With a weight, that figure is used directly, and no body fat measurement is needed.",
     "comparisonTitle": "What the difference means in practice",
     "comparisonBody": "The \"Actual\" column comes from a week-by-week simulation where energy expenditure is recalculated each week from the new weight. A method assuming a fixed weekly rate all the way gives fewer weeks than that.",
     "table": {
@@ -1629,7 +1629,7 @@
     "limitsTitle": "What the calculation cannot do",
     "limitsPoint1": "It assumes energy expenditure falls in step with weight. In reality it falls somewhat more slowly, since part of expenditure depends on height, age and sex.",
     "limitsPoint2": "It does not account for adaptive thermogenesis — the body conserving extra energy during a prolonged deficit. That effect pulls the other way and partly offsets the first simplification.",
-    "limitsPoint3": "The largest uncertainty is your body fat measurement. Calipers and bioimpedance carry an error of several percentage points, which affects the time more than the choice of method does.",
+    "limitsPoint3": "If you set the goal as a body fat percentage, the measurement is often the largest uncertainty: calipers and bioimpedance carry an error of several percentage points, which affects the time more than the choice of method does. That does not apply when you start from a target weight.",
     "sourcesTitle": "Scientific basis",
     "source1": "Shows that a calculation using a fixed weekly rate fails to account for energy balance changing during the intervention, and therefore predicts weight loss without the plateau that actually occurs.",
     "source2": "The mathematical model behind the critique of assuming that 7,700 kcal always equals one kilo."
