@@ -17,8 +17,15 @@
  * referenserna. Modalen ska kännas igen av den som redan läst en
  * formelbeskrivning i kalkylatorn.
  *
- * Delad mellan Målsättning och perioder: båda använder samma modell, så de
- * ska förklara den på samma sätt.
+ * ANVÄNDS BARA AV MÅLSÄTTNING (GoalCalculatorTool). Docblocket sa tidigare
+ * "delad mellan Målsättning och perioder" — det var sant en kort period,
+ * men länken i periodräknaren togs bort 2026-08-19 eftersom modalen handlar
+ * om tidslinjen, som bara visas i Målsättning.
+ *
+ * Periodräknaren har en egen, kortare källista med ANDRA källor: Helms och
+ * Roberts, som handlar om vilken TAKT som bevarar muskler. Den här modalen
+ * handlar om Hall & Chow, alltså varför takten avtar över tid. Två frågor,
+ * två underlag — de ska inte slås ihop.
  */
 
 import { useTranslation } from 'react-i18next'
