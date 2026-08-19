@@ -1610,30 +1610,28 @@
   },
   "timelineMethod": {
     "title": "Så räknas tiden ut",
-    "intro": "Calculeat ger oftast ett längre svar än andra kalkylatorer på nätet. Det är avsiktligt — de flesta använder en modell som är känd för att överskatta hur snabbt det går.",
-    "linearTitle": "Den vanliga metoden",
-    "linearBody": "Nästan alla kalkylatorer räknar linjärt: de tar hur mycket du vill tappa, delar med ett fast antal kilo per vecka, och får ut ett antal veckor. Det bygger på \"3500 kcal-regeln\" — att ett underskott på 7 700 kcal alltid ger ett kilo, hela vägen. Calculeat gjorde samma sak fram till 2026-08-19.",
-    "whyWrongTitle": "Varför den blir fel",
-    "whyWrongBody": "Den antar att takten aldrig avtar. Men energiförbrukningen sjunker när du blir lättare — en mindre kropp kostar mindre att bära och att hålla vid liv. Eftersom målet här är en ANDEL av din förbrukning (till exempel 20–25 % underskott) krymper underskottet i kalorier i takt med att förbrukningen gör det. Du tappar alltså färre kilo per vecka ju längre du kommer, och den linjära modellen missar det helt.",
-    "ourModelTitle": "Så gör vi i stället",
-    "ourModelBody": "Vi håller takten konstant som en andel av din kroppsvikt i stället för som ett fast antal kilo. Då avtar kilotappet automatiskt allteftersom du blir lättare. För att kontrollera vilken modell som stämmer simulerade vi nedgången vecka för vecka med förbrukningen omräknad varje vecka — alltså det som faktiskt händer — och jämförde:",
+    "subtitle": "Metod och vetenskapligt underlag",
+    "intro": "Tiden till målet räknas ut från din kroppssammansättning och den takt du valt. Beräkningen tar hänsyn till att viktnedgång går långsammare ju längre den pågår — därför blir svaret ofta något längre än hos enklare kalkylatorer.",
+    "principleTitle": "Takten avtar med tiden",
+    "principleBody": "Ditt kaloriunderskott är satt som en andel av din energiförbrukning, till exempel 20–25 procent. Förbrukningen sjunker i takt med att du blir lättare — en mindre kropp kostar mindre att röra och att hålla vid liv. Underskottet i kalorier krymper alltså med den, och därmed också hur många kilo du tappar per vecka.",
+    "principlePoint1": "Takten hålls konstant som en andel av din kroppsvikt, inte som ett fast antal kilo.",
+    "principlePoint2": "Kilotappet avtar därför automatiskt allteftersom vikten sjunker.",
+    "principlePoint3": "Målvikten räknas ut från din fettfria massa, som antas bevaras — det är fettet som ska bort.",
+    "comparisonTitle": "Vad skillnaden betyder i praktiken",
+    "comparisonBody": "Kolumnen \"Verkligt\" kommer från en simulering vecka för vecka, där energiförbrukningen räknas om varje vecka utifrån den nya vikten. En metod som antar fast veckotakt hela vägen ger färre veckor än så.",
     "table": {
       "case": "Utgångsläge",
       "actual": "Verkligt",
-      "linear": "Linjärt",
-      "ours": "Calculeat"
+      "ours": "Calculeat",
+      "fixed": "Fast takt"
     },
-    "tableNote": "Antal veckor vid 20 % underskott, för en man på 180 cm och 35 år. Den linjära modellen felar alltid åt samma håll: den lovar snabbare resultat än vad som är möjligt, och felet växer ju mer som ska tappas.",
-    "sourcesTitle": "Underlag",
-    "source1": "Visar att den linjära modellens allvarligaste fel är att den inte tar hänsyn till att energibalansen förändras under resans gång, och att den därför förutspår viktnedgång utan den avplanande kurva som faktiskt inträffar.",
-    "source2": "Den matematiska modell som ligger bakom kritiken mot 3500 kcal-regeln, publicerad i Lancet.",
+    "tableNote": "Antal veckor vid 20 procents underskott, för en man på 180 cm och 35 år. Avvikelsen för fast takt pekar alltid åt samma håll och växer med hur mycket som ska tappas.",
     "limitsTitle": "Vad beräkningen inte kan",
-    "limitsBody": "Det här är en uppskattning, inte ett löfte. Modellen förenklar genom att anta att förbrukningen sjunker i takt med vikten — i verkligheten sjunker den något långsammare. Den räknar inte heller med adaptiv termogenes, alltså att kroppen sparar extra energi under ett långvarigt underskott, vilket drar åt motsatt håll. De två förenklingarna tar delvis ut varandra. Den största osäkerheten är ändå din kroppsfettmätning: kaliper och bioimpedans har ett fel på flera procentenheter, vilket påverkar tiden mer än modellvalet gör.",
-    "lockedTitle": "Hela metoden och källorna",
-    "lockedBody": "Med Premium ser du exakt hur tiden räknas fram — och underlaget bakom valet av modell.",
-    "lockedPoint1": "Varför den linjära metoden överskattar, och hur mycket",
-    "lockedPoint2": "Jämförelse mot en simulering vecka för vecka, för tre viktklasser",
-    "lockedPoint3": "Vetenskapliga källor med PMID, och vad beräkningen inte kan",
-    "lockedCta": "Se hela metoden"
+    "limitsPoint1": "Den antar att energiförbrukningen sjunker i takt med vikten. I verkligheten sjunker den något långsammare, eftersom en del av förbrukningen beror på längd, ålder och kön.",
+    "limitsPoint2": "Den räknar inte med adaptiv termogenes — att kroppen sparar extra energi under ett långvarigt underskott. Den effekten drar åt motsatt håll och tar delvis ut den första förenklingen.",
+    "limitsPoint3": "Den största osäkerheten är din kroppsfettmätning. Kaliper och bioimpedans har ett fel på flera procentenheter, vilket påverkar tiden mer än valet av beräkningsmetod gör.",
+    "sourcesTitle": "Vetenskapligt underlag",
+    "source1": "Visar att en beräkning med fast veckotakt inte tar hänsyn till att energibalansen förändras under resans gång, och att den därför förutspår viktnedgång utan den avplanande kurva som faktiskt inträffar.",
+    "source2": "Den matematiska modellen bakom kritiken mot antagandet att 7 700 kcal alltid motsvarar ett kilo."
   }
 }

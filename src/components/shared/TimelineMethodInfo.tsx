@@ -1,204 +1,201 @@
 /**
- * Förklarar hur tidsberäkningen fungerar och varför den skiljer sig från de
- * flesta kalkylatorer på nätet.
+ * Förklarar hur tidsberäkningen fungerar och vilka källor den vilar på.
  *
- * VARFÖR DEN FINNS: appen ger ett längre svar än konkurrenterna för samma
- * indata. Utan förklaring ser det ut som ett fel — särskilt för den som
- * dubbelkollar mot en annan kalkylator och får färre veckor där. Skillnaden
- * är avsiktlig och har stöd i litteraturen, och då ska den gå att granska.
+ * VARFÖR DEN FINNS: appen ger ett längre svar än de flesta kalkylatorer på
+ * nätet för samma indata. Utan förklaring ser det ut som ett fel — särskilt
+ * för den som dubbelkollar mot en annan kalkylator och får färre veckor där.
+ * Skillnaden är avsiktlig och har stöd i litteraturen, och då ska den gå att
+ * granska.
  *
- * PREMIUM: härledningen, jämförelsetabellen och källorna kräver
- * `calculation_method_info`. Gratisnivån ser ändå VAD modalen handlar om och
- * varför modellvalet spelar roll — enligt synlighetsprincipen i
- * PREMIUM_SPEC.md ska den som inte har funktionen ändå veta att den finns.
- * Låstexten är formulerad som vinst, inte som förlust.
+ * ALDRIG PREMIUM (beslut 2026-08-19, efter att ett lås prövats och ångrats):
+ * detta är en metod- och källredovisning, inte en funktion. Synlighets-
+ * principen i PREMIUM_SPEC.md säger att informationen aldrig är premium.
  *
- * Delad mellan Målsättning och perioder: båda använder samma modell sedan
- * 2026-08-19, så de ska förklara den på samma sätt.
+ * FÖLJER BMRFormulaModal: samma rubriknivåer (text-lg font-semibold
+ * text-neutral-800 + mb-3), samma punktlistor med färgad markör i flex,
+ * samma källkort (bg-neutral-50 med ram) och samma Vancouver-format på
+ * referenserna. Modalen ska kännas igen av den som redan läst en
+ * formelbeskrivning i kalkylatorn.
+ *
+ * Delad mellan Målsättning och perioder: båda använder samma modell, så de
+ * ska förklara den på samma sätt.
  */
 
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Lock } from 'lucide-react'
 import { InfoModal } from '@/components/ui/InfoModal'
-import { Button } from '@/components/ui/button'
-import { PremiumBadge } from '@/components/premium/PremiumBadge'
-import { UpgradeModal } from '@/components/premium/UpgradeModal'
-import { useEntitlements } from '@/hooks/useEntitlements'
-import { useAuth } from '@/contexts/AuthContext'
 
 interface Props {
   open: boolean
   onClose: () => void
 }
 
+/**
+ * Jämförelsen som ligger bakom modellvalet. Talen är låsta med test i
+ * TimelineMethodInfo.test.ts — en förklaring som appen själv motsäger vore
+ * värre än ingen förklaring alls.
+ */
+const COMPARISON_ROWS = [
+  { start: '80 kg', from: 20, to: 8, actual: 22, fixed: 20, ours: 22 },
+  { start: '100 kg', from: 25, to: 12, actual: 27, fixed: 26, ours: 28 },
+  { start: '120 kg', from: 35, to: 15, actual: 49, fixed: 45, ours: 51 },
+] as const
+
+/**
+ * Vancouver-format med doi och PMID, identiskt med bmrDescriptions.ts —
+ * appens etablerade sätt att ange en vetenskaplig källa.
+ */
+const REFERENCES = [
+  {
+    citation:
+      'Hall KD, Chow CC. Why is the 3500 kcal per pound weight loss rule wrong? Int J Obes (Lond). 2013 Dec;37(12):1614. doi: 10.1038/ijo.2013.112. PMID: 23774459.',
+    noteKey: 'source1',
+  },
+  {
+    citation:
+      'Hall KD, Sacks G, Chandramohan D, Chow CC, Wang YC, Gortmaker SL, Swinburn BA. Quantification of the effect of energy imbalance on bodyweight. Lancet. 2011 Aug 27;378(9793):826-37. doi: 10.1016/S0140-6736(11)60812-X. PMID: 21872751.',
+    noteKey: 'source2',
+  },
+] as const
+
 export function TimelineMethodInfo({ open, onClose }: Props) {
   const { t } = useTranslation('tools')
-  const { limits } = useEntitlements()
-  const { isPreviewMode } = useAuth()
-  const [upgradeOpen, setUpgradeOpen] = useState(false)
-
-  // Preview-läget visar innehållet med "Ingår i Premium"-badge i stället för
-  // lås — samma beslut som PremiumGate, så att den som testar appen ser vad
-  // premium faktiskt ger.
-  const hasAccess = limits.calculation_method_info || isPreviewMode
 
   return (
-    <>
-      <InfoModal open={open} onClose={onClose} title={t('timelineMethod.title')} size="2xl">
-        <div className="space-y-5 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
-          {/* Alltid synligt: vad frågan gäller och varför den spelar roll.
-              Utan detta vet en gratisanvändare inte ens att modellvalet är
-              något att bry sig om. */}
-          <p>{t('timelineMethod.intro')}</p>
+    <InfoModal
+      open={open}
+      onClose={onClose}
+      title={t('timelineMethod.title')}
+      subtitle={t('timelineMethod.subtitle')}
+    >
+      <div className="space-y-6">
+        <p className="leading-relaxed text-neutral-700 dark:text-neutral-200">
+          {t('timelineMethod.intro')}
+        </p>
 
-          <section className="space-y-2">
-            <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
-              {t('timelineMethod.linearTitle')}
-            </h3>
-            <p>{t('timelineMethod.linearBody')}</p>
-          </section>
-
-          {hasAccess ? (
-            <>
-              {isPreviewMode && (
-                <div className="flex justify-end">
-                  <PremiumBadge variant="included" />
-                </div>
-              )}
-
-              <section className="space-y-2">
-                <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
-                  {t('timelineMethod.whyWrongTitle')}
-                </h3>
-                <p>{t('timelineMethod.whyWrongBody')}</p>
-              </section>
-
-              <section className="space-y-2">
-                <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
-                  {t('timelineMethod.ourModelTitle')}
-                </h3>
-                <p>{t('timelineMethod.ourModelBody')}</p>
-
-                {/* Konkreta tal slår en abstrakt förklaring. Siffrorna kommer
-                    från en simulering vecka för vecka med TDEE omräknat ur
-                    Mifflin-St Jeor — samma jämförelse som ligger bakom
-                    modellvalet, låst med test i TimelineMethodInfo.test.ts. */}
-                <div className="overflow-x-auto">
-                  <table className="w-full text-xs tabular-nums">
-                    <thead>
-                      <tr className="border-b border-neutral-200 text-left dark:border-neutral-700">
-                        <th className="py-1.5 pr-3 font-medium">
-                          {t('timelineMethod.table.case')}
-                        </th>
-                        <th className="py-1.5 pr-3 font-medium">
-                          {t('timelineMethod.table.actual')}
-                        </th>
-                        <th className="py-1.5 pr-3 font-medium">
-                          {t('timelineMethod.table.linear')}
-                        </th>
-                        <th className="py-1.5 font-medium">{t('timelineMethod.table.ours')}</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-neutral-600 dark:text-neutral-400">
-                      {[
-                        ['80 kg, 20 → 8 %', '22', '20', '22'],
-                        ['100 kg, 25 → 12 %', '27', '26', '28'],
-                        ['120 kg, 35 → 15 %', '49', '45', '51'],
-                      ].map(([fall, sanning, linjar, var_]) => (
-                        <tr
-                          key={fall}
-                          className="border-b border-neutral-100 dark:border-neutral-800"
-                        >
-                          <td className="py-1.5 pr-3">{fall}</td>
-                          <td className="py-1.5 pr-3">{sanning}</td>
-                          <td className="py-1.5 pr-3 text-error-600 dark:text-error-400">
-                            {linjar}
-                          </td>
-                          <td className="py-1.5 font-medium text-neutral-800 dark:text-neutral-200">
-                            {var_}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                  {t('timelineMethod.tableNote')}
-                </p>
-              </section>
-
-              <section className="space-y-2">
-                <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
-                  {t('timelineMethod.sourcesTitle')}
-                </h3>
-                <ul className="space-y-2 text-xs">
-                  <li>
-                    <span className="font-medium text-neutral-800 dark:text-neutral-200">
-                      Hall KD, Chow CC (2013).
-                    </span>{' '}
-                    Why is the 3500 kcal per pound weight loss rule wrong?{' '}
-                    <span className="italic">Int J Obes</span> 37(12). PMID 23774459.
-                    <br />
-                    <span className="text-neutral-500 dark:text-neutral-400">
-                      {t('timelineMethod.source1')}
-                    </span>
-                  </li>
-                  <li>
-                    <span className="font-medium text-neutral-800 dark:text-neutral-200">
-                      Hall KD m.fl. (2011).
-                    </span>{' '}
-                    Quantification of the effect of energy imbalance on bodyweight.{' '}
-                    <span className="italic">Lancet</span> 378(9793):826–37. PMID 21872751.
-                    <br />
-                    <span className="text-neutral-500 dark:text-neutral-400">
-                      {t('timelineMethod.source2')}
-                    </span>
-                  </li>
-                </ul>
-              </section>
-
-              {/* Ärlighet om vad modellen INTE gör. Utan detta stycket låter
-                  beräkningen mer exakt än den är, vilket är samma fel som den
-                  linjära modellen gjorde — bara i andra riktningen. */}
-              <section className="space-y-2 rounded-lg bg-neutral-50 p-4 dark:bg-neutral-900">
-                <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
-                  {t('timelineMethod.limitsTitle')}
-                </h3>
-                <p className="text-xs">{t('timelineMethod.limitsBody')}</p>
-              </section>
-            </>
-          ) : (
-            /* Låsvy: säger vad som finns bakom låset, formulerat som vinst.
-               Ingen suddad text — en oläslig textmassa ger ingen information
-               och ser bara ut som en vägg. */
-            <section className="space-y-3 rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-900">
-              <div className="flex items-center gap-2">
-                <Lock className="h-4 w-4 shrink-0 text-neutral-400" aria-hidden="true" />
-                <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
-                  {t('timelineMethod.lockedTitle')}
-                </h3>
-                <PremiumBadge />
-              </div>
-              <p className="text-sm">{t('timelineMethod.lockedBody')}</p>
-              <ul className="space-y-1 text-xs text-neutral-600 dark:text-neutral-400">
-                <li>· {t('timelineMethod.lockedPoint1')}</li>
-                <li>· {t('timelineMethod.lockedPoint2')}</li>
-                <li>· {t('timelineMethod.lockedPoint3')}</li>
-              </ul>
-              <Button size="sm" onClick={() => setUpgradeOpen(true)}>
-                {t('timelineMethod.lockedCta')}
-              </Button>
-            </section>
-          )}
+        {/* Principen först — allt annat följer av att takten avtar. */}
+        <div>
+          <h3 className="mb-3 text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+            {t('timelineMethod.principleTitle')}
+          </h3>
+          <p className="leading-relaxed text-neutral-700 dark:text-neutral-200">
+            {t('timelineMethod.principleBody')}
+          </p>
+          <ul className="mt-3 space-y-2">
+            {(['principlePoint1', 'principlePoint2', 'principlePoint3'] as const).map(key => (
+              <li key={key} className="flex gap-3">
+                <span className="mt-1 font-bold text-primary-600 dark:text-primary-300">•</span>
+                <span className="flex-1 text-neutral-700 dark:text-neutral-200">
+                  {t(`timelineMethod.${key}`)}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
-      </InfoModal>
 
-      <UpgradeModal
-        open={upgradeOpen}
-        onOpenChange={setUpgradeOpen}
-        limitKey="calculation_method_info"
-      />
-    </>
+        {/* Konkreta tal slår en abstrakt förklaring. "Verkligt" är en
+            simulering vecka för vecka där förbrukningen räknas om varje
+            vecka — alltså det som faktiskt händer. */}
+        <div>
+          <h3 className="mb-3 text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+            {t('timelineMethod.comparisonTitle')}
+          </h3>
+          <p className="mb-3 leading-relaxed text-neutral-700 dark:text-neutral-200">
+            {t('timelineMethod.comparisonBody')}
+          </p>
+
+          <div className="overflow-x-auto rounded-lg border border-neutral-200 dark:border-neutral-700">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b-2 border-primary-300 bg-primary-100 dark:border-primary-800 dark:bg-primary-900/40">
+                  <th className="p-3 text-left text-sm font-semibold text-primary-900 dark:text-primary-200">
+                    {t('timelineMethod.table.case')}
+                  </th>
+                  <th className="p-3 text-right text-sm font-semibold text-primary-900 dark:text-primary-200">
+                    {t('timelineMethod.table.actual')}
+                  </th>
+                  <th className="p-3 text-right text-sm font-semibold text-primary-900 dark:text-primary-200">
+                    {t('timelineMethod.table.fixed')}
+                  </th>
+                  <th className="p-3 text-right text-sm font-semibold text-primary-900 dark:text-primary-200">
+                    {t('timelineMethod.table.ours')}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white dark:bg-neutral-850">
+                {COMPARISON_ROWS.map(row => (
+                  <tr
+                    key={row.start}
+                    className="border-b border-primary-100 transition-colors last:border-b-0 hover:bg-primary-50 dark:border-neutral-700 dark:hover:bg-primary-900/25"
+                  >
+                    <td className="p-3 text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                      {row.start}
+                      <span className="font-normal text-neutral-500 dark:text-neutral-400">
+                        {' '}
+                        {row.from}&nbsp;→&nbsp;{row.to}&nbsp;%
+                      </span>
+                    </td>
+                    <td className="p-3 text-right text-sm font-medium tabular-nums text-neutral-800 dark:text-neutral-200">
+                      {row.actual}
+                    </td>
+                    {/* Enda kolumnen som avviker från verkligheten — och den
+                        avviker alltid nedåt. Amber, samma färg som appen
+                        annars använder för "viktigt att veta". */}
+                    <td className="p-3 text-right text-sm tabular-nums text-amber-700 dark:text-amber-300">
+                      {row.fixed}
+                    </td>
+                    <td className="p-3 text-right text-sm font-semibold tabular-nums text-primary-700 dark:text-primary-300">
+                      {row.ours}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3 text-xs italic leading-relaxed text-neutral-500 dark:text-neutral-400">
+            {t('timelineMethod.tableNote')}
+          </p>
+        </div>
+
+        {/* Vad beräkningen INTE kan. Utan detta låter den mer exakt än den
+            är — och en tidsuppskattning som låter exakt är just det som gör
+            att folk tappar förtroendet när verkligheten avviker. */}
+        <div>
+          <h3 className="mb-3 flex items-center gap-2 text-lg font-semibold text-amber-800 dark:text-amber-300">
+            <span className="text-xl">⚠</span>
+            {t('timelineMethod.limitsTitle')}
+          </h3>
+          <ul className="space-y-2">
+            {(['limitsPoint1', 'limitsPoint2', 'limitsPoint3'] as const).map(key => (
+              <li key={key} className="flex gap-3">
+                <span className="mt-1 font-bold text-amber-600 dark:text-amber-300">•</span>
+                <span className="flex-1 text-neutral-700 dark:text-neutral-200">
+                  {t(`timelineMethod.${key}`)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Källkort i exakt samma form som BMRFormulaModal och PALSystemModal. */}
+        <div>
+          <h3 className="mb-3 text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+            {t('timelineMethod.sourcesTitle')}
+          </h3>
+          <div className="space-y-3">
+            {REFERENCES.map(ref => (
+              <div
+                key={ref.noteKey}
+                className="rounded-lg border border-neutral-200 bg-neutral-50 p-3 text-sm text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400"
+              >
+                <p className="leading-relaxed">{ref.citation}</p>
+                <p className="mt-2 text-xs leading-relaxed text-neutral-500 dark:text-neutral-500">
+                  {t(`timelineMethod.${ref.noteKey}`)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </InfoModal>
   )
 }

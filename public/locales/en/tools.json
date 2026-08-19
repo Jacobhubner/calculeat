@@ -1610,30 +1610,28 @@
   },
   "timelineMethod": {
     "title": "How the time is calculated",
-    "intro": "Calculeat usually gives a longer answer than other calculators online. That is deliberate — most of them use a model known to overestimate how fast it goes.",
-    "linearTitle": "The common method",
-    "linearBody": "Almost all calculators work linearly: they take how much you want to lose, divide by a fixed number of kilos per week, and get a number of weeks. It rests on the \"3500 kcal rule\" — that a deficit of 7,700 kcal always yields one kilo, all the way. Calculeat did the same until 19 August 2026.",
-    "whyWrongTitle": "Why it goes wrong",
-    "whyWrongBody": "It assumes the rate never slows. But energy expenditure falls as you get lighter — a smaller body costs less to carry and to keep alive. Since the target here is a SHARE of your expenditure (for example a 20–25% deficit), the deficit in calories shrinks as expenditure does. So you lose fewer kilos per week the further you get, and the linear model misses that entirely.",
-    "ourModelTitle": "What we do instead",
-    "ourModelBody": "We keep the rate constant as a share of your body weight rather than as a fixed number of kilos. The kilo loss then tapers automatically as you get lighter. To check which model holds, we simulated the loss week by week with expenditure recalculated each week — what actually happens — and compared:",
+    "subtitle": "Method and scientific basis",
+    "intro": "The time to your goal is derived from your body composition and the rate you have chosen. The calculation accounts for weight loss slowing down the longer it continues — which is why the answer is often somewhat longer than with simpler calculators.",
+    "principleTitle": "The rate tapers over time",
+    "principleBody": "Your calorie deficit is set as a share of your energy expenditure, for example 20–25 percent. Expenditure falls as you get lighter — a smaller body costs less to move and to keep alive. The deficit in calories shrinks with it, and so does how many kilos you lose per week.",
+    "principlePoint1": "The rate is held constant as a share of your body weight, not as a fixed number of kilos.",
+    "principlePoint2": "The kilo loss therefore tapers automatically as your weight comes down.",
+    "principlePoint3": "Target weight is derived from your fat-free mass, which is assumed to be preserved — it is the fat that should go.",
+    "comparisonTitle": "What the difference means in practice",
+    "comparisonBody": "The \"Actual\" column comes from a week-by-week simulation where energy expenditure is recalculated each week from the new weight. A method assuming a fixed weekly rate all the way gives fewer weeks than that.",
     "table": {
       "case": "Starting point",
       "actual": "Actual",
-      "linear": "Linear",
-      "ours": "Calculeat"
+      "ours": "Calculeat",
+      "fixed": "Fixed rate"
     },
-    "tableNote": "Number of weeks at a 20% deficit, for a man of 180 cm aged 35. The linear model always errs in the same direction: it promises faster results than are possible, and the error grows with how much there is to lose.",
-    "sourcesTitle": "Sources",
-    "source1": "Shows that the linear model’s most serious error is failing to account for energy balance changing during the intervention, and that it therefore predicts weight loss without the plateau that actually occurs.",
-    "source2": "The mathematical model underlying the critique of the 3500 kcal rule, published in The Lancet.",
+    "tableNote": "Number of weeks at a 20 percent deficit, for a man of 180 cm aged 35. The deviation for a fixed rate always points the same way and grows with how much there is to lose.",
     "limitsTitle": "What the calculation cannot do",
-    "limitsBody": "This is an estimate, not a promise. The model simplifies by assuming expenditure falls in step with weight — in reality it falls somewhat more slowly. Nor does it account for adaptive thermogenesis, where the body conserves extra energy during a prolonged deficit, which pulls the other way. The two simplifications partly cancel out. The largest uncertainty is still your body fat measurement: calipers and bioimpedance carry an error of several percentage points, which affects the time more than the choice of model does.",
-    "lockedTitle": "The full method and sources",
-    "lockedBody": "With Premium you see exactly how the time is derived — and the evidence behind the choice of model.",
-    "lockedPoint1": "Why the linear method overestimates, and by how much",
-    "lockedPoint2": "Comparison against a week-by-week simulation, for three weight classes",
-    "lockedPoint3": "Scientific sources with PMIDs, and what the calculation cannot do",
-    "lockedCta": "See the full method"
+    "limitsPoint1": "It assumes energy expenditure falls in step with weight. In reality it falls somewhat more slowly, since part of expenditure depends on height, age and sex.",
+    "limitsPoint2": "It does not account for adaptive thermogenesis — the body conserving extra energy during a prolonged deficit. That effect pulls the other way and partly offsets the first simplification.",
+    "limitsPoint3": "The largest uncertainty is your body fat measurement. Calipers and bioimpedance carry an error of several percentage points, which affects the time more than the choice of method does.",
+    "sourcesTitle": "Scientific basis",
+    "source1": "Shows that a calculation using a fixed weekly rate fails to account for energy balance changing during the intervention, and therefore predicts weight loss without the plateau that actually occurs.",
+    "source2": "The mathematical model behind the critique of assuming that 7,700 kcal always equals one kilo."
   }
 }

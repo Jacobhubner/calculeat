@@ -46,12 +46,6 @@ export interface PlanLimits {
   diet_phase_planning: boolean
   /** Full tillgång till receptbanken (premium_only-recept). Gratis ser dem blurrade. */
   recipe_bank_full: boolean
-  /**
-   * Metodbeskrivningen för tidsberäkningen (TimelineMethodInfo): härledningen,
-   * jämförelsetabellen och källorna. Gratis ser VAD modalen handlar om och
-   * varför modellvalet spelar roll, men inte underlaget.
-   */
-  calculation_method_info: boolean
 }
 
 export const FREE_LIMITS: PlanLimits = {
@@ -75,7 +69,6 @@ export const FREE_LIMITS: PlanLimits = {
   all_diet_modes: true,
   diet_phase_planning: false,
   recipe_bank_full: false,
-  calculation_method_info: false,
 }
 
 export const PREMIUM_LIMITS: PlanLimits = {
@@ -98,7 +91,6 @@ export const PREMIUM_LIMITS: PlanLimits = {
   all_diet_modes: true,
   diet_phase_planning: true,
   recipe_bank_full: true,
-  calculation_method_info: true,
 }
 
 export interface Entitlements {
