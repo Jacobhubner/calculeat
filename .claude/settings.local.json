@@ -55,7 +55,13 @@
       "Bash(ls -lah \"C:\\\\Users\\\\jahub\\\\Desktop\\\\calculeat_icons\")",
       "Read(//c/Users/jahub/Desktop/calculeat_icons/**)",
       "Read(//c/Users/jahub/Pictures/Screenshots/**)",
-      "Bash(grep -E \"\\\\.\\(json|ts\\)$\")"
+      "Bash(grep -E \"\\\\.\\(json|ts\\)$\")",
+      "Bash(npx tsc *)",
+      "Bash(npx eslint *)",
+      "Bash(npx vitest *)",
+      "Bash(node -e ' *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)",
+      "Bash(npx vite *)"
     ],
     "deny": [],
     "ask": []

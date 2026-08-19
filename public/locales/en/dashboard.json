@@ -300,12 +300,26 @@
       "source1": "Helms et al. 2014 — rate 0.5–1%/week, length follows your starting level",
       "source2": "Roberts et al. 2020 — ≤0.5%/week; documented periods 14–32 weeks",
       "caveat": "Both are narrative reviews from competition literature, not controlled studies. No study has compared different lengths against each other — these figures describe what competitors have done, not what is optimal.",
-      "levelLabel": "How fast do you want to lose?",
-      "level": {
-        "cautious": "Cautious",
-        "normal": "Normal",
-        "aggressive": "Aggressive"
-      }
+      "levelSummary": "At a {{level}} rate: roughly {{kgMin}}–{{kgMax}} kg per week."
+    },
+    "deficitLevel": {
+      "label": "How fast do you want to lose?",
+      "cautious": "Cautious",
+      "normal": "Normal",
+      "aggressive": "Aggressive",
+      "adjustTitle": "Adjust the rate",
+      "adjustBody": "Changes how deep the deficit is. The period continues — your week count and weight curve are kept.",
+      "newTarget": "New calorie target: {{min}}–{{max}} kcal per day.",
+      "trackingNotice": "Tracking pauses for ten days after the change. Body weight swings with fluid and glycogen when intake changes, just as at the start of a period — a comparison before then says more about fluid balance than fat loss.",
+      "save": "Save rate",
+      "toastChanged": "Rate changed",
+      "current": "Current rate",
+      "adjust": "Adjust",
+      "changedDuringPhase": "The rate changed during this period, so the comparison weighs two different rates.",
+      "changedRecently": "The rate changed recently — tracking waits until there is data again.",
+      "cautiousDesc": "Slow weight loss, best for preserving muscle mass",
+      "normalDesc": "Balanced weight loss with good energy levels",
+      "aggressiveDesc": "Rapid weight loss, recommended only for short periods"
     }
   },
   "calibrationReadiness": {

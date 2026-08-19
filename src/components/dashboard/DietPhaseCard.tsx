@@ -31,6 +31,9 @@ import {
 import { useActiveDietPhase, useEndDietPhase } from '@/hooks/useDietPhases'
 import { useWeightHistory } from '@/hooks/useWeightHistory'
 import { PhasePickerDialog } from './PhasePickerDialog'
+import { DeficitLevelDialog } from './DeficitLevelDialog'
+import { deficitLevelIdFromLabel } from '@/lib/utils/deficitLevels'
+import { useAuth } from '@/contexts/AuthContext'
 
 const PHASE_ICON = {
   cut: TrendingDown,
@@ -89,6 +92,8 @@ export function DietPhaseCard({
   const endPhase = useEndDietPhase()
   const [searchParams, setSearchParams] = useSearchParams()
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [deficitOpen, setDeficitOpen] = useState(false)
+  const { isPreviewMode } = useAuth()
 
   /**
    * Öppna dialogen igen när användaren kommer tillbaka från
@@ -111,6 +116,15 @@ export function DietPhaseCard({
   // Fasen bygger på TDEE och kroppsvikt — utan dem går inga mål att föreslå.
   const canPickPhase = !!tdee && !!weightKg
 
+  /**
+   * Justering kräver samma underlag som periodstart, plus att det finns en
+   * pågående nedgångsperiod. Preview-läget undantas: triggern hoppar över
+   * preview-rader och profilskrivningen görs inte där, så bara en av fyra
+   * skrivningar skulle få effekt.
+   */
+  const canAdjustDeficit =
+    canPickPhase && !isPreviewMode && phase?.phase_type === 'cut' && !phase.ended_at
+
   const handleEnd = (p: DietPhase) => {
     if (!window.confirm(t('phase.endConfirm'))) return
     endPhase.mutate(p.id, {
@@ -127,6 +141,7 @@ export function DietPhaseCard({
             tdee={tdee}
             onChange={() => setPickerOpen(true)}
             onEnd={() => handleEnd(phase)}
+            onAdjustDeficit={canAdjustDeficit ? () => setDeficitOpen(true) : undefined}
             canPickPhase={canPickPhase}
             isEnding={endPhase.isPending}
           />
@@ -152,6 +167,17 @@ export function DietPhaseCard({
                 phaseTypeForCalorieGoal(calorieGoal)
           }
           initialFocus={phase?.focus}
+        />
+      )}
+
+      {canAdjustDeficit && phase && tdee && weightKg && (
+        <DeficitLevelDialog
+          open={deficitOpen}
+          onOpenChange={setDeficitOpen}
+          phase={phase}
+          tdee={tdee}
+          weightKg={weightKg}
+          bodyFatPercentage={bodyFatPercentage}
         />
       )}
     </>
@@ -188,6 +214,7 @@ function ActivePhase({
   tdee,
   onChange,
   onEnd,
+  onAdjustDeficit,
   canPickPhase,
   isEnding,
 }: {
@@ -195,6 +222,14 @@ function ActivePhase({
   tdee?: number
   onChange: () => void
   onEnd: () => void
+  /**
+   * Öppnar justering av underskottsdjupet. Undefined när det saknas underlag
+   * (TDEE/vikt) — då kan nya kalorier inte räknas fram, och att skriva
+   * deficit_level utan target_calories vore den värsta divergensen:
+   * profilen skulle räkna på den nya nivån medan kortet visar det gamla
+   * talet.
+   */
+  onAdjustDeficit?: () => void
   canPickPhase: boolean
   isEnding: boolean
 }) {
@@ -255,6 +290,28 @@ function ActivePhase({
                 {phase.protein_g_per_kg ? ` · ${phase.protein_g_per_kg} g/kg` : ''}
               </p>
             )}
+            {/* Nivån var osynlig på kortet efter start — den som valde
+                "Snabbt" fick ingen bekräftelse på att valet fastnade. Raden
+                visar den OCH är vägen till att ändra den, på ett ställe.
+                Endast cut: övriga fastyper har inget underskott att gradera
+                (deficit_level är NULL per CHECK-villkoret). */}
+            {phase.phase_type === 'cut' && onAdjustDeficit && (
+              <p className="mt-0.5 flex flex-wrap items-baseline gap-x-1.5 text-xs text-neutral-500 dark:text-neutral-400">
+                <span>
+                  {t(
+                    `phase.deficitLevel.${deficitLevelIdFromLabel(phase.deficit_level) ?? 'normal'}`
+                  )}{' '}
+                  <span className="tabular-nums">−{phase.deficit_level ?? '20-25%'}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={onAdjustDeficit}
+                  className="rounded font-medium text-primary-700 underline-offset-2 transition-colors hover:underline dark:text-primary-300"
+                >
+                  {t('phase.deficitLevel.adjust')}
+                </button>
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -279,6 +336,21 @@ function ActivePhase({
                   days: tracking.daysElapsed,
                 })}
               </p>
+            )}
+            {/* Gör heterogeniteten SYNLIG i stället för tyst. Efter ett
+                nivåbyte väger jämförelsen två olika takter, och efter tio
+                dagar kommer statusen tillbaka utan att något förklarar
+                varför den var pausad. */}
+            {tracking.levelChangedRecently ? (
+              <p className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+                {t('phase.deficitLevel.changedRecently')}
+              </p>
+            ) : (
+              tracking.levelChangedDuringPhase && (
+                <p className="mt-0.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+                  {t('phase.deficitLevel.changedDuringPhase')}
+                </p>
+              )
             )}
           </div>
         </div>

@@ -7,6 +7,7 @@
  */
 
 import { useState, useMemo } from 'react'
+import { multipliersForDeficitLevel, deficitLevelIdFromLabel } from '@/lib/utils/deficitLevels'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -217,17 +218,38 @@ export default function MacroModesCard({ profile, onMacroModeApply }: MacroModes
     // Also compare calorie goal and calorie range
     const matchesCalorieGoal = profile.calorie_goal === preview.calorieGoal
 
-    // Calculate expected calories from preview multipliers
-    const expectedCaloriesMin = profile.tdee ? profile.tdee * preview.calorieMinMultiplier : 0
-    const expectedCaloriesMax = profile.tdee ? profile.tdee * preview.calorieMaxMultiplier : 0
+    /**
+     * Kalorierna jämförs mot den nivå profilen FAKTISKT står på, inte mot
+     * kostlägets egen multiplikator.
+     *
+     * Bakgrund: sedan perioder fick ett underskottsdjup (2026-08-18) kan
+     * profilen stå på 0,85–0,90 eller 0,70–0,75 medan kostläget är samma.
+     * Lägesdefinitionen är MAKROFÖRDELNINGEN — djupet är en egen axel. Jämförde
+     * vi mot lägets hårdkodade 0,75–0,80 skulle varje användare som valt
+     * försiktigt eller snabbt se ALLA kostlägen som omarkerade, trots att
+     * fördelningen stämmer exakt.
+     */
+    const levelMultipliers = profile.deficit_level
+      ? multipliersForDeficitLevel(deficitLevelIdFromLabel(profile.deficit_level) ?? 'normal')
+      : null
+    const useLevel = !!(preview.deficitLevel && levelMultipliers)
+    const minMult = useLevel ? levelMultipliers!.min : preview.calorieMinMultiplier
+    const maxMult = useLevel ? levelMultipliers!.max : preview.calorieMaxMultiplier
+
+    const expectedCaloriesMin = profile.tdee ? profile.tdee * minMult : 0
+    const expectedCaloriesMax = profile.tdee ? profile.tdee * maxMult : 0
 
     const matchesCalories =
       Math.abs((profile.calories_min ?? 0) - expectedCaloriesMin) < 1 &&
       Math.abs((profile.calories_max ?? 0) - expectedCaloriesMax) < 1
 
-    // Also check deficit level if applicable
+    /**
+     * Underskottslägen kräver bara att profilen HAR ett djup, inte vilket.
+     * Lägen utan djup (underhåll, bulk) kräver fortfarande att kolumnen är
+     * tom — annars skulle ett kvarglömt värde se ut som ett giltigt underhåll.
+     */
     const matchesDeficitLevel = preview.deficitLevel
-      ? profile.deficit_level === preview.deficitLevel
+      ? !!profile.deficit_level
       : profile.deficit_level === null || profile.deficit_level === undefined
 
     return (
