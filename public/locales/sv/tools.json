@@ -1633,6 +1633,9 @@
     "sourcesTitle": "Vetenskapligt underlag",
     "source1": "Visar att en beräkning med fast veckotakt inte tar hänsyn till att energibalansen förändras under resans gång, och att den därför förutspår viktnedgång utan den avplanande kurva som faktiskt inträffar.",
     "source2": "Den matematiska modellen bakom kritiken mot antagandet att 7 700 kcal alltid motsvarar ett kilo.",
-    "principlePoint4": "Med en uppmätt kroppsfettprocent kan du sätta målet i fettnivå i stället för i kilo, och appen räknar då ut vilken vikt det motsvarar för just din kroppssammansättning. Det gör målet mer träffsäkert än en vikt vald på känsla."
+    "principlePoint4": "Med en uppmätt kroppsfettprocent kan du sätta målet i fettnivå i stället för i kilo, och appen räknar då ut vilken vikt det motsvarar för just din kroppssammansättning. Det gör målet mer träffsäkert än en vikt vald på känsla.",
+    "gainTitle": "Vid viktuppgång",
+    "gainBody": "Uppgång räknas med en fast veckotakt. Eftersom förbrukningen stiger med vikten växer överskottet något under resans gång, vilket gör att uppgången i praktiken kan gå marginellt fortare än beräknat. En jämförelse mot simulering vecka för vecka landar inom ett par veckor för en uppgång på 10–15 kg, och avvikelsen ligger åt det försiktiga hållet.",
+    "gainNote": "Underlaget nedan gäller viktnedgång. Motsvarande genomgång för viktuppgång saknas i litteraturen."
   }
 }

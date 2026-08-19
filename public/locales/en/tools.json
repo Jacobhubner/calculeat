@@ -1633,6 +1633,9 @@
     "sourcesTitle": "Scientific basis",
     "source1": "Shows that a calculation using a fixed weekly rate fails to account for energy balance changing during the intervention, and therefore predicts weight loss without the plateau that actually occurs.",
     "source2": "The mathematical model behind the critique of assuming that 7,700 kcal always equals one kilo.",
-    "principlePoint4": "With a measured body fat percentage you can set the goal as a fat level rather than in kilos, and the app works out what weight that corresponds to for your body composition. That makes the target more accurate than a weight chosen by feel."
+    "principlePoint4": "With a measured body fat percentage you can set the goal as a fat level rather than in kilos, and the app works out what weight that corresponds to for your body composition. That makes the target more accurate than a weight chosen by feel.",
+    "gainTitle": "When gaining weight",
+    "gainBody": "Weight gain is calculated at a fixed weekly rate. Since expenditure rises with weight, the surplus grows somewhat along the way, which means the gain can in practice go marginally faster than calculated. A comparison against a week-by-week simulation lands within a couple of weeks for a gain of 10–15 kg, and the deviation falls on the cautious side.",
+    "gainNote": "The sources below concern weight loss. An equivalent review for weight gain is not available in the literature."
   }
 }

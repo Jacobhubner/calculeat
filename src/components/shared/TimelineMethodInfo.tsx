@@ -158,6 +158,19 @@ export function TimelineMethodInfo({ open, onClose }: Props) {
           </p>
         </div>
 
+        {/* Tabellen och båda källorna handlar om NEDGÅNG. Utan det här
+            avsnittet tror den som planerar en uppgång att beläggen gäller
+            hens fall. Blå upplysningsplatta, samma mönster som
+            MethodInfoModal använder för neutral information. */}
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-900/25">
+          <h3 className="mb-1 text-sm font-semibold text-blue-900 dark:text-blue-300">
+            {t('timelineMethod.gainTitle')}
+          </h3>
+          <p className="text-sm leading-relaxed text-blue-900 dark:text-blue-300">
+            {t('timelineMethod.gainBody')}
+          </p>
+        </div>
+
         {/* Vad beräkningen INTE kan. Utan detta låter den mer exakt än den
             är — och en tidsuppskattning som låter exakt är just det som gör
             att folk tappar förtroendet när verkligheten avviker. */}
@@ -180,9 +193,15 @@ export function TimelineMethodInfo({ open, onClose }: Props) {
 
         {/* Källkort i exakt samma form som BMRFormulaModal och PALSystemModal. */}
         <div>
-          <h3 className="mb-3 text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+          <h3 className="mb-1 text-lg font-semibold text-neutral-800 dark:text-neutral-200">
             {t('timelineMethod.sourcesTitle')}
           </h3>
+          {/* Båda källorna handlar om viktnedgång — Hall & Chow 2013 nämner
+              inte uppgång alls (kontrollerat i fulltext). Det ska stå, inte
+              underförstås. */}
+          <p className="mb-3 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+            {t('timelineMethod.gainNote')}
+          </p>
           <div className="space-y-3">
             {REFERENCES.map(ref => (
               <div
