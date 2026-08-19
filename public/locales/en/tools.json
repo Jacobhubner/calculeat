@@ -1628,6 +1628,12 @@
     "source1": "Shows that the linear model’s most serious error is failing to account for energy balance changing during the intervention, and that it therefore predicts weight loss without the plateau that actually occurs.",
     "source2": "The mathematical model underlying the critique of the 3500 kcal rule, published in The Lancet.",
     "limitsTitle": "What the calculation cannot do",
-    "limitsBody": "This is an estimate, not a promise. The model simplifies by assuming expenditure falls in step with weight — in reality it falls somewhat more slowly. Nor does it account for adaptive thermogenesis, where the body conserves extra energy during a prolonged deficit, which pulls the other way. The two simplifications partly cancel out. The largest uncertainty is still your body fat measurement: calipers and bioimpedance carry an error of several percentage points, which affects the time more than the choice of model does."
+    "limitsBody": "This is an estimate, not a promise. The model simplifies by assuming expenditure falls in step with weight — in reality it falls somewhat more slowly. Nor does it account for adaptive thermogenesis, where the body conserves extra energy during a prolonged deficit, which pulls the other way. The two simplifications partly cancel out. The largest uncertainty is still your body fat measurement: calipers and bioimpedance carry an error of several percentage points, which affects the time more than the choice of model does.",
+    "lockedTitle": "The full method and sources",
+    "lockedBody": "With Premium you see exactly how the time is derived — and the evidence behind the choice of model.",
+    "lockedPoint1": "Why the linear method overestimates, and by how much",
+    "lockedPoint2": "Comparison against a week-by-week simulation, for three weight classes",
+    "lockedPoint3": "Scientific sources with PMIDs, and what the calculation cannot do",
+    "lockedCta": "See the full method"
   }
 }

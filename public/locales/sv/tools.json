@@ -1628,6 +1628,12 @@
     "source1": "Visar att den linjära modellens allvarligaste fel är att den inte tar hänsyn till att energibalansen förändras under resans gång, och att den därför förutspår viktnedgång utan den avplanande kurva som faktiskt inträffar.",
     "source2": "Den matematiska modell som ligger bakom kritiken mot 3500 kcal-regeln, publicerad i Lancet.",
     "limitsTitle": "Vad beräkningen inte kan",
-    "limitsBody": "Det här är en uppskattning, inte ett löfte. Modellen förenklar genom att anta att förbrukningen sjunker i takt med vikten — i verkligheten sjunker den något långsammare. Den räknar inte heller med adaptiv termogenes, alltså att kroppen sparar extra energi under ett långvarigt underskott, vilket drar åt motsatt håll. De två förenklingarna tar delvis ut varandra. Den största osäkerheten är ändå din kroppsfettmätning: kaliper och bioimpedans har ett fel på flera procentenheter, vilket påverkar tiden mer än modellvalet gör."
+    "limitsBody": "Det här är en uppskattning, inte ett löfte. Modellen förenklar genom att anta att förbrukningen sjunker i takt med vikten — i verkligheten sjunker den något långsammare. Den räknar inte heller med adaptiv termogenes, alltså att kroppen sparar extra energi under ett långvarigt underskott, vilket drar åt motsatt håll. De två förenklingarna tar delvis ut varandra. Den största osäkerheten är ändå din kroppsfettmätning: kaliper och bioimpedans har ett fel på flera procentenheter, vilket påverkar tiden mer än modellvalet gör.",
+    "lockedTitle": "Hela metoden och källorna",
+    "lockedBody": "Med Premium ser du exakt hur tiden räknas fram — och underlaget bakom valet av modell.",
+    "lockedPoint1": "Varför den linjära metoden överskattar, och hur mycket",
+    "lockedPoint2": "Jämförelse mot en simulering vecka för vecka, för tre viktklasser",
+    "lockedPoint3": "Vetenskapliga källor med PMID, och vad beräkningen inte kan",
+    "lockedCta": "Se hela metoden"
   }
 }
