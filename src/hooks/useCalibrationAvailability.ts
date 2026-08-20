@@ -221,13 +221,32 @@ export function useCalibrationAvailability(
     }
 
     // B+ availability: no period overlap + at least MIN_NEW_WEIGHTS_AFTER_CALIBRATION new weights
-    const RECOMMENDED_MIN_DAYS = 21
+    /**
+     * Dagar innan en NY kalibrering rekommenderas.
+     *
+     * SÄNKT FRÅN 21 (2026-08-21). Fjorton dagar är samma golv som
+     * kalibreringen själv accepterar, och att vänta längre än nödvändigt
+     * håller kvar användaren på ett formelskattat TDEE i onödan —
+     * särskilt den nya användaren, som har mest att vinna på att komma
+     * ifrån gissningen fort.
+     *
+     * Kvaliteten skyddas i stället av confidencePreview: kalibrering
+     * rekommenderas bara vid "high", alltså minst tre vägningar i vardera
+     * änden. Tiden ensam säger inget om underlaget.
+     */
+    const RECOMMENDED_MIN_DAYS = 14
     let isRecommended = false
     let reason = ''
 
     if (!lastCalibration) {
-      isRecommended = true
-      reason = 'Första kalibrering rekommenderas'
+      // Samma krav som vid omkalibrering: tunt underlag ger ett osäkert
+      // svar, och det första svaret är det som formar förtroendet.
+      if (confidencePreview === 'high') {
+        isRecommended = true
+        reason = 'Första kalibrering rekommenderas'
+      } else {
+        reason = 'Väg dig några gånger till — fler mätningar ger ett säkrare resultat'
+      }
     } else {
       const lastEndDate = new Date(lastCalibration.calibrated_at)
       lastEndDate.setHours(0, 0, 0, 0)
@@ -270,7 +289,17 @@ export function useCalibrationAvailability(
         daysSinceLastCalibration !== null &&
         daysSinceLastCalibration >= RECOMMENDED_MIN_DAYS
       ) {
-        if (weightTrend === 'losing' || weightTrend === 'gaining') {
+        /**
+         * REKOMMENDERAS BARA VID HÖG TILLFÖRLITLIGHET (2026-08-21).
+         *
+         * Att uppmana till kalibrering på tunt underlag ger ett svar som
+         * ser lika auktoritativt ut som ett välgrundat, men bygger på
+         * ett par vägningar. Vid low/standard förblir funktionen
+         * TILLGÄNGLIG — den som vill får köra — men appen ber inte om det.
+         */
+        if (confidencePreview !== 'high') {
+          reason = 'Väg dig några gånger till — fler mätningar ger ett säkrare resultat'
+        } else if (weightTrend === 'losing' || weightTrend === 'gaining') {
           isRecommended = true
           reason = `Vikten har ${weightTrend === 'losing' ? 'minskat' : 'ökat'} sedan senaste kalibreringen`
         } else if (weightTrend === 'stable' && daysSinceLastCalibration >= 28) {

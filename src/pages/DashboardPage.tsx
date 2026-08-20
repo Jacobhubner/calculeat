@@ -56,11 +56,28 @@ export default function DashboardPage() {
   //
   // Lazy useState, inte useMemo: klockan läses en gång vid mount i stället för
   // under rendering, vilket håller query-nyckeln stabil över omrenderingar.
-  const [calibrationWindow] = useState(() => {
+  const [calibrationWindowBase] = useState(() => {
     const end = new Date()
     const start = new Date(end.getTime() - 14 * 24 * 60 * 60 * 1000)
     return { start, end }
   })
+
+  /**
+   * Loggdagar räknas FRÅN senaste kalibreringen, inte 14 dagar bakåt rakt av.
+   *
+   * Fönstret var fast, så dagar som redan förbrukats av en tidigare
+   * kalibrering räknades igen. Direkt efter en kalibrering kunde kortet
+   * visa "8 av 7 loggdagar ✓" bredvid "0 av 3 vägningar" — loggkravet såg
+   * uppfyllt ut trots att ingen ny data fanns sedan mätningen.
+   */
+  const calibrationWindow = useMemo(() => {
+    const lastAt = lastCalibration?.calibrated_at
+    if (!lastAt) return calibrationWindowBase
+    const since = new Date(lastAt)
+    return since > calibrationWindowBase.start
+      ? { start: since, end: calibrationWindowBase.end }
+      : calibrationWindowBase
+  }, [calibrationWindowBase, lastCalibration?.calibrated_at])
   const { data: intakeWindow } = useActualCalorieIntake(
     calibrationWindow.start,
     calibrationWindow.end

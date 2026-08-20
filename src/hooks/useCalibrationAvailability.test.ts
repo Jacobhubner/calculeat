@@ -134,3 +134,39 @@ describe('useCalibrationAvailability — nya vägningar efter kalibrering', () =
     expect(result.current.progress.weighIns.required).toBeGreaterThan(0)
   })
 })
+
+describe('useCalibrationAvailability — när kalibrering REKOMMENDERAS', () => {
+  /**
+   * Rekommendationen kräver hög tillförlitlighet (minst tre vägningar i
+   * vardera änden). Att uppmana till kalibrering på tunt underlag ger ett
+   * svar som ser lika auktoritativt ut som ett välgrundat.
+   *
+   * Funktionen förblir TILLGÄNGLIG vid svagare underlag — appen ber bara
+   * inte om den.
+   */
+  it('rekommenderar inte första kalibreringen på tunt underlag', () => {
+    // Två vägningar räcker inte till "high".
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, weights(2, 14), null, 20)
+    )
+    expect(result.current.isRecommended).toBe(false)
+  })
+
+  it('rekommenderar när underlaget räcker', () => {
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, weights(8, 14), null, 20)
+    )
+    if (result.current.confidencePreview === 'high') {
+      expect(result.current.isRecommended).toBe(true)
+    }
+  })
+
+  it('håller funktionen tillgänglig även när den inte rekommenderas', () => {
+    // Skillnaden mellan "kan" och "bör" — ett tunt underlag ska inte låsa
+    // ute den som ändå vill köra.
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, weights(4, 14), null, 20)
+    )
+    expect(result.current.isAvailable).toBe(true)
+  })
+})
