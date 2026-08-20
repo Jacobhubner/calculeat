@@ -222,7 +222,7 @@
     },
     {
       "type": "p",
-      "text": "The calculator provides an estimate with a margin of error of ±10–15%. Monitor your weight for 2–3 weeks and adjust if the result doesn't match expectations."
+      "text": "The calculator provides an estimate. The margin of error is at least ±10–15% from the BMR formula, with the uncertainty in the activity factor on top of that. Monitor your weight for 2–3 weeks and adjust if the result doesn't match expectations."
     },
     {
       "type": "h2",
@@ -245,7 +245,7 @@
     },
     {
       "question": "How accurate is a TDEE calculator?",
-      "answer": "A TDEE calculator provides an estimate based on statistical formulas — Mifflin-St Jeor for BMR multiplied by a PAL factor (1.2–1.9) for activity level. Margin of error is typically ±10–15%. Individual factors such as muscle mass, hormonal balance and metabolism affect the true value. Use the result as a starting point and adjust based on how your weight actually changes."
+      "answer": "A TDEE calculator provides an estimate based on statistical formulas — Mifflin-St Jeor for BMR multiplied by a PAL factor (1.2–1.9) for activity level. The BMR formula carries a ±10–15% margin of error, and the PAL factor adds its own — one step off on the scale is 11–15%. Individual factors such as muscle mass, hormonal balance and metabolism affect the true value. Use the result as a starting point and adjust based on how your weight actually changes."
     },
     {
       "question": "What is the difference between BMR and TDEE?",

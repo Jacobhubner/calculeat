@@ -67,7 +67,7 @@
       },
       {
         "question": "How accurate is a TDEE calculator?",
-        "answer": "A TDEE calculator provides an estimate based on statistical formulas — Mifflin-St Jeor for BMR multiplied by a PAL factor (1.2–1.9) for activity level. Margin of error is typically ±10–15%. Individual factors such as muscle mass, hormonal balance and metabolism affect the true value. Use the result as a starting point and adjust based on how your weight actually changes."
+        "answer": "A TDEE calculator provides an estimate based on statistical formulas — Mifflin-St Jeor for BMR multiplied by a PAL factor (1.2–1.9) for activity level. The BMR formula carries a ±10–15% margin of error, and the PAL factor adds its own — one step off on the scale is 11–15%. Individual factors such as muscle mass, hormonal balance and metabolism affect the true value. Use the result as a starting point and adjust based on how your weight actually changes."
       },
       {
         "question": "How large a calorie deficit for weight loss?",

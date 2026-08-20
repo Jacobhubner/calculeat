@@ -177,7 +177,7 @@
     },
     {
       "type": "p",
-      "text": "TDEE-kalkylatorer ger en uppskattning med en felmarginal på typiskt ±10–15%. Faktorer som påverkar det verkliga värdet:",
+      "text": "TDEE-kalkylatorer ger en uppskattning. Själva BMR-formeln har en felmarginal på ±10–15% på individnivå, och ovanpå det kommer osäkerheten i vilken aktivitetsfaktor som är rätt — ett steg fel på den skalan är 11–15% i sig. Faktorer som påverkar det verkliga värdet:",
       "flush": true
     },
     {

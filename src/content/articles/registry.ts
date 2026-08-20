@@ -15,14 +15,14 @@ export const ARTICLES: ArticleMeta[] = [
     key: 'calorie-needs',
     paths: { sv: 'artiklar/kaloribehov', en: 'en/articles/calorie-needs' },
     datePublished: '2026-05-02',
-    dateModified: '2026-06-21',
+    dateModified: '2026-08-20',
     priority: 0.8,
   },
   {
     key: 'what-is-tdee',
     paths: { sv: 'artiklar/vad-ar-tdee', en: 'en/articles/what-is-tdee' },
     datePublished: '2026-05-02',
-    dateModified: '2026-06-28',
+    dateModified: '2026-08-20',
   },
   {
     key: 'calorie-deficit',

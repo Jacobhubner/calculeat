@@ -222,7 +222,7 @@
     },
     {
       "type": "p",
-      "text": "Kalkylatorn ger en uppskattning med en felmarginal på ±10–15%. Följ upp din vikt under 2–3 veckor och justera om resultatet inte stämmer med förväntan."
+      "text": "Kalkylatorn ger en uppskattning. Felmarginalen är minst ±10–15% från BMR-formeln, och därtill kommer osäkerheten i aktivitetsfaktorn. Följ upp din vikt under 2–3 veckor och justera om resultatet inte stämmer med förväntan."
     },
     {
       "type": "h2",
@@ -245,7 +245,7 @@
     },
     {
       "question": "Hur noggrant är en TDEE-kalkylator?",
-      "answer": "En TDEE-kalkylator ger en uppskattning baserad på statistiska formler — Mifflin-St Jeor för BMR multiplicerat med en PAL-faktor (1.2–1.9) för aktivitetsnivå. Felmarginal är typiskt ±10–15%. Individuella faktorer som muskelmassa, hormonbalans och metabolism påverkar det verkliga värdet. Använd resultatet som startpunkt och justera efter hur din vikt faktiskt förändras."
+      "answer": "En TDEE-kalkylator ger en uppskattning baserad på statistiska formler — Mifflin-St Jeor för BMR multiplicerat med en PAL-faktor (1.2–1.9) för aktivitetsnivå. BMR-formeln har en felmarginal på ±10–15%, och PAL-faktorn lägger till egen osäkerhet — ett steg fel på skalan är 11–15%. Individuella faktorer som muskelmassa, hormonbalans och metabolism påverkar det verkliga värdet. Använd resultatet som startpunkt och justera efter hur din vikt faktiskt förändras."
     },
     {
       "question": "Vad är skillnaden mellan BMR och TDEE?",

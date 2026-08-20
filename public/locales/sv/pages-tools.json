@@ -67,7 +67,7 @@
       },
       {
         "question": "Hur noggrant är en TDEE-kalkylator?",
-        "answer": "En TDEE-kalkylator ger en uppskattning baserad på statistiska formler — Mifflin-St Jeor för BMR multiplicerat med en PAL-faktor (1.2–1.9) för aktivitetsnivå. Felmarginal är typiskt ±10–15%. Individuella faktorer som muskelmassa, hormonbalans och metabolism påverkar det verkliga värdet. Använd resultatet som startpunkt och justera efter hur din vikt faktiskt förändras."
+        "answer": "En TDEE-kalkylator ger en uppskattning baserad på statistiska formler — Mifflin-St Jeor för BMR multiplicerat med en PAL-faktor (1.2–1.9) för aktivitetsnivå. BMR-formeln har en felmarginal på ±10–15%, och PAL-faktorn lägger till egen osäkerhet — ett steg fel på skalan är 11–15%. Individuella faktorer som muskelmassa, hormonbalans och metabolism påverkar det verkliga värdet. Använd resultatet som startpunkt och justera efter hur din vikt faktiskt förändras."
       },
       {
         "question": "Hur stor kaloribrist ska man ha för viktnedgång?",

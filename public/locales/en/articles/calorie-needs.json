@@ -173,7 +173,7 @@
     },
     {
       "type": "p",
-      "text": "TDEE calculators provide an estimate with a margin of error of typically ±10–15%. Factors that affect the real value:",
+      "text": "TDEE calculators provide an estimate. The BMR formula itself carries a margin of error of ±10–15% at the individual level, and on top of that comes the uncertainty in which activity factor is right — one step off on that scale is 11–15% in itself. Factors that affect the real value:",
       "flush": true
     },
     {
