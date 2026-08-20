@@ -58,9 +58,22 @@ export function useCalibrationAvailability(
      * vägen till en kalibrering, så nedräkningen visar det närmaste målet
      * i stället för det mest avlägsna.
      */
+    /**
+     * Räknas FRÅN senaste kalibreringen när den är nyare än 14 dagar.
+     *
+     * Fönstret var fast, så vägningar som redan förbrukats av en tidigare
+     * kalibrering räknades igen: dagen efter en kalibrering visade kortet
+     * "8 av 4 vägningar ✓" trots att inga nya fanns. Samma fel som
+     * loggdagarna hade, i raden bredvid.
+     */
     const fourteenDaysAgo = new Date(mountedAt - 14 * 24 * 60 * 60 * 1000)
+    const lastCalibratedAt = lastCalibration?.calibrated_at
+      ? new Date(lastCalibration.calibrated_at)
+      : null
+    const progressWindowStart =
+      lastCalibratedAt && lastCalibratedAt > fourteenDaysAgo ? lastCalibratedAt : fourteenDaysAgo
     const weighInsNow = weightHistory
-      ? weightHistory.filter(w => new Date(w.recorded_at) >= fourteenDaysAgo).length
+      ? weightHistory.filter(w => new Date(w.recorded_at) >= progressWindowStart).length
       : 0
     const weighInsNeeded = MIN_DATA_POINTS[14]
     const buildProgress = (): CalibrationAvailability['progress'] => ({

@@ -12,7 +12,7 @@
  */
 
 /** URL-parametrar som pekar ut en sektion och därför ska hindra scroll-to-top. */
-export const DEEP_LINK_PARAMS = ['calibrate', 'phase'] as const
+export const DEEP_LINK_PARAMS = ['calibrate', 'phase', 'weight'] as const
 
 /**
  * Ska den globala scroll-to-top hoppas över för den här URL:en?

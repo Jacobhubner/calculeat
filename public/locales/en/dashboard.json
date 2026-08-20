@@ -366,6 +366,7 @@
     "nextLogDay": "Next step: log everything you eat today — including what was not planned. That is the difference between your real burn rate and a guess.",
     "nextWeekend": "Next step: log at weekends too. Weekend days often run higher than weekdays, and leaving them out makes your burn rate look too low.",
     "nextAlmost": "Keep this up for a few more days — then the app can work out your TDEE from your own data.",
-    "explainer": "Calibration compares what you ate with how your weight responded. That makes your TDEE your own — not a formula estimate."
+    "explainer": "Calibration compares what you ate with how your weight responded. That makes your TDEE your own — not a formula estimate.",
+    "logWeightCta": "Log a weigh-in"
   }
 }

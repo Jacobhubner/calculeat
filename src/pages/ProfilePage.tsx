@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { User, Loader2, Check } from 'lucide-react'
@@ -136,6 +136,31 @@ export default function ProfilePage() {
   type SaveState = 'pristine' | 'dirty' | 'saving' | 'saved' | 'error'
   const [saveState, setSaveState] = useState<SaveState>('pristine')
   const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const weightSectionRef = useRef<HTMLDivElement>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  /**
+   * Djuplänk till viktspårningen (?weight=open).
+   *
+   * Beredskapskortet i Översikt uppmanar till en vägning; utan den här
+   * länken fick användaren själv leta reda på sektionen på en lång
+   * profilsida. Enklare än kalibreringens motsvarighet eftersom
+   * WeightTracker inte är kollapsad — men den globala ScrollToTop måste
+   * ändå hoppas över, vilket DEEP_LINK_PARAMS sköter.
+   */
+  useEffect(() => {
+    if (searchParams.get('weight') !== 'open') return
+
+    const next = new URLSearchParams(searchParams)
+    next.delete('weight')
+    setSearchParams(next, { replace: true })
+
+    // rAF: sektionen renderas först när profilen laddats.
+    const id = requestAnimationFrame(() => {
+      weightSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+    return () => cancelAnimationFrame(id)
+  }, [searchParams, setSearchParams])
 
   // Derive saveState from pendingChanges.
   // setSaveState here is intentional: saveState is presentation-only state derived
@@ -843,7 +868,12 @@ export default function ProfilePage() {
                 />
 
                 {/* Weight Tracking - Use mergedProfile to show pending changes */}
-                <WeightTracker profile={mergedProfile} onWeightChange={handleWeightChange} />
+                {/* Mål för ?weight=open, så beredskapskortet i Översikt kan
+                    länka hit. Utan det landade användaren högst upp på en
+                    lång profilsida och fick leta själv. */}
+                <div ref={weightSectionRef} className="scroll-mt-24">
+                  <WeightTracker profile={mergedProfile} onWeightChange={handleWeightChange} />
+                </div>
 
                 {/* Macro Distribution Settings */}
                 <MacroDistributionCard

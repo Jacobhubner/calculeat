@@ -366,6 +366,7 @@
     "nextLogDay": "Nästa steg: logga allt du äter i dag — även det som inte var planerat. Det är skillnaden mellan din verkliga förbrukning och en gissning.",
     "nextWeekend": "Nästa steg: logga även i helgen. Helgdagar ligger ofta högre än vardagar, och saknas de skattas din förbrukning för lågt.",
     "nextAlmost": "Fortsätt så här några dagar till — sedan kan appen räkna ut ditt TDEE utifrån din egen data.",
-    "explainer": "Kalibreringen jämför vad du ätit med hur vikten svarat. Då blir ditt TDEE ditt eget — inte en formels uppskattning."
+    "explainer": "Kalibreringen jämför vad du ätit med hur vikten svarat. Då blir ditt TDEE ditt eget — inte en formels uppskattning.",
+    "logWeightCta": "Registrera en vägning"
   }
 }

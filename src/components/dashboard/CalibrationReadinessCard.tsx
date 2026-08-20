@@ -18,7 +18,9 @@
 
 import { Zap, Scale, UtensilsCrossed, Check, CalendarRange } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import type { CalibrationAvailability } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
@@ -99,6 +101,7 @@ export default function CalibrationReadinessCard({
   className,
 }: CalibrationReadinessCardProps) {
   const { t } = useTranslation('dashboard')
+  const navigate = useNavigate()
 
   // Kortet är till för dem som ännu inte kan kalibrera. Kan de redan, tar
   // CalibrationPrompt över.
@@ -188,6 +191,22 @@ export default function CalibrationReadinessCard({
             {t(`calibrationReadiness.${nextStepKey}`)}
           </p>
         </div>
+
+        {/* Genväg till vägningen. Nästa steg var tidigare en uppmaning utan
+            väg framåt — den som ville följa den fick själv leta reda på
+            viktspårningen i profilen. Visas bara när det är just vägningar
+            som saknas. */}
+        {focus === 'weighIns' && (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-8 w-full text-xs"
+            onClick={() => navigate('/app/profile?weight=open')}
+          >
+            {t('calibrationReadiness.logWeightCta')}
+          </Button>
+        )}
 
         {!hasCalibratedBefore && (
           <p className="text-[11px] text-neutral-500 dark:text-neutral-400 border-t border-neutral-100 dark:border-neutral-800 pt-2.5">
