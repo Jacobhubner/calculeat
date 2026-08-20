@@ -175,12 +175,13 @@ export function PhasePickerDialog({
    * ett fel i utgångssiffran ger ett utfall som inte matchar löftet.
    * Väljer hon redan underhåll behövs ingen uppmaning; då gör hon det.
    *
-   * Visas inte för den som byter från en pågående period (initialFocus
-   * satt): den har redan loggat en period och är inte den oerfarne som
-   * rekommendationen finns för.
+   * TIDIGARE DOLDES DEN VID PERIODBYTE (initialFocus satt), med motiveringen
+   * att den som redan kört en period inte är oerfaren. Fel signal: en period
+   * kan ha gått utan att användaren loggat något, och då är TDEE fortfarande
+   * en gissning. tdeeIsEstimated svarar redan på den frågan — det är HAR
+   * MÄTNINGEN GJORTS som avgör, inte hur många perioder som passerat.
    */
-  const suggestMeasureFirst =
-    tdeeIsEstimated && (selected === 'cut' || selected === 'bulk') && !initialFocus
+  const suggestMeasureFirst = tdeeIsEstimated && (selected === 'cut' || selected === 'bulk')
 
   // Återställ valen varje gång dialogen öppnas, annars ligger föregående
   // val kvar nästa gång.
