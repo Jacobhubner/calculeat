@@ -43,6 +43,7 @@ function RequirementRow({
   current,
   required,
   isFocus,
+  hint,
 }: {
   icon: React.ReactNode
   label: string
@@ -50,6 +51,14 @@ function RequirementRow({
   required: number
   /** Det krav som ligger efter — lyfts fram, övriga tonas ner */
   isFocus: boolean
+  /**
+   * Villkor som talet inte rymmer.
+   *
+   * "0 / 4" läses som fyra vägningar, punkt — och fyra dagar i rad
+   * uppfyller siffran utan att ge en enda giltig kalibrering, eftersom
+   * de hamnar i samma ände av perioden.
+   */
+  hint?: string
 }) {
   const done = current >= required
   const pct = required > 0 ? Math.min(100, (current / required) * 100) : 100
@@ -57,9 +66,14 @@ function RequirementRow({
   return (
     <div className={cn('flex flex-col gap-1', !isFocus && !done && 'opacity-60')}>
       <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1.5 text-xs text-neutral-600 dark:text-neutral-300">
-          {icon}
-          {label}
+        <span className="flex items-baseline gap-1.5 text-xs text-neutral-600 dark:text-neutral-300">
+          <span className="flex items-center gap-1.5">
+            {icon}
+            {label}
+          </span>
+          {hint && (
+            <span className="text-[10px] text-neutral-400 dark:text-neutral-500">{hint}</span>
+          )}
         </span>
         <span
           className={cn(
@@ -306,6 +320,7 @@ export default function CalibrationReadinessCard({
             current={weighIns.current}
             required={weighIns.required}
             isFocus={focus === 'weighIns'}
+            hint={t('calibrationReadiness.weighInsHint')}
           />
           <RequirementRow
             icon={<UtensilsCrossed className="h-3.5 w-3.5" />}

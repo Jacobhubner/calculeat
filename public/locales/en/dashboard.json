@@ -359,7 +359,7 @@
     "title": "On your way to calibration",
     "weighIns": "Weigh-ins",
     "logDays": "Logged days",
-    "nextWeighIn": "Next step: weigh yourself tomorrow morning, before breakfast. The same time each day makes your weight comparable between days.",
+    "nextWeighIn": "Next step: weigh yourself tomorrow morning, before breakfast. Spread your weigh-ins across the whole period — calibration compares an early weight with a later one, so several in a row count as a single measurement point.",
     "nextLogDay": "Next step: log everything you eat today — including what was not planned. That is the difference between your real burn rate and a guess.",
     "nextWeekend": "Next step: log at weekends too. Weekend days often run higher than weekdays, and leaving them out makes your burn rate look too low.",
     "nextAlmost": "Keep this up for a few more days — then the app can work out your TDEE from your own data.",
@@ -380,6 +380,7 @@
     "nextUpgradePeriod": "Keep weighing and logging, and the measurement gets more reliable. At 28 days the uncertainty is about ±62 kcal per day instead of ±177.",
     "ladderPrecision": "±{{kcal}} kcal/day",
     "ladderReachedNote": "You are measuring over {{days}} days. Keep going and it gets more reliable.",
-    "ladderNoneNote": "Weigh-ins spread over at least 14 days give the first measurement."
+    "ladderNoneNote": "Weigh-ins spread over at least 14 days give the first measurement.",
+    "weighInsHint": "spread across the period"
   }
 }

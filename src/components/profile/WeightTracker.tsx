@@ -100,27 +100,49 @@ interface WeightTrackerProps {
   profile: Profile
   onWeightChange: (weight: number) => void
   onCalibrateClick?: () => void
+  /**
+   * Öppnar sektionen OCH vägningsformuläret direkt vid montering.
+   *
+   * Djuplänken från beredskapskortet säger "Registrera en vägning".
+   * Att landa på en hopfälld sektion gör knappen till en halv åtgärd —
+   * användaren måste fälla ut två nivåer till för att göra det knappen
+   * lovade.
+   */
+  defaultOpenWithForm?: boolean
 }
 
 export default function WeightTracker({
   profile,
   onWeightChange,
   onCalibrateClick: _onCalibrateClick,
+  defaultOpenWithForm = false,
 }: WeightTrackerProps) {
   // Recharts tar färger som props, inte klasser — dark: når dem aldrig
   const chartTheme = useChartTheme()
   const { t } = useTranslation('profile')
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(defaultOpenWithForm)
   const [currentWeight, setCurrentWeight] = useState(profile.weight_kg?.toString() || '')
   const [recordedDate, setRecordedDate] = useState(localDateString())
   const [bodyFatInput, setBodyFatInput] = useState('')
-  const [showAddWeight, setShowAddWeight] = useState(false)
+  const [showAddWeight, setShowAddWeight] = useState(defaultOpenWithForm)
   const [showHistory, setShowHistory] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState<WeightHistory | null>(null)
   const [showBodyFatInfo, setShowBodyFatInfo] = useState(false)
   const [showBodyFatMassInfo, setShowBodyFatMassInfo] = useState(false)
   const [showSoftLeanMassInfo, setShowSoftLeanMassInfo] = useState(false)
   const [showBodyFatMassChart, setShowBodyFatMassChart] = useState(false)
+
+  /**
+   * useState-seed räcker inte: står användaren redan på profilsidan är
+   * komponenten monterad, och då körs seeden aldrig om. Effekten öppnar
+   * därför på flanken — och bara uppåt, så att den som själv fäller ihop
+   * sektionen inte får den uppslagen igen.
+   */
+  useEffect(() => {
+    if (!defaultOpenWithForm) return
+    setIsOpen(true)
+    setShowAddWeight(true)
+  }, [defaultOpenWithForm])
   const [showSoftLeanMassChart, setShowSoftLeanMassChart] = useState(false)
   const [chartsReady, setChartsReady] = useState(false)
   const [bfmChartReady, setBfmChartReady] = useState(false)

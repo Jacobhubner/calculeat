@@ -359,7 +359,7 @@
     "title": "På väg mot kalibrering",
     "weighIns": "Vägningar",
     "logDays": "Loggade dagar",
-    "nextWeighIn": "Nästa steg: väg dig i morgon bitti, före frukost. Samma tid varje gång gör att vikten går att jämföra mellan dagar.",
+    "nextWeighIn": "Nästa steg: väg dig i morgon bitti, före frukost. Sprid vägningarna över hela perioden — kalibreringen jämför en tidig vikt med en senare, så flera vägningar i rad räknas som en enda mätpunkt.",
     "nextLogDay": "Nästa steg: logga allt du äter i dag — även det som inte var planerat. Det är skillnaden mellan din verkliga förbrukning och en gissning.",
     "nextWeekend": "Nästa steg: logga även i helgen. Helgdagar ligger ofta högre än vardagar, och saknas de skattas din förbrukning för lågt.",
     "nextAlmost": "Fortsätt så här några dagar till — sedan kan appen räkna ut ditt TDEE utifrån din egen data.",
@@ -380,6 +380,7 @@
     "nextUpgradePeriod": "Fortsätt väga dig och logga, så blir mätningen säkrare. Vid 28 dagar är osäkerheten ungefär ±62 kcal per dag i stället för ±177.",
     "ladderPrecision": "±{{kcal}} kcal/dag",
     "ladderReachedNote": "Du mäter över {{days}} dagar. Fortsätt så blir resultatet säkrare.",
-    "ladderNoneNote": "Vägningar spridda över minst 14 dagar ger den första mätningen."
+    "ladderNoneNote": "Vägningar spridda över minst 14 dagar ger den första mätningen.",
+    "weighInsHint": "spridda över perioden"
   }
 }

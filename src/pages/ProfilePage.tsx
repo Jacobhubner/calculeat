@@ -145,18 +145,20 @@ export default function ProfilePage() {
    *
    * Beredskapskortet i Översikt uppmanar till en vägning; utan den här
    * länken fick användaren själv leta reda på sektionen på en lång
-   * profilsida. Enklare än kalibreringens motsvarighet eftersom
-   * WeightTracker inte är kollapsad — men den globala ScrollToTop måste
-   * ändå hoppas över, vilket DEEP_LINK_PARAMS sköter.
+   * profilsida. WeightTracker är hopfälld som förval, så länken måste
+   * både öppna sektionen och scrolla dit; den globala ScrollToTop hoppas
+   * över via DEEP_LINK_PARAMS.
    */
   // Avsikten bärs av en ref, inte av URL:en. Städningen av parametern
   // startar om effekten, och en cleanup hann då avbryta scrollen innan
   // första ramen kört — samma fälla som deepLinkScroll.ts beskriver.
   const shouldScrollToWeight = useRef(false)
+  const [openWeightForm, setOpenWeightForm] = useState(false)
 
   useEffect(() => {
     if (searchParams.get('weight') !== 'open') return
     shouldScrollToWeight.current = true
+    setOpenWeightForm(true)
     const next = new URLSearchParams(searchParams)
     next.delete('weight')
     setSearchParams(next, { replace: true })
@@ -908,7 +910,11 @@ export default function ProfilePage() {
                     länka hit. Utan det landade användaren högst upp på en
                     lång profilsida och fick leta själv. */}
                 <div ref={weightSectionRef} className="scroll-mt-24">
-                  <WeightTracker profile={mergedProfile} onWeightChange={handleWeightChange} />
+                  <WeightTracker
+                    profile={mergedProfile}
+                    onWeightChange={handleWeightChange}
+                    defaultOpenWithForm={openWeightForm}
+                  />
                 </div>
 
                 {/* Macro Distribution Settings */}
