@@ -92,6 +92,19 @@ function RequirementRow({
 }
 
 /** Helgandel i ett representativt urval: 2 av 7 dagar. */
+/**
+ * Stegen i mätperiodstrappan.
+ *
+ * Bara 14 och 28 har en precisionssiffra: ±177 respektive ±62 kcal/dag
+ * står i calibration-quality.ts. Något motsvarande tal för 21 dagar finns
+ * inte beräknat, och ska därför inte gissas fram.
+ */
+const LADDER_STEPS: ReadonlyArray<{ days: 14 | 21 | 28; kcal: number | null }> = [
+  { days: 14, kcal: 177 },
+  { days: 21, kcal: null },
+  { days: 28, kcal: 62 },
+]
+
 const EXPECTED_WEEKEND_SHARE = 2 / 7
 
 export default function CalibrationReadinessCard({
@@ -203,63 +216,85 @@ export default function CalibrationReadinessCard({
         </div>
 
         {/*
-          Trappan: tre perioder som en stege, inte tre uppsättningar krav.
-          Bara periodlängd och precision syns — att 28 dagar kräver sex
-          vägningar i stället för fyra säger användaren ingenting, men
-          "±177 → ±62 kcal" är ett erbjudande.
+          Precisionen sitter UNDER sin egen punkt, inte vid kortets kanter.
+          Först låg ±177 längst till vänster och ±62 längst till höger,
+          vilket fick dem att se ut som fotnoter till kortet i stället för
+          etiketter till 14 respektive 28 dagar.
+
+          Rubriken säger numera VARFÖR stegen finns. "Mätperiod" beskrev
+          vad raden innehöll men inte vad användaren skulle göra med den.
         */}
         <div>
-          <p className="mb-1.5 text-[10px] uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+          <p className="mb-2 text-[11px] leading-snug text-neutral-600 dark:text-neutral-400">
             {t('calibrationReadiness.ladderLabel')}
           </p>
-          <div className="flex items-center gap-1.5">
-            {([14, 21, 28] as const).map((period, i) => {
-              const reached = reachedPeriods.includes(period)
-              const isActive = period === activePeriod && !reached
+          <div className="flex items-start">
+            {LADDER_STEPS.map((step, i) => {
+              const reached = reachedPeriods.includes(step.days)
+              const isNext = step.days === activePeriod && !reached
               return (
-                <div key={period} className="flex flex-1 items-center gap-1.5">
-                  <div
-                    className={cn(
-                      'h-2 w-2 shrink-0 rounded-full',
-                      reached
-                        ? 'bg-primary-600 dark:bg-primary-400'
-                        : isActive
-                          ? 'ring-2 ring-primary-500 dark:ring-primary-400'
-                          : 'bg-neutral-300 dark:bg-neutral-700'
-                    )}
-                  />
+                <div key={step.days} className="flex flex-1 flex-col items-center gap-1">
+                  <div className="flex w-full items-center">
+                    {/* Linjen till vänster om punkten, utom först */}
+                    <div
+                      className={cn(
+                        'h-px flex-1',
+                        i === 0
+                          ? 'bg-transparent'
+                          : reached
+                            ? 'bg-primary-400 dark:bg-primary-600'
+                            : 'bg-neutral-200 dark:bg-neutral-800'
+                      )}
+                    />
+                    <div
+                      className={cn(
+                        'h-2.5 w-2.5 shrink-0 rounded-full',
+                        reached
+                          ? 'bg-primary-600 dark:bg-primary-400'
+                          : isNext
+                            ? 'border-2 border-primary-500 bg-white dark:border-primary-400 dark:bg-neutral-850'
+                            : 'bg-neutral-300 dark:bg-neutral-700'
+                      )}
+                    />
+                    <div
+                      className={cn(
+                        'h-px flex-1',
+                        i === LADDER_STEPS.length - 1
+                          ? 'bg-transparent'
+                          : 'bg-neutral-200 dark:bg-neutral-800'
+                      )}
+                    />
+                  </div>
                   <span
                     className={cn(
                       'text-[10px] tabular-nums',
-                      reached || isActive
+                      reached || isNext
                         ? 'font-medium text-neutral-700 dark:text-neutral-200'
                         : 'text-neutral-400 dark:text-neutral-500'
                     )}
                   >
-                    {t('calibrationReadiness.ladderDays', { count: period })}
+                    {t('calibrationReadiness.ladderDays', { count: step.days })}
                   </span>
-                  {i < 2 && (
-                    <div
-                      className={cn(
-                        'h-px flex-1',
-                        reached
-                          ? 'bg-primary-400 dark:bg-primary-600'
-                          : 'bg-neutral-200 dark:bg-neutral-800'
-                      )}
-                    />
+                  {/* Bara de två belagda talen (calibration-quality.ts).
+                      21-steget får ingen siffra — den finns inte i koden
+                      och ska därför inte påstås. */}
+                  {step.kcal != null && (
+                    <span className="text-[10px] tabular-nums text-neutral-400 dark:text-neutral-500">
+                      {t('calibrationReadiness.ladderPrecision', { kcal: step.kcal })}
+                    </span>
                   )}
                 </div>
               )
             })}
           </div>
-          {/* Bara de två belagda talen. ±110 för 21 dagar finns inte i
-              koden och ska därför inte påstås. */}
-          <div className="mt-1 flex justify-between text-[10px] text-neutral-400 dark:text-neutral-500">
-            <span>{t('calibrationReadiness.ladderPrecisionShort')}</span>
-            <span>{t('calibrationReadiness.ladderPrecisionLong')}</span>
-          </div>
+          <p className="mt-2 text-[10px] leading-snug text-neutral-500 dark:text-neutral-400">
+            {reachedPeriods.length > 0
+              ? t('calibrationReadiness.ladderReachedNote', {
+                  days: reachedPeriods[reachedPeriods.length - 1],
+                })
+              : t('calibrationReadiness.ladderNoneNote')}
+          </p>
         </div>
-
         <div className="flex flex-col gap-2.5">
           <RequirementRow
             icon={<Scale className="h-3.5 w-3.5" />}

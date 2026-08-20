@@ -87,9 +87,19 @@ export function useCalibrationAvailability(
     const reachedPeriods: Array<14 | 21 | 28> = []
     for (const period of PERIODS) {
       const cutoff = new Date(mountedAt - period * 24 * 60 * 60 * 1000)
-      const inPeriod = (weightHistory ?? []).filter(w => new Date(w.recorded_at) >= cutoff)
+      /**
+       * Fönstret startar vid kalibreringen när den är nyare än perioden.
+       *
+       * Loopen räknade förut ALLA vägningar i fönstret. Dagen efter en
+       * kalibrering tände därför alla tre stegen — samtidigt som raden
+       * under sa "Nya vägningar 0 / 6". Samma kort, två sanningar. Och
+       * eftersom trappan trodde att 28 dagar var uppnått blev
+       * activePeriod 28, vilket är varför kravet sa 6 i stället för 4.
+       */
+      const windowStart = lastCalibratedAt && lastCalibratedAt > cutoff ? lastCalibratedAt : cutoff
+      const inPeriod = (weightHistory ?? []).filter(w => new Date(w.recorded_at) >= windowStart)
       if (inPeriod.length < MIN_DATA_POINTS[period]) continue
-      const clusters = buildClusters(weightHistory ?? [], period, new Date(mountedAt))
+      const clusters = buildClusters(inPeriod, period, new Date(mountedAt))
       if (!clusters) continue
       const minCluster = MIN_CLUSTER_SIZE[period]
       if (clusters.startCluster.count < minCluster || clusters.endCluster.count < minCluster)

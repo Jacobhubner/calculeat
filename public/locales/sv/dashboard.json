@@ -371,14 +371,15 @@
     "statusClusterGap": "Dina vägningar ligger för tätt i tiden för att mäta en förändring.",
     "statusNeedLogDays": "Vägningarna räcker. Nu saknas loggade dagar att jämföra dem mot.",
     "statusNeedCoverage": "Loggarna täcker bara en del av mätperioden.",
-    "ladderLabel": "Mätperiod",
+    "ladderLabel": "Ju längre mätperiod, desto säkrare resultat",
     "ladderDays": "{{count}} dagar",
-    "ladderPrecisionShort": "±177 kcal/dag",
-    "ladderPrecisionLong": "±62 kcal/dag",
     "weighInsNew": "Nya vägningar",
     "nextWeighAgainIn": "Nästa steg: väg dig igen om {{count}} dagar. Kalibreringen jämför en tidig vikt med en senare — då behövs mätningar i båda ändarna av perioden.",
     "nextWeighAgainToday": "Nästa steg: väg dig i dag. Kalibreringen jämför en tidig vikt med en senare, och nu saknas den senare.",
     "nextLogCoverage": "Nästa steg: logga även de dagar du hoppade över tidigare i perioden. Intaget och vikten behöver beskriva samma tid.",
-    "nextUpgradePeriod": "Fortsätt väga dig och logga, så blir mätningen säkrare. Vid 28 dagar är osäkerheten ungefär ±62 kcal per dag i stället för ±177."
+    "nextUpgradePeriod": "Fortsätt väga dig och logga, så blir mätningen säkrare. Vid 28 dagar är osäkerheten ungefär ±62 kcal per dag i stället för ±177.",
+    "ladderPrecision": "±{{kcal}} kcal/dag",
+    "ladderReachedNote": "Du mäter över {{days}} dagar. Fortsätt så blir resultatet säkrare.",
+    "ladderNoneNote": "Vägningar spridda över minst 14 dagar ger den första mätningen."
   }
 }

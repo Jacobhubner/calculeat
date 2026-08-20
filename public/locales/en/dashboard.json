@@ -371,14 +371,15 @@
     "statusClusterGap": "Your weigh-ins are too close together in time to measure a change.",
     "statusNeedLogDays": "You have enough weigh-ins. Now you need logged days to compare them against.",
     "statusNeedCoverage": "Your logs only cover part of the measurement period.",
-    "ladderLabel": "Measurement period",
+    "ladderLabel": "The longer the measurement period, the more reliable the result",
     "ladderDays": "{{count}} days",
-    "ladderPrecisionShort": "±177 kcal/day",
-    "ladderPrecisionLong": "±62 kcal/day",
     "weighInsNew": "New weigh-ins",
     "nextWeighAgainIn": "Next step: weigh yourself again in {{count}} days. Calibration compares an early weight with a later one — so it needs measurements at both ends of the period.",
     "nextWeighAgainToday": "Next step: weigh yourself today. Calibration compares an early weight with a later one, and the later one is missing.",
     "nextLogCoverage": "Next step: log the days you skipped earlier in the period too. Intake and weight need to describe the same stretch of time.",
-    "nextUpgradePeriod": "Keep weighing and logging, and the measurement gets more reliable. At 28 days the uncertainty is about ±62 kcal per day instead of ±177."
+    "nextUpgradePeriod": "Keep weighing and logging, and the measurement gets more reliable. At 28 days the uncertainty is about ±62 kcal per day instead of ±177.",
+    "ladderPrecision": "±{{kcal}} kcal/day",
+    "ladderReachedNote": "You are measuring over {{days}} days. Keep going and it gets more reliable.",
+    "ladderNoneNote": "Weigh-ins spread over at least 14 days give the first measurement."
   }
 }

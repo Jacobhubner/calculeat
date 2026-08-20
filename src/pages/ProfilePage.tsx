@@ -5,6 +5,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { hasScrollSettled, MAX_SCROLL_FRAMES } from '@/lib/utils/deepLinkScroll'
 import { useTranslation } from 'react-i18next'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { User, Loader2, Check } from 'lucide-react'
@@ -148,19 +149,54 @@ export default function ProfilePage() {
    * WeightTracker inte är kollapsad — men den globala ScrollToTop måste
    * ändå hoppas över, vilket DEEP_LINK_PARAMS sköter.
    */
+  // Avsikten bärs av en ref, inte av URL:en. Städningen av parametern
+  // startar om effekten, och en cleanup hann då avbryta scrollen innan
+  // första ramen kört — samma fälla som deepLinkScroll.ts beskriver.
+  const shouldScrollToWeight = useRef(false)
+
   useEffect(() => {
     if (searchParams.get('weight') !== 'open') return
-
+    shouldScrollToWeight.current = true
     const next = new URLSearchParams(searchParams)
     next.delete('weight')
     setSearchParams(next, { replace: true })
-
-    // rAF: sektionen renderas först när profilen laddats.
-    const id = requestAnimationFrame(() => {
-      weightSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    })
-    return () => cancelAnimationFrame(id)
   }, [searchParams, setSearchParams])
+
+  useEffect(() => {
+    if (!shouldScrollToWeight.current) return
+    shouldScrollToWeight.current = false
+
+    /**
+     * Sikta om tills positionen står still.
+     *
+     * En enda scrollIntoView landade fel: profilsidan växer medan den
+     * laddas, och App.tsx har dessutom en global ScrollToTop. Samma
+     * lösning som kalibreringens djuplänk använder.
+     */
+    let frames = 0
+    let lastTop = -1
+    let raf = 0
+
+    const aim = () => {
+      const el = weightSectionRef.current
+      if (!el) {
+        raf = requestAnimationFrame(aim)
+        return
+      }
+      const top = el.getBoundingClientRect().top
+      el.scrollIntoView({ behavior: 'auto', block: 'start' })
+      const settled = hasScrollSettled(lastTop, top)
+      lastTop = top
+      frames++
+      if (!settled && frames < MAX_SCROLL_FRAMES) {
+        raf = requestAnimationFrame(aim)
+      }
+    }
+
+    raf = requestAnimationFrame(aim)
+    return () => cancelAnimationFrame(raf)
+    // Körs när profilen laddats — INTE på searchParams, se ovan.
+  }, [activeProfile?.id])
 
   // Derive saveState from pendingChanges.
   // setSaveState here is intentional: saveState is presentation-only state derived
@@ -173,7 +209,7 @@ export default function ProfilePage() {
         clearTimeout(savedTimerRef.current)
         savedTimerRef.current = null
       }
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+
       setSaveState(prev => (prev === 'saving' ? prev : 'dirty'))
     } else {
       setSaveState(prev =>
