@@ -331,7 +331,7 @@
       "aggressiveDesc": "Snabb viktnedgång, rekommenderas endast för korta perioder"
     },
     "estimatedTdeeTitle": "Siffrorna bygger på en uppskattning",
-    "estimatedTdeeBody": "Din energiförbrukning är beräknad ur längd, vikt, ålder och den aktivitetsnivå du angett — inte uppmätt. Formler av det slaget slår ofta fel med ±10–15 % på individnivå, och aktivitetsnivån är svår att gissa rätt på. Ett fel åt något håll gör att du går ner snabbare eller långsammare än vad som står här.",
+    "estimatedTdeeBody": "Din energiförbrukning är beräknad ur längd, vikt, ålder och den aktivitetsnivå du angett — inte uppmätt. Formler av det slaget slår ofta fel med tio procent eller mer, och aktivitetsnivån är svår att gissa rätt på. Ett fel åt något håll gör att du går ner snabbare eller långsammare än vad som står här.",
     "estimatedTdeeAction": "Logga maten och väg dig regelbundet under perioden. Efter ett par veckor kan appen mäta din faktiska förbrukning och justera målet — då blir siffrorna dina, inte formelns.",
     "measureFirstTitle": "Börja med fyra veckor underhåll",
     "measureFirstBody": "Ät runt ditt beräknade behov och logga maten. Då mäter appen vad du faktiskt förbränner — och nedgången efter det bygger på din kropp i stället för på en formel.",
@@ -339,7 +339,7 @@
     "measureFirstPick": "Välj underhåll",
     "measureModalTitle": "Varför mäta först?",
     "measureModalSubtitle": "Fyra veckor som gör resten av planen träffsäker",
-    "measureIntro": "Din energiförbrukning är just nu beräknad ur längd, vikt, ålder och den aktivitetsnivå du angett. Det är den bästa gissning som går att göra utan data om dig — men formler av det slaget slår ofta fel med ±10–15 % på individnivå.",
+    "measureIntro": "Din energiförbrukning är just nu beräknad ur längd, vikt, ålder och den aktivitetsnivå du angett. Det är den bästa gissning som går att göra utan data om dig — men det är fortfarande en gissning.",
     "measureProblemTitle": "Vad ett litet fel gör",
     "measureProblemBody": "Aktivitetsnivån är svårast att träffa rätt på. Ett steg fel på reglaget är ungefär 13 procent, och det räcker för att ändra utfallet helt:",
     "measureProblemRow1": "Appen tror 2 228 kcal och du siktar på 1 727 — utlovat 0,46 kg i veckan.",

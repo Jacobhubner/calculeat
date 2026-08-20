@@ -331,7 +331,7 @@
       "aggressiveDesc": "Rapid weight loss, recommended only for short periods"
     },
     "estimatedTdeeTitle": "These numbers rest on an estimate",
-    "estimatedTdeeBody": "Your energy expenditure is calculated from height, weight, age and the activity level you selected — not measured. Formulas of this kind are often off by ±10–15% at the individual level, and activity level is hard to guess correctly. An error either way means you lose faster or slower than shown here.",
+    "estimatedTdeeBody": "Your energy expenditure is calculated from height, weight, age and the activity level you selected — not measured. Formulas of this kind are often off by ten percent or more, and activity level is hard to guess correctly. An error either way means you lose faster or slower than shown here.",
     "estimatedTdeeAction": "Log your food and weigh yourself regularly during the period. After a couple of weeks the app can measure your actual expenditure and adjust the target — then the numbers are yours, not the formula’s.",
     "measureFirstTitle": "Start with four weeks of maintenance",
     "measureFirstBody": "Eat around your calculated needs and log your food. The app then measures what you actually burn — and the loss after that rests on your body rather than a formula.",
@@ -339,7 +339,7 @@
     "measureFirstPick": "Choose maintenance",
     "measureModalTitle": "Why measure first?",
     "measureModalSubtitle": "Four weeks that make the rest of the plan accurate",
-    "measureIntro": "Your energy expenditure is currently calculated from height, weight, age and the activity level you selected. It is the best guess available without data about you — but formulas of this kind are often off by ±10–15% at the individual level.",
+    "measureIntro": "Your energy expenditure is currently calculated from height, weight, age and the activity level you selected. It is the best guess available without data about you — but it is still a guess.",
     "measureProblemTitle": "What a small error does",
     "measureProblemBody": "Activity level is the hardest to get right. One step off on the slider is roughly 13 percent, and that is enough to change the outcome entirely:",
     "measureProblemRow1": "The app assumes 2,228 kcal and you aim for 1,727 — a promised 0.46 kg per week.",
