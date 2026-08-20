@@ -602,3 +602,50 @@ describe('phaseTracking — nivåbyte mitt i perioden', () => {
     expect(medSparr!.status).toBe('too_early')
   })
 })
+
+describe('förvald faslängd', () => {
+  /**
+   * Talen möter en NY användare direkt efter registrering, ofta som det
+   * första hen ser av perioder. De var helt otestade fram till 2026-08-20 —
+   * bulk kunde ändras från 16 till 12 utan att ett enda test föll.
+   */
+  it('ger ett tal för ALLA fastyper, i båda spåren', () => {
+    // maintenance hade null, alltså ett tomt fält. Det tvingade den
+    // oerfarne att gissa och tog dessutom bort framstegsmätaren, som
+    // kräver planned_weeks.
+    for (const typ of ['cut', 'bulk', 'maintenance', 'reverse'] as const) {
+      for (const focus of ['health', 'strength'] as const) {
+        const s = suggestPhaseTargets(typ, 2600, 85, focus, undefined, 22)
+        expect(s.plannedWeeks).not.toBeNull()
+        expect(s.plannedWeeks).toBeGreaterThan(0)
+      }
+    }
+  })
+
+  it('håller de beslutade talen', () => {
+    // Ändra bara med en motivering i docblocket ovanför
+    // PHASE_DEFAULT_WEEKS — talen är härledningar ur takt och
+    // litteratur, inte godtyckliga.
+    const vantat = { cut: 12, bulk: 12, maintenance: 4, reverse: 4 } as const
+    for (const [typ, veckor] of Object.entries(vantat)) {
+      const s = suggestPhaseTargets(
+        typ as keyof typeof vantat,
+        2600,
+        85,
+        'health',
+        typ === 'reverse' ? 2000 : undefined,
+        22
+      )
+      expect(s.plannedWeeks).toBe(veckor)
+    }
+  })
+
+  it('ingen fas förvalt längre än ett halvår', () => {
+    // En nybörjare ska inte mötas av ett åtagande på sex månader innan
+    // hen ens utvärderat något.
+    for (const typ of ['cut', 'bulk', 'maintenance', 'reverse'] as const) {
+      const s = suggestPhaseTargets(typ, 2600, 85, 'health', 2000, 22)
+      expect(s.plannedWeeks!).toBeLessThanOrEqual(26)
+    }
+  })
+})

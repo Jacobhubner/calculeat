@@ -77,7 +77,20 @@ const PHASE_PROTEIN_G_PER_KG: Record<DietPhaseType, { min: number; recommended: 
  *   (Peos 2021, doi: 10.1249/MSS.0000000000002636, n=61 TRÄNADE) fann INGEN
  *   skillnad i fettmassa, fettfri massa eller viloenergiförbrukning.
  *
- * bulk = 16 veckor (intervall 8–20). EXTRAPOLERING — ingen källa anger längd.
+ * bulk = 12 veckor. SÄNKT FRÅN 16 (2026-08-20).
+ * - Garthe I et al., Eur J Sport Sci 2013;13(3):295-303
+ *   (doi: 10.1080/17461391.2011.643923, PMID 23679146) — randomiserad,
+ *   n=39 elitidrottare, och interventionen var en 8–12 VECKORS
+ *   viktuppgångsperiod. Detta är den enda empiriska bulklängd som
+ *   existerar. Resultatet stärker dessutom takt-argumentet: gruppen med
+ *   kostrådgivning gick upp 3,9 % mot 1,5 %, men fettmassan ökade 15 % mot
+ *   3 % UTAN skillnad i fettfri massa. Mer överskott gav mer fett, inte mer
+ *   muskler.
+ * - Iraki J et al., Sports 2019;7(7):154 (doi: 10.3390/sports7070154,
+ *   PMID 31247944) ger 0,25–0,5 %/vecka och 10–20 % över underhåll, men
+ *   INGEN längdrekommendation. Vid den takten innebär 16 veckor upp till
+ *   8 % viktuppgång innan användaren utvärderar något — för mycket att
+ *   förvälja åt någon som just skapat konto.
  * - Helms ER et al., Sports Med Open 2023 (doi: 10.1186/s40798-023-00651-y)
  *   — RCT, n=17, 8 v: 5 % vs 15 % överskott gav LIKARTAD muskeltillväxt,
  *   medan större överskott starkt förutsade fettökning (R²=0,49). Studien är
@@ -105,9 +118,23 @@ const PHASE_PROTEIN_G_PER_KG: Record<DietPhaseType, { min: number; recommended: 
  * Konsekvens för UI: nämn Roberts-förloppet som sammanhang när användaren
  * planerar en reverse efter tävling. Se POST_CONTEST_WEEKS i contestPrep.ts.
  *
- * maintenance = null. Ingen evidens existerar för en rekommenderad längd;
- * fasen är per definition öppen (Aragon 2017, doi: 10.1186/s12970-017-0174-y
- * ger ingen längdrekommendation för någon fas).
+ * maintenance = 4 veckor. VAR NULL, alltså ett TOMT FÄLT (ändrat 2026-08-20).
+ * - Peos JJ et al., Sports 2019;7(1):22 (doi: 10.3390/sports7010022,
+ *   PMID 30654501) skriver ordagrant att omvändningen av kroppens
+ *   kompensatoriska svar på ett underskott "may require at least 7–14 days
+ *   in EB" [energibalans], och rekommenderar praktiskt att varva två veckors
+ *   underskott med två veckor i balans.
+ *   ⚠️ Siffran gäller ÖVERVIKTIGA VUXNA — författarna anger det själva. Att
+ *   överföra den till tränade är osäkert: ICECAP (Peos 2021) visade att just
+ *   den populationsskillnaden spelar roll för diet breaks.
+ * - 4 veckor är dubbla det golvet och en naturlig månad. STEGET FRÅN
+ *   "minst 7–14 dagar" TILL 4 VECKOR ÄR EN HÄRLEDNING, inte Peos
+ *   rekommendation.
+ * - Varför inte null: ett tomt fält tvingar en oerfaren användare att gissa,
+ *   och utan planned_weeks får hen dessutom varken framstegsmätare eller
+ *   "vecka 3 av 4" — premiumfunktioner som tyst uteblev just för underhåll.
+ *   Aragon 2017 (doi: 10.1186/s12970-017-0174-y) ger fortfarande ingen
+ *   längdrekommendation för någon fas.
  *
  * ⚠️ Påståendet "8–16 veckor för bulk" cirkulerar i sekundärkällor men kunde
  * INTE spåras till någon primärkälla. Använd det inte som stöd.
@@ -117,8 +144,8 @@ const PHASE_PROTEIN_G_PER_KG: Record<DietPhaseType, { min: number; recommended: 
  */
 const PHASE_DEFAULT_WEEKS: Record<DietPhaseType, number | null> = {
   cut: 12,
-  bulk: 16,
-  maintenance: null,
+  bulk: 12,
+  maintenance: 4,
   reverse: 4,
 }
 
