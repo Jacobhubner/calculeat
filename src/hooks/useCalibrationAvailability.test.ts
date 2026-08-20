@@ -89,3 +89,48 @@ describe('useCalibrationAvailability — progress', () => {
     expect(result.current.progress.daysRemaining).toBe(0)
   })
 })
+
+describe('useCalibrationAvailability — nya vägningar efter kalibrering', () => {
+  /**
+   * MIN_NEW_WEIGHTS_AFTER_CALIBRATION är ett minimum "before re-applying".
+   * Utan nya mätningar körs kalibreringen på samma underlag som förra
+   * gången och kan inte ge något nytt svar.
+   *
+   * Grinden satte tidigare bara en reason och lämnade isAvailable: true, så
+   * kortet visade "0 av 3 nya viktmätningar" med en aktiv Kalibrera-knapp
+   * bredvid.
+   */
+  const nyligenKalibrerad = {
+    id: 'c1',
+    calibrated_at: new Date(Date.now() - 2 * 86400000).toISOString(),
+  } as unknown as Parameters<typeof useCalibrationAvailability>[2]
+
+  it('är otillgänglig direkt efter en kalibrering', () => {
+    // Vägningarna ligger FÖRE kalibreringen, alltså noll nya efter den.
+    // Spridda över dag 10-24 bakåt: uppfyller klusterkraven, men ALLA
+    // ligger före kalibreringen för två dagar sedan.
+    const gamla = weights(6, 14).map(w => ({
+      ...w,
+      recorded_at: new Date(new Date(w.recorded_at).getTime() - 10 * 86400000).toISOString(),
+    }))
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, gamla, nyligenKalibrerad, 20)
+    )
+    expect(result.current.isAvailable).toBe(false)
+    expect(result.current.reason).toContain('nya viktmätningar')
+  })
+
+  it('rapporterar framsteg så beredskapskortet kan visa det', () => {
+    // Spridda över dag 10-24 bakåt: uppfyller klusterkraven, men ALLA
+    // ligger före kalibreringen för två dagar sedan.
+    const gamla = weights(6, 14).map(w => ({
+      ...w,
+      recorded_at: new Date(new Date(w.recorded_at).getTime() - 10 * 86400000).toISOString(),
+    }))
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, gamla, nyligenKalibrerad, 20)
+    )
+    expect(result.current.progress.weighIns.current).toBe(0)
+    expect(result.current.progress.weighIns.required).toBeGreaterThan(0)
+  })
+})

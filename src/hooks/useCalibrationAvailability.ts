@@ -238,7 +238,34 @@ export function useCalibrationAvailability(
       const hasEnoughNewWeights = newWeightsAfterLast >= MIN_NEW_WEIGHTS_AFTER_CALIBRATION
 
       if (!hasEnoughNewWeights) {
-        reason = `${newWeightsAfterLast} av ${MIN_NEW_WEIGHTS_AFTER_CALIBRATION} nya viktmätningar sedan senaste kalibreringen`
+        /**
+         * OTILLGÄNGLIG, inte bara "inte rekommenderad".
+         *
+         * Kortet satte tidigare bara en reason här och lämnade
+         * isAvailable: true. Följden blev att det stod "0 av 3 nya
+         * viktmätningar sedan senaste kalibreringen" med en aktiv
+         * Kalibrera-knapp bredvid — två motsägande besked i samma ruta.
+         *
+         * Kravet är verkligt: MIN_NEW_WEIGHTS_AFTER_CALIBRATION beskrivs i
+         * calibration-constants som minimum "before re-applying". Utan nya
+         * mätningar körs kalibreringen på samma underlag som förra gången
+         * och kan inte ge något nytt svar.
+         */
+        return {
+          ...unavailable,
+          currentDataPoints: bestWeightsInPeriod.length,
+          daysSinceLastCalibration,
+          weightTrend,
+          suggestedTimePeriod: bestPeriod,
+          reason: `${newWeightsAfterLast} av ${MIN_NEW_WEIGHTS_AFTER_CALIBRATION} nya viktmätningar sedan senaste kalibreringen`,
+          progress: {
+            ...unavailable.progress,
+            weighIns: {
+              current: newWeightsAfterLast,
+              required: MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
+            },
+          },
+        }
       } else if (
         daysSinceLastCalibration !== null &&
         daysSinceLastCalibration >= RECOMMENDED_MIN_DAYS
