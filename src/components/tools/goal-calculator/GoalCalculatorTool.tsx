@@ -34,7 +34,7 @@ import { useTranslation } from 'react-i18next'
 
 export default function GoalCalculatorTool() {
   const navigate = useNavigate()
-  const { t } = useTranslation('tools')
+  const { t, i18n } = useTranslation('tools')
   const { profile } = useActiveProfile()
   const { data: activePhase } = useActiveDietPhase()
   const endPhase = useEndDietPhase()
@@ -978,19 +978,19 @@ export default function GoalCalculatorTool() {
                       {
                         label: t('goalCalc.weeklyChange.presets.cautious'),
                         desc: t('goalCalc.weeklyChange.presets.cautiousDesc'),
-                        tooltip: `${Math.round(tdee * 0.85)} - ${Math.round(tdee * 0.9)} kcal/dag`,
+                        tooltip: `${Math.round(tdee * 0.85)} - ${Math.round(tdee * 0.9)} ${t('goalCalc.units.kcalPerDay')}`,
                         kgPerWeek: calcKgPerWeek(0.1, 0.15),
                       },
                       {
                         label: t('goalCalc.weeklyChange.presets.normal'),
                         desc: t('goalCalc.weeklyChange.presets.normalDesc'),
-                        tooltip: `${Math.round(tdee * 0.75)} - ${Math.round(tdee * 0.8)} kcal/dag`,
+                        tooltip: `${Math.round(tdee * 0.75)} - ${Math.round(tdee * 0.8)} ${t('goalCalc.units.kcalPerDay')}`,
                         kgPerWeek: calcKgPerWeek(0.2, 0.25),
                       },
                       {
                         label: t('goalCalc.weeklyChange.presets.aggressive'),
                         desc: t('goalCalc.weeklyChange.presets.aggressiveDesc'),
-                        tooltip: `${Math.round(tdee * 0.7)} - ${Math.round(tdee * 0.75)} kcal/dag`,
+                        tooltip: `${Math.round(tdee * 0.7)} - ${Math.round(tdee * 0.75)} ${t('goalCalc.units.kcalPerDay')}`,
                         kgPerWeek: calcKgPerWeek(0.25, 0.3),
                       },
                     ]
@@ -998,7 +998,7 @@ export default function GoalCalculatorTool() {
                     presets = [
                       {
                         label: t('goalCalc.weeklyChange.presets.gain'),
-                        tooltip: `${Math.round(tdee * 1.1)} - ${Math.round(tdee * 1.2)} kcal/dag`,
+                        tooltip: `${Math.round(tdee * 1.1)} - ${Math.round(tdee * 1.2)} ${t('goalCalc.units.kcalPerDay')}`,
                         kgPerWeek: calcKgPerWeek(0.1, 0.2),
                       },
                     ]
@@ -1040,7 +1040,7 @@ export default function GoalCalculatorTool() {
                                   som olika tal fast de är samma. */}
                               <span className="text-[10px] opacity-70 mt-1">
                                 {preset.kgPerWeek.min.toFixed(2)}-{preset.kgPerWeek.max.toFixed(2)}{' '}
-                                kg/v
+                                {t('goalCalc.units.kgPerWeekShort')}
                               </span>
                             </Button>
                           )
@@ -1125,7 +1125,7 @@ export default function GoalCalculatorTool() {
                   <p className="text-lg font-bold text-neutral-900 dark:text-neutral-100 leading-snug">
                     {(() => {
                       if (!goalResult || !profileData?.tdee) {
-                        return `${weeklyWeightChange.min.toFixed(2)}–${weeklyWeightChange.max.toFixed(2)} kg/vecka`
+                        return `${weeklyWeightChange.min.toFixed(2)}–${weeklyWeightChange.max.toFixed(2)} ${t('goalCalc.units.kgPerWeek')}`
                       }
                       const tdee = profileData.tdee
                       const isWeightLoss = goalResult.weightToChange < 0
@@ -1165,7 +1165,7 @@ export default function GoalCalculatorTool() {
                           presetName = t('goalCalc.weeklyChange.presets.gainShort')
                         }
                       }
-                      const kgRange = `${weeklyWeightChange.min.toFixed(2)}–${weeklyWeightChange.max.toFixed(2)} kg/vecka`
+                      const kgRange = `${weeklyWeightChange.min.toFixed(2)}–${weeklyWeightChange.max.toFixed(2)} ${t('goalCalc.units.kgPerWeek')}`
                       return presetName ? `${presetName} · ${kgRange}` : kgRange
                     })()}
                   </p>
@@ -1201,11 +1201,14 @@ export default function GoalCalculatorTool() {
                       {t('goalCalc.timeline.earliestDone')}
                     </p>
                     <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
-                      {timeline.min.estimatedEndDate.toLocaleDateString('sv-SE', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
+                      {timeline.min.estimatedEndDate.toLocaleDateString(
+                        i18n.language === 'en' ? 'en-GB' : 'sv-SE',
+                        {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        }
+                      )}
                     </p>
                   </div>
                   <div className="px-5 py-4">
@@ -1213,11 +1216,14 @@ export default function GoalCalculatorTool() {
                       {t('goalCalc.timeline.latestDone')}
                     </p>
                     <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
-                      {timeline.max.estimatedEndDate.toLocaleDateString('sv-SE', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
+                      {timeline.max.estimatedEndDate.toLocaleDateString(
+                        i18n.language === 'en' ? 'en-GB' : 'sv-SE',
+                        {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        }
+                      )}
                     </p>
                   </div>
                 </div>

@@ -156,6 +156,11 @@
     "gender": {
       "male": "Male",
       "female": "Female"
+    },
+    "units": {
+      "kcalPerDay": "kcal/day",
+      "kgPerWeek": "kg/week",
+      "kgPerWeekShort": "kg/w"
     }
   },
   "metCalc": {

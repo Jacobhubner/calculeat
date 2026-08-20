@@ -156,6 +156,11 @@
     "gender": {
       "male": "Man",
       "female": "Kvinna"
+    },
+    "units": {
+      "kcalPerDay": "kcal/dag",
+      "kgPerWeek": "kg/vecka",
+      "kgPerWeekShort": "kg/v"
     }
   },
   "metCalc": {

@@ -108,6 +108,11 @@ export function PrepDurationHelper({
    */
   const useWeightMode = focus === 'health'
 
+  // Kolumnen är numeric(5,2), så värdet kan ha två decimaler (23.13). En
+  // decimal räcker gott för en mätning med flera procentenheters osäkerhet.
+  const bodyFatDisplay =
+    bodyFatPercentage != null ? Math.round(bodyFatPercentage * 10) / 10 : undefined
+
   const targetNum = parseFloat(targetBf.replace(',', '.'))
 
   // Takten härleds ur nivån och TDEE — inte ur en schablon. Mittvärdet
@@ -180,6 +185,19 @@ export function PrepDurationHelper({
   // användaren 8 klampar modulen till 5 — då vore det vilseledande att varna
   // för ett tal som inte ligger bakom veckosiffran.
   const rateClass = estimate ? classifyPrepRate(estimate.ratePercentUsed) : null
+
+  /**
+   * Målet är fysiologiskt omöjligt — under fettfri massa, eller under den
+   * essentiella fettnivån.
+   *
+   * Beräkningsmodulen returnerar medvetet ett svar ändå, för att UI:t ska
+   * kunna FÖRKLARA varför målet inte går att nå i stället för att bara visa
+   * ingenting. Men då måste UI:t också ta hand om flaggan: annars stod
+   * "Den går inte att nå" direkt ovanför "Beräknad tid: 61 veckor" i
+   * skärmens största siffra, med en aktiv knapp för att spara den tiden
+   * som faslängd.
+   */
+  const unreachable = !!estimate && (estimate.belowLeanMass || estimate.belowEssentialFat)
   const suggestedTarget =
     gender === 'male' ? SUGGESTED_TARGET_BODY_FAT.male : SUGGESTED_TARGET_BODY_FAT.female
 
@@ -207,7 +225,7 @@ export function PrepDurationHelper({
           <p className="text-xs text-neutral-600 dark:text-neutral-400">
             {useWeightMode
               ? t('phase.prep.introWeight', { current: weightKg })
-              : t('phase.prep.intro', { current: bodyFatPercentage })}
+              : t('phase.prep.intro', { current: bodyFatDisplay })}
           </p>
 
           {/* Målfält och takt sida vid sida: två korta uppgifter som hör
@@ -264,18 +282,18 @@ export function PrepDurationHelper({
               {t('phase.prep.belowEssential', { limit: estimate.essentialFatLimit })}
             </p>
           )}
-          {!estimate?.isMinorAdjustment && rateClass === 'acceptable' && (
+          {!unreachable && !estimate?.isMinorAdjustment && rateClass === 'acceptable' && (
             <p className="text-xs text-amber-700 dark:text-amber-300">
               {t('phase.prep.rateAcceptable')}
             </p>
           )}
-          {!estimate?.isMinorAdjustment && rateClass === 'aggressive' && (
+          {!unreachable && !estimate?.isMinorAdjustment && rateClass === 'aggressive' && (
             <p className="text-xs text-error-600 dark:text-error-400">
               {t('phase.prep.rateAggressive')}
             </p>
           )}
 
-          {estimate ? (
+          {estimate && !unreachable ? (
             <div className="overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-700">
               {/* Veckotalet är svaret användaren kom hit för — det ska synas
                   som en siffra, inte som en mening i löptext. */}
@@ -369,7 +387,8 @@ export function PrepDurationHelper({
               </div>
             </div>
           ) : (
-            targetBf !== '' && (
+            targetBf !== '' &&
+            !unreachable && (
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
                 {useWeightMode ? t('phase.prep.noResultWeight') : t('phase.prep.noResult')}
               </p>

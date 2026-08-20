@@ -402,9 +402,14 @@ export function estimatePrepDuration(input: PrepEstimateInput): PrepEstimate | n
     ratePercentUsed,
     // Jämförelsen med fallstudiernas 14–32 veckor gäller bara riktiga
     // nedgångsperioder, inte finjusteringar.
+    // Jämför mot det AVRUNDADE talet — det är vad användaren ser. Med
+    // weeksExact stod "14 veckor" bredvid "kortare än 14–32 veckor" när
+    // det exakta värdet var 13,95 (2049 nåbara fall i svepning över
+    // appens egna takter).
     outsideObservedRange:
       !isMinorAdjustment &&
-      (weeksExact < OBSERVED_PREP_WEEKS.min || weeksExact > OBSERVED_PREP_WEEKS.max),
+      (round1(weeksExact) < OBSERVED_PREP_WEEKS.min ||
+        round1(weeksExact) > OBSERVED_PREP_WEEKS.max),
     isMinorAdjustment,
     belowEssentialFat: targetBodyFatPct < limit,
     essentialFatLimit: limit,
@@ -511,9 +516,11 @@ export function estimateDurationToWeight(input: {
     weightToLoseKg: round1(weightToLoseKg),
     weeklyLossKg: round1(currentWeightKg * r),
     ratePercentUsed,
+    // Samma avrundningsjämförelse som ovan.
     outsideObservedRange:
       !isMinorAdjustment &&
-      (weeksExact < OBSERVED_PREP_WEEKS.min || weeksExact > OBSERVED_PREP_WEEKS.max),
+      (round1(weeksExact) < OBSERVED_PREP_WEEKS.min ||
+        round1(weeksExact) > OBSERVED_PREP_WEEKS.max),
     isMinorAdjustment,
     belowLeanMass,
     leanMassKg: leanMassKg != null ? round1(leanMassKg) : null,

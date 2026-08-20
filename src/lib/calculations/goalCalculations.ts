@@ -153,7 +153,16 @@ export function calculateTimeline(
     weeksRequired = Math.abs(weightToChange / weeklyWeightChange)
   }
 
-  if (!Number.isFinite(weeksRequired) || weeksRequired <= 0) return null
+  /**
+   * Övre gräns: 20 år. En takt nära noll ger annars miljontals veckor, och
+   * då blir estimatedEndDate ett Invalid Date som renderas rakt ut i UI:t
+   * (verifierat: 0,0001 kcal/vecka ger 811 miljoner veckor). Ett svar på
+   * den skalan är dessutom meningslöst — bättre att säga att det inte går
+   * att räkna på.
+   */
+  const MAX_WEEKS = 52 * 20
+  if (!Number.isFinite(weeksRequired) || weeksRequired <= 0 || weeksRequired > MAX_WEEKS)
+    return null
 
   const monthsRequired = weeksRequired / 4.33 // Genomsnittligt antal veckor per månad
 

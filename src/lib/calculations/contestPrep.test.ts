@@ -454,16 +454,19 @@ describe('underskottsnivåerna matchar Energimål', () => {
   it('ger samma kg/vecka som referenstabellen visar', () => {
     // TDEE 3190, 90,8 kg — samma som i referenstabellen
     const params = { tdee: 3190, weightKg: 90.8 }
+    // EXAKTA värden, inte ungefärliga. toBeCloseTo(x, 1) hade toleransen
+    // ±0,05 — en tredjedel av hela nivåspannet — och dolde att kgMax här
+    // stod som 0,44 när det sanna värdet är 0,435 och UI:t visar 0,43.
     const vantat = {
-      cautious: [0.29, 0.44],
-      normal: [0.58, 0.73],
-      aggressive: [0.73, 0.87],
+      cautious: [0.29, 0.435],
+      normal: [0.58, 0.725],
+      aggressive: [0.725, 0.87],
     } as const
 
     for (const id of ['cautious', 'normal', 'aggressive'] as const) {
       const r = ratePercentForDeficitLevel({ level: id, ...params })!
-      expect(r.kgMin).toBeCloseTo(vantat[id][0], 1)
-      expect(r.kgMax).toBeCloseTo(vantat[id][1], 1)
+      expect(r.kgMin).toBeCloseTo(vantat[id][0], 4)
+      expect(r.kgMax).toBeCloseTo(vantat[id][1], 4)
     }
   })
 
@@ -511,26 +514,25 @@ describe('målviktsläget', () => {
     expect(Math.abs(viaBf.weeks - viaVikt.weeks)).toBeLessThan(0.15)
   })
 
-  it('typiska hälsospårsmål', () => {
-    for (const [w, mal] of [
-      [95, 87],
-      [110, 95],
-      [80, 74],
-    ] as const) {
+  it('ger rimliga tider för typiska hälsospårsmål', () => {
+    // Hade tidigare NOLL assertions — bara console.log i en loop, alltså
+    // en utskrift som passerade oavsett vad funktionen returnerade.
+    const fall = [
+      { w: 95, mal: 87, vantat: 14.6 },
+      { w: 110, mal: 95, vantat: 24.4 },
+      { w: 80, mal: 74, vantat: 13.0 },
+    ] as const
+
+    for (const f of fall) {
       const e = estimateDurationToWeight({
-        currentWeightKg: w,
-        targetWeightKg: mal,
+        currentWeightKg: f.w,
+        targetWeightKg: f.mal,
         weeklyRatePercent: 0.6,
       })!
-      console.log(
-        `${w} -> ${mal} kg:`,
-        e.weeks,
-        'v,',
-        e.weightToLoseKg,
-        'kg,',
-        e.weeklyLossKg,
-        'kg/v'
-      )
+      expect(e.weeks).toBeCloseTo(f.vantat, 1)
+      expect(e.weightToLoseKg).toBeCloseTo(f.w - f.mal, 1)
+      // Utan kroppsfett finns inget spann att visa.
+      expect(e.weeksRealistic).toBe(e.weeks)
     }
   })
 
