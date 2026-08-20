@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ReactNode, useRef } from 'react'
 import { X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Portal } from '@/components/ui/portal'
@@ -37,14 +37,34 @@ export function InfoModal({
   size = '2xl',
 }: InfoModalProps) {
   const { t } = useTranslation('common')
+  /** Sant bara när musknappen trycktes ned på överlägget självt. */
+  const pressStartedOnOverlay = useRef(false)
 
   if (!open) return null
 
   return (
     <Portal>
+      {/*
+        Stänger på MOUSE DOWN + UP på överlägget, inte på click.
+
+        Ett click räknas vid mouse-up. Drog man scrollreglaget i panelen och
+        släppte utanför den — vilket sker lätt eftersom reglaget ligger i
+        panelens kant — landade mouse-up på överlägget och modalen stängdes
+        mitt i läsningen. Samma sak vid markering av text som råkade sluta
+        utanför panelen.
+
+        Genom att kräva att BÅDA händelserna sker på överlägget stängs den
+        bara vid ett avsiktligt klick vid sidan om.
+      */}
       <div
         className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 dark:bg-black/70"
-        onClick={onClose}
+        onMouseDown={e => {
+          if (e.target === e.currentTarget) pressStartedOnOverlay.current = true
+        }}
+        onMouseUp={e => {
+          if (e.target === e.currentTarget && pressStartedOnOverlay.current) onClose()
+          pressStartedOnOverlay.current = false
+        }}
       >
         <div
           className={cn(
@@ -52,7 +72,6 @@ export function InfoModal({
             'dark:bg-neutral-850 dark:text-neutral-100 dark:shadow-black/50',
             SIZE_CLASSES[size]
           )}
-          onClick={e => e.stopPropagation()}
         >
           {/* Header */}
           <div className="sticky top-0 z-10 bg-white dark:bg-neutral-850 border-b border-neutral-200 dark:border-neutral-700 p-6 rounded-t-2xl flex justify-between items-start gap-4">
