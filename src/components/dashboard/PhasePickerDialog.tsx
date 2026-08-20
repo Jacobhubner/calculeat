@@ -23,6 +23,7 @@ import {
   HeartPulse,
   Lock,
   ChevronLeft,
+  HelpCircle,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -575,13 +576,20 @@ export function PhasePickerDialog({
                         >
                           {t('phase.measureFirstPick')}
                         </Button>
-                        <button
+                        {/* Såg ut som löptext bredvid knappen — en frågeikon
+                            och en ram gör att den läses som klickbar utan att
+                            konkurrera med huvudvalet, som behåller sin
+                            fyllda knapp. */}
+                        <Button
                           type="button"
+                          size="sm"
+                          variant="ghost"
                           onClick={() => setMeasureInfoOpen(true)}
-                          className="rounded text-xs font-medium text-primary-700 underline-offset-2 transition-colors hover:underline dark:text-primary-300"
+                          className="h-7 gap-1.5 border border-primary-300 text-xs text-primary-800 hover:bg-primary-100 dark:border-primary-700 dark:text-primary-200 dark:hover:bg-primary-900/40"
                         >
+                          <HelpCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                           {t('phase.measureFirstCta')}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   )}
