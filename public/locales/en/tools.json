@@ -1650,6 +1650,8 @@
     "eqRangeLabel": "The upper bound of the range",
     "eqRangeNote": "Calculated only when the goal is set as a body fat percentage. t is the target level as a decimal and f is the share of the loss assumed to be fat-free mass (0.15). The formula solves for reaching the same fat level even though some of what is lost is muscle — so more total weight must go, and it takes longer. When the goal is a weight, it is reached just as fast regardless of what is lost, so there is no range.",
     "eqGainLabel": "Weight gain",
-    "eqGainNote": "Gain is calculated linearly. Energy expenditure rises with weight, so the surplus grows rather than shrinks — the curve does not taper, and the exponential model would lean the wrong way."
+    "eqGainNote": "Gain is calculated linearly. Energy expenditure rises with weight, so the surplus grows rather than shrinks — the curve does not taper, and the exponential model would lean the wrong way.",
+    "eqDeltaLabel": "What the deficit means in kg per week",
+    "eqDeltaNote": "This is the figure shown at each level and in Energy goal. One kilo of body weight is assumed to represent 7,700 kcal. The factor is the share of your expenditure you eat — 0.75 at a 25 percent deficit, 1.15 at a 15 percent surplus. A deficit gives a positive number, a surplus a negative one. Since the levels are ranges, both bounds are calculated and you see the result as an interval."
   }
 }

@@ -92,13 +92,20 @@ const EQUATIONS = [
     ],
   },
   {
+    labelKey: 'eqDeltaLabel',
+    noteKey: 'eqDeltaNote',
+    lines: [
+      'kcal/dag   =  TDEE − TDEE × faktor',
+      '',
+      '              kcal/dag × 7',
+      'kg/vecka   =  ─────────────',
+      '                  7700',
+    ],
+  },
+  {
     labelKey: 'eqRateLabel',
     noteKey: 'eqRateNote',
-    lines: [
-      'kcal/dag  =  TDEE − TDEE × faktor',
-      'kg/vecka  =  kcal/dag × 7 / 7700',
-      'r         =  kg/vecka / startvikt',
-    ],
+    lines: ['r  =  |kg/vecka| / startvikt'],
   },
   {
     labelKey: 'eqTargetLabel',

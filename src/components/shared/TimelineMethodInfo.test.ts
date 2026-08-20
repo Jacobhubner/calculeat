@@ -1,4 +1,5 @@
 import { estimatePrepDuration, estimateDurationToWeight } from '@/lib/calculations/contestPrep'
+import { weeklyRateForCalories } from '@/lib/calculations/weeklyRate'
 import { describe, it, expect } from 'vitest'
 import {
   calculateGoal,
@@ -120,5 +121,29 @@ describe('ekvationerna i modalen stämmer med koden', () => {
       weeklyRatePercent: rate,
     })!
     expect(Math.abs(manuell - kod.weeksRealistic)).toBeLessThan(0.1)
+  })
+
+  it('kg per vecka ur kalorimålet', () => {
+    // Modalens formel:
+    //   kcal/dag = TDEE − TDEE × faktor
+    //   kg/vecka = kcal/dag × 7 / 7700
+    // Tecknet spelar roll: underskott ska ge ett POSITIVT tal, överskott
+    // ett negativt. Skrevs först tvärtom.
+    const tdee = 2800
+
+    // Underskott 25 % (faktor 0,75)
+    const underskott = ((tdee - tdee * 0.75) * 7) / 7700
+    const kod = weeklyRateForCalories({
+      tdee,
+      caloriesMin: tdee * 0.75,
+      caloriesMax: tdee * 0.75,
+      weightKg: 90,
+    })
+    expect(underskott).toBeGreaterThan(0)
+    expect(Math.abs(underskott - kod.kgMax)).toBeLessThan(0.001)
+
+    // Överskott 15 % (faktor 1,15) ger negativt tal
+    const overskott = ((tdee - tdee * 1.15) * 7) / 7700
+    expect(overskott).toBeLessThan(0)
   })
 })

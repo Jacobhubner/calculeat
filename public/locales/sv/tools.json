@@ -1650,6 +1650,8 @@
     "eqRangeLabel": "Spannets övre gräns",
     "eqRangeNote": "Räknas bara när målet satts i kroppsfettprocent. t är målnivån som decimal och f är den andel av nedgången som antas vara fettfri massa (0,15). Formeln löser för att nå samma fettnivå trots att en del av det som försvinner är muskler — därför måste mer totalvikt bort, och det tar längre tid. Sätts målet som en vikt nås den lika snabbt oavsett vad som försvinner, och då finns inget spann.",
     "eqGainLabel": "Viktuppgång",
-    "eqGainNote": "Uppgång räknas linjärt. Energiförbrukningen stiger med vikten, så överskottet växer i stället för att krympa — kurvan avtar inte, och exponentialmodellen skulle luta åt fel håll."
+    "eqGainNote": "Uppgång räknas linjärt. Energiförbrukningen stiger med vikten, så överskottet växer i stället för att krympa — kurvan avtar inte, och exponentialmodellen skulle luta åt fel håll.",
+    "eqDeltaLabel": "Vad underskottet motsvarar i kg per vecka",
+    "eqDeltaNote": "Detta är talet som visas vid varje nivåval och i Energimål. Ett kilo kroppsvikt antas motsvara 7 700 kcal. Faktorn är andelen av din förbrukning du äter — 0,75 vid 25 procents underskott, 1,15 vid 15 procents överskott. Ett underskott ger ett positivt tal, ett överskott ett negativt. Eftersom nivåerna är spann räknas både övre och undre gränsen, och du ser resultatet som ett intervall."
   }
 }
