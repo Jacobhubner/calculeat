@@ -39,6 +39,7 @@ export function InfoModal({
   const { t } = useTranslation('common')
   /** Sant bara när musknappen trycktes ned på överlägget självt. */
   const pressStartedOnOverlay = useRef(false)
+  const panelRef = useRef<HTMLDivElement>(null)
 
   /**
    * Esc stänger modalen.
@@ -56,6 +57,36 @@ export function InfoModal({
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [open, onClose])
+
+  /**
+   * Släpp igenom hjulscroll i panelen.
+   *
+   * Radix Dialog monterar react-remove-scroll, som lägger en
+   * document-lyssnare på wheel och touchmove och kallar preventDefault för
+   * allt som inte ligger i dess shards — och shards är bara dialogens EGET
+   * innehåll. Den här modalen ligger i en annan portal och blockerades
+   * därför, trots att panelen har overflow-y-auto. Att dra i scrollreglaget
+   * fungerade, eftersom det inte är ett wheel-event.
+   *
+   * React-handlare räcker inte: de körs på root-containern, alltså efter
+   * document-lyssnaren. Därför en NATIV lyssnare i capture-fas, som hinner
+   * först och stoppar spridningen innan Radix ser händelsen. Webbläsarens
+   * egen scroll påverkas inte av stopPropagation.
+   */
+  useEffect(() => {
+    if (!open) return
+    const panel = panelRef.current
+    if (!panel) return
+    const allow = (e: Event) => {
+      if (panel.contains(e.target as Node)) e.stopPropagation()
+    }
+    document.addEventListener('wheel', allow, { capture: true })
+    document.addEventListener('touchmove', allow, { capture: true })
+    return () => {
+      document.removeEventListener('wheel', allow, { capture: true })
+      document.removeEventListener('touchmove', allow, { capture: true })
+    }
+  }, [open])
 
   if (!open) return null
 
@@ -93,6 +124,7 @@ export function InfoModal({
         }}
       >
         <div
+          ref={panelRef}
           className={cn(
             'bg-white rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-y-auto',
             'dark:bg-neutral-850 dark:text-neutral-100 dark:shadow-black/50',
