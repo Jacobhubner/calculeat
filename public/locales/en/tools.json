@@ -1640,7 +1640,7 @@
     "gainBody": "Weight gain is calculated at a fixed weekly rate. Since expenditure rises with weight, the surplus grows somewhat along the way, which means the gain can in practice go marginally faster than calculated. A comparison against a week-by-week simulation lands within a couple of weeks for a gain of 10–15 kg, and the deviation falls on the cautious side.",
     "gainNote": "The sources below concern weight loss. An equivalent review for weight gain is not available in the literature.",
     "equationsTitle": "The equations",
-    "equationsIntro": "The same core equation is used for all weight loss — in Goal setting and when planning a period. The surfaces differ only in how the rate and target weight are derived.",
+    "equationsIntro": "The same core equation is used for all weight loss — in the Goal Calculator and when planning a period. The surfaces differ only in how the rate and target weight are derived.",
     "eqCoreLabel": "The core equation",
     "eqCoreNote": "The assumption is that you lose a fixed SHARE of your body weight each week, not a fixed number of kilos. That is why the kilo loss tapers as you get lighter. r is the weekly rate as a decimal — 0.005 means 0.5% of body weight per week.",
     "eqRateLabel": "How the rate (r) is derived",
