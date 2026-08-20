@@ -1,4 +1,4 @@
-import { ReactNode, useRef } from 'react'
+import { ReactNode, useEffect, useRef } from 'react'
 import { X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Portal } from '@/components/ui/portal'
@@ -40,6 +40,23 @@ export function InfoModal({
   /** Sant bara när musknappen trycktes ned på överlägget självt. */
   const pressStartedOnOverlay = useRef(false)
 
+  /**
+   * Esc stänger modalen.
+   *
+   * Fanns inte tidigare — den låg alltid ovanpå en Radix Dialog, som har
+   * egen Esc-hantering, så tangenten råkade fungera. När PhasePickerDialog
+   * fick onEscapeKeyDown-guard för att sluta stänga periodvalet bakom den
+   * här modalen slutade Esc göra någonting alls.
+   */
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [open, onClose])
+
   if (!open) return null
 
   return (
@@ -57,7 +74,16 @@ export function InfoModal({
         bara vid ett avsiktligt klick vid sidan om.
       */}
       <div
-        className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 dark:bg-black/70"
+        /*
+          pointer-events-auto är INTE överflödig.
+
+          Radix DismissableLayer sätter pointer-events: none på body när en
+          Dialog är öppen, och slår bara på det igen inuti dialogens eget
+          innehåll. Den här modalen renderas i en egen portal på body — alltså
+          utanför — och tog därför inte emot ett enda klick när den öppnades
+          ovanpå en Dialog. Varken X, Stäng eller scroll fungerade.
+        */
+        className="pointer-events-auto fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/50 dark:bg-black/70"
         onMouseDown={e => {
           if (e.target === e.currentTarget) pressStartedOnOverlay.current = true
         }}
