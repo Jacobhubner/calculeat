@@ -348,11 +348,13 @@ export function PrepDurationHelper({
                     {t('phase.prep.minorAdjustment')}
                   </p>
                 )}
-                {/* Faslängden lagras i hela veckor, så knappen rundar upp, och
-                  den använder spannets ÖVRE gräns. Att planera för golvet vore
-                  att planera för ett bästa fall som sällan inträffar — och för
-                  kort tid tvingar fram en högre takt i slutet, där risken för
-                  muskelförlust är störst. */}
+                {/* Faslängden lagras i hela veckor, så knappen rundar upp.
+                    I fettprocentläget används spannets ÖVRE gräns: att planera
+                    för golvet vore att planera för ett bästa fall som sällan
+                    inträffar, och för kort tid tvingar fram en högre takt i
+                    slutet där risken för muskelförlust är störst.
+                    I viktläget finns inget spann (weeksRealistic === weeks),
+                    så knappen använder samma tal som visas. */}
                 {onUseWeeks && (
                   <Button
                     type="button"
