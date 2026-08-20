@@ -357,9 +357,6 @@
   },
   "calibrationReadiness": {
     "title": "På väg mot kalibrering",
-    "countdown_one": "Om {{count}} dag kan appen räkna ut ditt verkliga TDEE",
-    "countdown_other": "Om {{count}} dagar kan appen räkna ut ditt verkliga TDEE",
-    "almostThere": "Snart kan appen räkna ut ditt verkliga TDEE",
     "weighIns": "Vägningar",
     "logDays": "Loggade dagar",
     "nextWeighIn": "Nästa steg: väg dig i morgon bitti, före frukost. Samma tid varje gång gör att vikten går att jämföra mellan dagar.",
@@ -367,6 +364,21 @@
     "nextWeekend": "Nästa steg: logga även i helgen. Helgdagar ligger ofta högre än vardagar, och saknas de skattas din förbrukning för lågt.",
     "nextAlmost": "Fortsätt så här några dagar till — sedan kan appen räkna ut ditt TDEE utifrån din egen data.",
     "explainer": "Kalibreringen jämför vad du ätit med hur vikten svarat. Då blir ditt TDEE ditt eget — inte en formels uppskattning.",
-    "logWeightCta": "Registrera en vägning"
+    "logWeightCta": "Registrera en vägning",
+    "titleAfterCalibration": "Din nästa kalibrering",
+    "statusCollecting": "Underlaget byggs upp. Fortsätt väga dig och logga maten.",
+    "statusFresh": "Nästa mätning börjar nu. Underlaget byggs upp igen från och med i dag.",
+    "statusClusterGap": "Dina vägningar ligger för tätt i tiden för att mäta en förändring.",
+    "statusNeedLogDays": "Vägningarna räcker. Nu saknas loggade dagar att jämföra dem mot.",
+    "statusNeedCoverage": "Loggarna täcker bara en del av mätperioden.",
+    "ladderLabel": "Mätperiod",
+    "ladderDays": "{{count}} dagar",
+    "ladderPrecisionShort": "±177 kcal/dag",
+    "ladderPrecisionLong": "±62 kcal/dag",
+    "weighInsNew": "Nya vägningar",
+    "nextWeighAgainIn": "Nästa steg: väg dig igen om {{count}} dagar. Kalibreringen jämför en tidig vikt med en senare — då behövs mätningar i båda ändarna av perioden.",
+    "nextWeighAgainToday": "Nästa steg: väg dig i dag. Kalibreringen jämför en tidig vikt med en senare, och nu saknas den senare.",
+    "nextLogCoverage": "Nästa steg: logga även de dagar du hoppade över tidigare i perioden. Intaget och vikten behöver beskriva samma tid.",
+    "nextUpgradePeriod": "Fortsätt väga dig och logga, så blir mätningen säkrare. Vid 28 dagar är osäkerheten ungefär ±62 kcal per dag i stället för ±177."
   }
 }

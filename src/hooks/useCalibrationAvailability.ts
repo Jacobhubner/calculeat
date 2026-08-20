@@ -10,6 +10,7 @@ import {
   MIN_CLUSTER_SIZE,
   MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
   MIN_LOG_DAYS_FOR_CALIBRATION,
+  MIN_LOG_COVERAGE_OF_PERIOD,
   buildClusters,
 } from '@/lib/calculations/calibration'
 import { useEntitlements, isUnlimited } from '@/hooks/useEntitlements'
@@ -72,17 +73,110 @@ export function useCalibrationAvailability(
       : null
     const progressWindowStart =
       lastCalibratedAt && lastCalibratedAt > fourteenDaysAgo ? lastCalibratedAt : fourteenDaysAgo
-    const weighInsNow = weightHistory
-      ? weightHistory.filter(w => new Date(w.recorded_at) >= progressWindowStart).length
+
+    /**
+     * Vilka perioder håller redan, och vilken jobbar användaren mot?
+     *
+     * Loopen nedan testade förut samma sak men kastade mellanresultaten —
+     * bara den längsta träffen behölls. Beredskapskortet behöver hela
+     * stegen för att kunna visa att det finns mer att hämta: en längre
+     * mätperiod ger säkrare resultat (±177 kcal/dag vid 14 dagar mot ±62
+     * vid 28, se calibration-quality.ts).
+     */
+    const PERIODS: Array<14 | 21 | 28> = [14, 21, 28]
+    const reachedPeriods: Array<14 | 21 | 28> = []
+    for (const period of PERIODS) {
+      const cutoff = new Date(mountedAt - period * 24 * 60 * 60 * 1000)
+      const inPeriod = (weightHistory ?? []).filter(w => new Date(w.recorded_at) >= cutoff)
+      if (inPeriod.length < MIN_DATA_POINTS[period]) continue
+      const clusters = buildClusters(weightHistory ?? [], period, new Date(mountedAt))
+      if (!clusters) continue
+      const minCluster = MIN_CLUSTER_SIZE[period]
+      if (clusters.startCluster.count < minCluster || clusters.endCluster.count < minCluster)
+        continue
+      reachedPeriods.push(period)
+    }
+
+    /**
+     * Aktiv period = nästa nivå att sträcka sig mot, eller den högsta när
+     * allt är uppnått. Kraven i kortet mäts mot DEN, så barerna följer med
+     * uppåt i stället för att fastna på 14-dagarskraven.
+     */
+    const activePeriod: 14 | 21 | 28 =
+      reachedPeriods.length === 0
+        ? 14
+        : reachedPeriods.length === PERIODS.length
+          ? 28
+          : PERIODS[reachedPeriods.length]
+
+    const weighInsNeeded = MIN_DATA_POINTS[activePeriod]
+
+    /**
+     * Fönstret följer den aktiva perioden.
+     *
+     * weighInsNow räknades först alltid över 14 dagar medan kravet togs från
+     * activePeriod. Var den 28 jämfördes 14 dagars vägningar mot 28 dagars
+     * krav, och kortet visade för få trots att underlaget räckte.
+     */
+    const activeCutoff = new Date(mountedAt - activePeriod * 24 * 60 * 60 * 1000)
+    const activeWindowStart =
+      lastCalibratedAt && lastCalibratedAt > activeCutoff ? lastCalibratedAt : activeCutoff
+    const weighInsInActivePeriod = weightHistory
+      ? weightHistory.filter(w => new Date(w.recorded_at) >= activeWindowStart).length
       : 0
-    const weighInsNeeded = MIN_DATA_POINTS[14]
+
+    /**
+     * När blir nästa vägning meningsfull?
+     *
+     * Klusterkravet går inte att uppfylla genom att väga sig igen i dag —
+     * mätningarna måste hamna i olika ändar av fönstret, som delas i
+     * tredjedelar. Ligger allt i slutet får den äldsta mätningen först
+     * driva in i startzonen, och det tar tid.
+     *
+     * Det här är en NEDRÄKNING och kan bara minska. daysRemaining var ett
+     * ANTAL som presenterades som dagar, och kunde dessutom gå bakåt.
+     */
+    const zoneDays = activePeriod / 3
+    const oldestInWindow = (weightHistory ?? [])
+      .filter(w => new Date(w.recorded_at) >= progressWindowStart)
+      .map(w => new Date(w.recorded_at).getTime())
+      .sort((a, b) => a - b)[0]
+    const daysSinceOldest =
+      oldestInWindow != null ? (mountedAt - oldestInWindow) / (24 * 60 * 60 * 1000) : 0
+    const daysUntilNextWeighInUseful = Math.max(0, Math.ceil(zoneDays - daysSinceOldest))
+
+    /**
+     * Täckningskravet kontrollerades bara i calibration-core, alltså EFTER
+     * knapptrycket. Kortet kunde därför säga "redo" om något som sedan
+     * nekades. Uppskattas här mot den aktiva perioden.
+     */
+    const coverageOk =
+      logDays >= Math.ceil(activePeriod * MIN_LOG_COVERAGE_OF_PERIOD) ||
+      logDays >= MIN_LOG_DAYS_FOR_CALIBRATION * 2
+
+    const blocking: CalibrationAvailability['progress']['blocking'] =
+      weighInsInActivePeriod < weighInsNeeded
+        ? 'weighInCount'
+        : reachedPeriods.length === 0
+          ? 'clusterGap'
+          : logDays < MIN_LOG_DAYS_FOR_CALIBRATION
+            ? 'logDays'
+            : !coverageOk
+              ? 'logCoverage'
+              : 'none'
+
     const buildProgress = (): CalibrationAvailability['progress'] => ({
-      weighIns: { current: weighInsNow, required: weighInsNeeded },
+      weighIns: { current: weighInsInActivePeriod, required: weighInsNeeded },
       logDays: { current: logDays, required: MIN_LOG_DAYS_FOR_CALIBRATION },
+      // Kvar för bakåtkompatibilitet, se @deprecated i types.ts.
       daysRemaining: Math.max(
-        Math.max(0, weighInsNeeded - weighInsNow),
+        Math.max(0, weighInsNeeded - weighInsInActivePeriod),
         Math.max(0, MIN_LOG_DAYS_FOR_CALIBRATION - logDays)
       ),
+      activePeriod,
+      reachedPeriods,
+      blocking,
+      daysUntilNextWeighInUseful: blocking === 'clusterGap' ? daysUntilNextWeighInUseful : null,
     })
 
     const unavailable: CalibrationAvailability = {

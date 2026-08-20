@@ -357,9 +357,6 @@
   },
   "calibrationReadiness": {
     "title": "On your way to calibration",
-    "countdown_one": "In {{count}} day the app can work out your real TDEE",
-    "countdown_other": "In {{count}} days the app can work out your real TDEE",
-    "almostThere": "Soon the app can work out your real TDEE",
     "weighIns": "Weigh-ins",
     "logDays": "Logged days",
     "nextWeighIn": "Next step: weigh yourself tomorrow morning, before breakfast. The same time each day makes your weight comparable between days.",
@@ -367,6 +364,21 @@
     "nextWeekend": "Next step: log at weekends too. Weekend days often run higher than weekdays, and leaving them out makes your burn rate look too low.",
     "nextAlmost": "Keep this up for a few more days — then the app can work out your TDEE from your own data.",
     "explainer": "Calibration compares what you ate with how your weight responded. That makes your TDEE your own — not a formula estimate.",
-    "logWeightCta": "Log a weigh-in"
+    "logWeightCta": "Log a weigh-in",
+    "titleAfterCalibration": "Your next calibration",
+    "statusCollecting": "The data is building up. Keep weighing yourself and logging your food.",
+    "statusFresh": "The next measurement starts now. The data builds up again from today.",
+    "statusClusterGap": "Your weigh-ins are too close together in time to measure a change.",
+    "statusNeedLogDays": "You have enough weigh-ins. Now you need logged days to compare them against.",
+    "statusNeedCoverage": "Your logs only cover part of the measurement period.",
+    "ladderLabel": "Measurement period",
+    "ladderDays": "{{count}} days",
+    "ladderPrecisionShort": "±177 kcal/day",
+    "ladderPrecisionLong": "±62 kcal/day",
+    "weighInsNew": "New weigh-ins",
+    "nextWeighAgainIn": "Next step: weigh yourself again in {{count}} days. Calibration compares an early weight with a later one — so it needs measurements at both ends of the period.",
+    "nextWeighAgainToday": "Next step: weigh yourself today. Calibration compares an early weight with a later one, and the later one is missing.",
+    "nextLogCoverage": "Next step: log the days you skipped earlier in the period too. Intake and weight need to describe the same stretch of time.",
+    "nextUpgradePeriod": "Keep weighing and logging, and the measurement gets more reliable. At 28 days the uncertainty is about ±62 kcal per day instead of ±177."
   }
 }

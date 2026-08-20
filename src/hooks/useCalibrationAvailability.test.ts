@@ -170,3 +170,69 @@ describe('useCalibrationAvailability — när kalibrering REKOMMENDERAS', () => 
     expect(result.current.isAvailable).toBe(true)
   })
 })
+
+describe('useCalibrationAvailability — trappan och blockeringsorsak', () => {
+  /**
+   * Kortet visar tre mätperioder som en stege. Utan reachedPeriods kunde
+   * det bara mäta mot 14-dagarskraven, och användaren såg aldrig att en
+   * längre period ger säkrare resultat.
+   */
+  it('rapporterar aktiv period och uppnådda nivåer', () => {
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, weights(8, 28), null, 20)
+    )
+    expect([14, 21, 28]).toContain(result.current.progress.activePeriod)
+    expect(Array.isArray(result.current.progress.reachedPeriods)).toBe(true)
+  })
+
+  it('pekar ut klustringen när vägningarna ligger för tätt', () => {
+    // Alla mätningar de senaste tre dagarna: antalet räcker, men de hamnar
+    // bara i fönstrets sista tredjedel.
+    const nu = Date.now()
+    const tata = Array.from({ length: 6 }, (_, i) => ({
+      id: `t${i}`,
+      user_id: 'u1',
+      weight_kg: 85 - i * 0.1,
+      recorded_at: new Date(nu - i * 3600000).toISOString(),
+      created_at: new Date(nu - i * 3600000).toISOString(),
+    })) as unknown as Parameters<typeof useCalibrationAvailability>[1]
+
+    const { result } = renderHook(() => useCalibrationAvailability(profile, tata, null, 20))
+    // Antalet är uppfyllt...
+    expect(result.current.progress.weighIns.current).toBeGreaterThanOrEqual(
+      result.current.progress.weighIns.required
+    )
+    // ...men ingen period håller, och orsaken ska framgå.
+    expect(result.current.progress.reachedPeriods).toHaveLength(0)
+    expect(result.current.progress.blocking).toBe('clusterGap')
+  })
+
+  it('ger en NEDRÄKNING vid klusterbrist, inte ett antal', () => {
+    const nu = Date.now()
+    const tata = Array.from({ length: 6 }, (_, i) => ({
+      id: `t${i}`,
+      user_id: 'u1',
+      weight_kg: 85 - i * 0.1,
+      recorded_at: new Date(nu - i * 3600000).toISOString(),
+      created_at: new Date(nu - i * 3600000).toISOString(),
+    })) as unknown as Parameters<typeof useCalibrationAvailability>[1]
+
+    const { result } = renderHook(() => useCalibrationAvailability(profile, tata, null, 20))
+    const dagar = result.current.progress.daysUntilNextWeighInUseful
+    expect(dagar).not.toBeNull()
+    // Fönstrets tredjedel är ~4,7 dagar för 14-dagarsperioden. Mätningarna
+    // är timmar gamla, så nästan hela väntetiden återstår.
+    expect(dagar!).toBeGreaterThan(0)
+    expect(dagar!).toBeLessThanOrEqual(10)
+  })
+
+  it('sätter blocking till none när inget hindrar', () => {
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, weights(8, 28), null, 20)
+    )
+    if (result.current.isAvailable) {
+      expect(result.current.progress.blocking).toBe('none')
+      expect(result.current.progress.daysUntilNextWeighInUseful).toBeNull()
+    }
+  })
+})

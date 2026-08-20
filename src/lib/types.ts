@@ -722,8 +722,39 @@ export interface CalibrationAvailability {
   progress: {
     weighIns: { current: number; required: number }
     logDays: { current: number; required: number }
-    /** Dagar kvar i värsta fall (0 = allt uppfyllt) */
+    /**
+     * @deprecated Räknade max(saknade vägningar, saknade loggdagar) och
+     * visade det som DAGAR — fel enhet. "3 vägningar kvar" blev "om 3
+     * dagar", vilket dessutom är omöjligt när vägningarna måste spridas
+     * över perioden. Använd blocking i stället.
+     */
     daysRemaining: number
+    /**
+     * Vilken mätperiod kraven ovan gäller. Stiger när användaren klarat en
+     * nivå: har hon 14 dagar i hamn mäts hon mot 21:s krav.
+     */
+    activePeriod: 14 | 21 | 28
+    /** Perioder som redan håller — driver trappan i beredskapskortet. */
+    reachedPeriods: Array<14 | 21 | 28>
+    /**
+     * VAD som blockerar just nu, för att kortet ska kunna säga rätt sak.
+     *
+     *  weighInCount  — för få vägningar
+     *  clusterGap    — nog många, men för tätt i tiden (fönstret delas i
+     *                  tredjedelar; det behövs mätningar i båda ändarna)
+     *  logDays       — för få loggade dagar
+     *  logCoverage   — loggarna täcker inte halva mätperioden
+     *  none          — inget blockerar
+     */
+    blocking: 'weighInCount' | 'clusterGap' | 'logDays' | 'logCoverage' | 'none'
+    /**
+     * Dagar tills nästa vägning är meningsfull, när clusterGap blockerar.
+     *
+     * Klusterkravet kan inte uppfyllas genom att väga sig igen i dag —
+     * mätningarna måste hamna i olika ändar av fönstret. Detta är en
+     * NEDRÄKNING, till skillnad från daysRemaining som var ett antal.
+     */
+    daysUntilNextWeighInUseful: number | null
   }
 }
 

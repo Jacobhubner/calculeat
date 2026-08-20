@@ -107,7 +107,8 @@ export default function CalibrationReadinessCard({
   // CalibrationPrompt över.
   if (availability.isAvailable) return null
 
-  const { weighIns, logDays, daysRemaining } = availability.progress
+  const { weighIns, logDays, activePeriod, reachedPeriods, blocking, daysUntilNextWeighInUseful } =
+    availability.progress
 
   // Har man varken vägt sig eller loggat är kalibrering inte nästa steg —
   // då är det logga-mat som gäller, och dashboardens egna CTA:n säger redan
@@ -125,6 +126,14 @@ export default function CalibrationReadinessCard({
       ? 'logDays'
       : 'done'
 
+  /**
+   * Direkt efter en kalibrering räknas NYA vägningar, inte alla.
+   *
+   * Utan ordet "nya" tror den som har fyrtio vägningar i historiken att
+   * appen tappat bort hennes data när det står 0 / 3.
+   */
+  const isFreshAfterCalibration = hasCalibratedBefore && weighIns.current === 0
+
   // Även när båda kraven är nästan uppfyllda kan urvalet vara skevt.
   const weekendCount = (loggedDates ?? []).filter(iso => {
     const day = new Date(`${iso}T12:00:00`).getDay()
@@ -134,14 +143,38 @@ export default function CalibrationReadinessCard({
     (loggedDates?.length ?? 0) >= 7 &&
     weekendCount / (loggedDates?.length ?? 1) < EXPECTED_WEEKEND_SHARE * 0.5
 
+  /**
+   * Nästa steg styrs av vad som FAKTISKT blockerar, inte av vilken bar som
+   * är minst fylld. Klustringen syns aldrig som ett eget krav — den skulle
+   * bli en progressbar som går BAKÅT av sig själv, eftersom fönstret
+   * glider framåt varje dygn. Som nedräkning har den inte det problemet.
+   */
   const nextStepKey =
-    focus === 'weighIns'
-      ? 'nextWeighIn'
-      : focus === 'logDays'
-        ? 'nextLogDay'
-        : hasWeekendGap
-          ? 'nextWeekend'
-          : 'nextAlmost'
+    blocking === 'clusterGap'
+      ? daysUntilNextWeighInUseful && daysUntilNextWeighInUseful > 0
+        ? 'nextWeighAgainIn'
+        : 'nextWeighAgainToday'
+      : blocking === 'logCoverage'
+        ? 'nextLogCoverage'
+        : focus === 'weighIns'
+          ? 'nextWeighIn'
+          : focus === 'logDays'
+            ? 'nextLogDay'
+            : hasWeekendGap
+              ? 'nextWeekend'
+              : reachedPeriods.length > 0 && reachedPeriods.length < 3
+                ? 'nextUpgradePeriod'
+                : 'nextAlmost'
+
+  const statusKey = isFreshAfterCalibration
+    ? 'statusFresh'
+    : blocking === 'clusterGap'
+      ? 'statusClusterGap'
+      : blocking === 'logDays'
+        ? 'statusNeedLogDays'
+        : blocking === 'logCoverage'
+          ? 'statusNeedCoverage'
+          : 'statusCollecting'
 
   return (
     <Card className={className}>
@@ -152,21 +185,89 @@ export default function CalibrationReadinessCard({
           </div>
           <div className="min-w-0 flex-1">
             <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
-              {t('calibrationReadiness.title')}
+              {isFreshAfterCalibration
+                ? t('calibrationReadiness.titleAfterCalibration')
+                : t('calibrationReadiness.title')}
             </h4>
-            {/* Belöningen först, kravet som vägen dit */}
+            {/*
+              Tillståndet, inte en nedräkning. Den gamla countdown-texten
+              byggde på daysRemaining = max(saknade vägningar, saknade
+              loggdagar) — ett ANTAL som visades som DAGAR. Tre vägningar
+              back blev "om 3 dagar", vilket dessutom är omöjligt när
+              vägningarna måste spridas över perioden.
+            */}
             <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-0.5">
-              {daysRemaining > 0
-                ? t('calibrationReadiness.countdown', { count: daysRemaining })
-                : t('calibrationReadiness.almostThere')}
+              {t(`calibrationReadiness.${statusKey}`)}
             </p>
+          </div>
+        </div>
+
+        {/*
+          Trappan: tre perioder som en stege, inte tre uppsättningar krav.
+          Bara periodlängd och precision syns — att 28 dagar kräver sex
+          vägningar i stället för fyra säger användaren ingenting, men
+          "±177 → ±62 kcal" är ett erbjudande.
+        */}
+        <div>
+          <p className="mb-1.5 text-[10px] uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+            {t('calibrationReadiness.ladderLabel')}
+          </p>
+          <div className="flex items-center gap-1.5">
+            {([14, 21, 28] as const).map((period, i) => {
+              const reached = reachedPeriods.includes(period)
+              const isActive = period === activePeriod && !reached
+              return (
+                <div key={period} className="flex flex-1 items-center gap-1.5">
+                  <div
+                    className={cn(
+                      'h-2 w-2 shrink-0 rounded-full',
+                      reached
+                        ? 'bg-primary-600 dark:bg-primary-400'
+                        : isActive
+                          ? 'ring-2 ring-primary-500 dark:ring-primary-400'
+                          : 'bg-neutral-300 dark:bg-neutral-700'
+                    )}
+                  />
+                  <span
+                    className={cn(
+                      'text-[10px] tabular-nums',
+                      reached || isActive
+                        ? 'font-medium text-neutral-700 dark:text-neutral-200'
+                        : 'text-neutral-400 dark:text-neutral-500'
+                    )}
+                  >
+                    {t('calibrationReadiness.ladderDays', { count: period })}
+                  </span>
+                  {i < 2 && (
+                    <div
+                      className={cn(
+                        'h-px flex-1',
+                        reached
+                          ? 'bg-primary-400 dark:bg-primary-600'
+                          : 'bg-neutral-200 dark:bg-neutral-800'
+                      )}
+                    />
+                  )}
+                </div>
+              )
+            })}
+          </div>
+          {/* Bara de två belagda talen. ±110 för 21 dagar finns inte i
+              koden och ska därför inte påstås. */}
+          <div className="mt-1 flex justify-between text-[10px] text-neutral-400 dark:text-neutral-500">
+            <span>{t('calibrationReadiness.ladderPrecisionShort')}</span>
+            <span>{t('calibrationReadiness.ladderPrecisionLong')}</span>
           </div>
         </div>
 
         <div className="flex flex-col gap-2.5">
           <RequirementRow
             icon={<Scale className="h-3.5 w-3.5" />}
-            label={t('calibrationReadiness.weighIns')}
+            label={
+              isFreshAfterCalibration
+                ? t('calibrationReadiness.weighInsNew')
+                : t('calibrationReadiness.weighIns')
+            }
             current={weighIns.current}
             required={weighIns.required}
             isFocus={focus === 'weighIns'}
@@ -188,7 +289,9 @@ export default function CalibrationReadinessCard({
             <Zap className="h-3.5 w-3.5 mt-0.5 shrink-0 text-primary-600 dark:text-primary-300" />
           )}
           <p className="text-[11px] leading-relaxed text-neutral-600 dark:text-neutral-300">
-            {t(`calibrationReadiness.${nextStepKey}`)}
+            {t(`calibrationReadiness.${nextStepKey}`, {
+              count: daysUntilNextWeighInUseful ?? 0,
+            })}
           </p>
         </div>
 
@@ -196,7 +299,7 @@ export default function CalibrationReadinessCard({
             väg framåt — den som ville följa den fick själv leta reda på
             viktspårningen i profilen. Visas bara när det är just vägningar
             som saknas. */}
-        {focus === 'weighIns' && (
+        {(focus === 'weighIns' || (blocking === 'clusterGap' && !daysUntilNextWeighInUseful)) && (
           <Button
             type="button"
             size="sm"
