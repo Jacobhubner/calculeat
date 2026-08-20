@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PrepDurationHelper } from './PrepDurationHelper'
 import { MeasureFirstInfo } from './MeasureFirstInfo'
@@ -31,6 +31,7 @@ import type { DietPhaseType, PhaseFocus } from '@/lib/types'
 import { suggestPhaseTargets } from '@/lib/calculations/dietPhases'
 import { deficitLevelIdToLabel, type DeficitLevelId } from '@/lib/utils/deficitLevels'
 import { useStartDietPhase } from '@/hooks/useDietPhases'
+import { useActualCalorieIntake } from '@/hooks/useActualCalorieIntake'
 import { useUpdateProfile, useActiveProfile } from '@/hooks'
 import { useAuth } from '@/contexts/AuthContext'
 import { macrosForMode } from '@/lib/utils/macroModes'
@@ -50,6 +51,13 @@ const PHASE_TYPES: readonly DietPhaseType[] = ['maintenance', 'bulk', 'cut', 're
 // Hälsa först: det är det bredare spåret och kräver ingen kroppsfettmätning.
 // Styrkespåret ligger tvåa och är låst tills kroppsfett är angivet.
 const FOCUS_OPTIONS: readonly PhaseFocus[] = ['health', 'strength'] as const
+
+/**
+ * Mätperiodens längd i dagar. Fyra veckor, av samma skäl som
+ * rekommendationen anger: mätosäkerheten är ±177 kcal/dag vid 14 dagar men
+ * ±62 vid 28 (calibration-quality.ts).
+ */
+const MEASURE_WINDOW_DAYS = 28
 
 const PHASE_ICON = {
   cut: TrendingDown,
@@ -142,6 +150,28 @@ export function PhasePickerDialog({
    * tills det bekräftats mot utfall) är skattningar.
    */
   const tdeeIsEstimated = activeProfile?.tdee_source !== 'metabolic_calibration'
+
+  /**
+   * Loggade dagar de senaste fyra veckorna.
+   *
+   * Rekommendationen gäller en mätperiod på 28 dagar, så fönstret ska vara
+   * detsamma — Översiktens beredskapskort använder 14 dagar för ett annat
+   * syfte och går inte att låna rakt av.
+   *
+   * useMemo på datumen: utan det blir new Date() ett nytt objekt varje
+   * render, queryKey ändras, och frågan körs om i all oändlighet.
+   */
+  const measureWindow = useMemo(() => {
+    const end = new Date()
+    const start = new Date(end.getTime() - MEASURE_WINDOW_DAYS * 24 * 60 * 60 * 1000)
+    return { start, end }
+  }, [])
+  const { data: intakeWindow } = useActualCalorieIntake(
+    measureWindow.start,
+    measureWindow.end,
+    open
+  )
+  const loggedDays = intakeWindow?.daysWithData ?? 0
   const [measureInfoOpen, setMeasureInfoOpen] = useState(false)
 
   const [focus, setFocus] = useState<PhaseFocus>(initialFocus ?? 'health')
@@ -567,6 +597,18 @@ export function PhasePickerDialog({
                       <p className="mt-1 text-xs leading-relaxed text-primary-900/90 dark:text-primary-300">
                         {t('phase.measureFirstBody')}
                       </p>
+                      {/* Har hon redan börjat logga är "börja mäta" fel
+                          uppmaning — visa i stället hur långt hon kommit.
+                          Ett tal som rör sig motiverar bättre än en
+                          uppmaning som ser likadan ut varje gång. */}
+                      {loggedDays > 0 && (
+                        <p className="mt-1.5 text-xs font-medium tabular-nums text-primary-900 dark:text-primary-200">
+                          {t('phase.measureFirstProgress', {
+                            current: loggedDays,
+                            total: MEASURE_WINDOW_DAYS,
+                          })}
+                        </p>
+                      )}
                       <div className="mt-2.5 flex flex-wrap items-center gap-2">
                         <Button
                           type="button"

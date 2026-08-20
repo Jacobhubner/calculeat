@@ -13,7 +13,16 @@ import { localDateString } from '@/lib/utils/localDate'
  * loggdagar in i sandlådan — beredskapskortet visade "7/7 loggade dagar" för
  * en ny användare vars logg var tom.
  */
-export function useActualCalorieIntake(startDate: Date, endDate: Date) {
+export function useActualCalorieIntake(
+  startDate: Date,
+  endDate: Date,
+  /**
+   * Kör frågan bara när den behövs. PhasePickerDialog monteras redan på
+   * Översikt medan den är STÄNGD — utan detta hämtades matloggen för fyra
+   * veckor vid varje sidladdning, för data som ingen ser.
+   */
+  enabled = true
+) {
   const { user, isPreviewMode } = useAuth()
 
   return useQuery({
@@ -83,6 +92,6 @@ export function useActualCalorieIntake(startDate: Date, endDate: Date) {
         dailyCalories: filteredDailyCalories,
       }
     },
-    enabled: !!user,
+    enabled: !!user && enabled,
   })
 }

@@ -352,7 +352,8 @@
     "measureSolutionPoint2": "After 28 days it is down to ±62 kcal, roughly a tenth. That is why the recommendation is four weeks rather than two.",
     "measureSolutionPoint3": "The measurement needs at least seven logged days covering half the period. Missing days is fine — but the denser the log, the more reliable the result.",
     "measureSkipTitle": "Do you have to?",
-    "measureSkipBody": "No. If you want to start straight away, that is fine — the app adjusts the target as you log, and you can measure later. The recommendation exists so you avoid four weeks of dieting that does not give what you expected."
+    "measureSkipBody": "No. If you want to start straight away, that is fine — the app adjusts the target as you log, and you can measure later. The recommendation exists so you avoid four weeks of dieting that does not give what you expected.",
+    "measureFirstProgress": "You have logged {{current}} of {{total}} days."
   },
   "calibrationReadiness": {
     "title": "On your way to calibration",

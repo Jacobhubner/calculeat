@@ -352,7 +352,8 @@
     "measureSolutionPoint2": "Efter 28 dagar är osäkerheten nere på ±62 kcal, alltså omkring en tiondel. Det är därför rekommendationen är fyra veckor och inte två.",
     "measureSolutionPoint3": "Mätningen kräver minst sju loggade dagar som täcker halva perioden. Logga inte varje dag så fungerar det ändå — men ju tätare, desto säkrare.",
     "measureSkipTitle": "Måste du?",
-    "measureSkipBody": "Nej. Vill du sätta igång direkt går det utmärkt — appen justerar målet efterhand som du loggar, och du kan mäta senare. Rekommendationen finns för att du ska slippa fyra veckors nedgång som inte ger det du väntat dig."
+    "measureSkipBody": "Nej. Vill du sätta igång direkt går det utmärkt — appen justerar målet efterhand som du loggar, och du kan mäta senare. Rekommendationen finns för att du ska slippa fyra veckors nedgång som inte ger det du väntat dig.",
+    "measureFirstProgress": "Du har loggat {{current}} av {{total}} dagar."
   },
   "calibrationReadiness": {
     "title": "På väg mot kalibrering",
