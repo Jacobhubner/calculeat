@@ -310,7 +310,29 @@ export function PhasePickerDialog({
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+        {/*
+          MeasureFirstInfo renderas i en EGEN portal på document.body, alltså
+          utanför Radix content-träd. Radix tolkar därför varje klick och
+          scroll i den som "utanför dialogen" och stänger periodvalet — den
+          som öppnade förklaringen tappade alltså sitt periodval bakom den,
+          och kunde varken scrolla eller klicka utan att allt försvann.
+
+          Guarderna avbryter bara medan den nästlade modalen är öppen. Är den
+          stängd beter sig dialogen precis som förut: klick utanför stänger.
+        */}
+        <DialogContent
+          className="max-h-[90vh] overflow-y-auto sm:max-w-lg"
+          onPointerDownOutside={e => {
+            if (measureInfoOpen) e.preventDefault()
+          }}
+          onInteractOutside={e => {
+            if (measureInfoOpen) e.preventDefault()
+          }}
+          onEscapeKeyDown={e => {
+            // Esc ska stänga den översta modalen, inte den under.
+            if (measureInfoOpen) e.preventDefault()
+          }}
+        >
           <DialogHeader>
             {/* Tillbakaknappen hör till huvudet, inte till innehållet: inklämd
               under beskrivningen såg den ut att tillhöra periodlistan, och
