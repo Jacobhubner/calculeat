@@ -1638,6 +1638,18 @@
     "principlePoint4": "Med en uppmätt kroppsfettprocent kan du sätta målet i fettnivå i stället för i kilo, och appen räknar då ut vilken vikt det motsvarar för just din kroppssammansättning. Det gör målet mer träffsäkert än en vikt vald på känsla.",
     "gainTitle": "Vid viktuppgång",
     "gainBody": "Uppgång räknas med en fast veckotakt. Eftersom förbrukningen stiger med vikten växer överskottet något under resans gång, vilket gör att uppgången i praktiken kan gå marginellt fortare än beräknat. En jämförelse mot simulering vecka för vecka landar inom ett par veckor för en uppgång på 10–15 kg, och avvikelsen ligger åt det försiktiga hållet.",
-    "gainNote": "Underlaget nedan gäller viktnedgång. Motsvarande genomgång för viktuppgång saknas i litteraturen."
+    "gainNote": "Underlaget nedan gäller viktnedgång. Motsvarande genomgång för viktuppgång saknas i litteraturen.",
+    "equationsTitle": "Ekvationerna",
+    "equationsIntro": "Samma kärnekvation används för all viktnedgång — i Målsättning och när en period planeras. Skillnaden mellan ytorna ligger bara i hur takten och målvikten tas fram.",
+    "eqCoreLabel": "Kärnekvationen",
+    "eqCoreNote": "Antagandet är att du tappar en fast ANDEL av kroppsvikten per vecka, inte ett fast antal kilo. Det är därför kilotappet avtar när du blir lättare. r är veckotakten som decimal — 0,005 betyder 0,5 % av kroppsvikten per vecka.",
+    "eqRateLabel": "Hur takten (r) tas fram",
+    "eqRateNote": "Faktorn är andelen av din energiförbrukning du äter: 0,75–0,80 vid ett underskott på 20–25 %. 7 700 kcal är den energimängd ett kilo kroppsvikt antas motsvara.",
+    "eqTargetLabel": "Hur målvikten tas fram",
+    "eqTargetNote": "Bara det här steget behöver en kroppsfettprocent. Anger du målvikten direkt är frågan redan besvarad, och kärnekvationen körs på det talet.",
+    "eqRangeLabel": "Spannets övre gräns",
+    "eqRangeNote": "Räknas bara när målet satts i kroppsfettprocent. t är målnivån som decimal och f är den andel av nedgången som antas vara fettfri massa (0,15). Formeln löser för att nå samma fettnivå trots att en del av det som försvinner är muskler — därför måste mer totalvikt bort, och det tar längre tid. Sätts målet som en vikt nås den lika snabbt oavsett vad som försvinner, och då finns inget spann.",
+    "eqGainLabel": "Viktuppgång",
+    "eqGainNote": "Uppgång räknas linjärt. Energiförbrukningen stiger med vikten, så överskottet växer i stället för att krympa — kurvan avtar inte, och exponentialmodellen skulle luta åt fel håll."
   }
 }

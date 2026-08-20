@@ -7,9 +7,16 @@
  * Skillnaden är avsiktlig och har stöd i litteraturen, och då ska den gå att
  * granska.
  *
- * ALDRIG PREMIUM (beslut 2026-08-19, efter att ett lås prövats och ångrats):
- * detta är en metod- och källredovisning, inte en funktion. Synlighets-
- * principen i PREMIUM_SPEC.md säger att informationen aldrig är premium.
+ * FÖRKLARINGEN ÄR ALDRIG PREMIUM (beslut 2026-08-19, efter att ett lås över
+ * hela modalen prövats och ångrats): varför beräkningen ser ut som den gör,
+ * vad den inte kan, och vilka källor den vilar på är en metod- och
+ * källredovisning, inte en funktion. Synlighetsprincipen i PREMIUM_SPEC.md
+ * säger att informationen aldrig är premium.
+ *
+ * DE EXAKTA EKVATIONERNA ÄR DET (2026-08-20): samma gräns som appen redan
+ * drar för BMR-formler, PAL-system och kroppskompositionsmetoder — själva
+ * formeln är produkten, förklaringen av den är inte det. EquationGate
+ * renderar dem inte alls för gratis, så de ligger inte läsbara i DOM:en.
  *
  * FÖLJER BMRFormulaModal: samma rubriknivåer (text-lg font-semibold
  * text-neutral-800 + mb-3), samma punktlistor med färgad markör i flex,
@@ -30,6 +37,7 @@
 
 import { useTranslation } from 'react-i18next'
 import { InfoModal } from '@/components/ui/InfoModal'
+import { EquationGate } from '@/components/premium/EquationGate'
 
 interface Props {
   open: boolean
@@ -61,6 +69,60 @@ const REFERENCES = [
     citation:
       'Hall KD, Sacks G, Chandramohan D, Chow CC, Wang YC, Gortmaker SL, Swinburn BA. Quantification of the effect of energy imbalance on bodyweight. Lancet. 2011 Aug 27;378(9793):826-37. doi: 10.1016/S0140-6736(11)60812-X. PMID: 21872751.',
     noteKey: 'source2',
+  },
+] as const
+
+/**
+ * Ekvationerna som visas i modalen, exakt de som körs i koden:
+ *   contestPrep.ts:372 och :470, goalCalculations.ts:151 och :153.
+ *
+ * Skrivna för läsning, inte för att köras — men varje rad ska gå att
+ * jämföra med sin motsvarighet i beräkningsfilerna utan tolkning.
+ */
+const EQUATIONS = [
+  {
+    labelKey: 'eqCoreLabel',
+    noteKey: 'eqCoreNote',
+    lines: [
+      'vikt(v) = startvikt × (1 − r)^v',
+      '',
+      '        ln(målvikt / startvikt)',
+      'v  =  ─────────────────────────',
+      '            ln(1 − r)',
+    ],
+  },
+  {
+    labelKey: 'eqRateLabel',
+    noteKey: 'eqRateNote',
+    lines: [
+      'kcal/dag  =  TDEE − TDEE × faktor',
+      'kg/vecka  =  kcal/dag × 7 / 7700',
+      'r         =  kg/vecka / startvikt',
+    ],
+  },
+  {
+    labelKey: 'eqTargetLabel',
+    noteKey: 'eqTargetNote',
+    lines: [
+      'fettfri massa  =  vikt × (1 − fett% / 100)',
+      'målvikt        =  fettfri massa / (1 − målfett% / 100)',
+    ],
+  },
+  {
+    labelKey: 'eqRangeLabel',
+    noteKey: 'eqRangeNote',
+    lines: [
+      '            t × vikt − fettmassa',
+      'förlust  =  ────────────────────────',
+      '                 t − 1 + f',
+      '',
+      'slutvikt =  vikt − förlust',
+    ],
+  },
+  {
+    labelKey: 'eqGainLabel',
+    noteKey: 'eqGainNote',
+    lines: ['v  =  |viktförändring| / (kg per vecka)'],
   },
 ] as const
 
@@ -205,6 +267,41 @@ export function TimelineMethodInfo({ open, onClose }: Props) {
               </li>
             ))}
           </ul>
+        </div>
+
+        {/* Ekvationerna. EquationGate, inte PremiumGate: exakta formler är
+            själva värdet och renderas inte alls för gratis — de får inte
+            ligga läsbara i DOM:en bakom en oskärpa. Samma nyckel och samma
+            komponent som BMR-formlerna och kroppskompositionsmetoderna
+            använder. */}
+        <div>
+          <h3 className="mb-3 text-lg font-semibold text-neutral-800 dark:text-neutral-200">
+            {t('timelineMethod.equationsTitle')}
+          </h3>
+          <p className="mb-3 leading-relaxed text-neutral-700 dark:text-neutral-200">
+            {t('timelineMethod.equationsIntro')}
+          </p>
+          <EquationGate feature="all_tdee_formulas">
+            <div className="space-y-4">
+              {EQUATIONS.map(eq => (
+                <div key={eq.labelKey}>
+                  <p className="mb-1 text-sm font-semibold text-neutral-600 dark:text-neutral-400">
+                    {t(`timelineMethod.${eq.labelKey}`)}
+                  </p>
+                  {/* overflow-x-auto: ekvationerna är breda och får inte
+                      tvinga hela modalen i sidled på mobil. */}
+                  <div className="overflow-x-auto rounded-lg border border-neutral-200 bg-neutral-50 p-3 dark:border-neutral-700 dark:bg-neutral-900">
+                    <pre className="whitespace-pre font-mono text-xs leading-relaxed text-neutral-800 dark:text-neutral-200">
+                      {eq.lines.join('\n')}
+                    </pre>
+                  </div>
+                  <p className="mt-1.5 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400">
+                    {t(`timelineMethod.${eq.noteKey}`)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </EquationGate>
         </div>
 
         {/* Källkort i exakt samma form som BMRFormulaModal och PALSystemModal. */}

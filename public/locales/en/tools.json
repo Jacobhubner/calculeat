@@ -1638,6 +1638,18 @@
     "principlePoint4": "With a measured body fat percentage you can set the goal as a fat level rather than in kilos, and the app works out what weight that corresponds to for your body composition. That makes the target more accurate than a weight chosen by feel.",
     "gainTitle": "When gaining weight",
     "gainBody": "Weight gain is calculated at a fixed weekly rate. Since expenditure rises with weight, the surplus grows somewhat along the way, which means the gain can in practice go marginally faster than calculated. A comparison against a week-by-week simulation lands within a couple of weeks for a gain of 10–15 kg, and the deviation falls on the cautious side.",
-    "gainNote": "The sources below concern weight loss. An equivalent review for weight gain is not available in the literature."
+    "gainNote": "The sources below concern weight loss. An equivalent review for weight gain is not available in the literature.",
+    "equationsTitle": "The equations",
+    "equationsIntro": "The same core equation is used for all weight loss — in Goal setting and when planning a period. The surfaces differ only in how the rate and target weight are derived.",
+    "eqCoreLabel": "The core equation",
+    "eqCoreNote": "The assumption is that you lose a fixed SHARE of your body weight each week, not a fixed number of kilos. That is why the kilo loss tapers as you get lighter. r is the weekly rate as a decimal — 0.005 means 0.5% of body weight per week.",
+    "eqRateLabel": "How the rate (r) is derived",
+    "eqRateNote": "The factor is the share of your energy expenditure you eat: 0.75–0.80 at a 20–25% deficit. 7,700 kcal is the energy one kilo of body weight is assumed to represent.",
+    "eqTargetLabel": "How the target weight is derived",
+    "eqTargetNote": "Only this step needs a body fat percentage. If you enter the target weight directly, that question is already answered and the core equation runs on that figure.",
+    "eqRangeLabel": "The upper bound of the range",
+    "eqRangeNote": "Calculated only when the goal is set as a body fat percentage. t is the target level as a decimal and f is the share of the loss assumed to be fat-free mass (0.15). The formula solves for reaching the same fat level even though some of what is lost is muscle — so more total weight must go, and it takes longer. When the goal is a weight, it is reached just as fast regardless of what is lost, so there is no range.",
+    "eqGainLabel": "Weight gain",
+    "eqGainNote": "Gain is calculated linearly. Energy expenditure rises with weight, so the surplus grows rather than shrinks — the curve does not taper, and the exponential model would lean the wrong way."
   }
 }

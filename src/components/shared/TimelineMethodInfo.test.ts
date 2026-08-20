@@ -1,3 +1,4 @@
+import { estimatePrepDuration, estimateDurationToWeight } from '@/lib/calculations/contestPrep'
 import { describe, it, expect } from 'vitest'
 import {
   calculateGoal,
@@ -58,5 +59,66 @@ describe('TimelineMethodInfo — tabellen', () => {
       expect(r.linjar).toBeLessThan(r.sanning)
       expect(r.calculeat).toBeGreaterThanOrEqual(r.sanning)
     }
+  })
+})
+
+/**
+ * Modalen VISAR ekvationerna för premiumanvändare. Skulle de glida isär från
+ * koden vore det värre än att inte visa dem alls — en formel som inte
+ * stämmer är ett falskt löfte om insyn.
+ *
+ * Testerna räknar därför för hand med exakt de formler som står i EQUATIONS
+ * och jämför mot vad funktionerna returnerar.
+ */
+describe('ekvationerna i modalen stämmer med koden', () => {
+  it('kärnekvationen', () => {
+    const w = 95,
+      r = 0.006,
+      mal = 87
+    // Modalens formel: v = ln(målvikt/startvikt) / ln(1 − r)
+    const manuell = Math.log(mal / w) / Math.log(1 - r)
+    const kod = estimateDurationToWeight({
+      currentWeightKg: w,
+      targetWeightKg: mal,
+      weeklyRatePercent: r * 100,
+    })!
+    expect(Math.abs(manuell - kod.weeks)).toBeLessThan(0.1)
+  })
+
+  it('målvikt ur fettprocent', () => {
+    const w = 95,
+      bf = 28,
+      mal = 20
+    // Modalens formel
+    const lean = w * (1 - bf / 100)
+    const malvikt = lean / (1 - mal / 100)
+    const kod = estimatePrepDuration({
+      currentWeightKg: w,
+      currentBodyFatPct: bf,
+      targetBodyFatPct: mal,
+      weeklyRatePercent: 0.6,
+    })!
+    expect(Math.abs(malvikt - kod.projectedWeightKg)).toBeLessThan(0.1)
+  })
+
+  it('spannets övre gräns', () => {
+    const w = 95,
+      bf = 28,
+      mal = 20,
+      rate = 0.6
+    const t = mal / 100,
+      f = 0.15
+    const fettmassa = w * (bf / 100)
+    // Modalens formel
+    const forlust = (t * w - fettmassa) / (t - 1 + f)
+    const slutvikt = w - forlust
+    const manuell = Math.log(slutvikt / w) / Math.log(1 - rate / 100)
+    const kod = estimatePrepDuration({
+      currentWeightKg: w,
+      currentBodyFatPct: bf,
+      targetBodyFatPct: mal,
+      weeklyRatePercent: rate,
+    })!
+    expect(Math.abs(manuell - kod.weeksRealistic)).toBeLessThan(0.1)
   })
 })
