@@ -34,6 +34,7 @@ import { PhasePickerDialog } from './PhasePickerDialog'
 import { DeficitLevelDialog } from './DeficitLevelDialog'
 import { deficitLevelIdFromLabel } from '@/lib/utils/deficitLevels'
 import { useAuth } from '@/contexts/AuthContext'
+import { useActiveProfile } from '@/hooks'
 
 const PHASE_ICON = {
   cut: TrendingDown,
@@ -94,6 +95,17 @@ export function DietPhaseCard({
   const [pickerOpen, setPickerOpen] = useState(false)
   const [deficitOpen, setDeficitOpen] = useState(false)
   const { isPreviewMode } = useAuth()
+  const { profile: activeProfileForTdee } = useActiveProfile()
+
+  /**
+   * Samma flagga som PhasePickerDialog: är TDEE uppmätt eller skattat?
+   *
+   * Avgör HUR ett avvikande utfall ska tolkas. Med ett skattat TDEE är det
+   * troligaste skälet till att nedgången går långsammare inte att användaren
+   * gjort fel, utan att skattningen inte stämmer för henne. "Det går
+   * långsammare än planerat" utan den upplysningen läses som ett omdöme.
+   */
+  const tdeeIsEstimated = activeProfileForTdee?.tdee_source !== 'metabolic_calibration'
 
   /**
    * Öppna dialogen igen när användaren kommer tillbaka från
@@ -142,6 +154,7 @@ export function DietPhaseCard({
             onChange={() => setPickerOpen(true)}
             onEnd={() => handleEnd(phase)}
             onAdjustDeficit={canAdjustDeficit ? () => setDeficitOpen(true) : undefined}
+            tdeeIsEstimated={tdeeIsEstimated}
             canPickPhase={canPickPhase}
             isEnding={endPhase.isPending}
           />
@@ -217,6 +230,7 @@ function ActivePhase({
   onAdjustDeficit,
   canPickPhase,
   isEnding,
+  tdeeIsEstimated,
 }: {
   phase: DietPhase
   tdee?: number
@@ -232,6 +246,8 @@ function ActivePhase({
   onAdjustDeficit?: () => void
   canPickPhase: boolean
   isEnding: boolean
+  /** Styr om ett avvikande utfall ska tolkas som skattningsfel. */
+  tdeeIsEstimated: boolean
 }) {
   const { t } = useTranslation('dashboard')
   const { limits } = useEntitlements()
@@ -335,6 +351,15 @@ function ActivePhase({
                   expected: formatKg(tracking.expectedChangeKg),
                   days: tracking.daysElapsed,
                 })}
+              </p>
+            )}
+            {/* Bara när utfallet avviker OCH TDEE är skattat. Vid ett
+                uppmätt värde är avvikelsen faktiskt information om
+                användarens följsamhet; vid ett skattat är den lika gärna
+                information om skattningen. */}
+            {tdeeIsEstimated && (tracking.status === 'behind' || tracking.status === 'ahead') && (
+              <p className="mt-0.5 text-[11px] leading-snug text-neutral-500 dark:text-neutral-400">
+                {t('phase.tracking.estimatedTdeeHint')}
               </p>
             )}
             {/* Gör heterogeniteten SYNLIG i stället för tyst. Efter ett

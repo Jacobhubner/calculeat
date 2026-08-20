@@ -278,7 +278,8 @@
       "too_early": "För tidigt att säga — vikten svänger av vätska de första veckorna",
       "detail": "{{actual}} på {{days}} dagar · förväntat {{expected}}",
       "needsWeights": "Väg dig för att se om perioden ger resultat — annars vet appen bara vad du siktar på, inte vad som händer.",
-      "needsOneMore": "En vägning till så kan appen visa hur perioden går."
+      "needsOneMore": "En vägning till så kan appen visa hur perioden går.",
+      "estimatedTdeeHint": "Det troligaste skälet är att den uppskattade energiförbrukningen inte stämmer för dig — inte att du gjort fel. Fortsätt logga, så kan appen mäta ditt faktiska värde och justera målet."
     },
     "prep": {
       "title": "Hur lång tid tar nedgången?",
@@ -328,7 +329,10 @@
       "cautiousDesc": "Långsam viktnedgång, bäst för att bevara muskelmassa",
       "normalDesc": "Balanserad viktnedgång med god energinivå",
       "aggressiveDesc": "Snabb viktnedgång, rekommenderas endast för korta perioder"
-    }
+    },
+    "estimatedTdeeTitle": "Siffrorna bygger på en uppskattning",
+    "estimatedTdeeBody": "Din energiförbrukning är beräknad ur längd, vikt, ålder och den aktivitetsnivå du angett — inte uppmätt. Formler av det slaget slår ofta fel med tio procent eller mer, och aktivitetsnivån är svår att gissa rätt på. Ett fel åt något håll gör att du går ner snabbare eller långsammare än vad som står här.",
+    "estimatedTdeeAction": "Logga maten och väg dig regelbundet under perioden. Efter ett par veckor kan appen mäta din faktiska förbrukning och justera målet — då blir siffrorna dina, inte formelns."
   },
   "calibrationReadiness": {
     "title": "På väg mot kalibrering",

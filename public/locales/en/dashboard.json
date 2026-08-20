@@ -278,7 +278,8 @@
       "too_early": "Too early to tell — weight swings with fluid in the first weeks",
       "detail": "{{actual}} over {{days}} days · expected {{expected}}",
       "needsWeights": "Weigh in to see whether the period is working — otherwise the app only knows what you are aiming for, not what is happening.",
-      "needsOneMore": "One more weigh-in and the app can show how the period is going."
+      "needsOneMore": "One more weigh-in and the app can show how the period is going.",
+      "estimatedTdeeHint": "The likeliest reason is that the estimated energy expenditure does not match you — not that you did anything wrong. Keep logging, and the app can measure your actual value and adjust the target."
     },
     "prep": {
       "title": "How long will the cut take?",
@@ -328,7 +329,10 @@
       "cautiousDesc": "Slow weight loss, best for preserving muscle mass",
       "normalDesc": "Balanced weight loss with good energy levels",
       "aggressiveDesc": "Rapid weight loss, recommended only for short periods"
-    }
+    },
+    "estimatedTdeeTitle": "These numbers rest on an estimate",
+    "estimatedTdeeBody": "Your energy expenditure is calculated from height, weight, age and the activity level you selected — not measured. Formulas of this kind are often off by ten percent or more, and activity level is hard to guess correctly. An error either way means you lose faster or slower than shown here.",
+    "estimatedTdeeAction": "Log your food and weigh yourself regularly during the period. After a couple of weeks the app can measure your actual expenditure and adjust the target — then the numbers are yours, not the formula’s."
   },
   "calibrationReadiness": {
     "title": "On your way to calibration",

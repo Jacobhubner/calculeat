@@ -121,6 +121,25 @@ export function PhasePickerDialog({
   const openUpgradeModal = useUpgradeModalStore(state => state.open)
   /** Planering över tid (längd + upptrappning) är premium */
   const hasPlanning = limits.diet_phase_planning
+
+  /**
+   * Är TDEE en FORMELSKATTNING eller ett UPPMÄTT värde?
+   *
+   * En ny användare har ingen loggdata och kan inte kalibrera. Hennes TDEE
+   * kommer då ur Mifflin plus en aktivitetsnivå hon själv gissat — och båda
+   * felkällorna är stora. Ett steg fel på aktivitetsreglaget (lätt aktiv i
+   * stället för stillasittande) är 13 % för en kvinna på 95 kg, vilket gör
+   * att ett lovat tapp på 0,46 kg/vecka i praktiken blir 0,20.
+   *
+   * Perioden presenterade tidigare kalorimål och veckotakt som fakta oavsett
+   * varifrån TDEE kom. Den som följde planen och inte såg resultatet drog
+   * rimligen slutsatsen att appen har fel — eller att hon själv misslyckats.
+   *
+   * Bara metabolisk kalibrering mäter det faktiska värdet; övriga källor
+   * ("manual" inräknad, eftersom ett handinmatat tal också är en gissning
+   * tills det bekräftats mot utfall) är skattningar.
+   */
+  const tdeeIsEstimated = activeProfile?.tdee_source !== 'metabolic_calibration'
   const [focus, setFocus] = useState<PhaseFocus>(initialFocus ?? 'health')
   const [selected, setSelected] = useState<DietPhaseType>(initialPhase ?? 'cut')
   const [weeks, setWeeks] = useState('')
@@ -475,6 +494,23 @@ export function PhasePickerDialog({
                     tdee={tdee}
                     weightKg={weightKg}
                   />
+                )}
+
+                {/* Sägs FÖRE kalorimålet, inte efter. Läser man siffran
+                    först och förbehållet sedan har man redan bildat sig en
+                    uppfattning om vad som ska hända. */}
+                {tdeeIsEstimated && (
+                  <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-900/25">
+                    <p className="text-xs font-semibold text-blue-900 dark:text-blue-200">
+                      {t('phase.estimatedTdeeTitle')}
+                    </p>
+                    <p className="mt-1 text-xs leading-relaxed text-blue-900/90 dark:text-blue-300">
+                      {t('phase.estimatedTdeeBody')}
+                    </p>
+                    <p className="mt-1.5 text-xs leading-relaxed text-blue-900/90 dark:text-blue-300">
+                      {t('phase.estimatedTdeeAction')}
+                    </p>
+                  </div>
                 )}
 
                 {/*
