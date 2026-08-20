@@ -50,6 +50,17 @@ export function PhaseHistoryCard() {
     })
   }
 
+  /**
+   * Inget kort alls när historiken är tom.
+   *
+   * Kortet låg tidigare på Måluträknarens sida och tog full bredd för att
+   * säga "Inga avslutade perioder än" — ovanför sidans huvudfunktion. Ett
+   * tomt kort är inte information, det är en plats som ser ut att innehålla
+   * något. Uppsäljningen följer med: att sälja historik till någon som inte
+   * har någon är fel tillfälle.
+   */
+  if (ended.length === 0) return null
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -67,25 +78,19 @@ export function PhaseHistoryCard() {
           vad premium skulle tillföra, i stället för att möta en vägg framför
           något hen inte vet vad det är.
         */}
-        {ended.length === 0 ? (
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            {t('phase.history.empty')}
-          </p>
-        ) : (
-          <ul className="space-y-2">
-            {ended.map(p => (
-              <HistoryRow
-                key={p.id}
-                phase={p}
-                isConfirming={confirmId === p.id}
-                isDeleting={deletePhase.isPending}
-                onAskDelete={() => setConfirmId(p.id)}
-                onCancelDelete={() => setConfirmId(null)}
-                onConfirmDelete={() => handleDelete(p.id)}
-              />
-            ))}
-          </ul>
-        )}
+        <ul className="space-y-2">
+          {ended.map(p => (
+            <HistoryRow
+              key={p.id}
+              phase={p}
+              isConfirming={confirmId === p.id}
+              isDeleting={deletePhase.isPending}
+              onAskDelete={() => setConfirmId(p.id)}
+              onCancelDelete={() => setConfirmId(null)}
+              onConfirmDelete={() => handleDelete(p.id)}
+            />
+          ))}
+        </ul>
 
         {!hasPlanning && (
           <button

@@ -255,7 +255,6 @@
     "endConfirm": "End the current period?",
     "history": {
       "title": "Past periods",
-      "empty": "No completed periods yet. When you end a period it shows up here.",
       "weeks": "{{count}} weeks",
       "weeks_one": "{{count}} week",
       "delete": "Delete",

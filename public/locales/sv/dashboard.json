@@ -255,7 +255,6 @@
     "endConfirm": "Avsluta den pågående perioden?",
     "history": {
       "title": "Tidigare perioder",
-      "empty": "Inga avslutade perioder än. När du avslutar en period hamnar den här.",
       "weeks": "{{count}} veckor",
       "weeks_one": "{{count}} vecka",
       "delete": "Ta bort",

@@ -419,25 +419,6 @@ export default function GoalCalculatorTool() {
         </Badge>
       </div>
 
-      {/*
-        Fasen först: den är det löpande — vad användaren jobbar mot just nu —
-        medan kalkylatorn nedanför är utforskande. Sidorna slogs ihop
-        2026-08-15; fasen hade en egen sida (/app/phase) men två navposter för
-        samma sak ("Din fas" och "Målsättning") var förvirrande.
-      */}
-      <DietPhaseCard
-        tdee={profile?.tdee}
-        weightKg={profile?.weight_kg}
-        currentCalories={
-          profile?.calories_min && profile?.calories_max
-            ? Math.round((profile.calories_min + profile.calories_max) / 2)
-            : undefined
-        }
-        bodyFatPercentage={profile?.body_fat_percentage}
-        calorieGoal={profile?.calorie_goal}
-      />
-      <PhaseHistoryCard />
-
       {/* Saknad Data */}
       {missingFields.length > 0 && (
         <MissingDataCard
@@ -1263,6 +1244,31 @@ export default function GoalCalculatorTool() {
           </div>
         )}
       </div>
+
+      {/*
+        Perioder ligger UNDER kalkylatorn (flyttat 2026-08-20).
+
+        De låg först, med motiveringen att en pågående period är det löpande
+        medan kalkylatorn är utforskande. Men sidan heter Måluträknare och
+        besöks för att räkna — perioder är en smalare funktion för den som
+        vill ha hjälp med rutin. Två kort i full bredd sköt ner sidans
+        huvudfunktion under vikningen, och det andra kortet var dessutom tomt
+        för alla utan avslutade perioder.
+
+        PhaseHistoryCard renderar numera ingenting alls när historiken är tom.
+      */}
+      <DietPhaseCard
+        tdee={profile?.tdee}
+        weightKg={profile?.weight_kg}
+        currentCalories={
+          profile?.calories_min && profile?.calories_max
+            ? Math.round((profile.calories_min + profile.calories_max) / 2)
+            : undefined
+        }
+        bodyFatPercentage={profile?.body_fat_percentage}
+        calorieGoal={profile?.calorie_goal}
+      />
+      <PhaseHistoryCard />
 
       {activePhase && (
         <PhaseConflictDialog
