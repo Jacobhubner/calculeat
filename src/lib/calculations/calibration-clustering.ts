@@ -5,6 +5,7 @@
 import type { WeightHistory, WeightCluster } from '@/lib/types'
 import { daysBetween, meanDate, median } from './calibration-helpers'
 import { detectWeightOutliers } from './calibration-outliers'
+import { MIN_CLUSTER_SIZE, MIN_CLUSTER_SEPARATION_DAYS } from './calibration-constants'
 
 export interface ClusterBuildResult {
   startCluster: WeightCluster
@@ -49,12 +50,25 @@ export function buildClusters(
   let startItems = cleaned.filter(m => m.recorded_at <= startZoneEnd)
   let endItems = cleaned.filter(m => m.recorded_at >= endZoneStart)
 
-  // Fallback: extend to 50% if a cluster is empty
-  if (startItems.length === 0) {
+  /**
+   * Fallback: utvidga zonen till halva fönstret när den inte rymmer ett
+   * fullstort kluster.
+   *
+   * Villkoret var === 0 medan anroparna kräver MIN_CLUSTER_SIZE. Grinden
+   * blev därför icke-monoton: EN mätning i startzonen var strikt sämre än
+   * ingen alls, eftersom noll utlöste utvidgningen men ett inte gjorde det.
+   * Att lägga till en vägning kunde alltså förstöra ett läge som hållit.
+   *
+   * Utvidgningen ensam räcker inte — två halvfönster möts i mitten och kan
+   * ge kluster som beskriver nästan samma tidpunkt. Separationskravet
+   * längre ned är vad som gör den här raden säker.
+   */
+  const minCluster = MIN_CLUSTER_SIZE[periodDays]
+  if (startItems.length < minCluster) {
     const halfEnd = new Date(windowStart.getTime() + (periodDays * 24 * 60 * 60 * 1000) / 2)
     startItems = cleaned.filter(m => m.recorded_at <= halfEnd)
   }
-  if (endItems.length === 0) {
+  if (endItems.length < minCluster) {
     const halfStart = new Date(now.getTime() - (periodDays * 24 * 60 * 60 * 1000) / 2)
     endItems = cleaned.filter(m => m.recorded_at >= halfStart)
   }
@@ -85,6 +99,22 @@ export function buildClusters(
   }
 
   if (startItems.length === 0 || endItems.length === 0) return null
+
+  /**
+   * Tidsbasen måste bära en mätning.
+   *
+   * Räknas EFTER överlappslösningen — den flyttar mätningar mellan
+   * klustren och förskjuter därmed centroiderna.
+   *
+   * runCalibration hade regeln men hooken inte, så kortet kunde säga
+   * "redo" om data som knappen sedan nekade. Här ärver alla anropare den
+   * samtidigt.
+   */
+  const separation = daysBetween(
+    meanDate(startItems.map(m => m.recorded_at)),
+    meanDate(endItems.map(m => m.recorded_at))
+  )
+  if (separation < MIN_CLUSTER_SEPARATION_DAYS) return null
 
   const makeCluster = (items: Array<{ weight_kg: number; recorded_at: Date }>): WeightCluster => {
     const weights = items.map(i => i.weight_kg)

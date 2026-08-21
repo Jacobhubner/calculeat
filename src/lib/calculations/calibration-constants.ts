@@ -20,6 +20,18 @@ export const MIN_DATA_POINTS: Record<14 | 21 | 28, number> = {
   28: 6,
 }
 
+/**
+ * Minsta avstånd mellan klustrens centroider, i dagar.
+ *
+ * Tidsbasen är nämnaren i dailyCalorieBalance: 0,3 kg vägningsbrus kostar
+ * ~300 kcal/dag vid 7 dagars bas men det dubbla vid 3,5. Regeln hör därför
+ * hemma där klustren byggs, inte i en validering nedströms som bara en av
+ * anroparna når — hooken kontrollerade klusterstorlek men aldrig det här,
+ * runCalibration tvärtom, och grindarna kunde säga olika saker om samma
+ * data.
+ */
+export const MIN_CLUSTER_SEPARATION_DAYS = 7
+
 /** Minimum cluster size per period */
 export const MIN_CLUSTER_SIZE: Record<14 | 21 | 28, number> = {
   14: 2,

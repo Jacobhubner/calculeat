@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { buildClusters } from './calibration-clustering'
-import { MIN_CLUSTER_SIZE } from './calibration-constants'
+import { MIN_CLUSTER_SIZE, MIN_CLUSTER_SEPARATION_DAYS } from './calibration-constants'
 import { daysBetween, meanDate } from './calibration-helpers'
 import type { WeightHistory } from '@/lib/types'
 
@@ -10,11 +10,12 @@ import type { WeightHistory } from '@/lib/types'
  * helt. Ett fel här ger inte ett blockerat läge utan en TYST felaktig
  * siffra, vilket är den värsta sorten.
  *
- * Testerna låser särskilt 50 %-fallbacken (rad 53-60 i källan). Den ser ut
- * som en bugg: den utvidgas vid EXAKT noll mätningar medan anroparna kräver
- * två, så en ensam mätning i startzonen är strikt sämre än ingen alls. Att
- * ändra tröskeln till < MIN_CLUSTER_SIZE är dock mätt fel väg att gå — se
- * "50 %-fallbacken" nedan.
+ * Testerna låser särskilt de två reglerna som hör ihop: 50 %-fallbacken och
+ * separationskravet. Fallbacken ensam (tröskeln flyttad från noll till
+ * MIN_CLUSTER_SIZE) släpper igenom kluster som beskriver nästan samma
+ * tidpunkt — mätt: 2 568 lägen med tidsbas under 7 dagar, ned till 2,5.
+ * Separationskravet är vad som gör den säker, och de får därför aldrig
+ * skiljas åt.
  */
 
 const DAY = 86400000
@@ -84,46 +85,85 @@ describe('buildClusters — separabilitet', () => {
 
 describe('buildClusters — 50 %-fallbacken', () => {
   /**
-   * Fallbacken utlöses vid noll, inte vid < MIN_CLUSTER_SIZE. Det gör
-   * grinden icke-monoton: att LÄGGA TILL en vägning kan förstöra ett läge
-   * som annars hållit.
+   * Fallbacken utlöses vid < MIN_CLUSTER_SIZE, inte vid noll.
+   *
+   * Villkoret var === 0 medan anroparna kräver två, vilket gjorde grinden
+   * icke-monoton: EN mätning i startzonen var strikt sämre än ingen alls,
+   * så att LÄGGA TILL en vägning kunde förstöra ett läge som hållit.
    */
-  it('noll i startzonen utvidgar zonen till halva fönstret', () => {
-    const r = buildClusters(at([8, 7, 2, 1]), 14, new Date())
+  it('utvidgar zonen när den inte rymmer ett fullstort kluster', () => {
+    // Startzonen (dag 14 → 9,33) är tom; utvidgad till halva fönstret
+    // fångar den dag 11 och 10. Tidsbasen blir 10,5 dagar och klarar golvet.
+    const r = buildClusters(at([11, 10, 1, 0]), 14, new Date())
     expect(r).not.toBeNull()
     expect(r!.startCluster.count).toBeGreaterThanOrEqual(MIN_CLUSTER_SIZE[14])
   })
 
-  it('EN i startzonen utvidgar inte — färre mätningar hade räckt längre', () => {
-    // Samma data som ovan plus en vägning dag 10. Startzonen har nu en
-    // mätning, fallbacken uteblir, och klustret fastnar på 1 < 2.
-    const r = buildClusters(at([10, 8, 2, 1]), 14, new Date())
-    expect(r).not.toBeNull()
-    expect(r!.startCluster.count).toBe(1)
+  it('blockerar när utvidgningen inte räcker till tidsbasen', () => {
+    // [8,7,2,1] fyller båda klustren men centroiderna ligger 6 dagar isär.
+    // Utvidgningen får inte köpa ett kluster på bekostnad av mätbarheten.
+    expect(buildClusters(at([8, 7, 2, 1]), 14, new Date())).toBeNull()
   })
 
-  /**
-   * REGRESSIONSSKYDD. Att flytta tröskeln till < MIN_CLUSTER_SIZE ser ut
-   * som den självklara fixen, men ett uttömmande svep över alla
-   * vägningskombinationer visar att den släpper igenom 2 568 lägen med
-   * tidsbas under 7 dagar — ned till 2,5 dagar.
-   *
-   * Tidsbasen är nämnaren i dailyCalorieBalance (calibration-core.ts).
-   * 0,3 kg vägningsbrus kostar ~300 kcal/dag vid 7 dagars bas men det
-   * dubbla vid 3,5. runCalibration blockerar därför under 7 dagar — men
-   * useCalibrationAvailability kontrollerar ALDRIG den regeln, så en
-   * sådan ändring skulle få kortet att säga "redo" om något knappen sedan
-   * nekar.
-   *
-   * Ändra inte tröskeln utan att först flytta 7-dagarsregeln hit.
-   */
-  it('två utvidgade zoner kan mötas i mitten och ge kort tidsbas', () => {
-    // Med utvidgning åt båda håll täcker zonerna hela fönstret.
-    const r = buildClusters(at([10, 9, 8, 7, 6]), 14, new Date())
-    if (r && r.startCluster.count >= 2 && r.endCluster.count >= 2) {
-      // Håller klustren är tidsbasen kort — och just därför farlig.
-      expect(timeBase(r)).toBeLessThan(7)
+  it('straffar inte en ensam mätning i startzonen', () => {
+    // Samma data plus en vägning dag 10. Förut fastnade klustret på 1 < 2
+    // eftersom utvidgningen bara skedde vid exakt noll.
+    const r = buildClusters(at([10, 8, 2, 1]), 14, new Date())
+    expect(r).not.toBeNull()
+    expect(r!.startCluster.count).toBeGreaterThanOrEqual(MIN_CLUSTER_SIZE[14])
+  })
+
+  it.each([[[10, 8, 2, 1]], [[13, 7, 2, 1]], [[10, 9, 5, 1, 0]]])(
+    'släpper igenom %o, som har gott om tidsbas',
+    offs => {
+      const r = buildClusters(at(offs), 14, new Date())
+      expect(r).not.toBeNull()
+      expect(r!.startCluster.count).toBeGreaterThanOrEqual(2)
+      expect(r!.endCluster.count).toBeGreaterThanOrEqual(2)
     }
+  )
+})
+
+describe('buildClusters — separationskravet', () => {
+  /**
+   * Utvidgningen ensam vore farlig: två halvfönster möts i mitten och kan
+   * ge kluster som beskriver nästan samma tidpunkt. Tidsbasen är nämnaren
+   * i dailyCalorieBalance, så en komprimerad bas blåser upp den beräknade
+   * energibalansen — 0,3 kg vägningsbrus kostar ~300 kcal/dag vid 7 dagar
+   * men det dubbla vid 3,5.
+   *
+   * Regeln fanns i runCalibration men inte i hooken, så kortet kunde säga
+   * "redo" om data som knappen sedan nekade. Nu ärver alla anropare den.
+   */
+  it.each([[[10, 9, 8, 7, 6]], [[7, 6, 5, 4]], [[12, 8, 7, 6, 5]]])(
+    'blockerar %o, där klustren ligger för nära i tid',
+    offs => {
+      const r = buildClusters(at(offs), 14, new Date())
+      if (r) {
+        // Håller den ändå ska tidsbasen bära en mätning.
+        expect(timeBase(r)).toBeGreaterThanOrEqual(MIN_CLUSTER_SEPARATION_DAYS)
+      }
+    }
+  )
+
+  it('ger aldrig en tidsbas under golvet, oavsett mönster', () => {
+    // Uttömmande svep: 424 149 godkända klustringar, minsta tidsbas 7,00.
+    let minTb = Infinity
+    for (const P of [14, 21, 28] as const) {
+      const need = { 14: 4, 21: 5, 28: 6 }[P]
+      const rec = (from: number, acc: number[]) => {
+        if (acc.length === need) {
+          const r = buildClusters(at(acc), P, new Date())
+          if (r && r.startCluster.count >= 2 && r.endCluster.count >= 2) {
+            minTb = Math.min(minTb, timeBase(r))
+          }
+          return
+        }
+        for (let d = from; d <= P; d++) rec(d + 1, [...acc, d])
+      }
+      rec(0, [])
+    }
+    expect(minTb).toBeGreaterThanOrEqual(MIN_CLUSTER_SEPARATION_DAYS)
   })
 })
 

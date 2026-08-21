@@ -1,7 +1,11 @@
 import { describe, it, expect, vi } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useCalibrationAvailability } from './useCalibrationAvailability'
-import { MIN_LOG_DAYS_FOR_CALIBRATION, buildClusters } from '@/lib/calculations/calibration'
+import {
+  MIN_LOG_DAYS_FOR_CALIBRATION,
+  buildClusters,
+  runCalibration,
+} from '@/lib/calculations/calibration'
 import type { Profile, WeightHistory } from '@/lib/types'
 
 // Entitlements slås av: testerna gäller datakraven, inte plangränserna.
@@ -378,5 +382,64 @@ describe('useCalibrationAvailability — vägningarnas spridning', () => {
     )
     expect(result.current.progress.weighInSpread.early).toBeGreaterThanOrEqual(2)
     expect(result.current.progress.weighInSpread.late).toBeGreaterThanOrEqual(2)
+  })
+})
+
+describe('useCalibrationAvailability — grinden mot motorn', () => {
+  /**
+   * Kortets löfte måste hålla vid knapptrycket.
+   *
+   * Hooken kontrollerade klusterstorlek men aldrig 7-dagarsregeln,
+   * runCalibration tvärtom. De två grindarna kunde därför säga olika saker
+   * om samma data — 17 % av de "redo" lägena nekades i praktiken. Sedan
+   * separationskravet flyttats in i buildClusters ärver båda den.
+   */
+  it('säger aldrig redo om något motorn nekar på klusterskäl', () => {
+    const now = new Date()
+    // 0,4 dagars marginal: en vägning ligger aldrig exakt på fönsterkanten,
+    // där millisekunder mellan två klockavläsningar avgör utfallet.
+    const at = (offs: number[]): WeightHistory[] =>
+      offs.map((o, i) => {
+        const iso = new Date(now.getTime() - (o - 0.4) * 86400000).toISOString()
+        return {
+          id: `w${i}`,
+          user_id: 'u1',
+          weight_kg: 85 - o * 0.03,
+          recorded_at: iso,
+          created_at: iso,
+        } as WeightHistory
+      })
+
+    let missmatch = 0
+    const rec = (from: number, acc: number[]) => {
+      if (acc.length === 4) {
+        const hist = at(acc)
+        const { result } = renderHook(() => useCalibrationAvailability(profile, hist, null, 20))
+        if (result.current.isAvailable) {
+          const r = runCalibration({
+            weightHistory: hist,
+            periodDays: 14,
+            currentTDEE: 2500,
+            targetCalories: 2100,
+            actualCaloriesAvg: 2100,
+            foodLogCompleteness: 100,
+            daysWithLogData: 20,
+            isFirstCalibration: true,
+            now,
+          })
+          if (
+            typeof r === 'string' &&
+            (r.includes('kort tid') || r.includes('start- och slutvikt'))
+          ) {
+            missmatch++
+          }
+        }
+        return
+      }
+      for (let d = from; d <= 14; d++) rec(d + 1, [...acc, d])
+    }
+    rec(0, [])
+
+    expect(missmatch).toBe(0)
   })
 })
