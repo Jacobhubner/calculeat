@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { runCalibration, type CalibrationInput } from './calibration-core'
-import { MIN_LOG_DAYS_FOR_CALIBRATION } from './calibration-constants'
+import { runCalibration, validateWeightData, type CalibrationInput } from './calibration-core'
+import { MIN_LOG_DAYS_FOR_CALIBRATION, MIN_DATA_POINTS } from './calibration-constants'
+import { buildClusters } from './calibration-clustering'
 import type { WeightHistory } from '@/lib/types'
 
 /**
@@ -356,5 +357,76 @@ describe('runCalibration — klusterstorlek som egen grind', () => {
   it('släpper igenom när båda ändarna bär två mätningar', () => {
     const r = runCalibration(baseInput({ weightHistory: glesa([13, 12, 1, 0]), periodDays: 14 }))
     expect(typeof r).not.toBe('string')
+  })
+})
+
+describe('periodvalet mot motorn', () => {
+  /**
+   * Grinden godkänner EN period — rullgardinen erbjuder tre.
+   *
+   * useCalibrationAvailability validerar den längsta period som håller,
+   * men MetabolicCalibration låter användaren byta till en annan. Den
+   * väljaren mätte bara antal vägningar och klusterstorlek, medan motorn
+   * dessutom prövar takt, CV och separation.
+   *
+   * MÄTT före fixen: 32 av 60 periodval nekades efter klicket. Väljaren
+   * kör nu validateWeightData, alltså samma funktion motorn själv använder.
+   */
+  function periodErbjuds(hist: WeightHistory[], period: 14 | 21 | 28, now: Date): boolean {
+    const cutoff = new Date(now.getTime() - period * 24 * 60 * 60 * 1000)
+    if (hist.filter(w => new Date(w.recorded_at) >= cutoff).length < MIN_DATA_POINTS[period]) {
+      return false
+    }
+    const c = buildClusters(hist, period, now)
+    if (!c) return false
+    return validateWeightData(c.allMeasurements, c.startCluster, c.endCluster, period) === null
+  }
+
+  const kurva = (offsets: number[], lutning: number, brus: number): WeightHistory[] =>
+    offsets.map((o, i) => {
+      const d = new Date(NOW.getTime() - o * 24 * 60 * 60 * 1000)
+      return {
+        id: `p${i}`,
+        user_id: 'u1',
+        weight_kg: 85 + lutning * (Math.max(...offsets) - o) + brus * Math.sin(i * 2.1),
+        recorded_at: d.toISOString(),
+        created_at: d.toISOString(),
+      } as WeightHistory
+    })
+
+  it('erbjuder bara perioder som motorn faktiskt kör', () => {
+    let erbjudna = 0
+    let nekade = 0
+
+    for (const offsets of [
+      [13, 12, 1, 0],
+      [13, 12, 8, 4, 1, 0],
+      [20, 19, 10, 1, 0],
+      [27, 26, 14, 13, 1, 0],
+      [27, 20, 13, 6, 1, 0],
+    ]) {
+      for (const lutning of [0, -0.05, -0.2]) {
+        for (const brus of [0, 0.5, 1.5]) {
+          const hist = kurva(offsets, lutning, brus)
+          for (const period of [14, 21, 28] as const) {
+            if (!periodErbjuds(hist, period, NOW)) continue
+            erbjudna++
+            const r = runCalibration(baseInput({ weightHistory: hist, periodDays: period }))
+            // TDEE-golvet och -taket undantas: de kan bara avgöras efter att
+            // hela pipelinen körts, alltså inte av en grind.
+            if (
+              typeof r === 'string' &&
+              !r.includes('rekommenderad') &&
+              !r.includes('orealistiskt')
+            ) {
+              nekade++
+            }
+          }
+        }
+      }
+    }
+
+    expect(erbjudna).toBeGreaterThan(0)
+    expect(nekade).toBe(0)
   })
 })

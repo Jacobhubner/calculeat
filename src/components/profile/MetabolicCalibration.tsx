@@ -50,8 +50,8 @@ import {
 import {
   runCalibration,
   MIN_DATA_POINTS,
-  MIN_CLUSTER_SIZE,
   calibrationNow,
+  validateWeightData,
   MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
   MIN_DAILY_KCAL_FOR_LOG,
   buildClusters,
@@ -365,16 +365,22 @@ export default function MetabolicCalibration({
       if (count >= MIN_DATA_POINTS[period]) {
         const clusters = buildClusters(weightHistory, period, now)
         /**
-         * Klusterstorleken kontrollerades inte här, bara att kluster alls
-         * gick att bilda. Perioder med en ensam mätning i en ände blev
-         * därför valbara — och motorn körde vidare på dem, eftersom kravet
-         * då bara fanns hos anroparna. Numera nekar validateWeightData
-         * sådana underlag; det här är förvalet, inte skyddet.
+         * Motorns egen validering, inte en egen uppsättning kontroller.
+         *
+         * Rullgardinen mätte bara antal och klusterstorlek, medan
+         * runCalibration dessutom prövar takt, CV och separation. Perioder
+         * blev därför valbara som motorn sedan nekade — 32 av 60 periodval
+         * i ett svep. Grinden i useCalibrationAvailability godkänner ETT
+         * periodval, men härifrån kan användaren välja ett annat.
          */
         result[period] =
           clusters !== null &&
-          clusters.startCluster.count >= MIN_CLUSTER_SIZE[period] &&
-          clusters.endCluster.count >= MIN_CLUSTER_SIZE[period]
+          validateWeightData(
+            clusters.allMeasurements,
+            clusters.startCluster,
+            clusters.endCluster,
+            period
+          ) === null
       }
     }
     return result
