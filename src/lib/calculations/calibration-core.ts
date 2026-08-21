@@ -26,6 +26,7 @@ import {
   calculateWeightTrendTheilSen,
 } from './calibration-trend'
 import { buildClusters } from './calibration-clustering'
+import { calibrationNow } from './calibration-clock'
 import {
   getCalorieEstimate,
   detectSelectiveLogging,
@@ -129,7 +130,10 @@ export interface CalibrationInput {
  * Returns a CalibrationResult on success, or a string error message on failure.
  */
 export function runCalibration(input: CalibrationInput): CalibrationResult | string {
-  const now = input.now ?? new Date()
+  // Dygnsslutet, inte tidpunkten — samma "nu" som grinden räknar mot.
+  // Anropare skickar normalt in now; defaulten får inte vara den enda
+  // platsen där en råklocka smyger sig in.
+  const now = input.now ?? calibrationNow()
 
   // Step 1: Build clusters (includes outlier detection and median-based averaging)
   const clusterResult = buildClusters(input.weightHistory, input.periodDays, now)

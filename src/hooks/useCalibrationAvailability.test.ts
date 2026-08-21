@@ -5,6 +5,7 @@ import {
   MIN_LOG_DAYS_FOR_CALIBRATION,
   buildClusters,
   runCalibration,
+  calibrationNow,
 } from '@/lib/calculations/calibration'
 import type { Profile, WeightHistory } from '@/lib/types'
 
@@ -19,8 +20,15 @@ vi.mock('@/hooks/useEntitlements', () => ({
  * "Kalibrera nu" och användaren möts av ett felmeddelande efter klicket.
  */
 
+/**
+ * Vägningar räknade från kalibreringens egen klocka, inte Date.now().
+ *
+ * Fönstret slutar vid dygnsslutet. Med Date.now() som nollpunkt låg en
+ * vägning "14 dagar sedan" utanför fönstret när testet kördes på
+ * eftermiddagen — samma test föll eller passerade beroende på klockslag.
+ */
 function weights(count: number, spanDays = 14): WeightHistory[] {
-  const now = Date.now()
+  const now = calibrationNow().getTime()
   return Array.from({ length: count }, (_, i) => {
     const d = new Date(now - (spanDays - (i * spanDays) / Math.max(1, count - 1)) * 86400000)
     return {
@@ -192,7 +200,7 @@ describe('useCalibrationAvailability — trappan och blockeringsorsak', () => {
   it('pekar ut klustringen när vägningarna ligger för tätt', () => {
     // Alla mätningar de senaste tre dagarna: antalet räcker, men de hamnar
     // bara i fönstrets sista tredjedel.
-    const nu = Date.now()
+    const nu = calibrationNow().getTime()
     const tata = Array.from({ length: 6 }, (_, i) => ({
       id: `t${i}`,
       user_id: 'u1',
@@ -254,7 +262,7 @@ describe('useCalibrationAvailability — nedräkningen vid klusterbrist', () => 
    */
   const offsets = (offs: number[]): WeightHistory[] =>
     offs.map((d, i) => {
-      const iso = new Date(Date.now() - d * 86400000).toISOString()
+      const iso = new Date(calibrationNow().getTime() - d * 86400000).toISOString()
       return {
         id: `w${i}`,
         user_id: 'u1',
@@ -302,7 +310,7 @@ describe('useCalibrationAvailability — nedräkningen vid klusterbrist', () => 
       const dagar = result.current.progress.daysUntilNextWeighInUseful
       if (dagar === null) continue
 
-      const now = Date.now()
+      const now = calibrationNow().getTime()
       const target = now + dagar * 86400000
       const historik = offs.map(o => now - o * 86400000)
       const nya = [target, target - 86400000]
@@ -357,7 +365,7 @@ describe('useCalibrationAvailability — vägningarnas spridning', () => {
    */
   const offsets = (offs: number[]): WeightHistory[] =>
     offs.map((d, i) => {
-      const iso = new Date(Date.now() - d * 86400000).toISOString()
+      const iso = new Date(calibrationNow().getTime() - d * 86400000).toISOString()
       return {
         id: `w${i}`,
         user_id: 'u1',

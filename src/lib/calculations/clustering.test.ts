@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { buildClusters } from './calibration-clustering'
 import { MIN_CLUSTER_SIZE, MIN_CLUSTER_SEPARATION_DAYS } from './calibration-constants'
 import { daysBetween, meanDate } from './calibration-helpers'
+import { calibrationNow } from './calibration-clock'
 import type { WeightHistory } from '@/lib/types'
 
 /**
@@ -20,9 +21,15 @@ import type { WeightHistory } from '@/lib/types'
 
 const DAY = 86400000
 
-/** Vägningar angivna som dagar bakåt från nu. */
+/**
+ * Vägningar angivna som dagar bakåt från kalibreringens klocka.
+ *
+ * calibrationNow, inte Date.now: fönstret slutar vid dygnsslutet, så en
+ * vägning "14 dagar sedan" mätt från en eftermiddag hamnar utanför det.
+ * Testet skulle annars falla eller passera beroende på klockslag.
+ */
 function at(offsetsInDays: number[]): WeightHistory[] {
-  const now = Date.now()
+  const now = calibrationNow().getTime()
   return offsetsInDays.map((offset, i) => {
     const iso = new Date(now - offset * DAY).toISOString()
     return {
@@ -43,7 +50,7 @@ function timeBase(result: NonNullable<ReturnType<typeof buildClusters>>): number
 describe('buildClusters — zonindelning', () => {
   it('delar fönstret i tredjedelar', () => {
     // 14 dagar: startzon 14 → 9,33 bakåt, slutzon 4,67 → 0.
-    const r = buildClusters(at([13, 12, 2, 1]), 14, new Date())
+    const r = buildClusters(at([13, 12, 2, 1]), 14, calibrationNow())
     expect(r).not.toBeNull()
     expect(r!.startCluster.count).toBe(2)
     expect(r!.endCluster.count).toBe(2)
@@ -52,31 +59,31 @@ describe('buildClusters — zonindelning', () => {
   it('räknar mätningar i mitten till närmaste kluster, inte bort', () => {
     // Mittenvägningar är inte värdelösa: de ingår i allMeasurements och
     // därmed i OLS-trenden och CV-beräkningen.
-    const r = buildClusters(at([13, 12, 7, 2, 1]), 14, new Date())
+    const r = buildClusters(at([13, 12, 7, 2, 1]), 14, calibrationNow())
     expect(r).not.toBeNull()
     expect(r!.allMeasurements).toHaveLength(5)
   })
 
   it('utesluter mätningar utanför fönstret', () => {
-    const r = buildClusters(at([30, 13, 12, 2, 1]), 14, new Date())
+    const r = buildClusters(at([30, 13, 12, 2, 1]), 14, calibrationNow())
     expect(r).not.toBeNull()
     expect(r!.allMeasurements).toHaveLength(4)
   })
 
   it('returnerar null under två mätningar', () => {
-    expect(buildClusters(at([5]), 14, new Date())).toBeNull()
-    expect(buildClusters([], 14, new Date())).toBeNull()
+    expect(buildClusters(at([5]), 14, calibrationNow())).toBeNull()
+    expect(buildClusters([], 14, calibrationNow())).toBeNull()
   })
 })
 
 describe('buildClusters — separabilitet', () => {
   it('kräver att startcentroiden ligger före slutcentroiden', () => {
     // Alla mätningar samma dygn: centroiderna sammanfaller.
-    expect(buildClusters(at([1, 1, 1, 1]), 14, new Date())).toBeNull()
+    expect(buildClusters(at([1, 1, 1, 1]), 14, calibrationNow())).toBeNull()
   })
 
   it('ger en tidsbas som speglar det faktiska avståndet', () => {
-    const r = buildClusters(at([13, 12, 1, 0]), 14, new Date())
+    const r = buildClusters(at([13, 12, 1, 0]), 14, calibrationNow())
     expect(r).not.toBeNull()
     // ~12,5 dagar mellan centroiderna
     expect(timeBase(r!)).toBeGreaterThan(11)
@@ -94,7 +101,7 @@ describe('buildClusters — 50 %-fallbacken', () => {
   it('utvidgar zonen när den inte rymmer ett fullstort kluster', () => {
     // Startzonen (dag 14 → 9,33) är tom; utvidgad till halva fönstret
     // fångar den dag 11 och 10. Tidsbasen blir 10,5 dagar och klarar golvet.
-    const r = buildClusters(at([11, 10, 1, 0]), 14, new Date())
+    const r = buildClusters(at([11, 10, 1, 0]), 14, calibrationNow())
     expect(r).not.toBeNull()
     expect(r!.startCluster.count).toBeGreaterThanOrEqual(MIN_CLUSTER_SIZE[14])
   })
@@ -102,13 +109,13 @@ describe('buildClusters — 50 %-fallbacken', () => {
   it('blockerar när utvidgningen inte räcker till tidsbasen', () => {
     // [8,7,2,1] fyller båda klustren men centroiderna ligger 6 dagar isär.
     // Utvidgningen får inte köpa ett kluster på bekostnad av mätbarheten.
-    expect(buildClusters(at([8, 7, 2, 1]), 14, new Date())).toBeNull()
+    expect(buildClusters(at([8, 7, 2, 1]), 14, calibrationNow())).toBeNull()
   })
 
   it('straffar inte en ensam mätning i startzonen', () => {
     // Samma data plus en vägning dag 10. Förut fastnade klustret på 1 < 2
     // eftersom utvidgningen bara skedde vid exakt noll.
-    const r = buildClusters(at([10, 8, 2, 1]), 14, new Date())
+    const r = buildClusters(at([10, 8, 2, 1]), 14, calibrationNow())
     expect(r).not.toBeNull()
     expect(r!.startCluster.count).toBeGreaterThanOrEqual(MIN_CLUSTER_SIZE[14])
   })
@@ -116,7 +123,7 @@ describe('buildClusters — 50 %-fallbacken', () => {
   it.each([[[10, 8, 2, 1]], [[13, 7, 2, 1]], [[10, 9, 5, 1, 0]]])(
     'släpper igenom %o, som har gott om tidsbas',
     offs => {
-      const r = buildClusters(at(offs), 14, new Date())
+      const r = buildClusters(at(offs), 14, calibrationNow())
       expect(r).not.toBeNull()
       expect(r!.startCluster.count).toBeGreaterThanOrEqual(2)
       expect(r!.endCluster.count).toBeGreaterThanOrEqual(2)
@@ -138,7 +145,7 @@ describe('buildClusters — separationskravet', () => {
   it.each([[[10, 9, 8, 7, 6]], [[7, 6, 5, 4]], [[12, 8, 7, 6, 5]]])(
     'blockerar %o, där klustren ligger för nära i tid',
     offs => {
-      const r = buildClusters(at(offs), 14, new Date())
+      const r = buildClusters(at(offs), 14, calibrationNow())
       if (r) {
         // Håller den ändå ska tidsbasen bära en mätning.
         expect(timeBase(r)).toBeGreaterThanOrEqual(MIN_CLUSTER_SEPARATION_DAYS)
@@ -153,7 +160,7 @@ describe('buildClusters — separationskravet', () => {
       const need = { 14: 4, 21: 5, 28: 6 }[P]
       const rec = (from: number, acc: number[]) => {
         if (acc.length === need) {
-          const r = buildClusters(at(acc), P, new Date())
+          const r = buildClusters(at(acc), P, calibrationNow())
           if (r && r.startCluster.count >= 2 && r.endCluster.count >= 2) {
             minTb = Math.min(minTb, timeBase(r))
           }
@@ -179,7 +186,7 @@ describe('buildClusters — periodlängder', () => {
     for (let i = 0; i < count - 4; i++) offsets.push(Math.round(period / 2) + i)
     offsets.push(1, 0)
 
-    const r = buildClusters(at(offsets), period, new Date())
+    const r = buildClusters(at(offsets), period, calibrationNow())
     expect(r).not.toBeNull()
     expect(r!.startCluster.count).toBeGreaterThanOrEqual(MIN_CLUSTER_SIZE[period])
     expect(r!.endCluster.count).toBeGreaterThanOrEqual(MIN_CLUSTER_SIZE[period])
@@ -190,7 +197,7 @@ describe('buildClusters — periodlängder', () => {
 
 describe('buildClusters — medianen som centralvärde', () => {
   it('låter en extremvikt inte dra klustret med sig', () => {
-    const now = Date.now()
+    const now = calibrationNow().getTime()
     const mk = (offset: number, kg: number, i: number) =>
       ({
         id: `w${i}`,

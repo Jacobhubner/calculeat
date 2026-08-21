@@ -102,6 +102,8 @@ export {
   MIN_LOG_COVERAGE_OF_PERIOD,
 } from './calibration-constants'
 
+export { calibrationNow } from './calibration-clock'
+
 export type { OutlierResult } from './calibration-outliers'
 export { detectWeightOutliers } from './calibration-outliers'
 

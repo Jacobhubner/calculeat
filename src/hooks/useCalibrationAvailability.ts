@@ -12,6 +12,7 @@ import {
   MIN_LOG_DAYS_FOR_CALIBRATION,
   MIN_LOG_COVERAGE_OF_PERIOD,
   buildClusters,
+  calibrationNow,
 } from '@/lib/calculations/calibration'
 import { useEntitlements, isUnlimited } from '@/hooks/useEntitlements'
 
@@ -102,10 +103,16 @@ export function useCalibrationAvailability(
   /** premium/founder har grace = -1 (obegränsat) och passerar utan gräns */
   const planLimited = !isUnlimited(graceCount)
 
-  // Klockan läses en gång vid mount i stället för under varje rendering.
-  // Utan det blir resultatet instabilt när komponenten råkar rendera om, och
-  // react-hooks/purity flaggar anropet.
-  const [mountedAt] = useState(() => Date.now())
+  /**
+   * Klockan läses en gång vid mount i stället för under varje rendering.
+   * Utan det blir resultatet instabilt när komponenten råkar rendera om, och
+   * react-hooks/purity flaggar anropet.
+   *
+   * calibrationNow, inte Date.now: modalen räknar mot dygnsslutet, och med
+   * en råtidpunkt här låg de två fönstren upp till 16 timmar isär. Kortet
+   * kunde då säga "redo" om data som modalen räknade som otillräcklig.
+   */
+  const [mountedAt] = useState(() => calibrationNow().getTime())
 
   return useMemo(() => {
     const logDays = logDaysInPeriod ?? 0

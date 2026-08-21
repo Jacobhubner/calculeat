@@ -51,6 +51,7 @@ import {
   runCalibration,
   MIN_DATA_POINTS,
   MIN_CLUSTER_SIZE,
+  calibrationNow,
   MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
   MIN_DAILY_KCAL_FOR_LOG,
   buildClusters,
@@ -275,8 +276,10 @@ export default function MetabolicCalibration({
   const { data: calibrationHistoryList, isLoading: calibrationHistoryLoading } =
     useCalibrationHistory(profile.user_id)
 
-  const [periodEndDate, setPeriodEndDate] = useState<Date>(() => endOfDay(new Date()))
-  const refreshNow = useCallback(() => setPeriodEndDate(endOfDay(new Date())), [])
+  // calibrationNow är samma dygnsslut som grinden räknar mot — se
+  // calibration-clock.ts. Skilda klockor gav skilda svar om samma data.
+  const [periodEndDate, setPeriodEndDate] = useState<Date>(() => calibrationNow())
+  const refreshNow = useCallback(() => setPeriodEndDate(calibrationNow()), [])
 
   // Stable "today" reference — recalculates when the user navigates periods.
   const today = useMemo(() => startOfDay(new Date()), [periodEndDate])
@@ -295,7 +298,9 @@ export default function MetabolicCalibration({
   const goForward = useCallback(() => {
     setPeriodEndDate(d => {
       const next = endOfDay(addDays(d, timePeriod))
-      return next > endOfDay(new Date()) ? endOfDay(new Date()) : next
+      // Taket är samma "nu" som grinden använder, inte en egen avläsning.
+      const ceiling = calibrationNow()
+      return next > ceiling ? ceiling : next
     })
   }, [timePeriod])
 
