@@ -13,6 +13,7 @@ import {
   MIN_LOG_COVERAGE_OF_PERIOD,
   buildClusters,
   calibrationNow,
+  validateWeightData,
 } from '@/lib/calculations/calibration'
 import { useEntitlements, isUnlimited } from '@/hooks/useEntitlements'
 
@@ -337,6 +338,32 @@ export function useCalibrationAvailability(
       }
     }
 
+    /**
+     * Kör motorns egen validering i stället för att härma den.
+     *
+     * Takt- och CV-grinderna fanns bara i runCalibration, så kortet kunde
+     * säga "redo" om data som nekades efter klicket. Mätt på ett svep över
+     * brusiga och snabba viktkurvor föll 14 av 25 redo-lägen — 56 %, med
+     * takten som dominerande orsak.
+     *
+     * validateWeightData tar samma kluster som runCalibration sedan bygger,
+     * alltså exakt samma indata. Att anropa den är det enda sättet att
+     * garantera att grinden och motorn inte glider isär igen.
+     */
+    const validationError = validateWeightData(
+      bestClusterResult.allMeasurements,
+      bestClusterResult.startCluster,
+      bestClusterResult.endCluster,
+      bestPeriod
+    )
+    if (validationError) {
+      return {
+        ...unavailable,
+        currentDataPoints: weightHistory.length,
+        reason: validationError.message,
+      }
+    }
+
     // Matloggning krävs lika mycket som vägningar. Utan den kalibreras TDEE
     // mot målet i stället för mot faktiskt intag — samma grind som
     // runCalibration, så knappen aldrig leder till ett felmeddelande.
@@ -520,6 +547,14 @@ export function useCalibrationAvailability(
       }
     }
 
+    /**
+     * Kvar som skärpning, inte som spärr.
+     *
+     * CV över blockeringströskeln fångas numera av validateWeightData långt
+     * tidigare, med motorns eget felmeddelande. Det här greppet gäller de
+     * fall där trenden ser ryckig ut utan att nå den tröskeln — då är
+     * kalibrering fortfarande TILLGÄNGLIG, appen ber bara inte om den.
+     */
     if (weightTrend === 'erratic') {
       reason = 'Oregelbunden viktdata — väg dig på morgonen före frukost för bäst resultat'
       isRecommended = false

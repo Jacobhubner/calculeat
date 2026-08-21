@@ -451,3 +451,68 @@ describe('useCalibrationAvailability — grinden mot motorn', () => {
     expect(missmatch).toBe(0)
   })
 })
+
+describe('useCalibrationAvailability — takt och CV', () => {
+  /**
+   * Takt- och CV-grinderna fanns bara i runCalibration.
+   *
+   * MÄTT före fixen: 14 av 25 redo-lägen föll vid knapptrycket — 56 %, med
+   * takten som dominerande orsak. Kortet lovade en kalibrering som motorn
+   * sedan nekade, och användaren fick felet först efter klicket.
+   *
+   * Hooken kör nu validateWeightData på samma kluster som runCalibration
+   * bygger. Att härma reglerna räcker inte — de måste vara samma kod.
+   */
+  const kurva = (lutningPerDag: number, brus: number): WeightHistory[] => {
+    const now = calibrationNow().getTime()
+    return [13, 12, 8, 4, 1, 0].map((o, i) => {
+      const iso = new Date(now - o * 86400000).toISOString()
+      return {
+        id: `k${i}`,
+        user_id: 'u1',
+        weight_kg: 85 + lutningPerDag * (13 - o) + brus * Math.sin(i * 2.1),
+        recorded_at: iso,
+        created_at: iso,
+      } as WeightHistory
+    })
+  }
+
+  it('nekar för snabb viktförändring med motorns eget besked', () => {
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, kurva(-0.3, 0), null, 20)
+    )
+    expect(result.current.isAvailable).toBe(false)
+    expect(result.current.reason).toContain('fysiologisk')
+  })
+
+  it('säger aldrig redo om något motorn nekar på takt eller CV', () => {
+    let redo = 0
+    let missar = 0
+    for (const brus of [0, 0.5, 1.5, 3, 5]) {
+      for (const lutning of [0, -0.05, -0.15, -0.3, 0.3]) {
+        const hist = kurva(lutning, brus)
+        const { result } = renderHook(() => useCalibrationAvailability(profile, hist, null, 20))
+        if (!result.current.isAvailable) continue
+        redo++
+        const r = runCalibration({
+          weightHistory: hist,
+          periodDays: 14,
+          currentTDEE: 2500,
+          targetCalories: 2100,
+          actualCaloriesAvg: 2100,
+          foodLogCompleteness: 100,
+          daysWithLogData: 20,
+          isFirstCalibration: true,
+          now: calibrationNow(),
+        })
+        // TDEE-golvet undantaget: det kan bara avgöras efter att hela
+        // pipelinen körts, alltså inte av en grind.
+        if (typeof r === 'string' && (r.includes('varierar') || r.includes('fysiologisk'))) {
+          missar++
+        }
+      }
+    }
+    expect(redo).toBeGreaterThan(0)
+    expect(missar).toBe(0)
+  })
+})
