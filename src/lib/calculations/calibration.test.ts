@@ -317,3 +317,44 @@ describe('runCalibration — calorieSource märks ärligt', () => {
     }
   })
 })
+
+describe('runCalibration — klusterstorlek som egen grind', () => {
+  /**
+   * Motorn litade på anroparna.
+   *
+   * MIN_CLUSTER_SIZE kontrollerades i hooken och i periodväljaren, men
+   * aldrig i validateWeightData. Ett direktanrop — eller en anropare som
+   * tappar sin kontroll — kunde därför köra kalibreringen med EN mätning i
+   * ena änden, alltså med halva jämförelsen vilande på ett enskilt
+   * vågvärde.
+   *
+   * MÄTT på samma sanna trend: 2586 kcal/dag med en mätning i startklustret
+   * mot 2449 med tre. 137 kcal/dag i ren brusskillnad, presenterat som en
+   * mätning — inte som ett fel.
+   */
+  const glesa = (offsets: number[]): WeightHistory[] =>
+    offsets.map((o, i) => {
+      const d = new Date(NOW.getTime() - o * 24 * 60 * 60 * 1000)
+      return {
+        id: `s${i}`,
+        user_id: 'u1',
+        weight_kg: 85 - o * 0.04,
+        recorded_at: d.toISOString(),
+        created_at: d.toISOString(),
+      } as WeightHistory
+    })
+
+  it.each([[[13, 6, 5, 4]], [[13, 2, 1, 0]]])(
+    'nekar %o, där startklustret bara har en mätning',
+    offsets => {
+      const r = runCalibration(baseInput({ weightHistory: glesa(offsets), periodDays: 14 }))
+      expect(typeof r).toBe('string')
+      expect(r as string).toContain('vardera änden')
+    }
+  )
+
+  it('släpper igenom när båda ändarna bär två mätningar', () => {
+    const r = runCalibration(baseInput({ weightHistory: glesa([13, 12, 1, 0]), periodDays: 14 }))
+    expect(typeof r).not.toBe('string')
+  })
+})

@@ -8,6 +8,7 @@
 import type { WeightHistory, CalibrationResult, CalibrationWarning } from '@/lib/types'
 import {
   MIN_DATA_POINTS,
+  MIN_CLUSTER_SIZE,
   MIN_LOG_DAYS_FOR_CALIBRATION,
   MIN_LOG_COVERAGE_OF_PERIOD,
   MIN_ADJUSTMENT_PERCENT,
@@ -61,6 +62,27 @@ export function validateWeightData(
     return {
       blocked: true,
       message: `Behöver minst ${minPoints} viktmätningar under ${periodDays} dagar (har ${allMeasurements.length})`,
+    }
+  }
+
+  /**
+   * Båda ändarna måste bära mer än en mätning.
+   *
+   * Kravet fanns bara hos anroparna — hooken och periodväljaren — medan
+   * motorn själv körde vidare på ett kluster med en enda vägning. Då vilar
+   * halva jämförelsen på ett oavrundat vågvärde: mätt gav samma sanna trend
+   * 2586 kcal/dag med en mätning i startklustret mot 2449 med tre, alltså
+   * 137 kcal/dag i ren brusskillnad.
+   *
+   * Att lita på anroparna räcker inte. Grinden kan ändras, en ny anropare
+   * kan tillkomma, och felet syns inte — det ger en trovärdig siffra, inte
+   * ett felmeddelande.
+   */
+  const minCluster = MIN_CLUSTER_SIZE[periodDays]
+  if (startCluster.count < minCluster || endCluster.count < minCluster) {
+    return {
+      blocked: true,
+      message: `Behöver minst ${minCluster} vägningar i vardera änden av perioden (har ${startCluster.count} tidigt och ${endCluster.count} sent)`,
     }
   }
 

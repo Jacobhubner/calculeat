@@ -367,7 +367,9 @@ export default function MetabolicCalibration({
         /**
          * Klusterstorleken kontrollerades inte här, bara att kluster alls
          * gick att bilda. Perioder med en ensam mätning i en ände blev
-         * därför valbara och runCalibration nekade dem efter klicket.
+         * därför valbara — och motorn körde vidare på dem, eftersom kravet
+         * då bara fanns hos anroparna. Numera nekar validateWeightData
+         * sådana underlag; det här är förvalet, inte skyddet.
          */
         result[period] =
           clusters !== null &&
