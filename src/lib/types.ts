@@ -753,8 +753,50 @@ export interface CalibrationAvailability {
      * Klusterkravet kan inte uppfyllas genom att väga sig igen i dag —
      * mätningarna måste hamna i olika ändar av fönstret. Detta är en
      * NEDRÄKNING, till skillnad från daysRemaining som var ett antal.
+     *
+     * null betyder "gäller inte" — antingen blockerar något annat än
+     * klustringen, eller så hjälper ingen vägning inom överskådlig tid.
+     * De två skiljs åt av clusterOutlook, inte av det här fältet.
      */
     daysUntilNextWeighInUseful: number | null
+    /**
+     * Vad som faktiskt går att göra åt klusterkravet.
+     *
+     * 'weighToday' — en vägning i dag räcker.
+     * 'weighLater' — vägningen gör nytta först om N dagar (se ovan).
+     * 'windowExpiring' — mätningarna faller ur fönstret innan de hinner
+     *   bilda ett startkluster; ingen enskild vägning löser det.
+     * 'notBlocking' — klustringen är inte det som stoppar.
+     *
+     * Utan det här kunde kortet inte skilja "väg dig i dag" från "ingen
+     * vägning hjälper" — båda kom ut som 0 ur den gamla formeln, och
+     * användaren fick samma uppmaning dag efter dag utan effekt.
+     */
+    clusterOutlook: 'weighToday' | 'weighLater' | 'windowExpiring' | 'notBlocking'
+    /**
+     * Hinder som mer data inte löser.
+     *
+     * 'planInterval' — gratisnivåns intervall har inte löpt ut.
+     * 'missingTdee' — TDEE saknas i profilen.
+     * 'none' — inget sådant hinder.
+     *
+     * Kortet visade förut nedräkningar och "väg dig igen" även i de här
+     * lägena, eftersom det bara läste progress och aldrig reason. Att be
+     * någon väga sig i 150 dagar till ingen nytta är den värsta sortens
+     * vägledning: en uppmaning som garanterat inte leder någonstans.
+     */
+    hardBlock: 'planInterval' | 'missingTdee' | 'none'
+    /** Dagar kvar av plan-intervallet, när hardBlock är 'planInterval'. */
+    hardBlockDaysLeft: number | null
+    /**
+     * Hur vägningarna fördelar sig över mätperiodens ändar.
+     *
+     * "4 / 6" rymmer inte spridningskravet: fyra vägningar i rad uppfyller
+     * talet men ger noll giltiga mätpunkter, eftersom de hamnar i samma
+     * ände. Två separata siffror går att agera på — ett totaltal gör det
+     * inte.
+     */
+    weighInSpread: { early: number; late: number }
   }
 }
 

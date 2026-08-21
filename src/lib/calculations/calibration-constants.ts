@@ -7,6 +7,12 @@
 
 export const KCAL_PER_KG = 7700
 
+/**
+ * Längsta mätperioden. Den som samlar underlag behöver täcka DEN, inte
+ * den kortaste — annars blir den längsta nivån onåbar i praktiken.
+ */
+export const MAX_CALIBRATION_PERIOD_DAYS = 28
+
 /** Minimum data points per period */
 export const MIN_DATA_POINTS: Record<14 | 21 | 28, number> = {
   14: 4,

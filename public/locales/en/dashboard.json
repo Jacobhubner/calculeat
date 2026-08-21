@@ -381,6 +381,16 @@
     "ladderPrecision": "±{{kcal}} kcal/day",
     "ladderReachedNote": "You are measuring over {{days}} days. Keep going and it gets more reliable.",
     "ladderNoneNote": "Weigh-ins spread over at least 14 days give the first measurement.",
-    "weighInsHint": "spread across the period"
+    "weighInsHint": "spread across the period",
+    "planIntervalTitle": "Calibration opens again later",
+    "planIntervalBody": "The free tier calibrates at intervals, and the next one is in {{count}} days. More weigh-ins will not speed that up — but everything you log meanwhile still counts when it opens.",
+    "missingTdeeTitle": "Set your TDEE first",
+    "missingTdeeBody": "Calibration adjusts an existing TDEE. Without a starting value there is nothing to recalculate — fill it in on your profile and the measurement starts counting.",
+    "statusWindowExpiring": "Your weigh-ins drop out of the measurement period before they form a data point.",
+    "nextWindowExpiring": "Next step: weigh yourself today and keep going about once a week. The period counts backwards from today, so weigh-ins too far back fall out — a steady rhythm always keeps the data alive.",
+    "spreadEarly_one": "{{count}} early",
+    "spreadEarly_other": "{{count}} early",
+    "spreadLate_one": "{{count}} late",
+    "spreadLate_other": "{{count}} late"
   }
 }

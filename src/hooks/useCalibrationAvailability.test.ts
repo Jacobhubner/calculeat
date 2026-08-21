@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useCalibrationAvailability } from './useCalibrationAvailability'
-import { MIN_LOG_DAYS_FOR_CALIBRATION } from '@/lib/calculations/calibration'
+import { MIN_LOG_DAYS_FOR_CALIBRATION, buildClusters } from '@/lib/calculations/calibration'
 import type { Profile, WeightHistory } from '@/lib/types'
 
 // Entitlements slås av: testerna gäller datakraven, inte plangränserna.
@@ -207,7 +207,11 @@ describe('useCalibrationAvailability — trappan och blockeringsorsak', () => {
     expect(result.current.progress.blocking).toBe('clusterGap')
   })
 
-  it('ger en NEDRÄKNING vid klusterbrist, inte ett antal', () => {
+  it('erkänner när inga vägningar räddar mätperioden', () => {
+    // Sex mätningar inom en timme. De ligger så tätt att de bildar ETT
+    // moln: fönstret hinner glida förbi dem innan de kan bli ett
+    // startkluster, och två nya vägningar räcker inte i andra änden.
+    // Verifierat mot buildClusters — inget läge inom 30 dagar håller.
     const nu = Date.now()
     const tata = Array.from({ length: 6 }, (_, i) => ({
       id: `t${i}`,
@@ -218,12 +222,11 @@ describe('useCalibrationAvailability — trappan och blockeringsorsak', () => {
     })) as unknown as Parameters<typeof useCalibrationAvailability>[1]
 
     const { result } = renderHook(() => useCalibrationAvailability(profile, tata, null, 20))
-    const dagar = result.current.progress.daysUntilNextWeighInUseful
-    expect(dagar).not.toBeNull()
-    // Fönstrets tredjedel är ~4,7 dagar för 14-dagarsperioden. Mätningarna
-    // är timmar gamla, så nästan hela väntetiden återstår.
-    expect(dagar!).toBeGreaterThan(0)
-    expect(dagar!).toBeLessThanOrEqual(10)
+    // Ärligt svar i stället för ett datum som inte infrias. Den gamla
+    // formeln svarade 5 dagar här — och efter fem dagar hade ingenting
+    // hänt.
+    expect(result.current.progress.clusterOutlook).toBe('windowExpiring')
+    expect(result.current.progress.daysUntilNextWeighInUseful).toBeNull()
   })
 
   it('sätter blocking till none när inget hindrar', () => {
@@ -234,5 +237,146 @@ describe('useCalibrationAvailability — trappan och blockeringsorsak', () => {
       expect(result.current.progress.blocking).toBe('none')
       expect(result.current.progress.daysUntilNextWeighInUseful).toBeNull()
     }
+  })
+})
+
+describe('useCalibrationAvailability — nedräkningen vid klusterbrist', () => {
+  /**
+   * Nedräkningen räknades förut med formeln zoneDays − daysSinceOldest,
+   * som mätte när äldsta mätningen lämnar SLUTzonen i stället för när den
+   * når STARTzonen. I flera lägen gav den 0 fastän ingen vägning hjälpte:
+   * kortet sa "väg dig i dag", ingenting hände, och samma uppmaning kom
+   * tillbaka nästa dag. Nu simuleras regeln dag för dag.
+   */
+  const offsets = (offs: number[]): WeightHistory[] =>
+    offs.map((d, i) => {
+      const iso = new Date(Date.now() - d * 86400000).toISOString()
+      return {
+        id: `w${i}`,
+        user_id: 'u1',
+        weight_kg: 85 - i * 0.05,
+        recorded_at: iso,
+        created_at: iso,
+      } as WeightHistory
+    })
+
+  it('säger "väg dig i dag" bara när en vägning i dag faktiskt räcker', () => {
+    // Fyra gamla vägningar bildar redan ett startkluster — det som saknas
+    // är en färsk mätning i andra änden.
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, offsets([13, 12, 11, 10]), null, 20)
+    )
+    expect(result.current.progress.blocking).toBe('clusterGap')
+    expect(result.current.progress.clusterOutlook).toBe('weighToday')
+    expect(result.current.progress.daysUntilNextWeighInUseful).toBe(0)
+  })
+
+  it('ger en väntetid när allt ligger i samma ände', () => {
+    // Alla mätningar är timmar gamla: de kan inte bilda både start- och
+    // slutkluster förrän de hunnit åldras in i startzonen.
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, offsets([0.1, 0.2, 0.3, 0.4]), null, 20)
+    )
+    expect(result.current.progress.clusterOutlook).toBe('weighLater')
+    const dagar = result.current.progress.daysUntilNextWeighInUseful
+    expect(dagar).not.toBeNull()
+    expect(dagar!).toBeGreaterThan(0)
+  })
+
+  it('lovar aldrig en dag då klustret ändå inte håller', () => {
+    // Kontrollerar löftet mot den riktiga regeln: väger användaren sig den
+    // utlovade dagen (och dagen före, som simuleringen antar) ska
+    // buildClusters faktiskt ge två fullstora kluster.
+    for (const offs of [
+      [0.1, 0.2, 0.3, 0.4],
+      [3, 2, 1, 0],
+      [6, 5, 4, 3],
+    ]) {
+      const { result } = renderHook(() =>
+        useCalibrationAvailability(profile, offsets(offs), null, 20)
+      )
+      const dagar = result.current.progress.daysUntilNextWeighInUseful
+      if (dagar === null) continue
+
+      const now = Date.now()
+      const target = now + dagar * 86400000
+      const historik = offs.map(o => now - o * 86400000)
+      const nya = [target, target - 86400000]
+      const alla = [...historik, ...nya].map((t, i) => ({
+        id: `x${i}`,
+        user_id: 'u1',
+        weight_kg: 85 - i * 0.05,
+        recorded_at: new Date(t).toISOString(),
+        created_at: new Date(t).toISOString(),
+      })) as WeightHistory[]
+
+      const c = buildClusters(alla, 14, new Date(target))
+      expect(c).not.toBeNull()
+      expect(c!.startCluster.count).toBeGreaterThanOrEqual(2)
+      expect(c!.endCluster.count).toBeGreaterThanOrEqual(2)
+    }
+  })
+
+  it('sätter notBlocking när klustringen inte är hindret', () => {
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, offsets([13, 12, 1, 0]), null, 20)
+    )
+    expect(result.current.progress.clusterOutlook).toBe('notBlocking')
+    expect(result.current.progress.daysUntilNextWeighInUseful).toBeNull()
+  })
+})
+
+describe('useCalibrationAvailability — hinder som mer data inte löser', () => {
+  /**
+   * Kortet läste förut bara progress och aldrig reason. Den som var spärrad
+   * av gratisnivåns intervall fick därför nedräkningar och "väg dig igen" —
+   * en uppmaning som garanterat inte leder någonstans på 150 dagar.
+   */
+  it('flaggar saknat TDEE i stället för att räkna ned', () => {
+    const utanTdee = { lifetime_calibration_count: 0 } as unknown as Profile
+    const { result } = renderHook(() => useCalibrationAvailability(utanTdee, weights(10), null, 20))
+    expect(result.current.isAvailable).toBe(false)
+    expect(result.current.progress.hardBlock).toBe('missingTdee')
+  })
+
+  it('lämnar hardBlock som none när det bara saknas data', () => {
+    const { result } = renderHook(() => useCalibrationAvailability(profile, weights(2), null, 3))
+    expect(result.current.progress.hardBlock).toBe('none')
+    expect(result.current.progress.hardBlockDaysLeft).toBeNull()
+  })
+})
+
+describe('useCalibrationAvailability — vägningarnas spridning', () => {
+  /**
+   * "4 / 4" ser uppfyllt ut även när alla fyra ligger i samma ände av
+   * perioden. Två separata siffror gör skillnaden synlig vid talet självt.
+   */
+  const offsets = (offs: number[]): WeightHistory[] =>
+    offs.map((d, i) => {
+      const iso = new Date(Date.now() - d * 86400000).toISOString()
+      return {
+        id: `w${i}`,
+        user_id: 'u1',
+        weight_kg: 85 - i * 0.05,
+        recorded_at: iso,
+        created_at: iso,
+      } as WeightHistory
+    })
+
+  it('ger noll i båda ändar när vägningarna ligger i rad', () => {
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, offsets([3, 2, 1, 0]), null, 20)
+    )
+    // Antalet är uppfyllt men spridningen avslöjar att talet inte räcker.
+    expect(result.current.progress.weighInSpread.early).toBe(0)
+    expect(result.current.progress.weighInSpread.late).toBe(0)
+  })
+
+  it('räknar tidiga och sena var för sig när de är spridda', () => {
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, offsets([13, 12, 1, 0]), null, 20)
+    )
+    expect(result.current.progress.weighInSpread.early).toBeGreaterThanOrEqual(2)
+    expect(result.current.progress.weighInSpread.late).toBeGreaterThanOrEqual(2)
   })
 })

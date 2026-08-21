@@ -8,7 +8,7 @@ import { DashboardHeroSection } from '@/components/dashboard/DashboardHeroSectio
 import CalibrationPrompt from '@/components/profile/CalibrationPrompt'
 import CalibrationReadinessCard from '@/components/dashboard/CalibrationReadinessCard'
 import { useActualCalorieIntake } from '@/hooks/useActualCalorieIntake'
-import { MIN_DAILY_KCAL_FOR_LOG } from '@/lib/calculations/calibration'
+import { MIN_DAILY_KCAL_FOR_LOG, MAX_CALIBRATION_PERIOD_DAYS } from '@/lib/calculations/calibration'
 import { DietPhaseCard } from '@/components/dashboard/DietPhaseCard'
 import EmptyState from '@/components/EmptyState'
 import { useAuth } from '@/contexts/AuthContext'
@@ -50,20 +50,28 @@ export default function DashboardPage() {
   const { data: weightHistory } = useWeightHistory()
   const { data: lastCalibration } = useLastCalibration(profile?.user_id)
 
-  // Loggdagar krävs lika mycket som vägningar: utan dem kalibreras TDEE mot
-  // målet i stället för mot faktiskt intag. Fönstret matchar kortaste
-  // kalibreringsperioden (14 dagar).
-  //
-  // Lazy useState, inte useMemo: klockan läses en gång vid mount i stället för
-  // under rendering, vilket håller query-nyckeln stabil över omrenderingar.
+  /**
+   * Loggdagar krävs lika mycket som vägningar: utan dem kalibreras TDEE mot
+   * målet i stället för mot faktiskt intag.
+   *
+   * Fönstret täcker den LÄNGSTA kalibreringsperioden, inte den kortaste.
+   * Med 14 dagar blev 28-dagarsnivån matematiskt omöjlig: kravet är
+   * ceil(28 × 0,5) = 14 loggdagar, och ett 14-dagarsfönster rymmer som mest
+   * 14. Marginalen var noll, så en enda missad dag stängde nivån oavsett
+   * hur väl användaren vägde sig — och kortet sa ändå "fortsätt logga".
+   *
+   * Lazy useState, inte useMemo: klockan läses en gång vid mount i stället för
+   * under rendering, vilket håller query-nyckeln stabil över omrenderingar.
+   */
   const [calibrationWindowBase] = useState(() => {
     const end = new Date()
-    const start = new Date(end.getTime() - 14 * 24 * 60 * 60 * 1000)
+    const start = new Date(end.getTime() - MAX_CALIBRATION_PERIOD_DAYS * 24 * 60 * 60 * 1000)
     return { start, end }
   })
 
   /**
-   * Loggdagar räknas FRÅN senaste kalibreringen, inte 14 dagar bakåt rakt av.
+   * Loggdagar räknas FRÅN senaste kalibreringen, inte hela perioden bakåt
+   * rakt av.
    *
    * Fönstret var fast, så dagar som redan förbrukats av en tidigare
    * kalibrering räknades igen. Direkt efter en kalibrering kunde kortet

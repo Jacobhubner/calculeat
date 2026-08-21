@@ -381,6 +381,16 @@
     "ladderPrecision": "±{{kcal}} kcal/dag",
     "ladderReachedNote": "Du mäter över {{days}} dagar. Fortsätt så blir resultatet säkrare.",
     "ladderNoneNote": "Vägningar spridda över minst 14 dagar ger den första mätningen.",
-    "weighInsHint": "spridda över perioden"
+    "weighInsHint": "spridda över perioden",
+    "planIntervalTitle": "Kalibrering öppnar igen senare",
+    "planIntervalBody": "Gratisnivån kalibrerar med ett intervall, och nästa gång är om {{count}} dagar. Fler vägningar snabbar inte på det — men allt du loggar under tiden räknas när det väl öppnar.",
+    "missingTdeeTitle": "Ange ditt TDEE först",
+    "missingTdeeBody": "Kalibreringen justerar ett befintligt TDEE. Utan ett startvärde finns ingenting att räkna om — fyll i det i profilen så börjar mätningen räknas.",
+    "statusWindowExpiring": "Dina vägningar hinner falla ur mätperioden innan de bildar en mätpunkt.",
+    "nextWindowExpiring": "Nästa steg: väg dig i dag och fortsätt någon gång i veckan. Mätperioden räknar bakåt från i dag, så vägningar som ligger för långt bak faller ur — en jämn takt håller alltid underlaget levande.",
+    "spreadEarly_one": "{{count}} tidig",
+    "spreadEarly_other": "{{count}} tidiga",
+    "spreadLate_one": "{{count}} sen",
+    "spreadLate_other": "{{count}} sena"
   }
 }

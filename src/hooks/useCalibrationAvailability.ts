@@ -23,6 +23,62 @@ const DEFAULT_FREE_CALIBRATION_GRACE = 2
 const DEFAULT_FREE_CALIBRATION_INTERVAL_DAYS = 180
 
 /**
+ * Hur långt fram nedräkningen tittar. Behövs bara ett tak — bortom en
+ * period har fönstret glidit helt och läget ser annorlunda ut ändå.
+ */
+const MAX_LOOKAHEAD_DAYS = 30
+
+/**
+ * Antal dagar tills klusterkravet KAN uppfyllas, eller null om ingen
+ * vägning framåt hjälper inom överskådlig tid.
+ *
+ * Simulerar regeln dag för dag i stället för att räkna på den. Zonerna
+ * flyttar sig varje dygn och mätningar faller ur fönstret i andra änden,
+ * så en sluten formel blir fel så fort mer än ett fall ska täckas — vilket
+ * var precis vad den gamla gjorde.
+ *
+ * Antagandet är att användaren väger sig samma dag som svaret pekar ut.
+ * Håller klustret redan i dag returneras 0.
+ */
+function daysUntilClusterPossible(
+  weightHistory: WeightHistory[],
+  period: 14 | 21 | 28,
+  fromMs: number
+): number | null {
+  const minCluster = MIN_CLUSTER_SIZE[period]
+  const template = weightHistory[0] ?? ({} as WeightHistory)
+  const DAY_MS = 24 * 60 * 60 * 1000
+
+  for (let offset = 0; offset <= MAX_LOOKAHEAD_DAYS; offset++) {
+    const then = new Date(fromMs + offset * DAY_MS)
+
+    /**
+     * Användaren antas väga sig från och med den dagen och framåt, inte
+     * en enda gång. Slutklustret kräver minCluster mätningar och en ensam
+     * vägning kan därför aldrig fylla det — simulerar man bara en blir
+     * svaret "ingen vägning hjälper" även när en vecka av vägningar löser
+     * det galant.
+     */
+    const hypothetical: WeightHistory[] = Array.from({ length: minCluster }, (_, i) => ({
+      ...template,
+      id: `__hypothetical_${i}__`,
+      recorded_at: new Date(then.getTime() - i * DAY_MS).toISOString(),
+    }))
+
+    const clusters = buildClusters([...weightHistory, ...hypothetical], period, then)
+    if (
+      clusters &&
+      clusters.startCluster.count >= minCluster &&
+      clusters.endCluster.count >= minCluster
+    ) {
+      return offset
+    }
+  }
+
+  return null
+}
+
+/**
  * Determine if TDEE calibration is available and recommended.
  *
  * Uses the same thresholds and cluster logic as the actual calibration
@@ -55,24 +111,14 @@ export function useCalibrationAvailability(
     const logDays = logDaysInPeriod ?? 0
 
     /**
-     * Framsteg mot båda kraven. Räknas mot 14-dagarsperioden — den kortaste
-     * vägen till en kalibrering, så nedräkningen visar det närmaste målet
-     * i stället för det mest avlägsna.
+     * Vägningar som redan förbrukats av en tidigare kalibrering ska inte
+     * räknas igen — dagen efter en kalibrering visade kortet annars
+     * "8 av 4 vägningar ✓" trots att inga nya fanns. Varje fönster nedan
+     * klipps därför vid kalibreringsdatumet när det är nyare.
      */
-    /**
-     * Räknas FRÅN senaste kalibreringen när den är nyare än 14 dagar.
-     *
-     * Fönstret var fast, så vägningar som redan förbrukats av en tidigare
-     * kalibrering räknades igen: dagen efter en kalibrering visade kortet
-     * "8 av 4 vägningar ✓" trots att inga nya fanns. Samma fel som
-     * loggdagarna hade, i raden bredvid.
-     */
-    const fourteenDaysAgo = new Date(mountedAt - 14 * 24 * 60 * 60 * 1000)
     const lastCalibratedAt = lastCalibration?.calibrated_at
       ? new Date(lastCalibration.calibrated_at)
       : null
-    const progressWindowStart =
-      lastCalibratedAt && lastCalibratedAt > fourteenDaysAgo ? lastCalibratedAt : fourteenDaysAgo
 
     /**
      * Vilka perioder håller redan, och vilken jobbar användaren mot?
@@ -136,24 +182,44 @@ export function useCalibrationAvailability(
       : 0
 
     /**
+     * Var i perioden vägningarna faktiskt ligger.
+     *
+     * Räknas med buildClusters, alltså exakt den funktion grinden och
+     * runCalibration använder — en egen tredjedelsuträkning här skulle
+     * kunna glida isär från regeln den beskriver.
+     */
+    const spreadClusters = buildClusters(
+      (weightHistory ?? []).filter(w => new Date(w.recorded_at) >= activeWindowStart),
+      activePeriod,
+      new Date(mountedAt)
+    )
+    const weighInSpread = {
+      early: spreadClusters?.startCluster.count ?? 0,
+      late: spreadClusters?.endCluster.count ?? 0,
+    }
+
+    /**
      * När blir nästa vägning meningsfull?
      *
      * Klusterkravet går inte att uppfylla genom att väga sig igen i dag —
      * mätningarna måste hamna i olika ändar av fönstret, som delas i
-     * tredjedelar. Ligger allt i slutet får den äldsta mätningen först
+     * tredjedelar. Ligger allt i slutet får de äldsta mätningarna först
      * driva in i startzonen, och det tar tid.
+     *
+     * Räknas fram genom att SIMULERA regeln dag för dag, inte genom en
+     * formel. Den gamla formeln (zoneDays − daysSinceOldest) mätte när
+     * äldsta mätningen lämnar SLUTzonen, inte när den når STARTzonen, och
+     * gav 0 i lägen där ingen vägning alls hjälper — kortet sa "väg dig i
+     * dag", ingenting hände, och samma text kom tillbaka nästa dag.
      *
      * Det här är en NEDRÄKNING och kan bara minska. daysRemaining var ett
      * ANTAL som presenterades som dagar, och kunde dessutom gå bakåt.
      */
-    const zoneDays = activePeriod / 3
-    const oldestInWindow = (weightHistory ?? [])
-      .filter(w => new Date(w.recorded_at) >= progressWindowStart)
-      .map(w => new Date(w.recorded_at).getTime())
-      .sort((a, b) => a - b)[0]
-    const daysSinceOldest =
-      oldestInWindow != null ? (mountedAt - oldestInWindow) / (24 * 60 * 60 * 1000) : 0
-    const daysUntilNextWeighInUseful = Math.max(0, Math.ceil(zoneDays - daysSinceOldest))
+    const daysUntilNextWeighInUseful = daysUntilClusterPossible(
+      weightHistory ?? [],
+      activePeriod,
+      mountedAt
+    )
 
     /**
      * Täckningskravet kontrollerades bara i calibration-core, alltså EFTER
@@ -177,6 +243,7 @@ export function useCalibrationAvailability(
 
     const buildProgress = (): CalibrationAvailability['progress'] => ({
       weighIns: { current: weighInsInActivePeriod, required: weighInsNeeded },
+      weighInSpread,
       logDays: { current: logDays, required: MIN_LOG_DAYS_FOR_CALIBRATION },
       // Kvar för bakåtkompatibilitet, se @deprecated i types.ts.
       daysRemaining: Math.max(
@@ -187,6 +254,16 @@ export function useCalibrationAvailability(
       reachedPeriods,
       blocking,
       daysUntilNextWeighInUseful: blocking === 'clusterGap' ? daysUntilNextWeighInUseful : null,
+      clusterOutlook:
+        blocking !== 'clusterGap'
+          ? 'notBlocking'
+          : daysUntilNextWeighInUseful === null
+            ? 'windowExpiring'
+            : daysUntilNextWeighInUseful === 0
+              ? 'weighToday'
+              : 'weighLater',
+      hardBlock: 'none',
+      hardBlockDaysLeft: null,
     })
 
     const unavailable: CalibrationAvailability = {
@@ -211,6 +288,7 @@ export function useCalibrationAvailability(
       return {
         ...unavailable,
         reason: 'TDEE måste vara satt för att kalibrera',
+        progress: { ...unavailable.progress, hardBlock: 'missingTdee' },
       }
     }
 
@@ -288,6 +366,11 @@ export function useCalibrationAvailability(
           daysSinceLastCalibration,
           daysUntilNextRecommended: daysLeft,
           reason: `Nästa kalibrering om ${daysLeft} dagar — gratisnivån kalibrerar 1 gång var ${months}:e månad`,
+          progress: {
+            ...unavailable.progress,
+            hardBlock: 'planInterval',
+            hardBlockDaysLeft: daysLeft,
+          },
         }
       }
     }

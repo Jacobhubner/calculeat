@@ -16,7 +16,7 @@
  * med varandra och gör att ingen av dem känns angelägen.
  */
 
-import { Zap, Scale, UtensilsCrossed, Check, CalendarRange } from 'lucide-react'
+import { Zap, Scale, UtensilsCrossed, Check, CalendarRange, Lock } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
@@ -134,8 +134,47 @@ export default function CalibrationReadinessCard({
   // CalibrationPrompt över.
   if (availability.isAvailable) return null
 
-  const { weighIns, logDays, activePeriod, reachedPeriods, blocking, daysUntilNextWeighInUseful } =
-    availability.progress
+  const {
+    weighIns,
+    logDays,
+    activePeriod,
+    reachedPeriods,
+    blocking,
+    daysUntilNextWeighInUseful,
+    clusterOutlook,
+    hardBlock,
+    hardBlockDaysLeft,
+    weighInSpread,
+  } = availability.progress
+
+  /**
+   * Vid ett hinder som mer data inte löser är hela framstegskortet fel svar.
+   *
+   * Kortet läste förut bara progress och aldrig reason, så den som var
+   * spärrad av gratisnivåns intervall fick nedräkningar och "väg dig igen"
+   * — en uppmaning som garanterat inte leder någonstans på 150 dagar.
+   */
+  if (hardBlock !== 'none') {
+    return (
+      <Card className={className}>
+        <CardContent className="flex items-start gap-2.5 p-4">
+          <Lock className="mt-0.5 h-4 w-4 shrink-0 text-neutral-400 dark:text-neutral-500" />
+          <div>
+            <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
+              {hardBlock === 'planInterval'
+                ? t('calibrationReadiness.planIntervalTitle')
+                : t('calibrationReadiness.missingTdeeTitle')}
+            </h4>
+            <p className="mt-1 text-xs leading-snug text-neutral-600 dark:text-neutral-400">
+              {hardBlock === 'planInterval' && hardBlockDaysLeft != null
+                ? t('calibrationReadiness.planIntervalBody', { count: hardBlockDaysLeft })
+                : t('calibrationReadiness.missingTdeeBody')}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
   // Har man varken vägt sig eller loggat är kalibrering inte nästa steg —
   // då är det logga-mat som gäller, och dashboardens egna CTA:n säger redan
@@ -178,9 +217,11 @@ export default function CalibrationReadinessCard({
    */
   const nextStepKey =
     blocking === 'clusterGap'
-      ? daysUntilNextWeighInUseful && daysUntilNextWeighInUseful > 0
-        ? 'nextWeighAgainIn'
-        : 'nextWeighAgainToday'
+      ? clusterOutlook === 'windowExpiring'
+        ? 'nextWindowExpiring'
+        : clusterOutlook === 'weighLater'
+          ? 'nextWeighAgainIn'
+          : 'nextWeighAgainToday'
       : blocking === 'logCoverage'
         ? 'nextLogCoverage'
         : focus === 'weighIns'
@@ -196,7 +237,9 @@ export default function CalibrationReadinessCard({
   const statusKey = isFreshAfterCalibration
     ? 'statusFresh'
     : blocking === 'clusterGap'
-      ? 'statusClusterGap'
+      ? clusterOutlook === 'windowExpiring'
+        ? 'statusWindowExpiring'
+        : 'statusClusterGap'
       : blocking === 'logDays'
         ? 'statusNeedLogDays'
         : blocking === 'logCoverage'
@@ -320,7 +363,16 @@ export default function CalibrationReadinessCard({
             current={weighIns.current}
             required={weighIns.required}
             isFocus={focus === 'weighIns'}
-            hint={t('calibrationReadiness.weighInsHint')}
+            hint={
+              /*
+                Två siffror, inte en. "4 / 4" ser klart ut även när alla
+                fyra ligger i samma ände — och då är både tidiga och sena
+                noll, vilket är exakt det talet inte visar.
+              */
+              weighIns.current > 0
+                ? `${t('calibrationReadiness.spreadEarly', { count: weighInSpread.early })} · ${t('calibrationReadiness.spreadLate', { count: weighInSpread.late })}`
+                : t('calibrationReadiness.weighInsHint')
+            }
           />
           <RequirementRow
             icon={<UtensilsCrossed className="h-3.5 w-3.5" />}

@@ -50,6 +50,7 @@ import {
 import {
   runCalibration,
   MIN_DATA_POINTS,
+  MIN_CLUSTER_SIZE,
   MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
   MIN_DAILY_KCAL_FOR_LOG,
   buildClusters,
@@ -358,7 +359,15 @@ export default function MetabolicCalibration({
       const count = weightHistory.filter(w => new Date(w.recorded_at) >= cutoff).length
       if (count >= MIN_DATA_POINTS[period]) {
         const clusters = buildClusters(weightHistory, period, now)
-        result[period] = clusters !== null
+        /**
+         * Klusterstorleken kontrollerades inte här, bara att kluster alls
+         * gick att bilda. Perioder med en ensam mätning i en ände blev
+         * därför valbara och runCalibration nekade dem efter klicket.
+         */
+        result[period] =
+          clusters !== null &&
+          clusters.startCluster.count >= MIN_CLUSTER_SIZE[period] &&
+          clusters.endCluster.count >= MIN_CLUSTER_SIZE[period]
       }
     }
     return result
@@ -373,6 +382,26 @@ export default function MetabolicCalibration({
     }
     return result
   }, [weightHistory, now])
+
+  /**
+   * Öppna på den längsta period som faktiskt håller.
+   *
+   * Förvalet var hårdkodat till 21 dagar oavsett underlag. Den vars data
+   * bara räcker till 14 möttes därför av ett felmeddelande i stället för
+   * ett resultat, och fick själv gissa att svaret låg i rullgardinen.
+   *
+   * Längst först eftersom en längre mätperiod ger säkrare siffra (±62
+   * kcal/dag vid 28 dagar mot ±177 vid 14). Justeras bara en gång — den
+   * som själv väljer period ska inte bli överkörd när datan ändras.
+   */
+  const didPickPeriod = useRef(false)
+  useEffect(() => {
+    if (didPickPeriod.current) return
+    const best = ([28, 21, 14] as const).find(p => periodAvailability[p])
+    if (!best) return
+    didPickPeriod.current = true
+    setTimePeriod(best)
+  }, [periodAvailability])
 
   // Run calibration
   const calibrationResult = useMemo((): CalibrationResult | string | null => {
