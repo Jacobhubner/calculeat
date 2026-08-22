@@ -826,3 +826,63 @@ describe('uppgångens tidsspann', () => {
     expect(kort).toBeLessThan(lang)
   })
 })
+
+describe('uppgången använder LINJÄR modell', () => {
+  /**
+   * Tvärtemot nedgången — och det är avsiktligt.
+   *
+   * Uppgången räknades först exponentiellt som en spegling av
+   * estimatePrepDuration. En simulering vecka för vecka med TDEE omräknat
+   * ur Mifflin-St Jeor visade att det var fel åt det farliga hållet:
+   *
+   *   70 → 85 kg @15 %: sanning 41 v, linjär 42,2, exponentiell 38,4
+   *   60 → 70 kg @10 %: sanning 44 v, linjär 44,9, exponentiell 41,6
+   *
+   * Exponentialmodellen antar att takten följer kroppsvikten
+   * proportionellt. Uppåt stämmer det inte: +21 % vikt ger bara +9 % TDEE,
+   * eftersom stora delar av BMR beror på längd, ålder och kön. Modellen
+   * lovade därför snabbare resultat än möjligt.
+   */
+  it('ger samma svar som calculateTimeline', () => {
+    const start = 88.4
+    for (const [mal, kgPerVecka] of [
+      [100, 0.26],
+      [100, 0.52],
+      [95, 0.39],
+    ] as Array<[number, number]>) {
+      const perioder = estimateDurationToGain({
+        currentWeightKg: start,
+        targetWeightKg: mal,
+        weeklyRatePercent: (kgPerVecka / start) * 100,
+      })!.weeks
+      // Linjärt: kvarvarande kilo delat med veckotakten.
+      const vantat = (mal - start) / kgPerVecka
+      expect(Math.abs(perioder - vantat)).toBeLessThan(0.15)
+    }
+  })
+
+  it('underskattar inte tiden mot en simulerad sanning', () => {
+    /**
+     * Riktningskontrollen. Ett systematiskt fel som pekar åt det önskvärda
+     * hållet är värre än ett större slumpmässigt — den som får veta att
+     * bulken tar 38 veckor när den tar 41 tappar förtroendet för appen.
+     */
+    const KCAL = 7700
+    const tdee = (kg: number) => (10 * kg + 6.25 * 180 - 5 * 30 + 5) * 1.55
+    let vikt = 70
+    let sanningVeckor = 0
+    while (vikt < 85 && sanningVeckor < 400) {
+      vikt += (tdee(vikt) * 0.15 * 7) / KCAL
+      sanningVeckor++
+    }
+
+    const kgPerVecka = (tdee(70) * 0.15 * 7) / KCAL
+    const modell = estimateDurationToGain({
+      currentWeightKg: 70,
+      targetWeightKg: 85,
+      weeklyRatePercent: (kgPerVecka / 70) * 100,
+    })!.weeks
+
+    expect(modell).toBeGreaterThanOrEqual(sanningVeckor)
+  })
+})

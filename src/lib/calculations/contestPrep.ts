@@ -597,9 +597,9 @@ function clampGainRate(rate: number): number {
  * mål över nuvarande vikt (`targetWeightKg >= currentWeightKg` → null).
  * Uppgång saknade därför längdberäkning helt, i båda fokusspåren.
  *
- * Exponentialmodell precis som nedgången, men med (1 + r): takten är en
- * andel av kroppsvikten, och vikten STIGER under resans gång — så varje
- * veckas uppgång i kilo blir något större än den föregående.
+ * LINJÄR modell, till skillnad från nedgången. Skälet står vid formeln:
+ * exponentialmodellen antar att TDEE följer vikten proportionellt, vilket
+ * uppåt överdriver accelerationen och lovar för kort tid.
  */
 export function estimateDurationToGain(input: {
   currentWeightKg: number
@@ -632,7 +632,33 @@ export function estimateDurationToGain(input: {
   const ratePercentUsed = clampGainRate(input.weeklyRatePercent ?? GAIN_RATE_PERCENT.recommended)
   const r = ratePercentUsed / 100
 
-  const weeksExact = Math.log(targetWeightKg / currentWeightKg) / Math.log(1 + r)
+  /**
+   * LINJÄR MODELL VID UPPGÅNG — tvärtemot nedgången.
+   *
+   * Uppgången räknades först exponentiellt, som en spegling av
+   * estimatePrepDuration. Det var fel, och en simulering vecka för vecka
+   * med TDEE omräknat ur Mifflin-St Jeor visar varför:
+   *
+   *   fall                sanning   linjär        exponentiell
+   *   70 → 85 kg @15 %    41 v      42,2 (+1,2)   38,4 (−2,6)
+   *   88,4 → 100 kg @15 % 29 v      29,4 (+0,4)   27,7 (−1,3)
+   *   60 → 70 kg @10 %    44 v      44,9 (+0,9)   41,6 (−2,4)
+   *   kvinna 60 → 68 kg   30 v      30,4 (+0,4)   28,6 (−1,4)
+   *
+   * Exponentialmodellen antar att takten följer kroppsvikten
+   * PROPORTIONELLT. Vid nedgång är den approximationen konservativ, men
+   * uppåt slår den fel: 70 → 85 kg är +21 % vikt men bara +9 % TDEE,
+   * eftersom en stor del av BMR beror på längd, ålder och kön. Modellen
+   * överdriver därmed accelerationen och lovar snabbare resultat än
+   * möjligt — precis det systematiska fel den infördes för att åtgärda vid
+   * nedgång.
+   *
+   * Den linjära felar åt andra hållet, med mindre marginal. Samma modell
+   * som calculateTimeline använder för uppgång, så Målsättning och
+   * perioder ger samma svar.
+   */
+  const weeklyGainKg = currentWeightKg * r
+  const weeksExact = (targetWeightKg - currentWeightKg) / weeklyGainKg
   if (!Number.isFinite(weeksExact) || weeksExact <= 0) return null
 
   const weightToGainKg = targetWeightKg - currentWeightKg
@@ -640,7 +666,7 @@ export function estimateDurationToGain(input: {
   return {
     weeks: round1(weeksExact),
     weightToGainKg: round1(weightToGainKg),
-    weeklyGainKg: round1(currentWeightKg * r),
+    weeklyGainKg: round1(weeklyGainKg),
     ratePercentUsed,
     aboveRecommendedRate: ratePercentUsed > GAIN_RATE_PERCENT.max,
     isMinorAdjustment: weightToGainKg < currentWeightKg * MINOR_ADJUSTMENT_WEIGHT_FRACTION,
