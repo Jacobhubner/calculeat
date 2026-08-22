@@ -28,6 +28,7 @@ import {
   estimatePrepDuration,
   estimateDurationToWeight,
   estimateDurationToGain,
+  GAIN_RATE_PERCENT,
   classifyPrepRate,
   PREP_RATE_PERCENT,
   OBSERVED_PREP_WEEKS,
@@ -179,6 +180,18 @@ export function PrepDurationHelper({
   const gainRate =
     isGain && caloriesMin != null && caloriesMax != null && tdee > 0
       ? weeklyRateForCalories({ tdee, caloriesMin, caloriesMax, weightKg })
+      : null
+
+  /**
+   * Den snabbaste takt kalorimålet medger, när den överstiger Iraki 2019:s
+   * tak — annars null.
+   *
+   * kgMin är den MEST negativa (tdee − calories), alltså det största
+   * överskottet och den snabbaste uppgången.
+   */
+  const gainAboveRecommended =
+    gainRate && Math.abs(gainRate.percentMin) > GAIN_RATE_PERCENT.max
+      ? Math.round(Math.abs(gainRate.percentMin) * 100) / 100
       : null
 
   const gainEstimate = isGain
@@ -460,6 +473,18 @@ export function PrepDurationHelper({
                     <p className="text-xs text-neutral-600 dark:text-neutral-400">
                       {t('phase.prep.gainRateNote')}
                     </p>
+                    {/* Kalorimålets övre del kan ligga över litteraturens
+                        tak — 10–20 % överskott ger 0,29–0,59 %/v för en
+                        88-kilos kropp, medan Iraki 2019 stannar vid 0,5.
+                        Notisen ovan beskrev förut förvalet 0,25 % som om
+                        det vore den takt som faktiskt användes. */}
+                    {gainAboveRecommended != null && (
+                      <p className="text-xs text-amber-700 dark:text-amber-300">
+                        {t('phase.prep.gainRateAboveMax', {
+                          percent: gainAboveRecommended,
+                        })}
+                      </p>
+                    )}
                     <p className="text-xs text-neutral-600 dark:text-neutral-400">
                       {t('phase.prep.gainStrengthTraining')}
                     </p>

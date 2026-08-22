@@ -738,3 +738,39 @@ describe('uppgångstakten är konsekvent med Målsättning', () => {
     expect(langsam!.weeks).toBeGreaterThan(snabb!.weeks * 1.8)
   })
 })
+
+describe('kalorimålets övre del mot litteraturens tak', () => {
+  /**
+   * NNR-lägets bulk-override ger 10–20 % överskott. Den övre delen landar
+   * på ~0,6 %/vecka OAVSETT kroppsstorlek — alltså över Iraki 2019:s tak
+   * på 0,5 %. Det är systematiskt, inte ett kantfall.
+   *
+   * Notisen i räknaren påstod tidigare "0,25 % av kroppsvikten per vecka",
+   * alltså förvalet som slutade användas när takten började härledas ur
+   * kalorimålet. Texten beskrev en takt som var inom rekommendationen
+   * medan den faktiska låg över den.
+   */
+  it.each([60, 88.4, 120])('flaggas för %s kg', weightKg => {
+    const tdee = weightKg * 33
+    const rate = weeklyRateForCalories({
+      tdee,
+      caloriesMin: tdee * 1.1,
+      caloriesMax: tdee * 1.2,
+      weightKg,
+    })
+    // percentMin är den mest negativa, alltså den snabbaste uppgången.
+    expect(Math.abs(rate.percentMin)).toBeGreaterThan(GAIN_RATE_PERCENT.max)
+  })
+
+  it('spannets nedre del håller sig inom rekommendationen', () => {
+    const tdee = 88.4 * 33
+    const rate = weeklyRateForCalories({
+      tdee,
+      caloriesMin: tdee * 1.1,
+      caloriesMax: tdee * 1.2,
+      weightKg: 88.4,
+    })
+    expect(Math.abs(rate.percentMax)).toBeGreaterThanOrEqual(GAIN_RATE_PERCENT.min)
+    expect(Math.abs(rate.percentMax)).toBeLessThanOrEqual(GAIN_RATE_PERCENT.max)
+  })
+})

@@ -313,11 +313,12 @@
       "introGain": "Du väger {{current}} kg. Ange målvikt, så räknas tiden ut.",
       "targetGainLabel": "Målvikt (kg)",
       "gainRateLabel": "Rekommenderad takt",
-      "gainRateNote": "0,25 % av kroppsvikten per vecka. Snabbare uppgång ger mestadels fett: i en studie på elitidrottare gick en grupp upp mer än dubbelt så snabbt och ökade fettmassan fem gånger så mycket — utan att bygga mer muskler (Garthe 2013).",
+      "gainRateNote": "Takten följer ditt kalorimål. Iraki 2019 rekommenderar 0,25–0,5 % av kroppsvikten per vecka för uppgång — snabbare ger mestadels fett: i en studie på elitidrottare gick en grupp upp mer än dubbelt så snabbt och ökade fettmassan fem gånger så mycket, utan att bygga mer muskler (Garthe 2013).",
       "gainStrengthTraining": "Kalorierna avgör hur mycket du går upp. Styrketräningen avgör hur mycket av det som blir muskler — utan den blir överskottet till största delen fett.",
       "gainLowerRangeNote": "Den lägre delen av kalorispannet tillsammans med en längre period ger minst fettuppgång. Tar du kortare tid på dig krävs ett större överskott, och överskottet är det som lagras som fett.",
       "titleGain": "Hur lång tid tar uppgången?",
-      "statWeightToGain": "Att lägga på"
+      "statWeightToGain": "Att lägga på",
+      "gainRateAboveMax": "Övre delen av ditt kalorispann ger {{percent}} % av kroppsvikten per vecka, alltså snabbare än de 0,5 % litteraturen rekommenderar. Lägg dig i spannets nedre del om du vill hålla fettuppgången nere."
     },
     "deficitLevel": {
       "label": "Hur snabbt vill du gå ner?",
