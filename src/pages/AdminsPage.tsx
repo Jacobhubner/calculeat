@@ -33,10 +33,25 @@ import { usePreviewMode } from '@/hooks/usePreviewMode'
 import { useFreeViewMode } from '@/hooks/useFreeViewMode'
 import { useSupportAdminUnreadCount } from '@/hooks/useSupportChat'
 
-function CapabilityItem({ children }: { children: React.ReactNode }) {
+/**
+ * `available={false}` används för superadminpunkterna när den som tittar är
+ * vanlig admin: de ska synas så att man vet vem man ska vända sig till, men
+ * en bock hade läst som "det här kan du göra".
+ */
+function CapabilityItem({
+  children,
+  available = true,
+}: {
+  children: React.ReactNode
+  available?: boolean
+}) {
   return (
     <li className="flex items-start gap-2.5">
-      <Check className="h-4 w-4 shrink-0 mt-0.5 text-primary-600 dark:text-primary-400" />
+      {available ? (
+        <Check className="h-4 w-4 shrink-0 mt-0.5 text-primary-600 dark:text-primary-400" />
+      ) : (
+        <Crown className="h-4 w-4 shrink-0 mt-0.5 text-amber-600 dark:text-amber-300" />
+      )}
       <span className="text-sm text-neutral-600 dark:text-neutral-400">{children}</span>
     </li>
   )
@@ -113,17 +128,21 @@ export default function AdminsPage() {
               <CapabilityItem>{t('capabilities.freeView')}</CapabilityItem>
             </ul>
 
-            {isSuperAdmin && (
-              <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-700">
-                <p className="mb-2.5 text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                  {t('capabilities.superAdminNote')}
-                </p>
-                <ul className="space-y-2.5">
-                  <CapabilityItem>{t('capabilities.manageAdmins')}</CapabilityItem>
-                  <CapabilityItem>{t('capabilities.grantPremium')}</CapabilityItem>
-                </ul>
-              </div>
-            )}
+            {/* Superadminpunkterna visas även för vanliga admins, så att de
+                vet att verktygen finns och vem de ska be om dem. */}
+            <div className="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-700">
+              <p className="mb-2.5 text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                {isSuperAdmin ? t('capabilities.superAdminNote') : t('capabilities.adminNote')}
+              </p>
+              <ul className="space-y-2.5">
+                <CapabilityItem available={isSuperAdmin}>
+                  {t('capabilities.manageAdmins')}
+                </CapabilityItem>
+                <CapabilityItem available={isSuperAdmin}>
+                  {t('capabilities.grantPremium')}
+                </CapabilityItem>
+              </ul>
+            </div>
           </CardContent>
         </Card>
 

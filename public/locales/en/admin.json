@@ -15,6 +15,7 @@
     "preview": "Try the app as a new user in a sandbox, without touching your own data",
     "freeView": "See the app as a free user to check what is locked",
     "superAdminNote": "As a super admin you can also:",
+    "adminNote": "Only super admins can do this. If you need help with any of it — reach out to a super admin:",
     "manageAdmins": "Add and remove other admins",
     "grantPremium": "Grant free premium to a user and see their full subscription history"
   },

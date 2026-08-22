@@ -15,6 +15,7 @@
     "preview": "Testa appen som en ny användare i en sandlåda, utan att röra din egen data",
     "freeView": "Se appen som en gratisanvändare för att kontrollera vad som är låst",
     "superAdminNote": "Som superadmin kan du dessutom:",
+    "adminNote": "Det här kan bara superadmins göra. Behöver du hjälp med något av detta — hör av dig till en superadmin:",
     "manageAdmins": "Lägga till och ta bort andra admins",
     "grantPremium": "Ge premium gratis till en användare och se hela deras prenumerationshistorik"
   },
