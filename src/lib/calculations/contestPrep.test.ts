@@ -7,6 +7,7 @@
  */
 
 import { describe, it, expect } from 'vitest'
+import { weeklyRateForCalories } from './weeklyRate'
 import {
   estimatePrepDuration,
   estimateDurationToWeight,
@@ -678,5 +679,62 @@ describe('estimateDurationToGain', () => {
     expect(
       estimateDurationToGain({ currentWeightKg: 80, targetWeightKg: 90 })!.isMinorAdjustment
     ).toBe(false)
+  })
+})
+
+describe('uppgångstakten är konsekvent med Målsättning', () => {
+  /**
+   * FYND 2026-08-22: Perioder visade 0,20 kg/v där Målsättning visade
+   * 0,26–0,52 för samma mål och samma användare. Skälet var att uppgången
+   * fick en fast evidenssiffra (Iraki 2019:s nedre ände) medan nedgången
+   * och Målsättning båda härleder takten ur KALORIMÅLET.
+   *
+   * weeklyRate.ts finns uttryckligen för att hålla dem samstämmiga; den nya
+   * uppgången kringgick den. Nu tar alla tre samma väg.
+   */
+  it('härleder samma kg/v som Målsättning ur samma kalorimål', () => {
+    const tdee = 2881
+    const weightKg = 88.4
+    // NNR-lägets bulk-override: 10–20 % över underhåll.
+    const rate = weeklyRateForCalories({
+      tdee,
+      caloriesMin: tdee * 1.1,
+      caloriesMax: tdee * 1.2,
+      weightKg,
+    })
+
+    // Överskott ger NEGATIVA tal ur weeklyRateForCalories (tdee − calories).
+    // kgMin är den MEST negativa, alltså den snabbaste uppgången.
+    expect(Math.abs(rate.kgMax)).toBeCloseTo(0.26, 2)
+    expect(Math.abs(rate.kgMin)).toBeCloseTo(0.52, 2)
+  })
+
+  it('visar spannet lågt till högt trots negativa mellanled', () => {
+    const tdee = 2881
+    const rate = weeklyRateForCalories({
+      tdee,
+      caloriesMin: tdee * 1.1,
+      caloriesMax: tdee * 1.2,
+      weightKg: 88.4,
+    })
+    const lag = Math.abs(rate.kgMax)
+    const hog = Math.abs(rate.kgMin)
+    expect(lag).toBeLessThan(hog)
+  })
+
+  it('använder den inskickade takten, inte förvalet', () => {
+    // Regressionsskyddet: föll den tillbaka på Iraki-förvalet skulle svaret
+    // bli detsamma oavsett vilken takt som skickas in.
+    const langsam = estimateDurationToGain({
+      currentWeightKg: 88.4,
+      targetWeightKg: 100,
+      weeklyRatePercent: 0.294,
+    })
+    const snabb = estimateDurationToGain({
+      currentWeightKg: 88.4,
+      targetWeightKg: 100,
+      weeklyRatePercent: 0.588,
+    })
+    expect(langsam!.weeks).toBeGreaterThan(snabb!.weeks * 1.8)
   })
 })

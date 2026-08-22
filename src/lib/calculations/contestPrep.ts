@@ -604,7 +604,14 @@ function clampGainRate(rate: number): number {
 export function estimateDurationToGain(input: {
   currentWeightKg: number
   targetWeightKg: number
-  /** % av kroppsvikt per vecka. Klampas mot Iraki 2019:s gränser. */
+  /**
+   * % av kroppsvikt per vecka.
+   *
+   * SKICKA IN DEN HÄRLEDDA TAKTEN, inte förvalet. Anroparen räknar den ur
+   * fasens kalorimål med weeklyRateForCalories — samma väg som nedgången
+   * och Målsättning tar. Utelämnas den används Iraki 2019:s nedre ände,
+   * vilket bara stämmer om kalorimålet råkar motsvara just den takten.
+   */
   weeklyRatePercent?: number
 }): {
   weeks: number

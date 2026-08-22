@@ -735,6 +735,13 @@ export function PhasePickerDialog({
                       level={deficitLevel}
                       focus={focus}
                       direction={selected === 'bulk' ? 'gain' : 'loss'}
+                      /* Uppgångens takt härleds ur fasens EGET kalorimål,
+                         inte ur en fast evidenssiffra. Annars visade
+                         Perioder 0,20 kg/v där Målsättning visade
+                         0,26–0,52 för samma mål — se weeklyRate.ts, som
+                         finns just för att hålla dem samstämmiga. */
+                      caloriesMin={suggestion.targetCaloriesMin}
+                      caloriesMax={suggestion.targetCaloriesMax}
                       onUseWeeks={hasPlanning ? w => setWeeks(String(w)) : undefined}
                     />
                   )}

@@ -19,6 +19,7 @@
 
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { weeklyRateForCalories } from '@/lib/calculations/weeklyRate'
 import { Calculator, ChevronDown } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -84,6 +85,16 @@ interface Props {
    * visar att snabbare mest ger fett.
    */
   direction?: 'loss' | 'gain'
+  /**
+   * Fasens kalorimål. Uppgångens takt härleds ur DEM, inte ur en fast
+   * evidenssiffra — samma väg som nedgången och Målsättning tar, via
+   * weeklyRateForCalories.
+   *
+   * Utan dem föll räknaren tillbaka på Iraki 2019:s nedre ände och visade
+   * 0,20 kg/v där Målsättning visade 0,26–0,52 för samma mål.
+   */
+  caloriesMin?: number
+  caloriesMax?: number
 }
 
 export function PrepDurationHelper({
@@ -95,6 +106,8 @@ export function PrepDurationHelper({
   focus,
   onUseWeeks,
   direction = 'loss',
+  caloriesMin,
+  caloriesMax,
 }: Props) {
   const { t } = useTranslation('dashboard')
   const [expanded, setExpanded] = useState(false)
@@ -163,10 +176,26 @@ export function PrepDurationHelper({
    * medvetet spannets nedre ände — Garthe 2013 visade att dubbla takten gav
    * fem gånger så mycket fettökning utan mer fettfri massa.
    */
+  const gainRate =
+    isGain && caloriesMin != null && caloriesMax != null && tdee > 0
+      ? weeklyRateForCalories({ tdee, caloriesMin, caloriesMax, weightKg })
+      : null
+
   const gainEstimate = isGain
     ? estimateDurationToGain({
         currentWeightKg: weightKg,
         targetWeightKg: targetNum,
+        // Mittvärdet räknar tiden; spannet visas för användaren — samma
+        // uppdelning som nedgången gör med levelRate.
+        /**
+         * ABSOLUTBELOPP: weeklyRateForCalories räknar tdee − calories, så
+         * ett ÖVERSKOTT ger negativa tal. Utan Math.abs avvisade
+         * clampGainRate dem och föll tillbaka på förvalet — vilket var
+         * precis den inkonsekvens den här ändringen ska ta bort.
+         */
+        weeklyRatePercent: gainRate
+          ? Math.abs(gainRate.percentMin + gainRate.percentMax) / 2
+          : undefined,
       })
     : null
 
@@ -262,7 +291,7 @@ export function PrepDurationHelper({
       >
         <span className="flex items-center gap-2 text-xs font-medium text-neutral-700 dark:text-neutral-200">
           <Calculator className="h-3.5 w-3.5" />
-          {t('phase.prep.title')}
+          {isGain ? t('phase.prep.titleGain') : t('phase.prep.title')}
         </span>
         <ChevronDown
           className={cn(
@@ -314,13 +343,15 @@ export function PrepDurationHelper({
             {/* Uppgången har ingen underskottsnivå att visa — nivåerna
                 beskriver hur DJUPT ett underskott är och saknar
                 motsvarighet uppåt. I stället visas Iraki 2019:s takt. */}
-            {isGain && gainEstimate && (
+            {isGain && gainRate && (
               <div className="min-w-[8rem] flex-1 space-y-1">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">
                   {t('phase.prep.gainRateLabel')}
                 </p>
+                {/* Spannet, inte ett enda tal — samma format som nedgångens
+                    levelRate, och samma siffror som Målsättning visar. */}
                 <p className="text-sm font-medium tabular-nums text-neutral-800 dark:text-neutral-100">
-                  {gainEstimate.weeklyGainKg.toFixed(2)}{' '}
+                  {Math.abs(gainRate.kgMax).toFixed(2)}–{Math.abs(gainRate.kgMin).toFixed(2)}{' '}
                   <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">
                     kg/v
                   </span>
@@ -396,7 +427,12 @@ export function PrepDurationHelper({
               <dl className="grid grid-cols-3 divide-x divide-neutral-200 border-t border-neutral-200 dark:divide-neutral-700 dark:border-neutral-700">
                 {(
                   [
-                    [useWeightMode ? 'statWeightToLose' : 'statFat', `${estimate.lossKg} kg`],
+                    [
+                      // Riktningen styr ordet: 'Att tappa 11,6 kg' stod kvar
+                      // vid en uppgång.
+                      isGain ? 'statWeightToGain' : useWeightMode ? 'statWeightToLose' : 'statFat',
+                      `${estimate.lossKg} kg`,
+                    ],
                     [
                       useWeightMode ? 'statTargetWeight' : 'statWeight',
                       `${estimate.endWeightKg} kg`,
