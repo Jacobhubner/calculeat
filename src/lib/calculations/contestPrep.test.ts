@@ -774,3 +774,55 @@ describe('kalorimålets övre del mot litteraturens tak', () => {
     expect(Math.abs(rate.percentMax)).toBeLessThanOrEqual(GAIN_RATE_PERCENT.max)
   })
 })
+
+describe('uppgångens tidsspann', () => {
+  /**
+   * Överskottet är ett spann (10–20 %), så tiden är det också. Kortet visar
+   * mittvärdet stort — det är förslaget knappen skriver in i Planerad längd
+   * — och spannet i mindre text bredvid.
+   *
+   * Räknarens EGNA tal, inte Målsättnings. Målsättning räknar linjärt och
+   * ger 22,1–44,3 för samma fall där den här exponentialmodellen ger
+   * 20,9–41,7. Att låna dit talen vore att återinföra inkonsekvensen.
+   */
+  it('mittvärdet ligger mellan ändarna', () => {
+    const tdee = 2881
+    const weightKg = 88.4
+    const rate = weeklyRateForCalories({
+      tdee,
+      caloriesMin: tdee * 1.1,
+      caloriesMax: tdee * 1.2,
+      weightKg,
+    })
+
+    const veckor = (pct: number) =>
+      estimateDurationToGain({
+        currentWeightKg: weightKg,
+        targetWeightKg: 100,
+        weeklyRatePercent: pct,
+      })!.weeks
+
+    const snabb = veckor(Math.abs(rate.percentMin))
+    const langsam = veckor(Math.abs(rate.percentMax))
+    const mitt = veckor(Math.abs(rate.percentMin + rate.percentMax) / 2)
+
+    expect(snabb).toBeLessThan(mitt)
+    expect(mitt).toBeLessThan(langsam)
+  })
+
+  it('större överskott ger kortare tid', () => {
+    // Riktningskontroll: att vända spannet av misstag hade gett ett
+    // intervall som läser bakfram i UI:t.
+    const kort = estimateDurationToGain({
+      currentWeightKg: 88.4,
+      targetWeightKg: 100,
+      weeklyRatePercent: 0.59,
+    })!.weeks
+    const lang = estimateDurationToGain({
+      currentWeightKg: 88.4,
+      targetWeightKg: 100,
+      weeklyRatePercent: 0.29,
+    })!.weeks
+    expect(kort).toBeLessThan(lang)
+  })
+})

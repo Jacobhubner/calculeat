@@ -189,10 +189,42 @@ export function PrepDurationHelper({
    * kgMin är den MEST negativa (tdee − calories), alltså det största
    * överskottet och den snabbaste uppgången.
    */
+  // kgMin/percentMin är den MEST negativa, alltså största överskottet och
+  // snabbaste uppgången.
+  const gainPctFast = gainRate ? Math.abs(gainRate.percentMin) : undefined
+  const gainPctSlow = gainRate ? Math.abs(gainRate.percentMax) : undefined
+
   const gainAboveRecommended =
     gainRate && Math.abs(gainRate.percentMin) > GAIN_RATE_PERCENT.max
       ? Math.round(Math.abs(gainRate.percentMin) * 100) / 100
       : null
+
+  /**
+   * Tiden vid kalorispannets båda ändar.
+   *
+   * Huvudtalet räknas på mitten och är det som föreslås som faslängd —
+   * knappen under skriver in ETT tal i Planerad längd. Men överskottet är
+   * ett spann (10–20 %), och då är tiden det också. Intervallet visas
+   * därför bredvid, i mindre text: förslaget behåller sin tydlighet medan
+   * osäkerheten framgår.
+   */
+  const gainWeeksFast =
+    isGain && gainPctFast
+      ? estimateDurationToGain({
+          currentWeightKg: weightKg,
+          targetWeightKg: targetNum,
+          weeklyRatePercent: gainPctFast,
+        })?.weeks
+      : undefined
+
+  const gainWeeksSlow =
+    isGain && gainPctSlow
+      ? estimateDurationToGain({
+          currentWeightKg: weightKg,
+          targetWeightKg: targetNum,
+          weeklyRatePercent: gainPctSlow,
+        })?.weeks
+      : undefined
 
   const gainEstimate = isGain
     ? estimateDurationToGain({
@@ -425,13 +457,29 @@ export function PrepDurationHelper({
                 <p className="text-[11px] uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
                   {t('phase.prep.resultLabel')}
                 </p>
-                <p className="text-xl font-bold tabular-nums text-neutral-900 dark:text-neutral-100">
-                  {estimate.weeksRealistic > estimate.weeks
-                    ? t('phase.prep.resultRange', {
-                        from: estimate.weeks,
-                        to: estimate.weeksRealistic,
-                      })
-                    : t('phase.prep.result', { weeks: estimate.weeks })}
+                <p className="flex flex-wrap items-baseline gap-x-2 text-xl font-bold tabular-nums text-neutral-900 dark:text-neutral-100">
+                  <span>
+                    {estimate.weeksRealistic > estimate.weeks
+                      ? t('phase.prep.resultRange', {
+                          from: estimate.weeks,
+                          to: estimate.weeksRealistic,
+                        })
+                      : t('phase.prep.result', { weeks: estimate.weeks })}
+                  </span>
+                  {/* Spannet bredvid, inte i stället för. Huvudtalet är
+                      förslaget knappen skriver in; intervallet visar att
+                      överskottet är 10–20 % och att tiden därför varierar.
+                      Räknarens EGNA tal — Målsättning räknar linjärt och
+                      ger 22,1–44,3 där den här modellen ger 21–42. Att låna
+                      dem hit vore att återinföra inkonsekvensen. */}
+                  {gainWeeksFast != null && gainWeeksSlow != null && (
+                    <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">
+                      {t('phase.prep.resultSpread', {
+                        from: gainWeeksFast,
+                        to: gainWeeksSlow,
+                      })}
+                    </span>
+                  )}
                 </p>
               </div>
 
