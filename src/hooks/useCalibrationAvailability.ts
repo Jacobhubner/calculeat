@@ -17,6 +17,8 @@ import {
   findBestPeriod,
   checkPeriodEligibility,
   calculateWeightTrendOLS,
+  projectRawTDEE,
+  checkProjectedTDEE,
   CV_BLOCK_THRESHOLD,
 } from '@/lib/calculations/calibration'
 import { useEntitlements, isUnlimited } from '@/hooks/useEntitlements'
@@ -100,7 +102,14 @@ export function useCalibrationAvailability(
    * i stället för mot faktiskt intag. Utelämnas den antas 0, vilket gör att
    * kalibrering inte erbjuds; anropare som har siffran ska skicka in den.
    */
-  logDaysInPeriod?: number
+  logDaysInPeriod?: number,
+  /**
+   * Loggat dagssnitt i perioden. Utan det kan golvkontrollen inte göras i
+   * förväg — då upptäcks ett orimligt TDEE först efter knapptrycket.
+   */
+  loggedCaloriesAvg?: number | null,
+  /** Användarens kalorimål, som getCalorieEstimate blandar mot. */
+  targetCalories?: number | null
 ): CalibrationAvailability {
   const { limits } = useEntitlements()
   const graceCount = limits.free_calibration_grace ?? DEFAULT_FREE_CALIBRATION_GRACE
@@ -601,6 +610,36 @@ export function useCalibrationAvailability(
       isRecommended = false
     }
 
+    /**
+     * Golvet och taket prövas i förväg, inte efter knapptrycket.
+     *
+     * rawTDEE är averageCalories minus daglig energibalans — båda räknas
+     * ur samma kluster och samma loggdata som grinden redan har. Klämmorna
+     * påverkar clampedTDEE, inte rawTDEE, och det är rawTDEE gränserna
+     * prövar. Projektionen ger identisk siffra som motorn (mätt: 0,00 kcal
+     * avvikelse över 36 fall).
+     *
+     * Kräver loggat intag. Saknas det blockerar loggkravet ändå tidigare.
+     */
+    if (loggedCaloriesAvg != null && targetCalories != null) {
+      const projected = projectRawTDEE(
+        bestClusterResult,
+        bestPeriod,
+        loggedCaloriesAvg,
+        targetCalories,
+        logDays
+      )
+      const outOfRange = checkProjectedTDEE(projected)
+      if (outOfRange) {
+        return {
+          ...unavailable,
+          currentDataPoints: bestWeightsInPeriod.length,
+          daysSinceLastCalibration,
+          reason: outOfRange,
+        }
+      }
+    }
+
     const daysUntilNextRecommended = isRecommended
       ? 0
       : daysSinceLastCalibration !== null
@@ -628,6 +667,8 @@ export function useCalibrationAvailability(
     graceCount,
     intervalDays,
     logDaysInPeriod,
+    loggedCaloriesAvg,
+    targetCalories,
     mountedAt,
   ])
 }

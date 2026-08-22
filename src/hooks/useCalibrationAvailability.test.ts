@@ -562,3 +562,77 @@ describe('useCalibrationAvailability — trendetiketten', () => {
     expect(result.current.weightTrend).toBe('losing')
   })
 })
+
+describe('useCalibrationAvailability — TDEE-golvet i förväg', () => {
+  /**
+   * Sista läckan i kedjan.
+   *
+   * Golvet och taket prövades bara i motorn, så ett orimligt intag gav
+   * "Kalibrera nu" följt av ett felmeddelande efter klicket. Grinden
+   * projicerar nu samma rawTDEE motorn räknar fram — identisk siffra, inte
+   * en uppskattning (se eligibility.test.ts).
+   */
+  const stadig = (): WeightHistory[] => {
+    const nu = calibrationNow().getTime()
+    return [13, 12, 8, 4, 1, 0].map((o, i) => {
+      const iso = new Date(nu - o * 86400000).toISOString()
+      return {
+        id: `g${i}`,
+        user_id: 'u1',
+        weight_kg: 85 - (13 - o) * 0.02,
+        recorded_at: iso,
+        created_at: iso,
+      } as WeightHistory
+    })
+  }
+
+  it('nekar i förväg när intaget ger ett orimligt lågt TDEE', () => {
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, stadig(), null, 20, 600, 2100)
+    )
+    expect(result.current.isAvailable).toBe(false)
+    expect(result.current.reason).toContain('minimigräns')
+  })
+
+  it('tillåter ett rimligt intag', () => {
+    const { result } = renderHook(() =>
+      useCalibrationAvailability(profile, stadig(), null, 20, 2100, 2100)
+    )
+    expect(result.current.isAvailable).toBe(true)
+  })
+
+  it('hoppar över kontrollen när intaget saknas', () => {
+    // Utan loggat intag finns inget att projicera — loggkravet blockerar
+    // ändå tidigare, så grinden ska inte gissa.
+    const { result } = renderHook(() => useCalibrationAvailability(profile, stadig(), null, 20))
+    expect(result.current.isAvailable).toBe(true)
+  })
+
+  it('säger aldrig redo om något motorn nekar — hela kedjan', () => {
+    const now = calibrationNow()
+    let redo = 0
+    let nekade = 0
+    for (const intag of [600, 1200, 2100, 3500, 6000]) {
+      const hist = stadig()
+      const { result } = renderHook(() =>
+        useCalibrationAvailability(profile, hist, null, 20, intag, 2100)
+      )
+      if (!result.current.isAvailable) continue
+      redo++
+      const r = runCalibration({
+        weightHistory: hist,
+        periodDays: result.current.suggestedTimePeriod ?? 14,
+        currentTDEE: 2500,
+        targetCalories: 2100,
+        actualCaloriesAvg: intag,
+        foodLogCompleteness: 100,
+        daysWithLogData: 20,
+        isFirstCalibration: true,
+        now,
+      })
+      if (typeof r === 'string') nekade++
+    }
+    expect(redo).toBeGreaterThan(0)
+    expect(nekade).toBe(0)
+  })
+})

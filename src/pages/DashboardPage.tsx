@@ -100,11 +100,20 @@ export default function DashboardPage() {
     [intakeWindow]
   )
 
+  // Intaget och målet skickas med så att golvkontrollen kan göras i
+  // förväg — utan dem upptäcks ett orimligt TDEE först efter knapptrycket.
+  const calibrationTargetCalories =
+    profile?.calories_min && profile?.calories_max
+      ? (profile.calories_min + profile.calories_max) / 2
+      : (profile?.tdee ?? null)
+
   const calibrationAvailability = useCalibrationAvailability(
     profile,
     weightHistory,
     lastCalibration,
-    intakeWindow?.daysWithData ?? 0
+    intakeWindow?.daysWithData ?? 0,
+    intakeWindow?.averageCalories ?? null,
+    calibrationTargetCalories
   )
   useCalibrationNotifier(calibrationAvailability)
 

@@ -366,6 +366,12 @@ export default function MetabolicCalibration({
      * som motorn sedan nekade: 32 av 60 periodval i ett svep. Grinden i
      * useCalibrationAvailability godkänner ETT periodval, men härifrån kan
      * användaren välja ett annat.
+     *
+     * TDEE-golvet prövas INTE här, till skillnad från i grinden. Det skulle
+     * kräva loggat intag för alla tre perioderna, alltså tre extra frågor
+     * mot servern — och vinsten uteblir: modalen räknar redan om vid varje
+     * periodbyte och visar motorns besked inline (isError), utan att
+     * användaren behöver trycka på något.
      */
     for (const period of [14, 21, 28] as const) {
       result[period] = checkPeriodEligibility(weightHistory, period, now).eligible

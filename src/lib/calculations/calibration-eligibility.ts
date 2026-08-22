@@ -14,7 +14,15 @@
  */
 
 import type { WeightHistory } from '@/lib/types'
-import { MIN_DATA_POINTS } from './calibration-constants'
+import {
+  MIN_DATA_POINTS,
+  MIN_CLUSTER_SEPARATION_DAYS,
+  TDEE_FLOOR,
+  TDEE_CEILING,
+} from './calibration-constants'
+import { daysBetween, meanDate, getEffectiveKcalPerKg } from './calibration-helpers'
+import { calculateWeightTrendOLS } from './calibration-trend'
+import { getCalorieEstimate } from './calibration-quality'
 import { buildClusters, type ClusterBuildResult } from './calibration-clustering'
 import { validateWeightData } from './calibration-core'
 
@@ -37,8 +45,11 @@ export interface PeriodEligibility {
  * Kan kalibrering köras på den här perioden, med den här historiken?
  *
  * Svarar med samma regler som runCalibration, eftersom den anropar samma
- * validateWeightData. Enda undantaget är TDEE-golvet och -taket: de kräver
- * att hela pipelinen körts och går inte att avgöra i förväg.
+ * validateWeightData.
+ *
+ * TDEE-golvet och -taket ingår INTE här — de beror på loggat intag, som
+ * den här funktionen inte tar emot. Anropare som har intaget prövar dem
+ * med projectRawTDEE och checkProjectedTDEE.
  */
 export function checkPeriodEligibility(
   weightHistory: WeightHistory[],
@@ -87,6 +98,73 @@ export function checkPeriodEligibility(
     clusters,
     reason: validationError?.message ?? null,
   }
+}
+
+/**
+ * Vad kalibreringen skulle landa på, innan klämmor och kvalitetsindex.
+ *
+ * Returnerar null när underlaget saknas — utan loggat intag finns inget att
+ * projicera, och då säger golvet ingenting.
+ *
+ * VARFÖR: TDEE-golvet och -taket avvisade underlag EFTER knapptrycket, och
+ * jag antog länge att det var oundvikligt eftersom rawTDEE "kommer ur hela
+ * pipelinen". Det stämmer inte. rawTDEE är averageCalories minus den dagliga
+ * energibalansen, och båda går att räkna fram ur samma kluster och samma
+ * loggdata som grinden redan har. Klämmorna påverkar clampedTDEE, inte
+ * rawTDEE — och det är rawTDEE golvet prövar.
+ */
+export function projectRawTDEE(
+  clusters: ClusterBuildResult,
+  periodDays: 14 | 21 | 28,
+  loggedCaloriesAvg: number | null,
+  targetCalories: number,
+  daysWithLogData: number
+): number | null {
+  if (loggedCaloriesAvg === null || daysWithLogData <= 0) return null
+
+  const { startCluster, endCluster, allMeasurements } = clusters
+
+  // Samma trendval som runCalibration: OLS när den går att beräkna, annars
+  // klustermedianerna.
+  const ols = calculateWeightTrendOLS(allMeasurements)
+  const weightChangeKg = ols
+    ? ols.trendEnd - ols.trendStart
+    : endCluster.average - startCluster.average
+  const actualDays = ols
+    ? Math.max(MIN_CLUSTER_SEPARATION_DAYS, ols.lastX)
+    : Math.max(
+        MIN_CLUSTER_SEPARATION_DAYS,
+        daysBetween(meanDate(startCluster.dates), meanDate(endCluster.dates))
+      )
+
+  const { averageCalories } = getCalorieEstimate(
+    loggedCaloriesAvg,
+    targetCalories,
+    daysWithLogData,
+    periodDays
+  )
+
+  const startWeight = ols ? ols.trendStart : startCluster.average
+  const weeklyChangePct = (weightChangeKg / startWeight) * 100 * (7 / actualDays)
+  const dailyCalorieBalance = (weightChangeKg * getEffectiveKcalPerKg(weeklyChangePct)) / actualDays
+
+  return averageCalories - dailyCalorieBalance
+}
+
+/**
+ * Ligger den projicerade siffran utanför de fysiologiska gränserna?
+ *
+ * Samma besked som runCalibration ger, så grinden och motorn säger samma sak.
+ */
+export function checkProjectedTDEE(projected: number | null): string | null {
+  if (projected === null) return null
+  if (projected < TDEE_FLOOR) {
+    return `Kalibrerat TDEE (${Math.round(projected)} kcal) är under rekommenderad minimigräns (${TDEE_FLOOR} kcal). Kontrollera din matloggning.`
+  }
+  if (projected > TDEE_CEILING) {
+    return `Kalibrerat TDEE (${Math.round(projected)} kcal) är orealistiskt högt. Kontrollera viktdata och matloggning.`
+  }
+  return null
 }
 
 /**

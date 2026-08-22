@@ -106,7 +106,12 @@ export {
 export { calibrationNow } from './calibration-clock'
 
 export type { PeriodEligibility } from './calibration-eligibility'
-export { checkPeriodEligibility, findBestPeriod } from './calibration-eligibility'
+export {
+  checkPeriodEligibility,
+  findBestPeriod,
+  projectRawTDEE,
+  checkProjectedTDEE,
+} from './calibration-eligibility'
 
 export type { OutlierResult } from './calibration-outliers'
 export { detectWeightOutliers } from './calibration-outliers'
