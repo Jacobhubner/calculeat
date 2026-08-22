@@ -812,3 +812,105 @@ export function suggestedNextPhase(current: DietPhaseType): DietPhaseType | null
       return null
   }
 }
+
+/**
+ * Hur många kilos viktförändring som får passera innan kalorimålet bör
+ * räknas om.
+ *
+ * TDEE följer vikten: för en 88-kilos man med PAL 1,55 rör sig underhållet
+ * ~15,5 kcal per kilo. Tre kilo ger alltså ~46 kcal, knappt 2 % av TDEE —
+ * ungefär den punkt där avvikelsen börjar synas i viktkurvan snarare än
+ * drunkna i dygnsvariationen.
+ *
+ * Lägre tröskel vore falskt larm, högre skulle låta felet växa till något
+ * som märks som utebliven progress.
+ */
+export const PHASE_RECALC_WEIGHT_DELTA_KG = 3
+
+export interface PhaseCalorieDrift {
+  /** Viktförändring sedan periodstart, kg (tecken bevarat). */
+  weightChangeKg: number
+  /** Uppskattat underhåll vid startvikten. */
+  tdeeAtStart: number
+  /** Uppskattat underhåll vid nuvarande vikt. */
+  tdeeNow: number
+  /** Hur mycket underhållet flyttat sig, kcal (tecken bevarat). */
+  driftKcal: number
+  /** Har tröskeln passerats? */
+  needsRecalc: boolean
+  /** Målet som gällde vid start, för jämförelse i UI. */
+  targetCalories: number
+  /**
+   * Målet omräknat mot nuvarande vikt — samma andel över eller under
+   * underhåll som vid start.
+   *
+   * VARFÖR ANDELEN OCH INTE KCAL-DIFFERENSEN: fasen valdes som "10–20 % över
+   * underhåll", inte som "+300 kcal". Behåller man kcal-beloppet krymper
+   * överskottet i procent medan vikten stiger, och uppgången bromsar in av
+   * skäl användaren inte kan se.
+   */
+  adjustedCalories: number
+}
+
+/**
+ * Har kalorimålet hunnit bli inaktuellt?
+ *
+ * VARFÖR: target_calories sparas EN gång vid periodstart och följer aldrig
+ * vikten. Under en längre period driver underhållet iväg åt det håll fasen
+ * går, och målet blir successivt mindre av vad det utgav sig för att vara.
+ *
+ * MÄTT för 88,4 → 100 kg vid +10 %: håller användaren kvar vid startens
+ * 3169 kcal tar uppgången 70 veckor i stället för 43, eftersom överskottet
+ * krympt från 288 till drygt 100 kcal på vägen. Räknarens veckotal
+ * förutsätter omräkning; utan den stämmer de inte.
+ *
+ * Returnerar null när underlaget saknas — utan TDEE och kalorimål finns
+ * ingenting att jämföra.
+ */
+export function phaseCalorieDrift(params: {
+  phase: DietPhase
+  currentWeightKg: number
+  /** Underhåll vid NUVARANDE vikt, som appen räknar det. */
+  currentTdee: number
+}): PhaseCalorieDrift | null {
+  const { phase, currentWeightKg, currentTdee } = params
+
+  const startWeight = phase.start_weight_kg
+  const targetCalories = phase.target_calories
+  if (startWeight == null || targetCalories == null) return null
+  if (!Number.isFinite(currentWeightKg) || currentWeightKg <= 0) return null
+  if (!Number.isFinite(currentTdee) || currentTdee <= 0) return null
+  if (startWeight <= 0) return null
+
+  const weightChangeKg = currentWeightKg - startWeight
+
+  /**
+   * Underhållet vid START skattas ur nuvarande TDEE och viktkvoten.
+   *
+   * Bara den viktberoende delen av BMR skalar — resten beror på längd,
+   * ålder och kön. Kvoten currentWeightKg/startWeight överskattar därför
+   * skillnaden något, men åt det försiktiga hållet: den gör att tröskeln
+   * nås aningen tidigare, inte senare.
+   */
+  const tdeeNow = currentTdee
+  const tdeeAtStart = currentTdee * (startWeight / currentWeightKg)
+  const driftKcal = tdeeNow - tdeeAtStart
+
+  /**
+   * Samma ANDEL över/under underhåll som vid start, mot dagens underhåll.
+   * tdeeAtStart kan inte vara noll här — currentTdee och startWeight är
+   * båda kontrollerade som positiva ovan.
+   */
+  const factor = targetCalories / tdeeAtStart
+  const adjustedCalories = Math.round(tdeeNow * factor)
+
+  return {
+    weightChangeKg: Math.round(weightChangeKg * 10) / 10,
+    tdeeAtStart: Math.round(tdeeAtStart),
+    tdeeNow: Math.round(tdeeNow),
+    driftKcal: Math.round(driftKcal),
+    needsRecalc: Math.abs(weightChangeKg) >= PHASE_RECALC_WEIGHT_DELTA_KG,
+    targetCalories,
+    adjustedCalories,
+  }
+}

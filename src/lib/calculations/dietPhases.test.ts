@@ -11,6 +11,7 @@ import {
   calorieGoalForPhase,
   goalConflictsWithPhase,
   phaseTypeForCalorieGoal,
+  phaseCalorieDrift,
 } from './dietPhases'
 import type { DietPhase } from '@/lib/types'
 
@@ -647,5 +648,100 @@ describe('förvald faslängd', () => {
       const s = suggestPhaseTargets(typ, 2600, 85, 'health', 2000, 22)
       expect(s.plannedWeeks!).toBeLessThanOrEqual(26)
     }
+  })
+})
+
+describe('phaseCalorieDrift', () => {
+  /**
+   * target_calories sparas EN gång vid periodstart och följer aldrig vikten.
+   * Under en längre period driver underhållet iväg åt det håll fasen går,
+   * och målet blir successivt mindre av vad det utgav sig för att vara.
+   *
+   * MÄTT för 88,4 → 100 kg vid +10 %: håller användaren kvar vid startens
+   * 3169 kcal tar uppgången 70 veckor i stället för 43, eftersom
+   * överskottet krympt från 288 till drygt 100 kcal på vägen.
+   */
+  const bmr = (kg: number) => 10 * kg + 6.25 * 180 - 5 * 30 + 5
+  const tdeeFor = (kg: number) => bmr(kg) * 1.546
+
+  const bulk = (startKg: number, target: number) =>
+    ({
+      id: 'p1',
+      user_id: 'u1',
+      phase_type: 'bulk',
+      focus: 'health',
+      started_at: '2026-06-01',
+      ended_at: null,
+      start_weight_kg: startKg,
+      target_calories: target,
+    }) as DietPhase
+
+  it('rapporterar ingen drift vid oförändrad vikt', () => {
+    const d = phaseCalorieDrift({
+      phase: bulk(88.4, 3169),
+      currentWeightKg: 88.4,
+      currentTdee: tdeeFor(88.4),
+    })
+    expect(d!.driftKcal).toBe(0)
+    expect(d!.needsRecalc).toBe(false)
+  })
+
+  it('flaggar först när tröskeln passerats', () => {
+    const under = phaseCalorieDrift({
+      phase: bulk(88.4, 3169),
+      currentWeightKg: 91,
+      currentTdee: tdeeFor(91),
+    })
+    const over = phaseCalorieDrift({
+      phase: bulk(88.4, 3169),
+      currentWeightKg: 94,
+      currentTdee: tdeeFor(94),
+    })
+    expect(under!.needsRecalc).toBe(false)
+    expect(over!.needsRecalc).toBe(true)
+  })
+
+  it('behåller ANDELEN över underhåll, inte kcal-beloppet', () => {
+    /**
+     * Fasen valdes som "10–20 % över underhåll", inte som "+300 kcal".
+     * Behålls kcal-beloppet krymper överskottet i procent medan vikten
+     * stiger, och uppgången bromsar in av skäl användaren inte kan se.
+     */
+    const d = phaseCalorieDrift({
+      phase: bulk(88.4, 3169),
+      currentWeightKg: 100,
+      currentTdee: tdeeFor(100),
+    })
+    const andelVidStart = 3169 / d!.tdeeAtStart
+    const andelNu = d!.adjustedCalories / d!.tdeeNow
+    expect(andelNu).toBeCloseTo(andelVidStart, 2)
+    expect(d!.adjustedCalories).toBeGreaterThan(3169)
+  })
+
+  it('ger negativ drift vid nedgång', () => {
+    const d = phaseCalorieDrift({
+      phase: bulk(88.4, 2300),
+      currentWeightKg: 83,
+      currentTdee: tdeeFor(83),
+    })
+    expect(d!.driftKcal).toBeLessThan(0)
+    expect(d!.adjustedCalories).toBeLessThan(2300)
+  })
+
+  it('returnerar null utan startvikt eller kalorimål', () => {
+    expect(
+      phaseCalorieDrift({
+        phase: { ...bulk(88.4, 3169), start_weight_kg: null },
+        currentWeightKg: 94,
+        currentTdee: 3000,
+      })
+    ).toBeNull()
+    expect(
+      phaseCalorieDrift({
+        phase: { ...bulk(88.4, 3169), target_calories: null },
+        currentWeightKg: 94,
+        currentTdee: 3000,
+      })
+    ).toBeNull()
   })
 })
