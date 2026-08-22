@@ -5,7 +5,12 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { hasScrollSettled, MAX_SCROLL_FRAMES } from '@/lib/utils/deepLinkScroll'
+import {
+  hasScrollSettled,
+  canScrollToSection,
+  MAX_SCROLL_FRAMES,
+  REQUIRED_SETTLED_FRAMES,
+} from '@/lib/utils/deepLinkScroll'
 import { useTranslation } from 'react-i18next'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import { User, Loader2, Check } from 'lucide-react'
@@ -165,7 +170,28 @@ export default function ProfilePage() {
   }, [searchParams, setSearchParams])
 
   useEffect(() => {
-    if (!shouldScrollToWeight.current) return
+    /**
+     * Vänta tills sektionen FAKTISKT är öppen.
+     *
+     * Effekten kördes förut på [activeProfile?.id] — ett värde som ofta
+     * inte ändras alls. Stod användaren redan på profilsidan, eller var
+     * profilen färdigladdad när klicket kom, sattes refen men effekten
+     * kördes aldrig. Därav "ibland korrekt": utfallet berodde på om
+     * profil-id råkade bli klart efter avsikten registrerats.
+     *
+     * openWeightForm är tillståndet effekten ovan själv sätter, så den här
+     * körs alltid när avsikten registrerats — samma mönster som
+     * kalibreringens djuplänk, som fungerar.
+     */
+    if (
+      !canScrollToSection({
+        intentRegistered: shouldScrollToWeight.current,
+        sectionExpanded: openWeightForm,
+      })
+    ) {
+      return
+    }
+
     shouldScrollToWeight.current = false
 
     /**
@@ -178,6 +204,9 @@ export default function ProfilePage() {
     let frames = 0
     let lastTop = -1
     let raf = 0
+    // Räknare för stilla ramar i RAD — en ensam räcker inte, se
+    // REQUIRED_SETTLED_FRAMES i deepLinkScroll.ts.
+    let settledStreak = 0
 
     const aim = () => {
       const el = weightSectionRef.current
@@ -187,18 +216,20 @@ export default function ProfilePage() {
       }
       const top = el.getBoundingClientRect().top
       el.scrollIntoView({ behavior: 'auto', block: 'start' })
-      const settled = hasScrollSettled(lastTop, top)
+      settledStreak = hasScrollSettled(lastTop, top) ? settledStreak + 1 : 0
       lastTop = top
       frames++
-      if (!settled && frames < MAX_SCROLL_FRAMES) {
+      if (settledStreak < REQUIRED_SETTLED_FRAMES && frames < MAX_SCROLL_FRAMES) {
         raf = requestAnimationFrame(aim)
       }
     }
 
     raf = requestAnimationFrame(aim)
     return () => cancelAnimationFrame(raf)
-    // Körs när profilen laddats — INTE på searchParams, se ovan.
-  }, [activeProfile?.id])
+    // Kör när sektionen öppnas — INTE på searchParams. Den listan var det
+    // som avbröt loopen: parametern städas bort i effekten ovan, vilket
+    // triggade en omkörning vars cleanup dödade animationen direkt.
+  }, [openWeightForm])
 
   // Derive saveState from pendingChanges.
   // setSaveState here is intentional: saveState is presentation-only state derived

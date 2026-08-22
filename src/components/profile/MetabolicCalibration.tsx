@@ -35,7 +35,12 @@ import { startOfDay, endOfDay, subDays, addDays, isBefore, format } from 'date-f
 import { sv } from 'date-fns/locale'
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { hasScrollSettled, canScrollToSection, MAX_SCROLL_FRAMES } from '@/lib/utils/deepLinkScroll'
+import {
+  hasScrollSettled,
+  canScrollToSection,
+  MAX_SCROLL_FRAMES,
+  REQUIRED_SETTLED_FRAMES,
+} from '@/lib/utils/deepLinkScroll'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -225,6 +230,9 @@ export default function MetabolicCalibration({
     let frames = 0
     let lastTop = -1
     let raf = 0
+    // Räknare för stilla ramar i RAD — en ensam räcker inte, se
+    // REQUIRED_SETTLED_FRAMES i deepLinkScroll.ts.
+    let settledStreak = 0
 
     const aim = () => {
       const el = sectionRef.current
@@ -237,10 +245,10 @@ export default function MetabolicCalibration({
       el.scrollIntoView({ behavior: 'auto', block: 'start' })
 
       // Stabil position två ramar i rad => klart
-      const settled = hasScrollSettled(lastTop, top)
+      settledStreak = hasScrollSettled(lastTop, top) ? settledStreak + 1 : 0
       lastTop = top
       frames++
-      if (!settled && frames < MAX_SCROLL_FRAMES) {
+      if (settledStreak < REQUIRED_SETTLED_FRAMES && frames < MAX_SCROLL_FRAMES) {
         raf = requestAnimationFrame(aim)
       }
     }

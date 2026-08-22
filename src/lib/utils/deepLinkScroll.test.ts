@@ -6,6 +6,7 @@ import {
   MAX_SCROLL_FRAMES,
   shouldTriggerDeepLinkScroll,
   canScrollToSection,
+  REQUIRED_SETTLED_FRAMES,
 } from './deepLinkScroll'
 
 /**
@@ -118,5 +119,51 @@ describe('MAX_SCROLL_FRAMES', () => {
     // sektionen expandera, men avbryter en sida som aldrig stabiliseras.
     expect(MAX_SCROLL_FRAMES).toBeGreaterThanOrEqual(20)
     expect(MAX_SCROLL_FRAMES).toBeLessThanOrEqual(120)
+  })
+})
+
+describe('omsiktningsloopen — stilla ramar i rad', () => {
+  /**
+   * EN stilla ram räckte förut för att avsluta scrollen.
+   *
+   * Sektionen expanderar via en effekt, så de första ramarna kan vara helt
+   * orörliga — målet har inte börjat flytta sig än. Loopen avbröt då på ram
+   * 2 och lämnade användaren ovanför sektionen. Ibland landade samma klick
+   * rätt, beroende på hur ramarna råkade falla, vilket är varför djuplänken
+   * kändes opålitlig snarare än trasig.
+   */
+  function simulera(positioner: number[]) {
+    let frames = 0
+    let lastTop = -1
+    let settledStreak = 0
+    for (const top of positioner) {
+      settledStreak = hasScrollSettled(lastTop, top) ? settledStreak + 1 : 0
+      lastTop = top
+      frames++
+      if (settledStreak >= REQUIRED_SETTLED_FRAMES || frames >= MAX_SCROLL_FRAMES) break
+    }
+    return { frames, slutPosition: positioner[frames - 1] }
+  }
+
+  it('följer med när sidan växer efter ett par orörliga ramar', () => {
+    // Ram 1-3 stilla (utfällningen har inte börjat), sedan hoppar målet.
+    const positioner = [500, 500, 500, 820, 640, 610, 608, 608, 608, 608]
+    const r = simulera(positioner)
+    expect(r.slutPosition).toBe(608)
+  })
+
+  it('avslutar snabbt när sidan redan står still', () => {
+    const r = simulera([600, 600, 600, 600, 600, 600])
+    expect(r.frames).toBeLessThanOrEqual(REQUIRED_SETTLED_FRAMES + 1)
+  })
+
+  it('loopar inte på en sida som aldrig lugnar sig', () => {
+    const rastlos = Array.from({ length: 200 }, (_, i) => 500 + (i % 2) * 40)
+    expect(simulera(rastlos).frames).toBe(MAX_SCROLL_FRAMES)
+  })
+
+  it('kräver fler än en stilla ram', () => {
+    // Skyddet mot exakt det som gjorde djuplänken opålitlig.
+    expect(REQUIRED_SETTLED_FRAMES).toBeGreaterThan(1)
   })
 })

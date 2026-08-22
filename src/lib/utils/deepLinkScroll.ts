@@ -41,6 +41,20 @@ export function hasScrollSettled(previousTop: number, currentTop: number): boole
 export const MAX_SCROLL_FRAMES = 40
 
 /**
+ * Hur många stilla ramar i rad som krävs innan scrollen anses klar.
+ *
+ * EN stilla ram räcker inte. Sektionen expanderar via en effekt, så de
+ * första ramarna kan vara helt orörliga — målet har inte börjat flytta sig
+ * än. Loopen avbröt då på ram 2 och lämnade användaren ovanför sektionen,
+ * medan samma klick ibland landade rätt beroende på hur ramarna råkade
+ * falla. Det var källan till att djuplänken kändes opålitlig.
+ *
+ * Fyra ramar ≈ 60 ms stillastående: långt mer än ett layouthopp, långt
+ * mindre än en utfällning.
+ */
+export const REQUIRED_SETTLED_FRAMES = 4
+
+/**
  * Ska djuplänken utlösa en scroll, givet URL-parametern och om avsikten
  * redan registrerats?
  *
