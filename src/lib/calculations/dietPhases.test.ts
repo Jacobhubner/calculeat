@@ -157,8 +157,10 @@ describe('suggestPhaseTargets', () => {
 
     expect(health.targetCaloriesMin).toBe(strength.targetCaloriesMin)
     expect(health.targetCaloriesMax).toBe(strength.targetCaloriesMax)
-    // …men olika makrofördelning
-    expect(health.macroMode).toBe('nnr')
+    // …men olika makrofördelning. Hälsospårets bulk pekar mot aktiv-läget
+    // sedan 2026-08-22 — NNR:s energiprocent gav 0,86 g/kg protein vid en
+    // uppgång, se testet om g/kg nedan.
+    expect(health.macroMode).toBe('active')
     expect(strength.macroMode).toBe('offseason')
   })
 
@@ -319,10 +321,25 @@ describe('macroModeForPhase / phaseNeedsBodyFat', () => {
     expect(macroModeForPhase('maintenance', 'strength')).toBe('active')
   })
 
-  it('pekar hälsospåret mot NNR och viktminskning', () => {
+  it('pekar hälsospåret mot NNR, aktiv och viktminskning', () => {
     expect(macroModeForPhase('cut', 'health')).toBe('weightloss')
-    expect(macroModeForPhase('bulk', 'health')).toBe('nnr')
     expect(macroModeForPhase('maintenance', 'health')).toBe('nnr')
+  })
+
+  it('ger hälsospårets bulk protein i g/kg, inte energiprocent', () => {
+    /**
+     * NNR anger protein i ENERGIPROCENT (10–20 E%). Vid en uppgång blir det
+     * fel väg: 10 E% av ett FÖRHÖJT kalorimål gav 0,86 g/kg för 80 kg vid
+     * TDEE 2500 — lägre än samma spårs cut (1,2–1,6 g/kg) och långt under
+     * Morton 2018:s brytpunkt 1,62. Alltså mindre protein när man bygger än
+     * när man bantar.
+     */
+    expect(macroModeForPhase('bulk', 'health')).toBe('active')
+
+    const s = suggestPhaseTargets('bulk', 2500, 80, 'health')
+    const minPerKg = s.proteinGramsMin / 80
+    // Morton 2018:s brytpunkt är 1,62 g/kg; aktiv-läget ger 1,6–2,0.
+    expect(minPerKg).toBeGreaterThanOrEqual(1.5)
   })
 
   it('låter reverse ärva utgångsfasens läge i båda spåren', () => {

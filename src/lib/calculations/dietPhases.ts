@@ -175,17 +175,30 @@ const PHASE_MACRO_MODE: Record<PhaseFocus, Record<DietPhaseType, MacroModeId>> =
   },
   health: {
     cut: 'weightloss', // Viktminskningsläge
-    bulk: 'nnr', // NNR-läge — se NNR_CALORIE_OVERRIDE nedan
+    /**
+     * Aktiv-läge, inte NNR — ÄNDRAT 2026-08-22 efter ett proteinfel.
+     *
+     * NNR anger protein i ENERGIPROCENT (10–20 E%). Vid en uppgång blir det
+     * fel väg: 10 E% av ett FÖRHÖJT kalorimål ger 0,86 g/kg för 80 kg vid
+     * TDEE 2500. Det är LÄGRE än samma spårs cut (1,2–1,6 g/kg, Leidy 2015)
+     * och långt under Morton 2018:s brytpunkt 1,62 — alltså mindre protein
+     * när man bygger än när man bantar.
+     *
+     * Aktiv-läget anger 1,6–2,0 g/kg (Morton 2018,
+     * doi: 10.1136/bjsports-2017-097608) och har samma kalorimultiplikatorer
+     * som NNR, så NNR_CALORIE_OVERRIDE behövs fortfarande för riktningen.
+     */
+    bulk: 'active',
     maintenance: 'nnr', // NNR-läge
     reverse: 'weightloss', // behåller Viktminskningsläget
   },
 }
 
 /**
- * NNR-läget är ett UNDERHÅLLSLÄGE: dess multiplikatorer är 0,97–1,03 (±3 %)
- * och dess calorieGoal är 'Maintain weight'. Det är rätt makrofördelning för
- * hälsospårets viktuppgång (balanserat, 10–20 E% protein) men fel
- * kaloririktning — utan override skulle "Viktuppgång" föreslå underhåll.
+ * Både NNR och Aktiv är UNDERHÅLLSLÄGEN: multiplikatorerna är 0,97–1,03
+ * (±3 %) och calorieGoal är 'Maintain weight'. Makrofördelningen passar
+ * hälsospårets faser, men kaloririktningen gör det inte — utan override
+ * skulle "Viktuppgång" föreslå underhåll.
  *
  * Vi separerar därför de två: NNR bestämmer makrofördelningen, fasen
  * bestämmer kaloririktningen. Överskottet matchar Bulk-lägets 10–20 %, så
@@ -390,10 +403,20 @@ export function suggestPhaseTargets(
   const levelMultipliers =
     phaseType === 'cut' && deficitLevel ? multipliersForDeficitLevel(deficitLevel) : null
 
-  // Kostlägets multiplikatorer om de finns, annars fasens egen faktor.
-  // NNR är ett underhållsläge och måste överridas för viktuppgång — annars
-  // föreslår "Viktuppgång" ±3 %, alltså inget överskott alls.
-  const override = macroMode === 'nnr' ? NNR_CALORIE_OVERRIDE[phaseType] : undefined
+  /**
+   * Kostlägets multiplikatorer om de finns, annars fasens egen faktor.
+   *
+   * Underhållslägen måste överridas för viktuppgång — annars föreslår
+   * "Viktuppgång" ±3 %, alltså inget överskott alls.
+   *
+   * Villkoret var macroMode === 'nnr' och blev därför tyst fel när
+   * hälsospårets bulk flyttades till aktiv-läget: overriden slutade gälla
+   * och målet föll från 3047 till 2687 kcal. Nu avgör LÄGETS KARAKTÄR, inte
+   * dess namn — varje underhållsläge som används för en riktad fas behöver
+   * samma korrigering.
+   */
+  const isMaintenanceMode = macroMode === 'nnr' || macroMode === 'active'
+  const override = isMaintenanceMode ? NNR_CALORIE_OVERRIDE[phaseType] : undefined
   const minMult =
     levelMultipliers?.min ??
     override?.min ??

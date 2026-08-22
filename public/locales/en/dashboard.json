@@ -181,7 +181,7 @@
     "typeLabel": "What do you want to do now?",
     "focus": {
       "strength": "Maximise muscle growth",
-      "strengthDesc": "You lift and want to build or keep muscle mass.",
+      "strengthDesc": "For you who strength train regularly. Training is what decides whether a surplus becomes muscle — without it, Health and balance works better.",
       "health": "Health and balance",
       "healthDesc": "You want to reach a healthy weight with balanced food."
     },
@@ -211,10 +211,18 @@
       }
     },
     "descriptions": {
-      "cut": "Eat below your needs so fat comes off — with enough protein to keep your muscle.",
-      "bulk": "Eat slightly above your needs to build muscle, without adding more fat than necessary.",
-      "maintenance": "Eat around your needs and keep weight stable — good between phases or once you're where you want to be.",
-      "reverse": "Raise calories step by step after a period in deficit, so your body keeps up and the weight doesn't rush back."
+      "strength": {
+        "cut": "Eat below your needs so fat comes off — with enough protein to keep your muscle mass.",
+        "bulk": "Eat slightly above your needs so training builds muscle. The surplus stays small, because anything beyond it does not build more muscle — it is stored as fat.",
+        "maintenance": "Eat around your needs and keep your weight steady. Good between two periods — and the period that lets the app measure what you actually burn.",
+        "reverse": "Raise calories step by step after a period in deficit instead of going back in one jump. Gives structure on the way back to maintenance."
+      },
+      "health": {
+        "cut": "Eat below your needs so your weight comes down at a sensible pace, with enough protein to keep you full.",
+        "bulk": "Eat slightly above your needs so your weight goes up in a controlled way, with balanced food throughout.",
+        "maintenance": "Eat around your needs and keep your weight where it is. Good once you have landed where you want — and the period that lets the app measure what you actually burn.",
+        "reverse": "Raise calories step by step after a period in deficit instead of going back in one jump. Gives structure on the way back to maintenance."
+      }
     },
     "macroMode": {
       "label": "Diet mode",
@@ -363,7 +371,8 @@
     "measureSolutionPoint3": "The measurement needs at least seven logged days covering half the period. Missing days is fine — but the denser the log, the more reliable the result.",
     "measureSkipTitle": "Do you have to?",
     "measureSkipBody": "No. If you want to start straight away, that is fine — the app adjusts the target as you log, and you can measure later. The recommendation exists so you avoid four weeks of dieting that does not give what you expected.",
-    "measureFirstProgress": "You have logged {{current}} of {{total}} days."
+    "measureFirstProgress": "You have logged {{current}} of {{total}} days.",
+    "strengthBulkTraining": "This surplus assumes you strength train. Without training, most of it is stored as fat."
   },
   "calibrationReadiness": {
     "title": "On your way to calibration",

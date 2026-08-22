@@ -181,7 +181,7 @@
     "typeLabel": "Vad vill du göra nu?",
     "focus": {
       "strength": "Maximera muskeluppbyggnad",
-      "strengthDesc": "Du styrketränar och vill bygga eller behålla muskelmassa.",
+      "strengthDesc": "För dig som styrketränar regelbundet. Träningen är det som avgör om ett överskott blir muskler — utan den fungerar Hälsa och balans bättre.",
       "health": "Hälsa och balans",
       "healthDesc": "Du vill nå en hälsosam vikt med balanserad kost."
     },
@@ -211,10 +211,18 @@
       }
     },
     "descriptions": {
-      "cut": "Ät under ditt behov så att fettet minskar — med tillräckligt protein för att muskelmassan ska sitta kvar.",
-      "bulk": "Ät något över ditt behov så att du kan bygga muskler, utan att lägga på dig mer fett än nödvändigt.",
-      "maintenance": "Ät runt ditt behov och håll vikten stabil — bra mellan två perioder eller när du landat där du vill.",
-      "reverse": "Höj kalorierna stegvis efter en period i underskott, så att kroppen hinner med och vikten inte rusar tillbaka."
+      "strength": {
+        "cut": "Ät under ditt behov så att fettet minskar — med tillräckligt protein för att muskelmassan ska sitta kvar.",
+        "bulk": "Ät något över ditt behov så att träningen ger muskler. Överskottet hålls litet, eftersom det som ligger över inte bygger mer muskler utan lagras som fett.",
+        "maintenance": "Ät runt ditt behov och håll vikten stabil. Bra mellan två perioder — och den period som låter appen mäta din faktiska förbrukning.",
+        "reverse": "Höj kalorierna stegvis efter en period i underskott i stället för att gå tillbaka i ett steg. Ger struktur på vägen tillbaka till underhåll."
+      },
+      "health": {
+        "cut": "Ät under ditt behov så att vikten går ner i lagom takt, med tillräckligt protein för att du ska hålla dig mätt.",
+        "bulk": "Ät något över ditt behov så att vikten går upp kontrollerat, med balanserad kost hela vägen.",
+        "maintenance": "Ät runt ditt behov och håll vikten där den är. Bra när du landat där du vill — och den period som låter appen mäta vad du faktiskt förbränner.",
+        "reverse": "Höj kalorierna stegvis efter en period i underskott i stället för att gå tillbaka i ett steg. Ger struktur på vägen tillbaka till underhåll."
+      }
     },
     "macroMode": {
       "label": "Kostläge",
@@ -363,7 +371,8 @@
     "measureSolutionPoint3": "Mätningen kräver minst sju loggade dagar som täcker halva perioden. Logga inte varje dag så fungerar det ändå — men ju tätare, desto säkrare.",
     "measureSkipTitle": "Måste du?",
     "measureSkipBody": "Nej. Vill du sätta igång direkt går det utmärkt — appen justerar målet efterhand som du loggar, och du kan mäta senare. Rekommendationen finns för att du ska slippa fyra veckors nedgång som inte ger det du väntat dig.",
-    "measureFirstProgress": "Du har loggat {{current}} av {{total}} dagar."
+    "measureFirstProgress": "Du har loggat {{current}} av {{total}} dagar.",
+    "strengthBulkTraining": "Det här överskottet förutsätter att du styrketränar. Utan träning lagras det mesta av det som fett."
   },
   "calibrationReadiness": {
     "title": "På väg mot kalibrering",

@@ -253,7 +253,17 @@ export function PhasePickerDialog({
         focus,
         // Planeringsfälten sparas bara med premium — annars skulle en
         // gratisanvändare få en tidsplan som UI:t sedan inte visar.
-        plannedWeeks: hasPlanning && weeks ? Number(weeks) : null,
+        /**
+         * Längden sparas ALLTID, med standardvärdet för gratis.
+         *
+         * Utan den kan en period aldrig ta slut på tid, och gratisanvändaren
+         * får en period som ser trasig ut i stället för ett lås — samma
+         * kategorifel som tidsberäknaren hade före 2026-08-19.
+         *
+         * Premium får ÄNDRA värdet; fältet ovan är gatat. Att välja hur
+         * länge är planering, att veta att perioden tog slut är det inte.
+         */
+        plannedWeeks: weeks ? Number(weeks) : (suggestion.plannedWeeks ?? null),
         // Mittpunkten i kostlägets spann — samma tal som visas i rutan ovan
         targetCalories: suggestion.targetCalories,
         // Kolumnen är g/kg (CHECK 0,5–4,0). NNR-läget anger protein i
@@ -544,7 +554,7 @@ export function PhasePickerDialog({
                             )}
                           </div>
                           <span className="text-xs text-neutral-600 dark:text-neutral-400">
-                            {t(`phase.descriptions.${type}`)}
+                            {t(`phase.descriptions.${focus}.${type}`)}
                           </span>
                         </button>
                       )
@@ -680,6 +690,22 @@ export function PhasePickerDialog({
                     <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-400">
                       {t('phase.macroMode.hint')}
                     </p>
+                    {/*
+                      Träningen nämns DÄR BESLUTET FATTAS, inte bara i
+                      tidsräknaren. Texten fanns redan som
+                      phase.prep.gainStrengthTraining men renderades bara när
+                      räknaren öppnades vid uppgång — den som valde
+                      styrkespåret och startade en bulk direkt såg den aldrig.
+
+                      Ingen spärr: träning går inte att verifiera, och en
+                      fråga användaren kan svara fel på ger friktion utan
+                      säkerhet.
+                    */}
+                    {focus === 'strength' && selected === 'bulk' && (
+                      <p className="mt-2 text-xs text-neutral-600 dark:text-neutral-300">
+                        {t('phase.strengthBulkTraining')}
+                      </p>
+                    )}
                   </div>
 
                   {/*
