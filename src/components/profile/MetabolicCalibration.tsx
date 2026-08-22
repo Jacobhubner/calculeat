@@ -51,10 +51,9 @@ import {
   runCalibration,
   MIN_DATA_POINTS,
   calibrationNow,
-  validateWeightData,
+  checkPeriodEligibility,
   MIN_NEW_WEIGHTS_AFTER_CALIBRATION,
   MIN_DAILY_KCAL_FOR_LOG,
-  buildClusters,
 } from '@/lib/calculations/calibration'
 import type { Profile, CalibrationResult, ProfileFormData } from '@/lib/types'
 import { toast } from 'sonner'
@@ -359,29 +358,17 @@ export default function MetabolicCalibration({
   const periodAvailability = useMemo(() => {
     const result: Record<14 | 21 | 28, boolean> = { 14: false, 21: false, 28: false }
     if (!weightHistory || !now) return result
+    /**
+     * checkPeriodEligibility äger frågan — se calibration-eligibility.ts.
+     *
+     * Väljaren mätte förut bara antal och klusterstorlek, medan motorn
+     * dessutom prövar takt, CV och separation. Perioder blev därför valbara
+     * som motorn sedan nekade: 32 av 60 periodval i ett svep. Grinden i
+     * useCalibrationAvailability godkänner ETT periodval, men härifrån kan
+     * användaren välja ett annat.
+     */
     for (const period of [14, 21, 28] as const) {
-      const cutoff = new Date(now.getTime() - period * 24 * 60 * 60 * 1000)
-      const count = weightHistory.filter(w => new Date(w.recorded_at) >= cutoff).length
-      if (count >= MIN_DATA_POINTS[period]) {
-        const clusters = buildClusters(weightHistory, period, now)
-        /**
-         * Motorns egen validering, inte en egen uppsättning kontroller.
-         *
-         * Rullgardinen mätte bara antal och klusterstorlek, medan
-         * runCalibration dessutom prövar takt, CV och separation. Perioder
-         * blev därför valbara som motorn sedan nekade — 32 av 60 periodval
-         * i ett svep. Grinden i useCalibrationAvailability godkänner ETT
-         * periodval, men härifrån kan användaren välja ett annat.
-         */
-        result[period] =
-          clusters !== null &&
-          validateWeightData(
-            clusters.allMeasurements,
-            clusters.startCluster,
-            clusters.endCluster,
-            period
-          ) === null
-      }
+      result[period] = checkPeriodEligibility(weightHistory, period, now).eligible
     }
     return result
   }, [weightHistory, now])

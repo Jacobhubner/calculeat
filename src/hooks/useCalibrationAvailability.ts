@@ -14,6 +14,10 @@ import {
   buildClusters,
   calibrationNow,
   validateWeightData,
+  findBestPeriod,
+  checkPeriodEligibility,
+  calculateWeightTrendOLS,
+  CV_BLOCK_THRESHOLD,
 } from '@/lib/calculations/calibration'
 import { useEntitlements, isUnlimited } from '@/hooks/useEntitlements'
 
@@ -159,6 +163,18 @@ export function useCalibrationAvailability(
       if (clusters.startCluster.count < minCluster || clusters.endCluster.count < minCluster)
         continue
       reachedPeriods.push(period)
+      /**
+       * MEDVETET bara klusterkontroll här, inte full validering.
+       *
+       * Trappan svarar på "har du samlat underlag nog", inte "går det att
+       * kalibrera just nu". Mätt skiljer de sig i hälften av fallen, och
+       * ALLA skillnader är taktspärren: vikten rör sig snabbare än 1,5 %
+       * per vecka, ofta vätske­vikt som passerar på några dagar.
+       *
+       * Att släcka ett steg då vore fel besked — vägningarna finns kvar och
+       * försvinner inte för att vikten rörde sig. Om kalibrering faktiskt
+       * är blockerad säger raden under, som utgår från isAvailable.
+       */
     }
 
     /**
@@ -303,38 +319,39 @@ export function useCalibrationAvailability(
     // Samma klocka som framstegsberäkningen ovan — annars kan de två svara
     // mot olika tidpunkter i samma rendering.
     const now = new Date(mountedAt)
-    const periods: Array<14 | 21 | 28> = [28, 21, 14]
 
     // Find the best available period (longest first)
     let bestPeriod: 14 | 21 | 28 | null = null
     let bestClusterResult: ReturnType<typeof buildClusters> = null
     let bestWeightsInPeriod: WeightHistory[] = []
 
-    for (const period of periods) {
-      const cutoff = new Date(now.getTime() - period * 24 * 60 * 60 * 1000)
-      const weightsInPeriod = weightHistory.filter(w => new Date(w.recorded_at) >= cutoff)
-
-      if (weightsInPeriod.length < MIN_DATA_POINTS[period]) continue
-
-      const clusters = buildClusters(weightHistory, period, now)
-      if (!clusters) continue
-
-      // Check minimum cluster sizes
-      const minCluster = MIN_CLUSTER_SIZE[period]
-      if (clusters.startCluster.count < minCluster || clusters.endCluster.count < minCluster)
-        continue
-
-      bestPeriod = period
-      bestClusterResult = clusters
-      bestWeightsInPeriod = weightsInPeriod
-      break
+    /**
+     * findBestPeriod äger frågan — loopen härmade den förut, med sin egen
+     * uppsättning kontroller. Varje ny regel i motorn glömdes då i minst
+     * en kopia; se calibration-eligibility.ts.
+     */
+    const best = findBestPeriod(weightHistory, now)
+    if (best) {
+      bestPeriod = best.period
+      bestClusterResult = best.result.clusters
+      bestWeightsInPeriod = best.result.weightsInPeriod
     }
 
     if (!bestPeriod || !bestClusterResult) {
+      /**
+       * Motorns eget besked, inte ett generellt "för få vägningar".
+       *
+       * 14-dagarsperioden är den användaren står närmast, så dess orsak är
+       * den handlingsbara. Utan det här föll takt- och CV-spärrar tillbaka
+       * på antalsmeddelandet och sa "Behöver minst 4 viktmätningar" till
+       * någon som redan hade sex.
+       */
+      const narmast = checkPeriodEligibility(weightHistory, 14, now)
       return {
         ...unavailable,
         currentDataPoints: weightHistory.length,
-        reason: `Behöver minst ${MIN_DATA_POINTS[14]} viktmätningar under 14 dagar`,
+        reason:
+          narmast.reason ?? `Behöver minst ${MIN_DATA_POINTS[14]} viktmätningar under 14 dagar`,
       }
     }
 
@@ -417,14 +434,37 @@ export function useCalibrationAvailability(
     let weightTrend: CalibrationAvailability['weightTrend'] = 'stable'
 
     if (sortedWeights.length >= 2) {
-      const firstWeight = sortedWeights[0].weight_kg
-      const lastWeight = sortedWeights[sortedWeights.length - 1].weight_kg
-      const changePercent = ((lastWeight - firstWeight) / firstWeight) * 100
-      const daysDiff =
-        (new Date(sortedWeights[sortedWeights.length - 1].recorded_at).getTime() -
-          new Date(sortedWeights[0].recorded_at).getTime()) /
-        (1000 * 60 * 60 * 24)
-      const weeklyChangePercent = daysDiff > 0 ? (changePercent / daysDiff) * 7 : 0
+      /**
+       * OLS över alla mätningar, inte första mot sista.
+       *
+       * Ändpunktsmetoden lät en enda brusig vägning definiera trenden:
+       * mätt kallade den en platt kurva "losing" i 9 fall av 48, alltid åt
+       * det hållet. Motorn regresserar över hela serien
+       * (calculateWeightTrendOLS), och trendetiketten användaren ser bör
+       * komma från samma metod som siffran hon sedan får.
+       */
+      const startWeight = sortedWeights[0].weight_kg
+      const olsTrend = calculateWeightTrendOLS(
+        sortedWeights.map(w => ({
+          weight_kg: w.weight_kg,
+          recorded_at: new Date(w.recorded_at),
+        }))
+      )
+
+      let weeklyChangePercent: number
+      if (olsTrend) {
+        weeklyChangePercent = ((olsTrend.slopeKgPerDay * 7) / startWeight) * 100
+      } else {
+        // Under tre mätningar går OLS inte att beräkna — då är ändpunkterna
+        // allt som finns.
+        const lastWeight = sortedWeights[sortedWeights.length - 1].weight_kg
+        const changePercent = ((lastWeight - startWeight) / startWeight) * 100
+        const daysDiff =
+          (new Date(sortedWeights[sortedWeights.length - 1].recorded_at).getTime() -
+            new Date(sortedWeights[0].recorded_at).getTime()) /
+          (1000 * 60 * 60 * 24)
+        weeklyChangePercent = daysDiff > 0 ? (changePercent / daysDiff) * 7 : 0
+      }
 
       // CV-based erratic detection
       const weights = sortedWeights.map(w => w.weight_kg)
@@ -433,7 +473,8 @@ export function useCalibrationAvailability(
         weights.reduce((sum, w) => sum + Math.pow(w - avgWeight, 2), 0) / weights.length
       const coefficientOfVariation = (Math.sqrt(variance) / avgWeight) * 100
 
-      if (coefficientOfVariation > 3) {
+      // Konstanten, inte en lös trea: tröskeln ska följa med om den ändras.
+      if (coefficientOfVariation > CV_BLOCK_THRESHOLD) {
         weightTrend = 'erratic'
       } else if (weeklyChangePercent < -0.5) {
         weightTrend = 'losing'

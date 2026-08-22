@@ -516,3 +516,49 @@ describe('useCalibrationAvailability — takt och CV', () => {
     expect(missar).toBe(0)
   })
 })
+
+describe('useCalibrationAvailability — trendetiketten', () => {
+  /**
+   * weightTrend räknades förut som första vägningen mot den sista.
+   *
+   * En enda brusig mätning i endera änden fick då definiera trenden: mätt
+   * kallade metoden en platt viktkurva "losing" i 9 fall av 48, alltid åt
+   * samma håll. Motorn regresserar över hela serien, och etiketten
+   * användaren ser bör komma från samma metod som siffran hon får.
+   */
+  it('låter inte en brusig ändpunkt skapa en trend', () => {
+    const nu = calibrationNow().getTime()
+    // Platt vikt med brus — sista mätningen råkar ligga lågt.
+    const brusig: WeightHistory[] = [13, 10, 7, 4, 1, 0].map((o, i) => {
+      const iso = new Date(nu - o * 86400000).toISOString()
+      return {
+        id: `b${i}`,
+        user_id: 'u1',
+        weight_kg: 85 + 1.5 * Math.sin(i * 2.1),
+        recorded_at: iso,
+        created_at: iso,
+      } as WeightHistory
+    })
+
+    const { result } = renderHook(() => useCalibrationAvailability(profile, brusig, null, 20))
+    // Ingen verklig nedgång finns i datan, så etiketten ska inte påstå en.
+    expect(result.current.weightTrend).not.toBe('losing')
+  })
+
+  it('känner igen en verklig nedgång', () => {
+    const nu = calibrationNow().getTime()
+    const nedgang: WeightHistory[] = [13, 10, 7, 4, 1, 0].map((o, i) => {
+      const iso = new Date(nu - o * 86400000).toISOString()
+      return {
+        id: `n${i}`,
+        user_id: 'u1',
+        weight_kg: 85 - (13 - o) * 0.1,
+        recorded_at: iso,
+        created_at: iso,
+      } as WeightHistory
+    })
+
+    const { result } = renderHook(() => useCalibrationAvailability(profile, nedgang, null, 20))
+    expect(result.current.weightTrend).toBe('losing')
+  })
+})

@@ -100,9 +100,13 @@ export {
   MIN_DAILY_KCAL_FOR_LOG,
   MIN_LOG_DAYS_FOR_CALIBRATION,
   MIN_LOG_COVERAGE_OF_PERIOD,
+  CV_BLOCK_THRESHOLD,
 } from './calibration-constants'
 
 export { calibrationNow } from './calibration-clock'
+
+export type { PeriodEligibility } from './calibration-eligibility'
+export { checkPeriodEligibility, findBestPeriod } from './calibration-eligibility'
 
 export type { OutlierResult } from './calibration-outliers'
 export { detectWeightOutliers } from './calibration-outliers'
