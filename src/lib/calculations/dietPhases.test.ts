@@ -681,6 +681,7 @@ describe('phaseCalorieDrift', () => {
       phase: bulk(88.4, 3169),
       currentWeightKg: 88.4,
       currentTdee: tdeeFor(88.4),
+      tdeeAtStart: tdeeFor(88.4),
     })
     expect(d!.driftKcal).toBe(0)
     expect(d!.needsRecalc).toBe(false)
@@ -691,11 +692,13 @@ describe('phaseCalorieDrift', () => {
       phase: bulk(88.4, 3169),
       currentWeightKg: 91,
       currentTdee: tdeeFor(91),
+      tdeeAtStart: tdeeFor(88.4),
     })
     const over = phaseCalorieDrift({
       phase: bulk(88.4, 3169),
       currentWeightKg: 94,
       currentTdee: tdeeFor(94),
+      tdeeAtStart: tdeeFor(88.4),
     })
     expect(under!.needsRecalc).toBe(false)
     expect(over!.needsRecalc).toBe(true)
@@ -711,6 +714,7 @@ describe('phaseCalorieDrift', () => {
       phase: bulk(88.4, 3169),
       currentWeightKg: 100,
       currentTdee: tdeeFor(100),
+      tdeeAtStart: tdeeFor(88.4),
     })
     const andelVidStart = 3169 / d!.tdeeAtStart
     const andelNu = d!.adjustedCalories / d!.tdeeNow
@@ -723,6 +727,7 @@ describe('phaseCalorieDrift', () => {
       phase: bulk(88.4, 2300),
       currentWeightKg: 83,
       currentTdee: tdeeFor(83),
+      tdeeAtStart: tdeeFor(88.4),
     })
     expect(d!.driftKcal).toBeLessThan(0)
     expect(d!.adjustedCalories).toBeLessThan(2300)
@@ -734,6 +739,7 @@ describe('phaseCalorieDrift', () => {
         phase: { ...bulk(88.4, 3169), start_weight_kg: null },
         currentWeightKg: 94,
         currentTdee: 3000,
+        tdeeAtStart: 2882,
       })
     ).toBeNull()
     expect(
@@ -741,7 +747,60 @@ describe('phaseCalorieDrift', () => {
         phase: { ...bulk(88.4, 3169), target_calories: null },
         currentWeightKg: 94,
         currentTdee: 3000,
+        tdeeAtStart: 2882,
       })
     ).toBeNull()
+  })
+})
+
+describe('phaseCalorieDrift — tdeeAtStart måste skickas in', () => {
+  /**
+   * Funktionen skattade först startens TDEE som currentTdee × viktkvoten.
+   * Det är fel åt fel håll: TDEE innehåller en stor viktOBEROENDE del
+   * (6,25×längd − 5×ålder + 5, gånger PAL), och att skala hela talet med
+   * vikten skalar även den.
+   *
+   * MÄTT för 88,4 → 100 kg: kvoten gav 2706 i stället för 2882, och det
+   * omräknade målet blev 3585 i stället för 3366 — 219 kcal för mycket.
+   * Kommentaren i koden påstod att felet var "åt det försiktiga hållet".
+   * Det stämde inte; det övergödde varje bulk.
+   */
+  const bmrFor = (kg: number) => 10 * kg + 6.25 * 180 - 5 * 30 + 5
+  const tdeeAt = (kg: number) => bmrFor(kg) * 1.546
+
+  const bulkFas = {
+    id: 'p2',
+    user_id: 'u1',
+    phase_type: 'bulk',
+    focus: 'health',
+    started_at: '2026-06-01',
+    ended_at: null,
+    start_weight_kg: 88.4,
+    target_calories: 3169,
+  } as DietPhase
+
+  it('ger det mål som den riktiga formeln ger', () => {
+    const d = phaseCalorieDrift({
+      phase: bulkFas,
+      currentWeightKg: 100,
+      currentTdee: tdeeAt(100),
+      tdeeAtStart: tdeeAt(88.4),
+    })
+    // Viktkvoten gav 3585 här. Rätt svar är 3366.
+    expect(d!.adjustedCalories).toBe(3366)
+    expect(d!.tdeeAtStart).toBe(Math.round(tdeeAt(88.4)))
+  })
+
+  it('avvisar orimligt tdeeAtStart', () => {
+    for (const bad of [0, -100, Number.NaN]) {
+      expect(
+        phaseCalorieDrift({
+          phase: bulkFas,
+          currentWeightKg: 100,
+          currentTdee: 3060,
+          tdeeAtStart: bad,
+        })
+      ).toBeNull()
+    }
   })
 })

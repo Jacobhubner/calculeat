@@ -870,10 +870,24 @@ export interface PhaseCalorieDrift {
 export function phaseCalorieDrift(params: {
   phase: DietPhase
   currentWeightKg: number
-  /** Underhåll vid NUVARANDE vikt, som appen räknar det. */
+  /** Underhåll vid NUVARANDE vikt. */
   currentTdee: number
+  /**
+   * Underhåll vid PERIODENS STARTVIKT, räknat med samma BMR-formel och
+   * samma aktivitetsnivå som currentTdee.
+   *
+   * MÅSTE skickas in — den går inte att skatta här.
+   *
+   * Funktionen skattade först startens TDEE som currentTdee × viktkvoten.
+   * Det är fel, och åt fel håll: TDEE innehåller en stor viktOBEROENDE del
+   * (längd, ålder, kön), så att skala hela talet med vikten skalar även
+   * den. MÄTT för 88,4 → 100 kg: kvoten gav 2706 i stället för 2882, och
+   * det omräknade målet blev 3585 i stället för 3366 — 219 kcal för mycket,
+   * alltså ett systematiskt övergödande av varje bulk.
+   */
+  tdeeAtStart: number
 }): PhaseCalorieDrift | null {
-  const { phase, currentWeightKg, currentTdee } = params
+  const { phase, currentWeightKg, currentTdee, tdeeAtStart } = params
 
   const startWeight = phase.start_weight_kg
   const targetCalories = phase.target_calories
@@ -884,23 +898,12 @@ export function phaseCalorieDrift(params: {
 
   const weightChangeKg = currentWeightKg - startWeight
 
-  /**
-   * Underhållet vid START skattas ur nuvarande TDEE och viktkvoten.
-   *
-   * Bara den viktberoende delen av BMR skalar — resten beror på längd,
-   * ålder och kön. Kvoten currentWeightKg/startWeight överskattar därför
-   * skillnaden något, men åt det försiktiga hållet: den gör att tröskeln
-   * nås aningen tidigare, inte senare.
-   */
+  if (!Number.isFinite(tdeeAtStart) || tdeeAtStart <= 0) return null
+
   const tdeeNow = currentTdee
-  const tdeeAtStart = currentTdee * (startWeight / currentWeightKg)
   const driftKcal = tdeeNow - tdeeAtStart
 
-  /**
-   * Samma ANDEL över/under underhåll som vid start, mot dagens underhåll.
-   * tdeeAtStart kan inte vara noll här — currentTdee och startWeight är
-   * båda kontrollerade som positiva ovan.
-   */
+  /** Samma ANDEL över/under underhåll som vid start, mot dagens underhåll. */
   const factor = targetCalories / tdeeAtStart
   const adjustedCalories = Math.round(tdeeNow * factor)
 
