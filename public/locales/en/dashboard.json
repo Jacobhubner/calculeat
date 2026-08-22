@@ -315,7 +315,7 @@
       "gainRateLabel": "Recommended rate",
       "gainRateNote": "The rate follows your calorie target. Iraki 2019 recommends 0.25–0.5% of body weight per week for gaining — faster is mostly fat: in a study on elite athletes, one group gained more than twice as fast and increased fat mass five times as much, without building more muscle (Garthe 2013).",
       "gainStrengthTraining": "Calories decide how much you gain. Strength training decides how much of it becomes muscle — without it, most of the surplus is fat.",
-      "gainLowerRangeNote": "The lower end of the CALORIE range combined with a longer period gives the least fat gain. Going faster requires a bigger surplus, and the surplus is what gets stored as fat.",
+      "gainLowerRangeNote": "The lower end of the calorie range combined with a longer period gives the least fat gain. Going faster requires a bigger surplus, and the surplus is what gets stored as fat.",
       "titleGain": "How long does the gain take?",
       "statWeightToGain": "To gain",
       "gainRateAboveMax": "The upper end of your calorie range gives {{percent}}% of body weight per week, faster than the 0.5% the literature recommends. Stay closer to the lower end of your calorie target to keep fat gain down.",
