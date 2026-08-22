@@ -18,6 +18,8 @@ import {
   MIN_TARGET_BODY_FAT,
   REALISTIC_LEAN_LOSS_FRACTION,
   ratePercentForDeficitLevel,
+  estimateDurationToGain,
+  GAIN_RATE_PERCENT,
 } from './contestPrep'
 
 describe('estimatePrepDuration — mot källans eget exempel', () => {
@@ -608,5 +610,73 @@ describe('målviktsläget', () => {
     })!
     expect(e.belowLeanMass).toBe(false)
     expect(e.leanMassKg).toBeNull()
+  })
+})
+
+describe('estimateDurationToGain', () => {
+  /**
+   * Längdberäknaren fanns bara för nedgång: estimateDurationToWeight
+   * avvisar uttryckligen mål över nuvarande vikt. Både hälsospårets
+   * "Gå upp i vikt" och styrkespårets "Bygga muskler" saknade därför svar
+   * på hur lång tid det tar.
+   */
+  it('räknar samma väg som en vecka-för-vecka-simulering', () => {
+    const r = estimateDurationToGain({ currentWeightKg: 70, targetWeightKg: 75 })
+    expect(r).not.toBeNull()
+
+    let vikt = 70
+    let veckor = 0
+    while (vikt < 75 && veckor < 500) {
+      vikt *= 1 + r!.ratePercentUsed / 100
+      veckor++
+    }
+    // Exponentialmodellen ska ligga inom en vecka från simuleringen.
+    expect(Math.abs(r!.weeks - veckor)).toBeLessThanOrEqual(1)
+  })
+
+  it('kräver inte kroppsfettmätning', () => {
+    // Till skillnad från fettprocentläget: den som vill upp till 93 kg har
+    // ställt en fråga som bara handlar om vikt.
+    const r = estimateDurationToGain({ currentWeightKg: 88.4, targetWeightKg: 93 })
+    expect(r).not.toBeNull()
+    expect(r!.weeks).toBeGreaterThan(0)
+  })
+
+  it('avvisar mål som inte är en uppgång', () => {
+    expect(estimateDurationToGain({ currentWeightKg: 80, targetWeightKg: 75 })).toBeNull()
+    expect(estimateDurationToGain({ currentWeightKg: 80, targetWeightKg: 80 })).toBeNull()
+  })
+
+  it('avvisar orimliga indata', () => {
+    expect(estimateDurationToGain({ currentWeightKg: 0, targetWeightKg: 80 })).toBeNull()
+    expect(estimateDurationToGain({ currentWeightKg: NaN, targetWeightKg: 80 })).toBeNull()
+  })
+
+  it('förvalet är spannets NEDRE ände', () => {
+    /**
+     * Tvärtemot nedgången, som förvaljer sitt övre värde. Garthe 2013:
+     * dubbla takten gav fem gånger så mycket fettökning UTAN mer fettfri
+     * massa. Att förvälja snabbare vore att förvälja fett.
+     */
+    const r = estimateDurationToGain({ currentWeightKg: 80, targetWeightKg: 84 })
+    expect(r!.ratePercentUsed).toBe(GAIN_RATE_PERCENT.min)
+  })
+
+  it('flaggar takt över Iraki 2019:s övre gräns', () => {
+    const r = estimateDurationToGain({
+      currentWeightKg: 80,
+      targetWeightKg: 88,
+      weeklyRatePercent: 1.0,
+    })
+    expect(r!.aboveRecommendedRate).toBe(true)
+  })
+
+  it('flaggar en finjustering, så varningar inte blir falskt larm', () => {
+    expect(
+      estimateDurationToGain({ currentWeightKg: 80, targetWeightKg: 81 })!.isMinorAdjustment
+    ).toBe(true)
+    expect(
+      estimateDurationToGain({ currentWeightKg: 80, targetWeightKg: 90 })!.isMinorAdjustment
+    ).toBe(false)
   })
 })

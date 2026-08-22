@@ -716,7 +716,13 @@ export function PhasePickerDialog({
                     behöver den. PrepDurationHelper returnerar null utan
                     mätvärde, så den försvinner då av sig själv i stället för
                     att visa en trasig ruta. */}
-                  {selected === 'cut' && (
+                  {/* Även för UPPGÅNG (tillagt 2026-08-22). Räknaren låg
+                      bara på cut, så "hur lång tid tar det" fanns inte för
+                      den som vill gå upp — varken i hälsospårets Gå upp i
+                      vikt eller i styrkespårets Bygga muskler. Frågan är
+                      densamma; takten är en annan (Iraki 2019), och
+                      uppgången kräver inte kroppsfettmätning. */}
+                  {(selected === 'cut' || selected === 'bulk') && (
                     <PrepDurationHelper
                       weightKg={weightKg}
                       tdee={tdee}
@@ -728,6 +734,7 @@ export function PhasePickerDialog({
                       }
                       level={deficitLevel}
                       focus={focus}
+                      direction={selected === 'bulk' ? 'gain' : 'loss'}
                       onUseWeeks={hasPlanning ? w => setWeeks(String(w)) : undefined}
                     />
                   )}

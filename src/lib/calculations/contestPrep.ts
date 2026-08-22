@@ -556,3 +556,86 @@ function round1(n: number): number {
 function round2(n: number): number {
   return Math.round(n * 100) / 100
 }
+
+/**
+ * Rekommenderad UPPGÅNGSTAKT, % av kroppsvikt per vecka.
+ *
+ * Iraki J et al., Sports 2019;7(7):154 (doi: 10.3390/sports7070154,
+ * PMID 31247944): 0,25–0,5 %/vecka, 10–20 % över underhåll.
+ *
+ * Att uppgång har ETT EGET spann, och inte speglar nedgångens, är hela
+ * poängen: Garthe 2013 (doi: 10.1080/17461391.2011.643923) randomiserade
+ * n=39 elitidrottare och fann att gruppen som gick upp 3,9 % ökade
+ * fettmassan 15 % mot 3 % — UTAN skillnad i fettfri massa mot gruppen som
+ * gick upp 1,5 %. Snabbare uppgång gav alltså mer fett, inte mer muskler.
+ * Helms 2023 (doi: 10.1186/s40798-023-00651-y) pekar åt samma håll: 5 % mot
+ * 15 % överskott gav likartad muskeltillväxt, medan större överskott starkt
+ * förutsade fettökning (R²=0,49).
+ *
+ * Därför är förvalet den LÄGRE änden här, tvärtemot nedgångens förval.
+ */
+export const GAIN_RATE_PERCENT = {
+  /** Nedre änden i Iraki 2019 — förval, eftersom snabbare mest ger fett. */
+  min: 0.25,
+  /** Förval. Samma som min: evidensen ger ingen anledning att sikta högre. */
+  recommended: 0.25,
+  /** Övre gränsen i Iraki 2019. */
+  max: 0.5,
+} as const
+
+function clampGainRate(rate: number): number {
+  if (!Number.isFinite(rate) || rate <= 0) return GAIN_RATE_PERCENT.recommended
+  // Samma yttre skydd som clampRate: formeln kräver (1 + r) > 0 och en takt
+  // under 0,05 %/v ger absurda tidsspann.
+  return Math.min(Math.max(rate, 0.05), 5)
+}
+
+/**
+ * Hur lång tid tar det att nå en HÖGRE målvikt?
+ *
+ * Motsvarigheten till estimateDurationToWeight, som uttryckligen avvisar
+ * mål över nuvarande vikt (`targetWeightKg >= currentWeightKg` → null).
+ * Uppgång saknade därför längdberäkning helt, i båda fokusspåren.
+ *
+ * Exponentialmodell precis som nedgången, men med (1 + r): takten är en
+ * andel av kroppsvikten, och vikten STIGER under resans gång — så varje
+ * veckas uppgång i kilo blir något större än den föregående.
+ */
+export function estimateDurationToGain(input: {
+  currentWeightKg: number
+  targetWeightKg: number
+  /** % av kroppsvikt per vecka. Klampas mot Iraki 2019:s gränser. */
+  weeklyRatePercent?: number
+}): {
+  weeks: number
+  weightToGainKg: number
+  weeklyGainKg: number
+  ratePercentUsed: number
+  /** Takten ligger över Iraki 2019:s övre gräns — mer fett, inte mer muskler. */
+  aboveRecommendedRate: boolean
+  isMinorAdjustment: boolean
+} | null {
+  const { currentWeightKg, targetWeightKg } = input
+
+  if (!Number.isFinite(currentWeightKg) || currentWeightKg <= 0) return null
+  if (!Number.isFinite(targetWeightKg) || targetWeightKg <= 0) return null
+  // Målet måste ligga ÖVER nuvarande vikt — annars är det ingen uppgång.
+  if (targetWeightKg <= currentWeightKg) return null
+
+  const ratePercentUsed = clampGainRate(input.weeklyRatePercent ?? GAIN_RATE_PERCENT.recommended)
+  const r = ratePercentUsed / 100
+
+  const weeksExact = Math.log(targetWeightKg / currentWeightKg) / Math.log(1 + r)
+  if (!Number.isFinite(weeksExact) || weeksExact <= 0) return null
+
+  const weightToGainKg = targetWeightKg - currentWeightKg
+
+  return {
+    weeks: round1(weeksExact),
+    weightToGainKg: round1(weightToGainKg),
+    weeklyGainKg: round1(currentWeightKg * r),
+    ratePercentUsed,
+    aboveRecommendedRate: ratePercentUsed > GAIN_RATE_PERCENT.max,
+    isMinorAdjustment: weightToGainKg < currentWeightKg * MINOR_ADJUSTMENT_WEIGHT_FRACTION,
+  }
+}

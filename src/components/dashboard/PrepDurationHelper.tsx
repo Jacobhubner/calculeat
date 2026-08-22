@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button'
 import {
   estimatePrepDuration,
   estimateDurationToWeight,
+  estimateDurationToGain,
   classifyPrepRate,
   PREP_RATE_PERCENT,
   OBSERVED_PREP_WEEKS,
@@ -73,6 +74,16 @@ interface Props {
    * Knappen döljs då i stället för att visas trasig.
    */
   onUseWeeks?: (weeks: number) => void
+  /**
+   * Uppgång i stället för nedgång.
+   *
+   * Räknaren visades bara för cut, så "hur lång tid tar det" fanns inte
+   * för den som vill gå upp — varken i hälsospåret (gå upp i vikt) eller i
+   * styrkespåret (bygga muskler). Frågan är densamma, men takten är en
+   * annan: Iraki 2019 ger 0,25–0,5 %/vecka för uppgång, och Garthe 2013
+   * visar att snabbare mest ger fett.
+   */
+  direction?: 'loss' | 'gain'
 }
 
 export function PrepDurationHelper({
@@ -83,6 +94,7 @@ export function PrepDurationHelper({
   level,
   focus,
   onUseWeeks,
+  direction = 'loss',
 }: Props) {
   const { t } = useTranslation('dashboard')
   const [expanded, setExpanded] = useState(false)
@@ -106,7 +118,15 @@ export function PrepDurationHelper({
    * svaret: med kroppsfett går spannets övre gräns att räkna fram, utan det
    * blir svaret ett enda tal.
    */
-  const useWeightMode = focus === 'health'
+  /**
+   * Uppgång anges ALLTID i kilo, även i styrkespåret.
+   *
+   * Målfettprocent är fel fråga när man bygger: den som lägger på sig
+   * muskler räknar i kilo, och ett procentmål uppåt vore dessutom
+   * tvetydigt (mer fett? mindre? oförändrat vid högre vikt?).
+   */
+  const isGain = direction === 'gain'
+  const useWeightMode = isGain || focus === 'health'
 
   // Kolumnen är numeric(5,2), så värdet kan ha två decimaler (23.13). En
   // decimal räcker gott för en mätning med flera procentenheters osäkerhet.
@@ -135,51 +155,83 @@ export function PrepDurationHelper({
         })
       : null
 
-  const weightEstimate = useWeightMode
-    ? estimateDurationToWeight({
+  /**
+   * Uppgångens takt kommer INTE från underskottsnivån.
+   *
+   * Nivåerna beskriver hur djupt ett underskott är; de har ingen
+   * motsvarighet uppåt. Iraki 2019:s förval används i stället, och det är
+   * medvetet spannets nedre ände — Garthe 2013 visade att dubbla takten gav
+   * fem gånger så mycket fettökning utan mer fettfri massa.
+   */
+  const gainEstimate = isGain
+    ? estimateDurationToGain({
         currentWeightKg: weightKg,
         targetWeightKg: targetNum,
-        weeklyRatePercent: rateNum,
-        currentBodyFatPct: bodyFatPercentage,
       })
     : null
 
+  const weightEstimate =
+    !isGain && useWeightMode
+      ? estimateDurationToWeight({
+          currentWeightKg: weightKg,
+          targetWeightKg: targetNum,
+          weeklyRatePercent: rateNum,
+          currentBodyFatPct: bodyFatPercentage,
+        })
+      : null
+
   /** Det som är gemensamt för båda lägena, så resten av vyn bara har ETT objekt. */
-  const estimate = bfEstimate
+  const estimate = gainEstimate
     ? {
-        weeks: bfEstimate.weeks,
-        weeksRealistic: bfEstimate.weeksRealistic,
-        weeklyLossKg: bfEstimate.weeklyLossKg,
-        ratePercentUsed: bfEstimate.ratePercentUsed,
-        outsideObservedRange: bfEstimate.outsideObservedRange,
-        isMinorAdjustment: bfEstimate.isMinorAdjustment,
-        lossKg: bfEstimate.fatToLoseKg,
-        endWeightKg: bfEstimate.projectedWeightKg,
-        belowEssentialFat: bfEstimate.belowEssentialFat,
+        weeks: gainEstimate.weeks,
+        weeksRealistic: gainEstimate.weeks,
+        weeklyLossKg: gainEstimate.weeklyGainKg,
+        ratePercentUsed: gainEstimate.ratePercentUsed,
+        // Nedgångens observerade prep-spann (14–32 v) gäller inte uppgång.
+        outsideObservedRange: false,
+        isMinorAdjustment: gainEstimate.isMinorAdjustment,
+        lossKg: gainEstimate.weightToGainKg,
+        endWeightKg: Math.round(targetNum * 10) / 10,
+        belowEssentialFat: false,
         belowLeanMass: false,
         leanMassKg: null as number | null,
-        essentialFatLimit: bfEstimate.essentialFatLimit,
+        essentialFatLimit: null as number | null,
       }
-    : weightEstimate
+    : bfEstimate
       ? {
-          weeks: weightEstimate.weeks,
-          // Spannet finns bara när kroppsfettet är uppmätt; annars är
-          // weeksRealistic === weeks och UI:t visar ett enda tal.
-          weeksRealistic: weightEstimate.weeksRealistic,
-          weeklyLossKg: weightEstimate.weeklyLossKg,
-          ratePercentUsed: weightEstimate.ratePercentUsed,
-          outsideObservedRange: weightEstimate.outsideObservedRange,
-          isMinorAdjustment: weightEstimate.isMinorAdjustment,
-          lossKg: weightEstimate.weightToLoseKg,
-          // Avrundas som fettprocentlägets projectedWeightKg, annars visas
-          // "87.456 kg" när användaren skrivit så.
-          endWeightKg: Math.round(targetNum * 10) / 10,
-          belowEssentialFat: false,
-          belowLeanMass: weightEstimate.belowLeanMass,
-          leanMassKg: weightEstimate.leanMassKg,
-          essentialFatLimit: 0,
+          weeks: bfEstimate.weeks,
+          weeksRealistic: bfEstimate.weeksRealistic,
+          weeklyLossKg: bfEstimate.weeklyLossKg,
+          ratePercentUsed: bfEstimate.ratePercentUsed,
+          outsideObservedRange: bfEstimate.outsideObservedRange,
+          isMinorAdjustment: bfEstimate.isMinorAdjustment,
+          lossKg: bfEstimate.fatToLoseKg,
+          endWeightKg: bfEstimate.projectedWeightKg,
+          belowEssentialFat: bfEstimate.belowEssentialFat,
+          belowLeanMass: false,
+          leanMassKg: null as number | null,
+          essentialFatLimit: bfEstimate.essentialFatLimit,
         }
-      : null
+      : weightEstimate
+        ? {
+            weeks: weightEstimate.weeks,
+            // Spannet finns bara när kroppsfettet är uppmätt; annars är
+            // weeksRealistic === weeks och UI:t visar ett enda tal.
+            weeksRealistic: weightEstimate.weeksRealistic,
+            weeklyLossKg: weightEstimate.weeklyLossKg,
+            ratePercentUsed: weightEstimate.ratePercentUsed,
+            outsideObservedRange: weightEstimate.outsideObservedRange,
+            isMinorAdjustment: weightEstimate.isMinorAdjustment,
+            lossKg: weightEstimate.weightToLoseKg,
+            // Avrundas som fettprocentlägets projectedWeightKg, annars visas
+            // "87.456 kg" när användaren skrivit så.
+            endWeightKg: Math.round(targetNum * 10) / 10,
+            belowEssentialFat: false,
+            belowLeanMass: weightEstimate.belowLeanMass,
+            leanMassKg: weightEstimate.leanMassKg,
+            essentialFatLimit: 0,
+          }
+        : null
 
   // Klassificera den takt som FAKTISKT användes, inte råinmatningen. Skriver
   // användaren 8 klampar modulen till 5 — då vore det vilseledande att varna
@@ -223,9 +275,11 @@ export function PrepDurationHelper({
       {expanded && (
         <div className="space-y-3 border-t border-neutral-200 px-3 py-3 dark:border-neutral-700">
           <p className="text-xs text-neutral-600 dark:text-neutral-400">
-            {useWeightMode
-              ? t('phase.prep.introWeight', { current: weightKg })
-              : t('phase.prep.intro', { current: bodyFatDisplay })}
+            {isGain
+              ? t('phase.prep.introGain', { current: weightKg })
+              : useWeightMode
+                ? t('phase.prep.introWeight', { current: weightKg })
+                : t('phase.prep.intro', { current: bodyFatDisplay })}
           </p>
 
           {/* Målfält och takt sida vid sida: två korta uppgifter som hör
@@ -234,7 +288,11 @@ export function PrepDurationHelper({
           <div className="flex flex-wrap items-end gap-3">
             <div className="min-w-[7rem] flex-1 space-y-1">
               <Label htmlFor="prep-target" className="text-xs">
-                {useWeightMode ? t('phase.prep.targetWeightLabel') : t('phase.prep.targetLabel')}
+                {isGain
+                  ? t('phase.prep.targetGainLabel')
+                  : useWeightMode
+                    ? t('phase.prep.targetWeightLabel')
+                    : t('phase.prep.targetLabel')}
               </Label>
               <Input
                 id="prep-target"
@@ -243,13 +301,35 @@ export function PrepDurationHelper({
                 step="0.5"
                 value={targetBf}
                 onChange={e => setTargetBf(e.target.value)}
-                placeholder={String(useWeightMode ? Math.round(weightKg * 0.92) : suggestedTarget)}
+                placeholder={String(
+                  isGain
+                    ? Math.round(weightKg * 1.05)
+                    : useWeightMode
+                      ? Math.round(weightKg * 0.92)
+                      : suggestedTarget
+                )}
                 className="h-8 text-sm"
               />
             </div>
+            {/* Uppgången har ingen underskottsnivå att visa — nivåerna
+                beskriver hur DJUPT ett underskott är och saknar
+                motsvarighet uppåt. I stället visas Iraki 2019:s takt. */}
+            {isGain && gainEstimate && (
+              <div className="min-w-[8rem] flex-1 space-y-1">
+                <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                  {t('phase.prep.gainRateLabel')}
+                </p>
+                <p className="text-sm font-medium tabular-nums text-neutral-800 dark:text-neutral-100">
+                  {gainEstimate.weeklyGainKg.toFixed(2)}{' '}
+                  <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">
+                    kg/v
+                  </span>
+                </p>
+              </div>
+            )}
             {/* Nivån väljs i periodvalet ovan — här visas bara vad den
                 innebär i takt, utan ett andra reglage för samma sak. */}
-            {levelRate && (
+            {!isGain && levelRate && (
               <div className="min-w-[8rem] flex-1 space-y-1">
                 <p className="text-xs text-neutral-500 dark:text-neutral-400">
                   {t(`phase.deficitLevel.${level}`)}
@@ -336,6 +416,22 @@ export function PrepDurationHelper({
               </dl>
 
               <div className="space-y-1.5 px-3 py-2.5">
+                {/* Uppgångens tre budskap, i den ordning de behövs:
+                    varför takten är låg, vad som avgör om det blir muskler,
+                    och varför en längre period är bättre än en kort. */}
+                {isGain && (
+                  <>
+                    <p className="text-xs text-neutral-600 dark:text-neutral-400">
+                      {t('phase.prep.gainRateNote')}
+                    </p>
+                    <p className="text-xs text-neutral-600 dark:text-neutral-400">
+                      {t('phase.prep.gainStrengthTraining')}
+                    </p>
+                    <p className="text-xs text-neutral-500 dark:text-neutral-400">
+                      {t('phase.prep.gainLowerRangeNote')}
+                    </p>
+                  </>
+                )}
                 {estimate.weeksRealistic > estimate.weeks && (
                   <p className="text-xs text-neutral-600 dark:text-neutral-400">
                     {t('phase.prep.rangeExplanation')}
