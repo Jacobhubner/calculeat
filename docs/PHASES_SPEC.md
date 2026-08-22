@@ -142,6 +142,38 @@ från senaste vägningen.
 **Gränsdragning:** målvikt och resultat sparas och visas för alla.
 Framstegsbaren förblir premium.
 
+#### planned_weeks sparas alltid — beslut 2026-08-22
+
+I dag sparas längden bara för premium:
+
+```ts
+plannedWeeks: hasPlanning && weeks ? Number(weeks) : null,  // PhasePickerDialog.tsx:256
+```
+
+Det gör att en gratisperiod aldrig kan "ta slut på tid" i steg 2. Beslutet
+är att **alltid spara en standardlängd, men låta bara premium ändra den**.
+Fältet fylls redan med `suggestion.plannedWeeks` vid varje öppning —
+värdet kastas bara bort vid start.
+
+Fyra skäl:
+
+1. **Samma kategorifel som tidsberäknaren**, som flyttades ut ur gaten
+   2026-08-19 med motiveringen att "en gräns som bara den oinvigde stötte
+   på är en dålig gräns". Här stöter gratisanvändaren inte på ett lås — hon
+   stöter på en period som ser trasig ut.
+2. **Konsekvens inom funktionen.** Steg 1 sparar redan målvikt för alla och
+   gatar bara framstegsbaren. Att behandla längden annorlunda vore
+   inkonsekvent.
+3. **Alternativet kostar tre kodvägar** i `phaseTracking` i stället för en:
+   klar-på-tid, klar-på-målvikt, och "kan aldrig bli klar" — den sista utan
+   definierat beteende.
+4. **Dagens gate är ändå kosmetisk.** Ingen trigger enforcar den; värdet går
+   att sätta via ett direkt RPC-anrop.
+
+**Ordningsföljd som inte får glida:** med det här blir "vecka 15 av 12"
+synligt för alla i stället för bara premium. Avslutningslogiken (steg 2)
+måste därför levereras i SAMMA släpp, inte efteråt.
+
 **Testas:** att målvikten överlever hela vägen från räknaren till kortet;
 att slutvikten sätts vid avslut; att underhåll utan målvikt inte kraschar.
 
@@ -196,6 +228,86 @@ kräver ingen migration.
 
 **Testas:** att varje fall ger rätt slutsats; att otillräcklig data ger
 "vet ej" i stället för en gissning.
+
+### Steg 0 — Spåren säger vad de är, och ett proteinfel rättas
+
+**Först, för att det är rena text- och tabelländringar utan beräkningsrisk
+— och för att ett av fynden är en verklig bugg.**
+
+#### 0a. Hälsospårets bulk ger för lite protein (BUGG)
+
+Hälsospårets `bulk` och `maintenance` anger protein i ENERGIPROCENT
+(10–20 E%) via NNR-läget, inte i g/kg. Vid en bulk blir det fel väg:
+10 E% av ett FÖRHÖJT kalorimål ger, för 80 kg vid TDEE 2500:
+
+| Överskott | Kalorier | 10 E% protein        |
+| --------- | -------- | -------------------- |
+| +10 %     | 2750     | 69 g = **0,86 g/kg** |
+| +20 %     | 3000     | 75 g = **0,94 g/kg** |
+
+Det är LÄGRE än samma spårs cut (1,2–1,6 g/kg, Leidy 2015) och långt under
+Morton 2018:s brytpunkt 1,62 g/kg. Man får alltså mindre protein när man
+bygger än när man bantar.
+
+**Åtgärd:** peka hälsospårets bulk mot `active` i stället för `nnr`
+(1,6–2,0 g/kg, Morton 2018). Det tar samtidigt bort behovet av
+`NNR_CALORIE_OVERRIDE`, eftersom fasen ändå styr kaloririktningen.
+
+#### 0b. Reverse-texten bryter mot kodens egen regel (BUGG)
+
+`dietPhases.ts` säger uttryckligen: upptrappning ska presenteras som
+"hjälp för den som vill ha struktur", ALDRIG som "så här undviker du att
+gå upp i vikt" — det senare stöds inte av datan.
+
+Nuvarande text säger: "...så att kroppen hinner med och **vikten inte
+rusar tillbaka**."
+
+**Åtgärd:** ny text som lovar struktur, inte utfall:
+
+> Höj kalorierna stegvis efter en period i underskott i stället för att gå
+> tillbaka i ett steg. Ger struktur på vägen tillbaka till underhåll.
+
+**Fasen behålls i båda spåren.** En granskning föreslog att ta bort reverse
+ur hälsospåret på grund av RCT:n som fann störst viktökning och högst
+avhopp i reverse-armen. Men koden flaggar själv att publikationstypen är
+osäker (supplement) och att två oberoende granskningar kom till olika
+slutsats. Att ta bort en fas på preliminär evidens är ett större steg än
+att rätta en text som bevisligen bryter mot en regel. Omprövas om
+evidensen stärks.
+
+#### 0c. Beskrivningarna blir spårspecifika
+
+`phase.descriptions` är gemensam och renderas spåroberoende. Texterna är
+skrivna i STYRKESPRÅK: hälsospårets cut säger "så att muskelmassan ska
+sitta kvar", trots att dess protein är motiverat av MÄTTNAD
+(`macroModes.ts`: weightloss-läget är "för allmänheten, inte
+tävlingsförberedelse").
+
+Spåren ÄR redan olika i protein och makron — appen säger bara aldrig vad
+skillnaden består i. Ny nyckelstruktur: `phase.descriptions.${focus}.${type}`.
+
+#### 0d. Styrketräning nämns där beslutet fattas
+
+Texten finns (`phase.prep.gainStrengthTraining`) men renderas bara i
+tidsräknaren vid uppgång. Den som väljer styrkespåret och startar en bulk
+utan att öppna räknaren ser den aldrig.
+
+Visas nu även i fasvalet när `focus === strength && selected === bulk`.
+Ingen spärr — träning går inte att verifiera, och en fråga användaren kan
+ljuga på ger friktion utan säkerhet.
+
+#### Vad som INTE ändras
+
+- **Kalorinivån ska inte skilja sig mellan spåren.** Helms 2023: 5 % mot
+  15 % överskott gav likartad muskeltillväxt medan större överskott starkt
+  förutsade fettökning. Mer till styrkespåret vore mer fett utan mer
+  muskler. Likheten är avsiktlig — `NNR_CALORIE_OVERRIDE` finns just för
+  att tvinga fram den.
+- **Faslängden ska inte skilja sig.** Ingen granskad källa anger ett
+  optimalt veckotal alls, alltså definitivt inte två. Startfettnivån är
+  rätt variabel, och den hanteras redan i tidsräknaren.
+
+---
 
 ### Steg 5 — Målet räknas om
 
