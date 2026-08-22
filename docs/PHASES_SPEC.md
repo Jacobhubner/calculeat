@@ -1,9 +1,9 @@
-# Perioder — analys och plan
+# Perioder — analys och arbetsplan
 
 Status: **arbetsplan.** Nuläget verifierat mot koden 2026-08-22.
 
 Utgångspunkt: appen har ännu inga riktiga användare utöver enstaka testare.
-Risken för regression är därför låg, och ambitionen kan sättas efter vad
+Regressionsrisken är därför låg, och ambitionen kan sättas efter vad
 funktionen **borde** vara — inte efter vad som är minst störande att ändra.
 
 Målet: en premiumanvändare ska kunna lita på att perioden är en **plan som
@@ -11,7 +11,7 @@ följs upp**, där det enda hen behöver göra är att logga och väga sig.
 
 ---
 
-## 1. Vad Perioder är i dag
+## 1. Nuläget
 
 En dietfas med mål, riktning och tänkt längd. Fyra typer, olika namn per
 fokusspår:
@@ -23,54 +23,63 @@ fokusspår:
 | `maintenance` | Underhåll     | Underhåll     | 4 v           |
 | `reverse`     | Trappa upp    | Reverse diet  | 4 v           |
 
-Längderna är härledningar, inte studieresultat. Litteraturen styr på
-hastighet och kroppsfettnivå, inte på tid. Motivering per siffra finns i
+Längderna är härledningar, inte studieresultat — litteraturen styr på
+hastighet och kroppsfettnivå, inte på tid. Motivering per siffra i
 `dietPhases.ts`.
+
+### Vad som fungerar bra i dag
+
+Värt att säga innan bristerna, eftersom det avgör vad som **inte** ska rivas:
+
+- **Fasbytet är atomärt.** `start_diet_phase` avslutar föregående fas och
+  startar den nya i ett RPC-anrop, just för att två anrop kunde lämna
+  användaren utan aktiv fas.
+- **Uppföljningen är ärlig.** Den skiljer `too_early` (vätskesvängningar) från
+  verkliga avvikelser, och `deficit_level_changed_at` hindrar att ett
+  nivåbyte läses som att användaren misslyckats.
+- **Estimerat TDEE flaggas.** `tdeeIsEstimated` finns på båda ställena, och
+  texten säger att avvikelsen troligen beror på formeln — inte på användaren.
+- **Fokusspåret sparas på perioden**, så en pågående fas inte byter namn.
 
 ### Gränsen gratis/premium
 
 En flagga: `diet_phase_planning`.
 
 **Gratis:** välja och byta fas, kalori- och proteinmål, kostläge,
-veckoräknare, uppföljning (faktisk mot förväntad viktförändring),
-tidsberäknaren, justera underskottsdjup.
+veckoräknare, uppföljning, tidsberäknaren, justera underskottsdjup.
 
 **Premium:** planerad längd + progressbar, fashistorik, guidat nästa steg,
 reverse-upptrappning, "Använd X veckor".
 
-Uppföljningen är alltså **redan gratis**. Gratisanvändaren ser att vikten
-inte följer planen — men inte varför, och får ingen hjälp att rätta till det.
-
 ---
 
-## 2. Analys: fem verkliga luckor
+## 2. Sex brister
 
 Ordnade efter hur mycket de undergräver löftet "en plan som följs upp".
 
 ### 2.1 Perioden har ingen målvikt
 
 `diet_phases` har `planned_weeks` men **ingen målvikt**. Tidsberäknaren
-frågar efter en, räknar ut veckor — och kastar sedan bort målet.
-`onUseWeeks` skickar bara `Math.ceil(weeks)` vidare.
+frågar efter en, räknar ut veckor — och kastar bort målet; `onUseWeeks`
+skickar bara `Math.ceil(weeks)`.
 
-Följden är att perioden inte kan svara på den mest grundläggande frågan:
-_hur långt har jag kommit?_ Progressbaren mäter **tid**, inte framsteg. En
-användare som ligger före planen ser samma bar som en som inte gått ner alls.
+Följd: **progressbaren mäter tid, inte framsteg.** Den som ligger före planen
+ser samma bar som den som inte gått ner ett gram.
 
-Det här är rotorsaken till 2.2 och en del av 2.3.
+Rotorsak till 2.2 och delvis 2.6.
 
 ### 2.2 Ingenting händer när perioden tar slut
 
-`phaseProgress` klampar till 1, men `weeksSince` fortsätter räkna. Efter
-tolv veckor står det "vecka 15 av 12" och baren är full. Ingen uppmaning,
-ingen notis, inget guidat nästa steg förrän användaren själv avslutar.
+`phaseProgress` klampar till 1, `weeksSince` fortsätter räkna. Efter tolv
+veckor står det "vecka 15 av 12" med full bar. Ingen uppmaning, ingen notis.
+Det guidade nästa steget finns i koden men triggar aldrig av sig själv.
 
-En plan som inte har ett slut är en påminnelse, inte en plan.
+En plan utan slut är en påminnelse, inte en plan.
 
 ### 2.3 Kalorimålet följer inte vikten
 
-`target_calories` sparas en gång och står kvar. Mätt för 88,4 kg, TDEE 2881,
-mål 3169 (+10 %):
+`target_calories` sparas en gång och står kvar. Mätt (88,4 kg, TDEE 2881,
+mål 3169 = +10 %):
 
 | Vikt    | Underhåll | Faktiskt överskott |
 | ------- | --------- | ------------------ |
@@ -79,117 +88,143 @@ mål 3169 (+10 %):
 | 100 kg  | 3060      | 109 kcal           |
 
 Uppgången bromsar in av sig själv: 70 veckor i stället för 43.
-Tidsberäknarens svar förutsätter omräkning — utan den stämmer de inte.
-
-`phaseCalorieDrift` finns och räknar rätt (efter mattefixen 2026-08-22).
+`phaseCalorieDrift` finns och räknar rätt sedan mattefixen 2026-08-22.
 
 ### 2.4 TDEE följer inte vikten — blockerar 2.3
 
 En vägning skriver `weight_kg` (`ProfilePage.tsx:469`) men rör aldrig
-`tdee`. Ingen trigger finns på `weight_history`. TDEE skrivs bara vid
-kalibrering, i TDEE-verktyget eller manuellt.
+`tdee`. Ingen trigger på `weight_history`. TDEE skrivs bara vid kalibrering,
+i TDEE-verktyget eller manuellt.
 
 Kopplas driften in som den är rapporterar den **fantomdrift** — divergensen
-mellan färsk vikt och inaktuell TDEE läses som att behovet ändrats.
+mellan färsk vikt och inaktuell TDEE läses som förändrat behov.
 
-### 2.5 Uppföljningen förklarar inte avvikelser
+### 2.5 Historiken visar inte vad perioden gav
 
-`tracking.behind` säger "Det går långsammare än planerat".
-`estimatedTdeeHint` tillägger att formeln kan vara fel. Men appen vet mer än
-så: den har intagsloggen, viktkurvan och kalibreringen. Den skulle kunna
-skilja _du åt mer än målet_ från _ditt TDEE är högre än formeln tror_ — två
-avvikelser med helt olika åtgärd.
+`PhaseHistoryCard` visar veckor och **startvikt** — aldrig slutvikt.
+`diet_phases` har ingen `end_weight_kg`, till skillnad från
+`calibration_history` som sparar både start och slut.
+
+En avslutad period säger alltså inte om den lyckades. Det är premiumets
+tyngsta säljargument som ligger oanvänt.
+
+### 2.6 Uppföljningen förklarar inte avvikelsen
+
+`tracking.behind` säger "Det går långsammare än planerat", och
+`estimatedTdeeHint` tillägger att formeln kan vara fel. Men appen har
+intagsloggen, viktkurvan och kalibreringen — den skulle kunna skilja _du åt
+mer än målet_ från _ditt TDEE är högre än formeln tror_. Två avvikelser med
+helt olika åtgärd.
 
 ---
 
-## 3. Plan
+## 3. Arbetsplan
 
-Fyra steg. Varje steg är självständigt värdefullt och testbart.
+Fem steg. Varje steg är självständigt värdefullt, testbart och kan släppas
+för sig.
 
-### Steg 1 — Målvikt på perioden
+### Steg 1 — Perioden får ett mål och ett resultat
 
-**Varför först:** rotorsak till 2.1 och 2.2, och den enda ändringen som
-kräver en migration. Allt annat blir bättre av att den finns.
+**Varför först:** rotorsak till 2.1, 2.2 och 2.5. Samlar de två
+migrationerna till en.
 
-- Ny kolumn `target_weight_kg` på `diet_phases` (nullable — underhåll har
-  ingen).
-- `PrepDurationHelper.onUseWeeks` skickar med målvikten, inte bara veckorna.
-- `PhasePickerDialog` sparar den.
-- `DietPhaseCard` visar **framsteg mot vikt** vid sidan av tid: "3,2 av
-  11,6 kg" med en bar som mäter det.
-- Progressbaren mäter framsteg, inte kalender.
+**Migration:** `target_weight_kg` och `end_weight_kg` på `diet_phases`, båda
+nullable (underhåll har ingen målvikt). `end_diet_phase` sätter slutvikten
+från senaste vägningen.
 
-Gratis/premium: målvikten sparas för alla, men **framstegsbaren är
-premium** — den hör till planering över tid. Gratis ser målvikten som ett
-tal.
+**Kod:**
+
+- `PrepDurationHelper.onUseWeeks` → `onUsePlan({ weeks, targetWeightKg })`
+- `PhasePickerDialog` sparar båda
+- `DietPhaseCard`: framsteg mot **vikt** — "3,2 av 11,6 kg" med bar
+- `PhaseHistoryCard`: "88,4 → 85,2 kg på 12 veckor"
+
+**Gränsdragning:** målvikt och resultat sparas och visas för alla.
+Framstegsbaren förblir premium.
+
+**Testas:** att målvikten överlever hela vägen från räknaren till kortet;
+att slutvikten sätts vid avslut; att underhåll utan målvikt inte kraschar.
 
 ### Steg 2 — Perioden får ett slut
 
-**Varför:** utan det är planen aldrig avslutad, och det guidade nästa steget
-(som redan finns) triggar aldrig av sig själv.
+**Beror på:** steg 1 (målvikten behövs för "klar i förtid").
 
 - Nytt tillstånd i `phaseTracking`: `completed` när `planned_weeks` passerats
-  **eller** målvikten nåtts.
-- Kortet byter läge: "Perioden är klar" med resultat (start → nu, uppnådd
-  takt) och det guidade nästa steget som knapp.
-- Notis via det befintliga systemet (`useCalibrationNotifier` är mallen —
-  samma `notifiedRef`-mönster, servern som andra spärr).
-- Vid nådd målvikt före tiden: fira det, föreslå underhåll eller reverse.
+  **eller** målvikten nåtts
+- Kortet byter läge: "Perioden är klar", resultat, guidat nästa steg som knapp
+- Notis via befintligt system — `useCalibrationNotifier` är mallen
+  (`notifiedRef` i klienten, servern som andra spärr)
+- Målvikt nådd i förtid: fira, föreslå underhåll eller reverse
 
-Gratis/premium: **avslutningen visas för alla** — att inte säga till när en
+**Gränsdragning:** avslutningen visas **för alla**. Att inte säga till när en
 period är slut är ett fel, inte en premiumfunktion. Det guidade nästa steget
 förblir premium.
 
+**Testas:** att `completed` triggar på båda villkoren; att notisen skickas
+en gång; att preview-läget inte skickar notiser.
+
 ### Steg 3 — TDEE följer vikten
 
-**Varför:** låser upp 2.3, och rättar ett fel som finns oavsett perioder.
+**Oberoende av 1–2.** Rättar ett fel som finns oavsett perioder.
 
-- `useCalculations` räknar redan om BMR/TDEE i minnet — resultatet
-  persisteras aldrig. Skriv det vid viktändring **när `tdee_source` är
-  formelbaserad**.
-- `tdee_source = 'manual'`: rör aldrig. Användaren har sagt sitt.
+- `useCalculations` räknar redan om BMR/TDEE i minnet — persistera det vid
+  viktändring **när `tdee_source` är formelbaserad**
+- `tdee_source = 'manual'`: rör aldrig, användaren har sagt sitt
 - `tdee_source = 'metabolic_calibration'`: rör aldrig, men **uppmana till ny
-  kalibrering** vid stor viktförändring. En mätning slår alltid en formel.
+  kalibrering** vid stor viktförändring
 
-Det sista är också svaret på hur kalibreringen ska kopplas in: den äger
-frågan när den finns, formeln fyller luckan när den inte gör det.
+Det sista är svaret på kalibreringsfrågan: mätningen äger frågan när den
+finns, formeln fyller luckan när den inte gör det.
 
-### Steg 4 — Målet räknas om
+**Testas:** att varje `tdee_source` behandlas rätt; att TDEE inte driftar vid
+oförändrad vikt.
 
-**Varför sist:** har fem konfliktytor och bygger på steg 3.
+### Steg 4 — Uppföljningen säger varför
 
-Innan en rad skrivs måste dessa lösas:
+**Beror på:** steg 3 (behöver aktuellt TDEE för att skilja orsakerna).
+
+Appen har redan data för att skilja tre fall:
+
+| Vad som mätts                 | Slutsats                      | Åtgärd som föreslås            |
+| ----------------------------- | ----------------------------- | ------------------------------ |
+| Intag ≈ mål, vikt följer inte | TDEE-skattningen stämmer inte | Kalibrera                      |
+| Intag > mål                   | Mer äts än planerat           | Justera målet eller loggningen |
+| För lite loggat               | Går inte att avgöra           | Logga fler dagar               |
+
+Det är den enskilt största kvalitetshöjningen för en premiumanvändare, och
+kräver ingen migration.
+
+**Testas:** att varje fall ger rätt slutsats; att otillräcklig data ger
+"vet ej" i stället för en gissning.
+
+### Steg 5 — Målet räknas om
+
+**Beror på:** steg 3. Sist, för att den har fem konfliktytor.
+
+Måste lösas innan en rad skrivs:
 
 1. **`phaseTracking`** får samma bugg som `deficit_level_changed_at` finns
-   för att förhindra — `expectedChangeKg` räknas som nuvarande takt gånger
-   hela den gångna tiden. Mätt: kvot 1,80 för någon som följt planen exakt.
+   för att förhindra — `expectedChangeKg` = nuvarande takt × hela gångna
+   tiden. Mätt: kvot 1,80 för någon som följt planen exakt.
 2. **Reverse diet undantas helt.** Där är `target_calories` en baslinje som
    upptrappningen räknar ovanpå; ett nytt värde får trappan att hoppa.
 3. **Två tabeller utan transaktion** — `diet_phases.target_calories` och
-   `profiles.calories_min/max`. Triggern rör inte de senare. Skrivs bara den
+   `profiles.calories_min/max`. Triggern rör inte de senare; skrivs bara den
    ena ändras kortets siffra men inte matdagbokens mål.
-4. **Manuellt mål går inte att skilja från automatiskt.** Kolumnen bär ingen
-   proveniens; ny kolumn krävs.
-5. **Preview Mode** måste hoppa över skrivningen, som de två befintliga
-   ställena gör.
+4. **Manuellt mål går inte att skilja från automatiskt.** Ny kolumn krävs.
+5. **Preview Mode** måste hoppa över skrivningen.
 
-**Ordning inom steget:** notis först (ingen skrivning), sedan förslag med
-knapp som återanvänder `DeficitLevelDialog` — den skriver redan alla fält i
-rätt ordning. Automatik sist, och bara om förslaget visar sig otillräckligt.
+**Ordning inom steget:** notis (ingen skrivning) → förslag med knapp som
+återanvänder `DeficitLevelDialog` (skriver redan alla fält rätt) → automatik
+sist, och bara om förslaget visar sig otillräckligt.
 
-### Vad gratis ser under steg 4
-
-Premissen "att visa driften är att ge bort svaret" håller inte. Att veta
-_att_ behovet ändrats säger inget om _hur mycket_ — det kräver formeln,
-startvikten och den ursprungliga andelen.
-
-Vid periodstart, för alla:
+**Vad gratis ser:** vid periodstart, för alla —
 
 > Ditt energibehov ändras när vikten gör det. Väg dig regelbundet, så märker
 > appen när målet behöver räknas om.
 
-När tröskeln passerats, gratis (texten i den befintliga låsta rutan byts —
-inget nytt element):
+Vid passerad tröskel, gratis (texten i den befintliga låsta rutan byts, inget
+nytt element):
 
 > Du har gått upp {{kg}} kg sedan starten, och en tyngre kropp gör av med
 > mer. Ditt mål står kvar på nivån från startvikten — det är därför
@@ -200,32 +235,34 @@ blurrat. Blur säger "du får inte", inte "det finns".
 
 ---
 
-## 4. Vad som INTE ska göras
+## 4. Ordning och beroenden
 
-- **Automatik före notis.** Fem konfliktytor, och värdet är litet inom en
-  period: tröskeln nås ~en gång per standardperiod och är värd ~46 kcal.
-- **Flytta uppföljningen bakom premium.** Den är gratis i dag och ska förbli
-  det — att se att planen inte håller är inte en betaltjänst.
-- **Två system som skriver samma kolumn.** Kalibreringen mäter verkligt
-  TDEE; en formelbaserad driftjustering bredvid den ger motstridiga
-  sanningsanspråk.
+| Steg                         | Beror på | Migration | Risk  | Värde |
+| ---------------------------- | -------- | --------- | ----- | ----- |
+| 1 Mål och resultat           | —        | Ja        | Låg   | Högt  |
+| 2 Slut på perioden           | 1        | Nej       | Låg   | Högt  |
+| 3 TDEE följer vikten         | —        | Nej       | Medel | Medel |
+| 4 Uppföljningen säger varför | 3        | Nej       | Låg   | Högt  |
+| 5 Omräkning                  | 3        | Ja        | Hög   | Medel |
+
+Steg 1 och 3 är oberoende och kan tas parallellt. **Mest värde per insats:
+1, 2 och 4** — tillsammans gör de perioden till en plan med början, framsteg,
+slut och förklaring.
+
+Steg 5 är det som gör upplevelsen sömlös, men också det som kan gå tyst
+sönder. Det ska inte tas förrän 1–4 fungerar.
 
 ---
 
-## 5. Ordning och beroenden
+## 5. Vad som inte ska göras
 
-| Steg                 | Beroende av | Kräver migration | Risk  |
-| -------------------- | ----------- | ---------------- | ----- |
-| 1 Målvikt            | —           | Ja               | Låg   |
-| 2 Slut på perioden   | 1           | Nej              | Låg   |
-| 3 TDEE följer vikten | —           | Nej              | Medel |
-| 4 Omräkning          | 3           | Ja (steg 4c)     | Hög   |
-
-Steg 1 och 3 är oberoende och kan tas i valfri ordning. Steg 2 blir bäst
-efter 1. Steg 4 är sist oavsett.
-
-**Mest värde per insats: steg 1 och 2.** Tillsammans gör de perioden till en
-plan med början, framsteg och slut — vilket är hela löftet.
+- **Automatik före notis.** Fem konfliktytor, och värdet är litet inom en
+  period: tröskeln nås ~en gång per standardperiod och är värd ~46 kcal.
+- **Flytta uppföljningen bakom premium.** Att se att planen inte håller är
+  inte en betaltjänst.
+- **Två system som skriver samma kolumn.** Kalibreringen mäter verkligt TDEE;
+  en formelbaserad justering bredvid ger motstridiga sanningsanspråk.
+- **Riva fasbytet.** Det är atomärt av ett dokumenterat skäl.
 
 ---
 
